@@ -131,10 +131,6 @@
     <None Include="shader\zcull_v.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ext\ext.booproj">
-      <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
-      <Name>ext</Name>
-    </ProjectReference>
     <Folder Include="code" />
     <Folder Include="code\frame" />
     <Folder Include="code\lib\par" />
@@ -159,8 +155,12 @@
     <Folder Include="shader\light\shadow" />
     <Folder Include="shader\mod" />
     <Folder Include="shader\part" />
+    <ProjectReference Include="..\ext\ext.booproj">
+      <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
+      <Name>ext</Name>
+    </ProjectReference>
     <Reference Include="OpenTK">
-      <HintPath>..\..\opentk\Binaries\OpenTK\Debug\OpenTK.dll</HintPath>
+      <HintPath>..\..\..\svn\opentk\Binaries\OpenTK\Debug\OpenTK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
