@@ -4,7 +4,9 @@ import System
 import System.Collections.Generic
 import OpenTK
 
-#---------
+#------------------------------------------
+#	DUAL QUATERNION
+#	effectively represents spatial data for the interpolation
 
 public struct DualQuat:
 	public re	as Quaternion
@@ -25,7 +27,9 @@ public struct DualQuat:
 		s.rot = kn * re
 		
 	
-#---------
+#------------------------------------------
+#	SPATIAL
+#	represents nodes position,rotation & scale in 3D space
 
 public struct Spatial:
 	public rot		as Quaternion
@@ -56,7 +60,9 @@ public struct Spatial:
 		return pos + scale * Vector3.Transform(v,rot)
 
 
-#---------
+#------------------------------------------
+#	BONERECORD, BONECHANNEL, ANIDATA
+#	animation primitives
 
 public struct BoneRecord( IComparable[of BoneRecord] ):
 	public d as Spatial
@@ -88,7 +94,10 @@ public class AniData:
 		name,length = str,t
 
 
-#---------
+#------------------------------------------
+#	NODE
+#	hierarchy element in space
+#	has a parent, caches the world-space transform
 
 public class Node( IComparable[of Node] ):
 	public final name	as string
@@ -135,7 +144,9 @@ public class Node( IComparable[of Node] ):
 			else:	return local
 	
 
-#---------
+#------------------------------------------
+#	NODEBONE
+#	bone node with pose sub-space
 
 public class NodeBone(Node):
 	public final pose	as Spatial
@@ -162,7 +173,9 @@ public class NodeBone(Node):
 		invPose.combine(s,pp)
 
 
-#-----------
+#------------------------------------------
+#	SKELETON
+#	manages bones
 
 public class Skeleton:
 	public final bones	as (NodeBone)
