@@ -92,7 +92,8 @@ public class Entity( vb.attr.Storage ):
 		for i in ids:
 			continue if bind(i)
 			continue if mesh.bind(i)
-			assert not 'valid attrib: ' + i
+			sat = kri.Ant.Inst.slotAttributes
+			assert not 'valid attrib: ' + sat.Name[i]
 		mesh.ind.bind()	if mesh.ind
 
 	public def enable(tid as int, ids as IEnumerable[of int]) as bool:

@@ -51,7 +51,7 @@ public class Apply( rend.tech.Meta ):
 		mlist = ('diffuse','specular','parallax')
 		ms = Array.ConvertAll(mlist) do(name as string):
 			return Ant.Inst.slotMetas.find('mat.'+name)
-		name = ('simple','exponent')[lc.expo]
+		name = ('simple','exponent2')[lc.expo]
 		super('lit.apply',
 			(Ant.Inst.units.texture, Ant.Inst.units.bump), ms,
 			(shade.Object('/light/apply_v'), shade.Object('/light/apply_f'),

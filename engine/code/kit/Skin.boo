@@ -3,7 +3,7 @@
 import System
 
 
-public class Tag(kri.ITag):
+public class Tag( kri.ITag ):
 	public skel		as kri.Skeleton	= null
 	private state	as int	 = 0
 	public Sync as bool:
@@ -30,25 +30,22 @@ public def prepare(e as kri.Entity, s as kri.Skeleton) as bool:
 
 #---------	SKELETON ANIMATION		--------#
 
-public class Anim(kri.ani.IBase):
+public class Anim( kri.ani.IBase ):
 	private final skel	as kri.Skeleton
-	private final sd	as kri.SkinData
-	public def constructor(s as kri.Skeleton, str as string):
-		skel = s
-		sd = skel.find(str)
+	private final ad	as kri.AniData
 	public def constructor(e as kri.Entity, str as string):
 		skel = e.seTag[of Tag]().skel
-		sd = skel.find(str)
+		ad = skel.node.find(str)
 	def kri.ani.IBase.onFrame(time as double) as uint:
-		return 2	if not sd
-		return 1	if time > sd.length
-		skel.moment(time, sd)
+		return 2	if not ad
+		return 1	if time > ad.length
+		skel.moment(time, ad)
 		return 0
 
 
 #---------	RENDER SKELETON SYNC		--------#
 
-public class Update(kri.rend.Basic):
+public class Update( kri.rend.Basic ):
 	private final tf	= kri.TransFeedback()
 	private final sa	= kri.shade.Smart()
 	private final va	= kri.vb.Array()

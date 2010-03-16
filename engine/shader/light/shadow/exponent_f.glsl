@@ -15,7 +15,7 @@ const float wes[] = float[NUM]( 0.4, 0.2, 0.2, 0.2 );
 
 float get_accum(vec3 coord)	{
 	//return texture(unit_light,coord).r;
-	float sample[NUM];
+	//float sample[NUM];
 	float rez = 0.0;
 	for(int i=0; i<NUM; ++i)	{
 		vec2 tc = coord.xy + texel_offset * offsets[i];

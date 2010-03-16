@@ -17,6 +17,22 @@ public class Particle(Loop):
 		return 0
 
 
+###		Spatial channel	###
+
+public class Spatial(IBase):
+	public final node	as kri.Node
+	public final bc		as kri.BoneChannel
+	public final lenght	as single
+	public def constructor(n as kri.Node, name as string):
+		node = n
+		ad = n.find(name)
+		lenght = ad.length
+		bc = ad.channels.Find({ c| return not c.b })
+	def IBase.onFrame(time as double) as uint:
+		node.Local = bc.moment(time)
+		return (0,1)[time>lenght]
+
+
 #-------------------------------#
 #	Rotate node with mouse		#
 #-------------------------------#

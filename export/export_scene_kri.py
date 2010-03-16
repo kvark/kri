@@ -61,6 +61,25 @@ def save_matrix(mx):
 		rot.x, rot.y, rot.z, rot.w)
 
 
+###  ANIMATION IPO   ###
+
+def save_ipo(ipos,offset):
+	if None in ipos:
+		out.pack('<H',0)
+		return
+	num = len( ipos[0].keyframe_points )
+	#print "\t(i) %s, keys %d" %(ipo,num)
+	for ip in ipos:
+		assert len(ip.keyframe_points) == num
+	out.pack('<H',num)
+	for i in range(num):
+		x = (ipos[0].keyframe_points[i].co[0] - offset) * kFrameSec
+		out.pack('<f',x)
+		data = [ ip.keyframe_points[i].co[1] for ip in ipos ]
+		out.array('f',data)
+		#print ('Time', x, i, data)
+
+
 ###  MATERIAL   ###
 
 def save_mat(mat):
@@ -108,6 +127,7 @@ def save_mat(mat):
 
 def save_mesh(mesh,armature,groups,doQuatInt):
 	import Mathutils as Math
+	n_bad_uv = 0
 	def calc_TBN(verts, uvs):
 		va = verts[1].co - verts[0].co
 		vb = verts[2].co - verts[0].co
@@ -115,7 +135,8 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		if uvs and n1.length > 0.0:
 			ta = uvs[1] - uvs[0]
 			tb = uvs[2] - uvs[0]
-			assert ta.length + tb.length > 0.0
+			if ta.length+tb.length == 0.0:
+				n_bad_uv += 1
 			tan = va*tb.y - vb*ta.y
 			bit = vb*ta.x - va*tb.x
 		else:
@@ -175,7 +196,9 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		ar_face.append( Face(face, mesh.verts, [0,1,2], uves) )
 		if nvert<4: continue
 		ar_face.append( Face(face, mesh.verts, [0,2,3], uves) )
-	print("\tconverted to tri-mesh")
+	if n_bad_uv:
+		print("\t(w) %d pure vertices detected" % (n_bad_uv))
+	else: print("\tconverted to tri-mesh")
 
 	#   2: fill sparsed vertex array
 	avg,set_vert = 0.0,{}
@@ -410,59 +433,6 @@ def save_camera(cam, is_cur):
 	out.end()
 
 
-###	SKELETON:ACTION		###
-
-def save_action(act,skel):
-	def save_ipo(ipos,offset):
-		if None in ipos:
-			out.pack('<H',0)
-			return
-		num = len( ipos[0].keyframe_points )
-		#print "\t(i) %s, keys %d" %(ipo,num)
-		for ip in ipos:
-			assert len(ip.keyframe_points) == num
-		out.pack('<H',num)
-		for i in range(num):
-			# hack: control_point is not documented in 2.5a0!
-			x = (ipos[0].keyframe_points[i].co[0] - offset) * kFrameSec
-			out.pack('<f',x)
-			data = [ ip.keyframe_points[i].co[1] for ip in ipos ]
-			out.array('f',data)
-			#print ('Time', x, i, data)
-
-	import re
-	common = set(skel.bones.keys()).intersection( act.groups.keys() )
-	nab = len(common) #number of animated joints
-	offset,nf = act.get_frame_range()
-	nf = nf+1-offset	# number of frames
-	out.begin('act')
-	out.pack( '<24sf', act.name, nf * kFrameSec )
-	out.end()
-	print("\tanim: '%s', %d frames, %d bones" % (act.name,nf,nab))
-	assert nab
-	rnas = {}
-	for f in act.fcurves:
-		mat = re.search('(\w+)\[\"(.+)\"\]\.(\w+)', f.data_path)
-		key = mat.groups()
-		assert key[0] == 'bones'
-		tag = ('location','rotation_quaternion','scale').index(key[2])
-		val = (tag<<2) + f.array_index
-		if not (key[1] in rnas):
-			rnas[key[1]] = 12 * [None]
-		rnas[key[1]][val] = f
-	for bn in common:
-		out.begin('a_bone')
-		out.pack('<B', skel.bones.keys().index(bn) )
-		order = ((0,1,2),(5,6,7,4),(8,))
-		for subord in order:
-			ipos = list(rnas[bn][i] for i in subord)
-			save_ipo(ipos,offset)
-		out.end()
-		#print('Bone ',bn)
-		#save_ipo(chan, (Ipo.PO_LOCX, Ipo.PO_LOCY, Ipo.PO_LOCZ))
-		#save_ipo(chan, (Ipo.PO_QUATX, Ipo.PO_QUATY, Ipo.PO_QUATZ, Ipo.PO_QUATW))
-		#save_ipo(chan, (Ipo.PO_SCALEX,))
-
 ###	SKELETON:CORE		###
 
 def save_skeleton(skel):
@@ -480,20 +450,6 @@ def save_skeleton(skel):
 		out.pack( '<24sB', bone.name, parid+1 )
 		save_matrix(mx)
 	out.end()
-	# export actions
-	actions = []
-	if skel.animation_data:
-		actions = [ns.action for nt in skel.animation_data.nla_tracks for ns in nt.strips]
-	else:
-		names = set( skel.bones.keys() )
-		def affects(a):
-			n2 = set(gr.name for gr in a.groups)
-			return not names.isdisjoint(n2)
-		actions = [a for a in bpy.data.actions if affects(a)]
-	for act in actions:
-		save_action(act, skel)
-		#for b in ob.getPose().bones.values():
-		#   print b.name,b.poseMatrix
 
 
 ###	PARTICLES	###
@@ -536,7 +492,45 @@ def save_game(gob):
 	print("\t(i) %s physics, %s bounds, %.1f mass, %.1f radius" % (enum+phys))
 
 
-###  	NODE	###
+###  	NODE:ACTION	###
+
+def save_node_action(act,data):
+	import re
+	offset,nf = act.get_frame_range()
+	out.begin('n_act')
+	out.pack( '<24sf', act.name, nf * kFrameSec )
+	out.end()
+	print("\tanim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+	rnas = {}
+	for f in act.fcurves:
+		#print('Tag:', f.data_path)
+		mat = re.search('(\w+)\.(\w+)\[\"(.+)\"\]\.(\w+)', f.data_path)
+		key = (mat.groups() if mat else None)
+		chan,var = '', f.data_path
+		if mat and key[0] == 'pose':
+			if key[1] != 'bones':
+				print("\t(w) unknow IPO: ", key[1])
+				continue
+			chan,var = key[2],key[3]
+		tag = ('location','rotation_quaternion','scale').index(var)
+		val = (tag<<2) + f.array_index
+		if not (chan in rnas):
+			rnas[chan] = 12 * [None]
+		rnas[chan][val] = f
+	for key,chan in rnas.items():
+		out.begin('a_bone')
+		bid = 0	# bone ID or 0 for the root
+		if key != '':	bid = 1+data.bones.keys().index(key)
+		assert bid<256
+		out.pack('<B', bid)
+		for subord in ((0,1,2),(5,6,7,4),(8,)):
+			ipos = list(chan[i] for i in subord)
+			save_ipo(ipos,offset)
+		out.end()
+
+
+###  	NODE:CORE	###
+
 def save_node(ob):
 	print(ob.type, ob.name, ob.parent)
 	# todo: parent types (bone,armature,node)
@@ -547,6 +541,20 @@ def save_node(ob):
 	local = (ob.matrix * ob.parent.matrix.copy().invert()) if ob.parent else ob.matrix
 	save_matrix( local )
 	out.end()
+	# save node actions
+	actions = []
+	if ob.animation_data:
+		actions = [ns.action for nt in ob.animation_data.nla_tracks for ns in nt.strips]
+	if not len(actions) and ob.type == 'ARMATURE':
+		names = set( ob.data.bones.keys() )
+		def affects(a):
+			n2 = set(gr.name for gr in a.groups)
+			return not names.isdisjoint(n2)
+		actions += filter(affects, bpy.data.actions)
+		if len(actions):
+			print("\t(i) extracted %d actions from context" % (len(actions)) )
+	for a in actions:
+		save_node_action(a, ob.data)
 	
 
 ### 	 SCENE		###
@@ -585,6 +593,8 @@ def save_scene(filename, context, doQuatInt=True):
 	print('Done.')
 	out.fx.close()
 
+
+### 	 EXPORT MODULE		###
 
 class ExportKRI( bpy.types.Operator ):
 	''' Export to KRI scene format (.scene).'''

@@ -47,7 +47,7 @@ public partial class Native:
 		dict['v_ind']	= pv_ind
 		# skeleton
 		dict['skel']	= p_skel
-		dict['act']		= p_act
+		dict['n_act']	= pn_act
 		dict['a_bone']	= pa_bone
 		# particles
 		dict['part']	= p_part

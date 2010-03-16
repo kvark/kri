@@ -12,14 +12,14 @@ public partial class Native:
 		ar.Push( IpoData[of T](t:-1.0f) )
 		for k in range(num):
 			ar.Push( IpoData[of T]( t:getReal(), d:fun(br) ))
-		return ar	
+		return ar
 
 	#---	Parse skeleton	---#
 	public def p_skel() as bool:
 		node = geData[of kri.Node]()
 		return false	if not node
 		nbones = br.ReadByte()
-		s = kri.Skeleton( nbones )
+		s = kri.Skeleton( node,nbones )
 		puData(s)
 		# read nodes
 		par = array[of byte](nbones)
@@ -33,21 +33,19 @@ public partial class Native:
 		return true
 	
 	#---	Parse skeletal action	---#
-	public def p_act() as bool:
-		skel = geData[of kri.Skeleton]()
-		return false	if not skel
-		sd = kri.SkinData( getString(STR_LEN), getReal() )
-		skel.anims.Add(sd)
-		puData(sd)
+	public def pn_act() as bool:
+		node = geData[of kri.Node]()
+		return false	if not node
+		ad = kri.AniData( getString(STR_LEN), getReal() )
+		node.anims.Add(ad)
+		puData(ad)
 		return true
 
 	#---	Parse action channel	---#
 	public def pa_bone() as bool:
-		sd	= geData[of kri.SkinData]()
-		skel = geData[of kri.Skeleton]()
-		return false	if not sd or not skel
+		ad	= geData[of kri.AniData]()
+		return false	if not ad
 		bid = br.ReadByte()
-		assert bid < skel.bones.Length
 		stack = Stack[of kri.BoneRecord]()
 		pos = getIpo[of Vector3](getVector)
 		rot = getIpo[of Quaternion](getQuat)
@@ -68,5 +66,5 @@ public partial class Native:
 		chan = kri.BoneChannel(bid, stack.Count)
 		for k in range(stack.Count):
 			chan.c[k] = stack.Pop()
-		sd.channels.Add(chan)
+		ad.channels.Add(chan)
 		return true

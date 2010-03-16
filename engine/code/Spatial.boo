@@ -58,8 +58,41 @@ public struct Spatial:
 
 #---------
 
+public struct BoneRecord( IComparable[of BoneRecord] ):
+	public d as Spatial
+	public t as single
+	public def CompareTo(r as BoneRecord) as int:	#imp: IComparable
+		return t.CompareTo(r.t)
+
+public struct BoneChannel:
+	public final b	as byte
+	public final c	as (BoneRecord)
+	public def constructor(index as byte, num as int):
+		assert num>0
+		b, c  =  index, array[of BoneRecord](num)
+	public def moment(time as single) as Spatial:
+		i = Array.FindIndex(c) do(ref b as BoneRecord):
+			return b.t > time
+		return c[-1].d	if i < 0
+		return c[0].d	if not i
+		s = Spatial()
+		k = (time - c[i-1].t) / (c[i].t - c[i-1].t)
+		s.lerpDq(c[i-1].d, c[i].d, k)
+		return s
+
+public class AniData:
+	public final name		as string
+	public final length		as single
+	public final channels	= List[of BoneChannel]()
+	public def constructor(str as string, t as single):
+		name,length = str,t
+
+
+#---------
+
 public class Node( IComparable[of Node] ):
 	public final name	as string
+	public final anims	= List[of AniData]()
 	private parent	as Node = null
 	private local	= Spatial.Identity
 	private cached	= Spatial.Identity
@@ -76,6 +109,8 @@ public class Node( IComparable[of Node] ):
 		return name.CompareTo(n.name)
 	public def refresh() as void:
 		world.combine(local,cached)
+	public def find(str as string) as AniData:
+		return anims.Find({d| d.name == str })
 	
 	public Parent as Node:
 		get: return parent
@@ -126,47 +161,20 @@ public class NodeBone(Node):
 		pp.inverse()
 		invPose.combine(s,pp)
 
-#---------
 
-public struct BoneRecord( IComparable[of BoneRecord] ):
-	public d as Spatial
-	public t as single
-	public def CompareTo(r as BoneRecord) as int:	#imp: IComparable
-		return t.CompareTo(r.t)
-
-public struct BoneChannel:
-	public final b	as byte
-	public final c	as (BoneRecord)
-	public def constructor(index as byte, num as int):
-		assert num>0
-		b, c  =  index, array[of BoneRecord](num)
-	public def moment(time as single) as Spatial:
-		i = Array.FindIndex(c) do(ref b as BoneRecord):
-			return b.t > time
-		return c[-1].d	if i < 0
-		return c[0].d	if not i
-		s = Spatial()
-		k = (time - c[i-1].t) / (c[i].t - c[i-1].t)
-		s.lerpDq(c[i-1].d, c[i].d, k)
-		return s
-
-public class SkinData:
-	public final name		as string
-	public final length		as single
-	public final channels	= List[of BoneChannel]()
-	public def constructor(str as string, t as single):
-		name,length = str,t
-
+#-----------
 
 public class Skeleton:
-	public final anims	= List[of SkinData]()
 	public final bones	as (NodeBone)
+	public final node	as Node
 	[getter(State)]
 	private state		as int	= 0
 	
-	public def constructor(num as int):
+	public def constructor(n as Node, num as int):
+		node = n
 		bones = array[of NodeBone](num)
 	public def constructor(s as Skeleton):
+		node = s.node
 		bones = s.bones.Clone() as (NodeBone)
 		for i in range( bones.Length ):
 			par = bones[i].Parent
@@ -175,10 +183,7 @@ public class Skeleton:
 			#ind = Array.BinarySearch(s.nodes, par)
 			continue	if ind < 0
 			bones[i].Parent = bones[ind]
-		anims.AddRange( s.anims )
 
-	public def find(str as string) as SkinData:
-		return anims.Find({d| d.name == str })
 	public def changed() as void:
 		++state
 	public def bakePoseData(np as Node) as void:
@@ -190,7 +195,10 @@ public class Skeleton:
 		for b in bones:
 			b.Local = b.pose
 		++state
-	public def moment(t as single, sd as SkinData) as void:
+	public def moment(t as single, sd as AniData) as void:
 		for c in sd.channels:
-			bones[c.b].setPose( c.moment(t) )
+			continue	if c.b > bones.Length
+			sp = c.moment(t)
+			if not c.b: node.Local = sp
+			else: bones[c.b-1].setPose(sp)
 		++state
