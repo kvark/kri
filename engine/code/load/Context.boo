@@ -67,13 +67,14 @@ public class Context:
 	
 	public def constructor():
 		mDef.meta[ ms.emissive	]	= kri.meta.Emission( ms.pEmissive )
-		mDef.meta[ ms.diffuse	]	= mDiff = kri.meta.Diffuse	( ms.pDiffuse,	ms.pMatData )
-		mDef.meta[ ms.specular	]	= mSpec = kri.meta.Specular	( ms.pSpecular,	ms.pMatData )
+		mDef.meta[ ms.diffuse	]	= mDiff = kri.meta.Diffuse	(ms.pDiffuse,	ms.pMatData)
+		mDef.meta[ ms.specular	]	= mSpec = kri.meta.Specular	(ms.pSpecular,	ms.pMatData)
 		mDef.meta[ ms.parallax	]	= mParx = kri.meta.Parallax	( ms.pMatData )
 		mDiff.shader = slib.lambert
 		mSpec.shader = slib.phong
 		mParx.shader = slib.shift0
-		mDef.unit[ kri.Ant.Inst.units.texture	] = kri.meta.Unit(
-			MakeTex(0xFF,0xFF,0xFF,0xFF), slib.text_gen0, slib.text_2d )
-		mDef.unit[ kri.Ant.Inst.units.bump		] = kri.meta.Unit(
-			MakeTex(0x80,0x80,0xFF,0x80), slib.bump_gen0, slib.bump_2d )
+		un as kri.meta.Unit = null
+		mDef.unit[ kri.Ant.Inst.units.texture	] = un = kri.meta.Unit( slib.text_gen0, slib.text_2d )
+		un.tex = MakeTex(0xFF,0xFF,0xFF,0xFF)
+		mDef.unit[ kri.Ant.Inst.units.bump		] = un = kri.meta.Unit( slib.bump_gen0, slib.bump_2d )
+		un.tex = MakeTex(0x80,0x80,0xFF,0x80)

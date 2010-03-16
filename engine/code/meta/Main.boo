@@ -3,13 +3,13 @@ namespace kri.meta
 import System
 import OpenTK
 import OpenTK.Graphics
-import kri
+import kri.shade
 
 
 #----------------------
 
-public class Basic(IApplyable,ICloneable):
-	public shader	as shade.Object	= null	# implementation shader
+public class Basic( kri.IApplyable, ICloneable ):
+	public shader	as Object	= null	# implementation shader
 	public def Clone() as object:			# ICloneable.Clone
 		return Basic(shader:shader)
 	public virtual def apply() as void:		# IApplyable.apply
@@ -17,19 +17,23 @@ public class Basic(IApplyable,ICloneable):
 
 
 public class Unit:
-	public tex	as Texture
-	public final generator	as shade.Object	# to generate the coordinate
-	public final sampler	as shade.Object	# to sample from the texture
-	public def constructor(t as Texture, sh_gen as shade.Object, sh_use as shade.Object):
-		tex,generator,sampler = t,sh_gen,sh_use
+	public tex	as kri.Texture
+	public final generator	as Object	# to generate the coordinate
+	public final sampler	as Object	# to sample from the texture
+	# offset & scale for the texture coords
+	public final trans	= (par.Value[of Vector3](), par.Value[of Vector3]())
+	public def constructor(sh_gen as Object, sh_use as Object):
+		generator,sampler = sh_gen,sh_use
+		trans[0].Value = Vector3.Zero
+		trans[1].Value = Vector3.One
 
 
 #----------------------
 
 public class Emission(Basic):
-	private final pCol	as shade.par.Value[of Color4]
+	private final pCol	as par.Value[of Color4]
 	public color		= Color4(0f,0f,0f,1f)
-	public def constructor(pc as shade.par.Value[of Color4]):
+	public def constructor(pc as par.Value[of Color4]):
 		pCol = pc
 	public def Clone() as object:
 		m = Emission(pCol)
@@ -40,11 +44,11 @@ public class Emission(Basic):
 
 
 public class Diffuse(Basic):
-	private final pCol	as shade.par.Value[of Color4]
-	private final pData	as shade.par.Value[of Vector4]
+	private final pCol	as par.Value[of Color4]
+	private final pData	as par.Value[of Vector4]
 	public color		= Color4(0.5f,0.5f,0.5f,1f)
 	public kReflection	= 1f
-	public def constructor(pc as shade.par.Value[of Color4], pd as shade.par.Value[of Vector4]):
+	public def constructor(pc as par.Value[of Color4], pd as par.Value[of Vector4]):
 		pCol,pData = pc,pd
 	public def Clone() as object:
 		m = Diffuse(pCol,pData)
@@ -57,12 +61,12 @@ public class Diffuse(Basic):
 
 
 public class Specular(Basic):
-	private final pCol	as shade.par.Value[of Color4]
-	private final pData	as shade.par.Value[of Vector4]
+	private final pCol	as par.Value[of Color4]
+	private final pData	as par.Value[of Vector4]
 	public color		= Color4(0.5f,0.5f,0.5f,1f)
 	public kSpecularity	= 1f
 	public kGlossiness	= 10f
-	public def constructor(pc as shade.par.Value[of Color4], pd as shade.par.Value[of Vector4]):
+	public def constructor(pc as par.Value[of Color4], pd as par.Value[of Vector4]):
 		pCol,pData = pc,pd
 	public def Clone() as object:
 		m = Specular(pCol,pData)
@@ -77,9 +81,9 @@ public class Specular(Basic):
 
 
 public class Parallax(Basic):
-	private final pData	as shade.par.Value[of Vector4]
+	private final pData	as par.Value[of Vector4]
 	public kShift	as single	= 0f
-	public def constructor(pd as shade.par.Value[of Vector4]):
+	public def constructor(pd as par.Value[of Vector4]):
 		pData = pd
 	public def Clone() as object:
 		m = Parallax(pData)

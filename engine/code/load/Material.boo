@@ -75,18 +75,20 @@ public partial class Native:
 		Image.bMipMap	= br.ReadByte()>0	# generate mip-maps
 		Image.bFilter	= br.ReadByte()>0	# linear filtering
 		return false	if mapping != TexMapping.Flat
-		tex = getTexture( 'res' + getString(PATH_LEN) )
+		# create unit with proper shaders
+		un as kri.meta.Unit	= null
 		if   tip == TexType.Diffuse:
 			assert coord == TexCoord.UV
-			m.unit[kri.Ant.inst.units.texture	] = kri.meta.Unit(
-				tex, con.slib.text_gen1, con.slib.text_2d )
+			m.unit[kri.Ant.inst.units.texture	] =un= kri.meta.Unit( con.slib.text_gen1, con.slib.text_2d )
 		elif tip == TexType.Normal:
 			assert coord == TexCoord.UV
-			m.unit[kri.Ant.inst.units.bump		] = kri.meta.Unit(
-				tex, con.slib.bump_gen1, con.slib.bump_2d )
+			m.unit[kri.Ant.inst.units.bump		] =un= kri.meta.Unit( con.slib.bump_gen1, con.slib.bump_2d )
 		elif tip == TexType.Reflection:
 			assert coord == TexCoord.Reflection
-			m.unit[kri.Ant.inst.units.reflect	] = kri.meta.Unit(
-				tex, con.slib.refl_gen, con.slib.refl_2d )
+			m.unit[kri.Ant.inst.units.reflect	] =un= kri.meta.Unit( con.slib.refl_gen, con.slib.refl_2d )
 		else:	return false
+		# texcoords & image path
+		for i in range(2):
+			un.trans[i].Value = getVector()
+		un.tex = getTexture( 'res' + getString(PATH_LEN) )
 		return true

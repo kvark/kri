@@ -117,6 +117,12 @@ def save_mat(mat):
 			('SPHERE','TUBE','CUBE','FLAT').index(mp),
 			('CLIP','REPEAT').index( it.extension ),
 			it.mipmap, it.interpolation)
+		# tex coords transformation
+		if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
+			print("\t(w) tex coord swizzling not supported")
+		for v in (mtex.offset,mtex.size):
+			out.pack('<3f', v[0],v[1],v[2])
+		# image path
 		name = img.filename
 		print("\t\timage: ", name)
 		out.pack( '<64s', name )
@@ -465,7 +471,7 @@ def save_particle(part):
 	size = (st.particle_size, st.random_size)
 	mat = bpy.data.materials[ st.material-1 ]
 	matname = (mat.name if mat else '')
-	print("\tparticle: %s [%s] %d num, [%d-%d] life %d" % ((part.name, matname, st.amount) + life))
+	print("\t+particle: %s [%s] %d num, [%d-%d] life %d" % ((part.name, matname, st.amount) + life))
 	dist = ('JIT','RAND','GRID').index( st.distribution )
 	out.begin('part')
 	out.pack('<L24s24sBf', st.amount, part.name, matname, dist, st.jitter_factor)
@@ -500,7 +506,7 @@ def save_node_action(act,data):
 	out.begin('n_act')
 	out.pack( '<24sf', act.name, nf * kFrameSec )
 	out.end()
-	print("\tanim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 	rnas = {}
 	for f in act.fcurves:
 		#print('Tag:', f.data_path)
