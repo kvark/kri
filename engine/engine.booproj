@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="code\ani\Data.boo" />
     <Compile Include="code\ani\Physics.boo" />
     <Compile Include="code\ani\App.boo" />
     <Compile Include="code\ani\Graph.boo" />

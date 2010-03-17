@@ -77,8 +77,8 @@ public struct BoneChannel:
 		assert num>0
 		b, c  =  index, array[of BoneRecord](num)
 	public def moment(time as single) as Spatial:
-		i = Array.FindIndex(c) do(ref b as BoneRecord):
-			return b.t > time
+		i = Array.FindIndex(c) do(ref r as BoneRecord):
+			return r.t > time
 		return c[-1].d	if i < 0
 		return c[0].d	if not i
 		s = Spatial()

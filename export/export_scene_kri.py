@@ -63,6 +63,19 @@ def save_matrix(mx):
 
 ###  ANIMATION IPO   ###
 
+def gather_anim(ob):
+	ad = ob.animation_data
+	if not ad: return []
+	return [ns.action for nt in ad.nla_tracks for ns in nt.strips]
+
+def save_action(act):
+	offset,nf = act.get_frame_range()
+	out.begin('m_act')
+	out.pack( '<24sf', act.name, nf * kFrameSec )
+	out.end()
+	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+	return offset
+
 def save_ipo(ipos,offset):
 	if None in ipos:
 		out.pack('<H',0)
@@ -80,7 +93,69 @@ def save_ipo(ipos,offset):
 		#print ('Time', x, i, data)
 
 
-###  MATERIAL   ###
+###  MATERIAL:ANIM   ###
+
+def save_mat_action(act):
+	import re
+	offset = save_action(act)
+	'''rnas = {}
+	for f in act.fcurves:
+		mat = re.search('(\w+)\[\"(.+)\"\]\.(\w+)', f.data_path)
+		key = (mat.groups() if mat else None)
+		chan,var = '', f.data_path
+		if mat and key[0] == 'pose':
+			if key[1] != 'bones':
+				print("\t(w) unknow IPO: ", key[1])
+				continue
+			chan,var = key[2],key[3]
+		tag = ('location','rotation_quaternion','scale').index(var)
+		val = (tag<<2) + f.array_index
+		if not (chan in rnas):
+			rnas[chan] = 12 * [None]
+		rnas[chan][val] = f
+	for key,chan in rnas.items():
+		out.begin('a_bone')
+		bid = 0	# bone ID or 0 for the root
+		if key != '':	bid = 1+data.bones.keys().index(key)
+		assert bid<256
+		out.pack('<B', bid)
+		for subord in ((0,1,2),(5,6,7,4),(8,)):
+			ipos = list(chan[i] for i in subord)
+			save_ipo(ipos,offset)
+		out.end()'''
+
+###  MATERIAL:UNIT   ###
+
+def save_mat_unit(mtex):
+	tip,img = 0,None
+	ar = [mtex.map_colordiff, mtex.map_normal, mtex.map_coloremission,
+		mtex.map_colorspec, mtex.map_colorreflection]
+	if True in ar:  tip = 1 + ar.index(True)	# stupid python
+	if mtex.texture and mtex.texture.type == 'IMAGE':
+		img = mtex.texture.image
+	else:	print("\t\t(w)",'tex type is not IMAGE')
+	if not img or not tip: return
+	tc,mp = mtex.texture_coordinates, mtex.mapping
+	print("\ttexture: %d domain, %s coords, %s mapping" % (tip,tc,mp))
+	out.begin('tex')
+	it = mtex.texture
+	out.pack( '<6B', tip,
+		('TANGENT','REFLECTION','NORMAL','WINDOW','UV','OBJECT','GLOBAL').index(tc),
+		('SPHERE','TUBE','CUBE','FLAT').index(mp),
+		('CLIP','REPEAT').index( it.extension ),
+		it.mipmap, it.interpolation)
+	# tex coords transformation
+	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
+		print("\t(w) tex coord swizzling not supported")
+	for v in (mtex.offset,mtex.size):
+		out.pack('<3f', v[0],v[1],v[2])
+	# image path
+	name = img.filename
+	print("\t\timage: ", name)
+	out.pack( '<64s', name )
+	out.end()
+
+###  MATERIAL:CORE   ###
 
 def save_mat(mat):
 	print("[%s]" % (mat.name))
@@ -97,36 +172,12 @@ def save_mat(mat):
 		mat.diffuse_intensity, mat.specular_intensity,
 		mat.specular_hardness, mat.ambient )
 	out.end()
-	for mtex in mat.texture_slots:
-		tip,img = 0,None
-		if mtex != None:
-			ar = [mtex.map_colordiff, mtex.map_normal, mtex.map_coloremission,
-				mtex.map_colorspec, mtex.map_colorreflection]
-			if True in ar:  tip = 1 + ar.index(True)	# stupid python
-			if mtex.texture and mtex.texture.type == 'IMAGE':
-				img = mtex.texture.image
-			else:	print("\t\t(w)",'tex type is not IMAGE')
-		if not img: tip = 0
-		if tip == 0: continue
-		tc,mp = mtex.texture_coordinates, mtex.mapping
-		print("\ttexture: %d domain, %s coords, %s mapping" % (tip,tc,mp))
-		out.begin('tex')
-		it = mtex.texture
-		out.pack( '<6B', tip,
-			('TANGENT','REFLECTION','NORMAL','WINDOW','UV','OBJECT','GLOBAL').index(tc),
-			('SPHERE','TUBE','CUBE','FLAT').index(mp),
-			('CLIP','REPEAT').index( it.extension ),
-			it.mipmap, it.interpolation)
-		# tex coords transformation
-		if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
-			print("\t(w) tex coord swizzling not supported")
-		for v in (mtex.offset,mtex.size):
-			out.pack('<3f', v[0],v[1],v[2])
-		# image path
-		name = img.filename
-		print("\t\timage: ", name)
-		out.pack( '<64s', name )
-		out.end()
+	# texture units
+	for mt in mat.texture_slots:
+		if mt: save_mat_unit(mt)
+	# animations
+	for act in gather_anim(mat):
+		save_mat_action(act)
 
 
 ###  MESH   ###
@@ -502,11 +553,7 @@ def save_game(gob):
 
 def save_node_action(act,data):
 	import re
-	offset,nf = act.get_frame_range()
-	out.begin('n_act')
-	out.pack( '<24sf', act.name, nf * kFrameSec )
-	out.end()
-	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+	offset = save_action(act)
 	rnas = {}
 	for f in act.fcurves:
 		#print('Tag:', f.data_path)
@@ -548,9 +595,7 @@ def save_node(ob):
 	save_matrix( local )
 	out.end()
 	# save node actions
-	actions = []
-	if ob.animation_data:
-		actions = [ns.action for nt in ob.animation_data.nla_tracks for ns in nt.strips]
+	actions = gather_anim(ob)
 	if not len(actions) and ob.type == 'ARMATURE':
 		names = set( ob.data.bones.keys() )
 		def affects(a):
