@@ -15,14 +15,15 @@ public partial class Native:
 		m = kri.Material( getString(STR_LEN) )
 		at.mats[m.name] = m
 		puData(m)
-		m.meta[ con.ms.emissive ] = mEmis = kri.meta.Emission	( con.ms.pEmissive )
-		m.meta[ con.ms.diffuse	] = mDiff = kri.meta.Diffuse	( con.ms.pDiffuse,	con.ms.pMatData )
-		m.meta[ con.ms.specular	] = mSpec = kri.meta.Specular	( con.ms.pSpecular,	con.ms.pMatData )
-		m.meta[ con.ms.parallax	] = mParx = kri.meta.Parallax	( con.ms.pMatData )
+		scalars = kri.shade.par.Value[of Vector4]()
+		m.meta[ con.ms.emissive ] = mEmis = kri.meta.Emission()
+		m.meta[ con.ms.diffuse	] = mDiff = kri.meta.Diffuse(scalars)
+		m.meta[ con.ms.specular	] = mSpec = kri.meta.Specular(scalars)
+		m.meta[ con.ms.parallax	] = mParx = kri.meta.Parallax(scalars)
 		# colors
-		mEmis.color = getColor()
-		mDiff.color = getColor()
-		mSpec.color = getColor()
+		mEmis.Color = getColor()
+		mDiff.Color = getColor()
+		mSpec.Color = getColor()
 		# models
 		id = br.ReadByte()
 		assert id < 1
@@ -31,11 +32,11 @@ public partial class Native:
 		assert id < 2
 		mSpec.shader = (con.slib.cooktorr, con.slib.phong)[id]
 		# params
-		mDiff.kReflection	= getReal()
-		mSpec.kSpecularity	= getReal()
-		mSpec.kGlossiness	= getReal()
-		mParx.kShift		= getReal()
-		mParx.shader = (con.slib.shift0, con.slib.shift1)[ mParx.kShift != 0.0 ]
+		mDiff.Reflection	= getReal()
+		mSpec.Specularity	= getReal()
+		mSpec.Glossiness	= getReal()
+		mParx.Shift			= getReal()
+		mParx.shader = (con.slib.shift0, con.slib.shift1)[ mParx.Shift != 0.0 ]
 		# units
 		con.mDef.unit.CopyTo( m.unit,0 )
 		return true
@@ -88,7 +89,7 @@ public partial class Native:
 			m.unit[kri.Ant.inst.units.reflect	] =un= kri.meta.Unit( con.slib.refl_gen, con.slib.refl_2d )
 		else:	return false
 		# texcoords & image path
-		for i in range(2):
-			un.trans[i].Value = getVector()
+		un.Offset	= Vector4(getVector(), 0.0)
+		un.Scale	= Vector4(getVector(), 1.0)
 		un.tex = getTexture( 'res' + getString(PATH_LEN) )
 		return true

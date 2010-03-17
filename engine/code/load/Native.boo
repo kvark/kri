@@ -73,6 +73,8 @@ public partial class Native:
 				assert bs.Position == size
 			else: bs.Seek(size, IO.SeekOrigin.Begin)
 		br.Close()
+		for m in at.mats.Values:
+			m.link()
 		return at
 	
 	protected def geData[of T]() as T:

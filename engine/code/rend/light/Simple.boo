@@ -48,9 +48,8 @@ public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final licon		as Context
 	public def constructor(lc as Context):
-		mlist = ('diffuse','specular','parallax')
-		ms = Array.ConvertAll(mlist) do(name as string):
-			return Ant.Inst.slotMetas.find('mat.'+name)
+		ms = Array.ConvertAll(('diffuse','specular','parallax')) do(name as string):
+			return Ant.Inst.slotMetas.find(name)
 		name = ('simple','exponent2')[lc.expo]
 		super('lit.apply',
 			(Ant.Inst.units.texture, Ant.Inst.units.bump), ms,

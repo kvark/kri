@@ -23,11 +23,11 @@ public class Meta:
 	public final reflection	as int
 	# create
 	public def constructor(sm as kri.lib.Slot, d as rep.Dict):
-		emissive	= sm.getForced('mat.emissive')
-		diffuse		= sm.getForced('mat.diffuse')
-		specular	= sm.getForced('mat.specular')
-		parallax	= sm.getForced('mat.parallax')
-		reflection	= sm.getForced('mat.reflection')
+		emissive	= sm.getForced('emissive')
+		diffuse		= sm.getForced('diffuse')
+		specular	= sm.getForced('specular')
+		parallax	= sm.getForced('parallax')
+		reflection	= sm.getForced('reflection')
 		d.add('mat.emissive',	pEmissive)
 		d.add('mat.diffuse',	pDiffuse)
 		d.add('mat.specular',	pSpecular)
@@ -66,10 +66,11 @@ public class Context:
 		return tex
 	
 	public def constructor():
-		mDef.meta[ ms.emissive	]	= kri.meta.Emission( ms.pEmissive )
-		mDef.meta[ ms.diffuse	]	= mDiff = kri.meta.Diffuse	(ms.pDiffuse,	ms.pMatData)
-		mDef.meta[ ms.specular	]	= mSpec = kri.meta.Specular	(ms.pSpecular,	ms.pMatData)
-		mDef.meta[ ms.parallax	]	= mParx = kri.meta.Parallax	( ms.pMatData )
+		scalars = par.Value[of Vector4]()
+		mDef.meta[ ms.emissive	]	= kri.meta.Emission()
+		mDef.meta[ ms.diffuse	]	= mDiff = kri.meta.Diffuse(scalars)
+		mDef.meta[ ms.specular	]	= mSpec = kri.meta.Specular(scalars)
+		mDef.meta[ ms.parallax	]	= mParx = kri.meta.Parallax(scalars)
 		mDiff.shader = slib.lambert
 		mSpec.shader = slib.phong
 		mParx.shader = slib.shift0

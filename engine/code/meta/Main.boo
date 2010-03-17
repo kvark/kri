@@ -1,93 +1,120 @@
 namespace kri.meta
 
-import System
 import OpenTK
 import OpenTK.Graphics
 import kri.shade
 
+public static class Scalars:
+	public final name	= 'mat_scalars'
 
 #----------------------
 
-public class Basic( kri.IApplyable, ICloneable ):
+public class Basic():
 	public shader	as Object	= null	# implementation shader
-	public def Clone() as object:			# ICloneable.Clone
+	public virtual def clone() as Basic:
 		return Basic(shader:shader)
-	public virtual def apply() as void:		# IApplyable.apply
+	public virtual def link(d as rep.Dict) as void:
 		pass
 
 
-public class Unit:
-	public tex	as kri.Texture
+public class Unit():
+	public tex	as kri.Texture	= null
 	public final generator	as Object	# to generate the coordinate
 	public final sampler	as Object	# to sample from the texture
-	# offset & scale for the texture coords
-	public final trans	= (par.Value[of Vector3](), par.Value[of Vector3]())
+
+	private final pOffset	= par.Value[of Vector4]()
+	private final pScale	= par.Value[of Vector4]()
+	portal Offset	= pOffset.Value
+	portal Scale	= pScale.Value
+
 	public def constructor(sh_gen as Object, sh_use as Object):
 		generator,sampler = sh_gen,sh_use
-		trans[0].Value = Vector3.Zero
-		trans[1].Value = Vector3.One
+		self.Offset	= Vector4.Zero
+		self.Scale	= Vector4.One
+	public def constructor(u as Unit):
+		generator = u.generator
+		sampler = u.sampler
+		tex = u.tex
+		self.Offset = u.Offset
+		self.Scale = u.Scale
+	public def link(d as rep.Dict, name as string) as void:
+		d.add('offset_'+name, pOffset)
+		d.add('scale_' +name, pScale)
 
 
 #----------------------
+# problem: shared pData will not be cloned properly
 
 public class Emission(Basic):
-	private final pCol	as par.Value[of Color4]
-	public color		= Color4(0f,0f,0f,1f)
-	public def constructor(pc as par.Value[of Color4]):
-		pCol = pc
-	public def Clone() as object:
-		m = Emission(pCol)
-		m.color = color
+	private final pCol	= par.Value[of Color4]()
+	portal Color	= pCol.Value
+
+	public def constructor():
+		self.Color = Color4.Gray
+	public override def clone() as Basic:
+		m = Emission()
+		m.Color = Color
 		return m
-	public override def apply() as void:
-		pCol.Value = color
+	public override def link(d as rep.Dict) as void:
+		d.add('mat.emissive', pCol)
 
 
 public class Diffuse(Basic):
-	private final pCol	as par.Value[of Color4]
+	private final pCol	= par.Value[of Color4]()
 	private final pData	as par.Value[of Vector4]
-	public color		= Color4(0.5f,0.5f,0.5f,1f)
-	public kReflection	= 1f
-	public def constructor(pc as par.Value[of Color4], pd as par.Value[of Vector4]):
-		pCol,pData = pc,pd
-	public def Clone() as object:
-		m = Diffuse(pCol,pData)
-		m.color = color
-		m.kReflection = kReflection
+	portal Color	= pCol.Value
+	portal Reflection = pData.Value.X
+	
+	public def constructor(pd as par.Value[of Vector4]):
+		pData = pd
+		self.Color = Color4.Gray
+		self.Reflection = 1f
+	public override def clone() as Basic:
+		m = Diffuse(pData)
+		m.Color = Color
+		m.Reflection = Reflection
 		return m
-	public override def apply() as void:
-		pData.Value.X = kReflection
-		pCol.Value = color
+	public override def link(d as rep.Dict) as void:
+		d.add('mat.diffuse', pCol)
+		if not Scalars.name in d:
+			d.add(Scalars.name, pData)
 
 
 public class Specular(Basic):
-	private final pCol	as par.Value[of Color4]
+	private final pCol	= par.Value[of Color4]()
 	private final pData	as par.Value[of Vector4]
-	public color		= Color4(0.5f,0.5f,0.5f,1f)
-	public kSpecularity	= 1f
-	public kGlossiness	= 10f
-	public def constructor(pc as par.Value[of Color4], pd as par.Value[of Vector4]):
-		pCol,pData = pc,pd
-	public def Clone() as object:
-		m = Specular(pCol,pData)
-		m.color = color
-		m.kSpecularity = kSpecularity
-		m.kGlossiness = kGlossiness
+	portal Color	= pCol.Value
+	portal Specularity	= pData.Value.Y
+	portal Glossiness	= pData.Value.Z
+	
+	public def constructor(pd as par.Value[of Vector4]):
+		pData = pd
+		self.Color = Color4.Gray
+		self.Specularity	= 1f
+		self.Glossiness		= 10f
+	public override def clone() as Basic:
+		m = Specular(pData)
+		m.Color = Color
+		m.Specularity	= Specularity
+		m.Glossiness	= Glossiness
 		return m
-	public override def apply() as void:
-		pData.Value.Y = kSpecularity
-		pData.Value.Z = kGlossiness
-		pCol.Value = color
+	public override def link(d as rep.Dict) as void:
+		d.add('mat.specular', pCol)
+		if not Scalars.name in d:
+			d.add(Scalars.name, pData)
 
 
 public class Parallax(Basic):
 	private final pData	as par.Value[of Vector4]
-	public kShift	as single	= 0f
+	portal Shift	= pData.Value.W
+	
 	public def constructor(pd as par.Value[of Vector4]):
 		pData = pd
-	public def Clone() as object:
+		self.Shift = 0f
+	public override def clone() as Basic:
 		m = Parallax(pData)
-		m.kShift = kShift
+		m.Shift = Shift
 		return m
-	public override def apply() as void:
-		pData.Value.W = kShift
+	public override def link(d as rep.Dict) as void:
+		if not Scalars.name in d:
+			d.add(Scalars.name, pData)

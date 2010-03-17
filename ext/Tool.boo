@@ -4,9 +4,10 @@ import System
 import System.Xml.Serialization
 import Boo.Lang.Compiler
 
+
 public def printXml[of T](ob as T, str as string) as void:
 	s = XmlSerializer( ob.GetType() )
-	out = System.IO.StreamWriter(str + '.xml')
+	out = IO.StreamWriter(str + '.xml')
 	s.Serialize(out,ob)
 	out.Close()
 	

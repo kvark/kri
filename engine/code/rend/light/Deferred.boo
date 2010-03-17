@@ -14,7 +14,7 @@ public class Fill( tech.Meta ):
 	# init
 	public def constructor():
 		ms = Array.ConvertAll( ('diffuse','specular','parallax') ) do(name as string):
-			return kri.Ant.Inst.slotMetas.find('mat.'+name)
+			return kri.Ant.Inst.slotMetas.find(name)
 		super('g.make',
 			(kri.Ant.Inst.units.texture, kri.Ant.Inst.units.bump), ms,
 			(kri.shade.Object('/g/make_v'), kri.shade.Object('/g/make_f'))

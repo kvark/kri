@@ -67,8 +67,8 @@ public class Smart(Program):
 		GL.UseProgram(id)	# for texture units
 		num = -1
 		GL.GetProgram(id, ProgramParameter.ActiveUniforms, num)
-		for i in range(num):
-			name = GL.GetActiveUniformName(id,i)
+		nar = ( GL.GetActiveUniformName(id,i) for i in range(num) )
+		for name in nar:
 			loc = getVar(name)
 			assert loc >= 0
 			if name.StartsWith('unit_'):

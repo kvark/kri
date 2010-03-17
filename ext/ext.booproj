@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="AutoSpecialize.boo" />
+    <Compile Include="Lang.boo" />
     <Compile Include="spec\Advanced.boo" />
     <Compile Include="spec\Simple.boo" />
     <Compile Include="Tool.boo" />

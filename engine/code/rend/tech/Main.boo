@@ -80,10 +80,7 @@ public class Meta(General):
 		shobs = sh
 	protected override def getUpdate(mat as kri.Material) as callable() as int:
 		return def() as int:
-			for i in metas:
-				mat.meta[i].apply()
-			for u in units:
-				kri.Ant.Inst.units.Tex[u] = mat.unit[u].tex
+			mat.apply()
 			return 1
 	private def list2key(shlist as IEnumerable[of kri.shade.Object]) as string:
 		sar = array[of string](sh.id.ToString() for sh in shlist)
@@ -98,5 +95,5 @@ public class Meta(General):
 		sa = kri.shade.Smart()
 		sMap.Add(key,sa)
 		sa.add( *(kri.Ant.Inst.shaders.gentleSet + array[of kri.shade.Object](sl) + shobs) )
-		sa.link(kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict) 
+		sa.link(kri.Ant.Inst.slotAttributes, dict, mat.dict, kri.Ant.Inst.dict) 
 		return sa

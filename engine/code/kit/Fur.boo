@@ -56,9 +56,9 @@ public class Meta( kri.meta.Basic ):
 		m.shells = shells
 		m.length = length
 		return m
-	public override def apply() as void:
-		fc.pShellCoef.Value = 1f / shells
-		fc.pLength.Value = length
+	#public override def apply() as void:
+	#	fc.pShellCoef.Value = 1f / shells
+	#	fc.pLength.Value = length
 
 
 //-----------	Updating physics using TF	-----------------//
