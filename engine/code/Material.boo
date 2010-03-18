@@ -8,7 +8,7 @@ public interface IApplyable:
 
 #---------
 
-public class Material(IApplyable):
+public class Material( IApplyable, ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.rep.Dict()
 	public final tech = array[of shade.Smart]	( lib.Const.nTech )

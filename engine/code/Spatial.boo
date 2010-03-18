@@ -39,6 +39,11 @@ public struct Spatial:
 	
 	public static def Qrot(ref v as Vector3, ref q as Quaternion) as Vector3:
 		return (q * Quaternion(Xyz:v,W:0f) * Quaternion.Invert(q)).Xyz
+	public static def Lerp(ref a as Spatial, ref b as Spatial, t as single) as Spatial:
+		sp as Spatial
+		sp.lerpDq(a,b,t)
+		return sp
+
 	public def combine(ref a as Spatial, ref b as Spatial) as void:
 		rot		= b.rot * a.rot
 		scale	= b.scale * a.scale
@@ -63,6 +68,14 @@ public struct Spatial:
 #------------------------------------------
 #	BONERECORD, BONECHANNEL, ANIDATA
 #	animation primitives
+
+public class BoneChannel2( ani.data.Channel[of Spatial] ):
+	public def constructor(index as byte, num as int):
+		super(num) do(pl as ani.data.IPlayer, val as Spatial):
+			bar = (pl as Skeleton).bones
+			bar[index].setPose(val)	if index < bar.Length
+		self.lerp = Spatial.Lerp
+
 
 public struct BoneRecord( IComparable[of BoneRecord] ):
 	public d as Spatial
@@ -177,7 +190,7 @@ public class NodeBone(Node):
 #	SKELETON
 #	manages bones
 
-public class Skeleton:
+public class Skeleton( ani.data.Player ):
 	public final bones	as (NodeBone)
 	public final node	as Node
 	[getter(State)]
@@ -197,21 +210,21 @@ public class Skeleton:
 			continue	if ind < 0
 			bones[i].Parent = bones[ind]
 
-	public def changed() as void:
+	def ani.data.IPlayer.touch() as void:
 		++state
 	public def bakePoseData(np as Node) as void:
 		sw = np.World
 		for b in bones:
 			b.bakeInvPose(sw)
-		++state
+		touch()
 	public def reset() as void:
 		for b in bones:
 			b.Local = b.pose
-		++state
-	public def moment(t as single, sd as AniData) as void:
+		touch()
+	public def moment(t as single, sd as AniData) as void:	# absolete
 		for c in sd.channels:
 			continue	if c.b > bones.Length
 			sp = c.moment(t)
 			if not c.b: node.Local = sp
 			else: bones[c.b-1].setPose(sp)
-		++state
+		touch()

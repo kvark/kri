@@ -23,7 +23,7 @@ public partial class Native:
 	public static final STR_LEN		= 24
 	public static final PATH_LEN	= 64
 	public final con	= Context()
-	public final dict	= Dictionary[of string, callable() as bool]()
+	public final dict	= Dictionary[of string, callable]()	# should be "callable() as bool"
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
@@ -38,6 +38,10 @@ public partial class Native:
 		# material
 		dict['mat']		= p_mat
 		dict['tex']		= p_tex
+		# animations
+		dict['pv_curve']	= px_curve_Vector3
+		dict['pq_curve']	= px_curve_Quaternion
+		dict['pc_curve']	= px_curve_Color4
 		# mesh
 		dict['mesh']	= p_mesh
 		dict['v_pos']	= pv_pos
@@ -47,6 +51,7 @@ public partial class Native:
 		dict['v_ind']	= pv_ind
 		# skeleton
 		dict['skel']	= p_skel
+		dict['s_act']	= px_act[of kri.Skeleton]
 		dict['n_act']	= pn_act
 		dict['a_bone']	= pa_bone
 		# particles
@@ -68,7 +73,8 @@ public partial class Native:
 			size = br.ReadUInt32()
 			size += bs.Position
 			assert size <= bs.Length
-			p as callable() as bool = null
+			#p as callable() as bool = null
+			p as callable = null
 			if dict.TryGetValue(name,p) and p():
 				assert bs.Position == size
 			else: bs.Seek(size, IO.SeekOrigin.Begin)

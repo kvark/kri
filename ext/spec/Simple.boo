@@ -4,7 +4,7 @@ import System
 import System.Collections.Generic
 import Boo.Lang.Compiler
 
-#---	Make a method specializations with manual modifications	---#
+#---	Make method specializations with manual modifications	---#
 
 [AttributeUsage(AttributeTargets.Method)]
 public class Method(AbstractAstAttribute):
@@ -16,7 +16,7 @@ public class Method(AbstractAstAttribute):
 			if not st:	raise 'not a type'
 			tips.Add(st)
 			
-	private virtual def Mod(m as Ast.Method, t as Ast.SimpleTypeReference):
+	protected virtual def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:
 		pass
 
 	public override def Apply(node as Ast.Node) as void:
@@ -38,22 +38,30 @@ public class Method(AbstractAstAttribute):
 			Mod(sm,t)
 
 
-#---	Make a method specializations with expression substitution	---#
-
+#---	Make specializations with substitution, change name & cleanup	---#
 [AttributeUsage(AttributeTargets.Method)]
-public class ReplaceMethod(Method):
-	final pred as Ast.NodePredicate
-	final fold as Ast.ReferenceExpression
-	final fnew as Ast.ReferenceExpression
-	
-	public def constructor(old as Ast.ReferenceExpression,
-	new as Ast.ReferenceExpression, *types as (Ast.ReferenceExpression)):
+public class ForkMethod(Method):
+	protected final pred as Ast.NodePredicate
+	protected final fold as Ast.ReferenceExpression
+	protected final fnew as Ast.ReferenceExpression
+	public final doRename	as bool
+
+	public def constructor(ren as Ast.BoolLiteralExpression,
+	old as Ast.ReferenceExpression, new as Ast.ReferenceExpression,
+	*types as (Ast.ReferenceExpression)):
 		super(*types)
+		doRename = ren.Value
 		fold,fnew = old,new
 		pred = def(n as Ast.Node):
 			exp = n as Ast.ReferenceExpression
 			return false if not exp
 			return exp.Name == fold.Name
 		
-	private override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference):
+	protected override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:
+		m.Body.Statements.Reject() do(st as Ast.Statement):
+			sdec = st as Ast.DeclarationStatement
+			if sdec:	# delete original declaration
+				return sdec.Declaration.Name == fold.Name
+			return false
 		m.ReplaceNodes(pred,fnew)
+		if doRename: m.Name += '_'+t.Name

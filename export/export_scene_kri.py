@@ -61,43 +61,87 @@ def save_matrix(mx):
 		rot.x, rot.y, rot.z, rot.w)
 
 
-###  ANIMATION IPO   ###
+###  ANIMATION CURVES   ###
 
 def gather_anim(ob):
 	ad = ob.animation_data
 	if not ad: return []
 	return [ns.action for nt in ad.nla_tracks for ns in nt.strips]
 
-def save_action(act):
+def save_action(act,sym):
 	offset,nf = act.get_frame_range()
-	out.begin('m_act')
+	out.begin( sym + '_act' )
 	out.pack( '<24sf', act.name, nf * kFrameSec )
 	out.end()
 	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 	return offset
 
-def save_ipo(ipos,offset):
-	if None in ipos:
+def save_meta_action(act,sym, indexator=None, sar=''):
+	import re
+	offset,nf = act.get_frame_range()
+	rnas = {} # {elem_id}{attrib_name}[sub_id]
+	# gather all
+	for f in act.fcurves:
+		bid,attrib = 0, f.data_path
+		mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
+		if mat:
+			mg = mat.groups()
+			if not indexator: continue
+			if mg[0] != sar:
+				print("\t\t(w) unknown array: ", mg[0])
+				continue
+			bid = 1 + indexator.index( mg[1] )
+			attrib = mg[2]
+		elif indexator: continue
+		if not bid in rnas:
+			rnas[bid] = {}
+		if not attrib in rnas[bid]:
+			rnas[bid][attrib] = 4*[None]
+		rnas[bid][attrib][f.array_index] = f
+	# write header or exit
+	if not len(rnas): return
+	out.begin( sym + '_act' )
+	out.pack( '<24sf', act.name, nf * kFrameSec )
+	out.end()
+	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+	# write in packs
+	for elem,it in rnas.items():
+		for attrib,sub in it.items():
+			out.begin('a_curve')
+			assert elem<256 and len(attrib)<24
+			out.pack('<BB24s', elem, len(sub), attrib)
+			save_curve_pack(sub,offset)
+			out.end()
+
+def save_curve_pack(curves,offset):
+	if None in curves:
+		print("\t\t(w) invalid curve pack")
 		out.pack('<H',0)
 		return
-	num = len( ipos[0].keyframe_points )
-	#print "\t(i) %s, keys %d" %(ipo,num)
-	for ip in ipos:
-		assert len(ip.keyframe_points) == num
-	out.pack('<H',num)
+	num = len( curves[0].keyframe_points )
+	extra = curves[0].extrapolation
+	#print "\t(i) %s, keys %d" %(curves,num)
+	for c in curves:
+		assert len(c.keyframe_points) == num
+		assert c.extrapolation == extra
+	out.pack('<HB', num, (extra == 'LINEAR'))
 	for i in range(num):
-		x = (ipos[0].keyframe_points[i].co[0] - offset) * kFrameSec
-		out.pack('<f',x)
-		data = [ ip.keyframe_points[i].co[1] for ip in ipos ]
-		out.array('f',data)
+		def h0(k): return k.co
+		def h1(k): return k.handle1
+		def h2(k): return k.handle2
+		kp = tuple(c.keyframe_points[i] for c in curves)
+		x = kp[0].co[0]
+		out.pack('<f', (mid-offset)*kFrameSec)
 		#print ('Time', x, i, data)
+		for fun in (h0,h1,h2):	# ignoring handlers time
+			out.array('f', (fun(k)[1] for k in kp) )
 
 
 ###  MATERIAL:ANIM   ###
 
 def save_mat_action(act):
 	import re
-	offset = save_action(act)
+	offset = save_action(act,'m')
 	'''rnas = {}
 	for f in act.fcurves:
 		mat = re.search('(\w+)\[\"(.+)\"\]\.(\w+)', f.data_path)
@@ -228,10 +272,10 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			self.mat = face.material_index
 			self.vi = [ face.verts[i]	for i in ind   ]
 			self.v  = [ vs[x]		for x in self.vi ]
-			self.no = [ Math.Vector(x.normal)	for x in self.v  ]
-			self.normal = Math.Vector(face.normal)
+			self.no = [ x.normal		for x in self.v  ]
+			self.normal = face.normal
 			if face.smooth: self.normal.zero()
-			self.uv = [ Math.Vector(uves[i])	for i in ind ] if uves else None
+			self.uv = [ uves[i]	for i in ind ] if uves else None
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
 			self.wes = 3 * [0.01+nv.length]
 			assert t.length > 0.0
@@ -248,7 +292,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		uves,nvert = None,len(face.verts)
 		if uv_act:
 			d = uv_act.data[i]
-			uves = (d.uv1,d.uv2,d.uv3,d.uv4)
+			uves = [Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4)]
 		if nvert<3: continue
 		ar_face.append( Face(face, mesh.verts, [0,1,2], uves) )
 		if nvert<4: continue
@@ -553,7 +597,7 @@ def save_game(gob):
 
 def save_node_action(act,data):
 	import re
-	offset = save_action(act)
+	offset = save_action(act,'n')
 	rnas = {}
 	for f in act.fcurves:
 		#print('Tag:', f.data_path)
@@ -594,9 +638,12 @@ def save_node(ob):
 	local = (ob.matrix * ob.parent.matrix.copy().invert()) if ob.parent else ob.matrix
 	save_matrix( local )
 	out.end()
-	# save node actions
+
+def save_actions(ob):
 	actions = gather_anim(ob)
 	if not len(actions) and ob.type == 'ARMATURE':
+		# search from global for old-style blend files
+		# new 2.5 standard places all animations locally
 		names = set( ob.data.bones.keys() )
 		def affects(a):
 			n2 = set(gr.name for gr in a.groups)
@@ -625,6 +672,9 @@ def save_scene(filename, context, doQuatInt=True):
 
 	for ob in context.scene.objects:
 		save_node( ob )
+		anims = gather_anim(ob)
+		for act in anims:
+			save_meta_action(act,'n')
 		save_game( ob.game )
 
 		if ob.type == 'MESH':
@@ -634,11 +684,15 @@ def save_scene(filename, context, doQuatInt=True):
 			save_mesh(ob.data, arm, ob.vertex_groups, doQuatInt)
 		elif ob.type == 'ARMATURE':
 			save_skeleton(ob.data)
+			bar = ob.data.bones.keys()
+			for act in anims:
+				save_meta_action(act, 's', bar, 'pose.bones')
 		elif ob.type == 'LAMP':
 			save_lamp(ob.data)
 		elif ob.type == 'CAMERA':
 			save_camera(ob.data, ob == context.scene.camera)
 
+		#save_actions( ob )
 		for p in ob.particle_systems:
 			save_particle(p)
 	print('Done.')

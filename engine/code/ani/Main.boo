@@ -27,9 +27,9 @@ public class Loop(IBase):
 	private start	= 0.0
 	[getter(Loops)]
 	private loops	as int = -1
-	private virtual def onLoop() as void:
+	protected virtual def onLoop() as void:
 		pass
-	private virtual def onRate(rate as double) as uint:
+	protected virtual def onRate(rate as double) as uint:
 		return 0
 	def IBase.onFrame(time as double) as uint:
 		if time > start+lTime:

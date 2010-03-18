@@ -24,8 +24,8 @@ public class Unit():
 
 	private final pOffset	= par.Value[of Vector4]()
 	private final pScale	= par.Value[of Vector4]()
-	portal Offset	= pOffset.Value
-	portal Scale	= pScale.Value
+	portal Offset	as Vector4	= pOffset.Value
+	portal Scale	as Vector4	= pScale.Value
 
 	public def constructor(sh_gen as Object, sh_use as Object):
 		generator,sampler = sh_gen,sh_use
@@ -47,7 +47,7 @@ public class Unit():
 
 public class Emission(Basic):
 	private final pCol	= par.Value[of Color4]()
-	portal Color	= pCol.Value
+	portal Color		as Color4	= pCol.Value
 
 	public def constructor():
 		self.Color = Color4.Gray
@@ -62,8 +62,8 @@ public class Emission(Basic):
 public class Diffuse(Basic):
 	private final pCol	= par.Value[of Color4]()
 	private final pData	as par.Value[of Vector4]
-	portal Color	= pCol.Value
-	portal Reflection = pData.Value.X
+	portal Color		as Color4	= pCol.Value
+	portal Reflection	as single	= pData.Value.X
 	
 	public def constructor(pd as par.Value[of Vector4]):
 		pData = pd
@@ -83,9 +83,9 @@ public class Diffuse(Basic):
 public class Specular(Basic):
 	private final pCol	= par.Value[of Color4]()
 	private final pData	as par.Value[of Vector4]
-	portal Color	= pCol.Value
-	portal Specularity	= pData.Value.Y
-	portal Glossiness	= pData.Value.Z
+	portal Color		as Color4	= pCol.Value
+	portal Specularity	as single	= pData.Value.Y
+	portal Glossiness	as single	= pData.Value.Z
 	
 	public def constructor(pd as par.Value[of Vector4]):
 		pData = pd
@@ -106,7 +106,7 @@ public class Specular(Basic):
 
 public class Parallax(Basic):
 	private final pData	as par.Value[of Vector4]
-	portal Shift	= pData.Value.W
+	portal Shift	as single	= pData.Value.W
 	
 	public def constructor(pd as par.Value[of Vector4]):
 		pData = pd

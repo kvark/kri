@@ -42,7 +42,7 @@ public class MethodSubClass(Method):
 	
 	private static index = 0
 	
-	private override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference):
+	protected override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:
 		m.Body.Accept(collector)
 		clTarget = collector.rez.Target as Ast.ReferenceExpression
 		return	if not collector.rez
