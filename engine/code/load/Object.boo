@@ -93,3 +93,21 @@ public partial class Native:
 			pe.onUpdate = { kri.Ant.Inst.units.activate(e.unit) }
 		at.scene.particles.Add(pe)
 		return true
+
+	#---	Parse skeleton	---#
+	public def p_skel() as bool:
+		node = geData[of kri.Node]()
+		return false	if not node
+		nbones = br.ReadByte()
+		s = kri.Skeleton( node,nbones )
+		puData(s)
+		# read nodes
+		par = array[of byte](nbones)
+		for i in range(nbones):
+			name = getString(STR_LEN)
+			par[i] = br.ReadByte()
+			s.bones[i] = kri.NodeBone(name, getSpatial())
+		for i in range(nbones):
+			s.bones[i].Parent = (s.bones[par[i]-1] if par[i] else node)
+		s.bakePoseData(node)
+		return true

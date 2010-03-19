@@ -54,8 +54,7 @@ public partial class Native:
 		# skeleton
 		dict['skel']	= p_skel
 		dict['s_act']	= px_act_Skeleton
-		#dict['n_act']	= px_act[of kri.Node]
-		dict['a_bone']	= pa_bone
+		dict['n_act']	= px_act_Node
 		# particles
 		dict['part']	= p_part
 		# physics

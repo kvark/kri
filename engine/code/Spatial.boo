@@ -1,7 +1,6 @@
 namespace kri
 
 import System
-import System.Collections.Generic
 import OpenTK
 
 #------------------------------------------
@@ -66,55 +65,12 @@ public struct Spatial:
 
 
 #------------------------------------------
-#	BONERECORD, BONECHANNEL, ANIDATA
-#	animation primitives
-
-public class BoneChannel2( ani.data.Channel[of Spatial] ):
-	public def constructor(index as byte, num as int):
-		super(num) do(pl as ani.data.IPlayer, val as Spatial):
-			bar = (pl as Skeleton).bones
-			bar[index].setPose(val)	if index < bar.Length
-		self.lerp = Spatial.Lerp
-
-
-public struct BoneRecord( IComparable[of BoneRecord] ):
-	public d as Spatial
-	public t as single
-	public def CompareTo(r as BoneRecord) as int:	#imp: IComparable
-		return t.CompareTo(r.t)
-
-public struct BoneChannel:
-	public final b	as byte
-	public final c	as (BoneRecord)
-	public def constructor(index as byte, num as int):
-		assert num>0
-		b, c  =  index, array[of BoneRecord](num)
-	public def moment(time as single) as Spatial:
-		i = Array.FindIndex(c) do(ref r as BoneRecord):
-			return r.t > time
-		return c[-1].d	if i < 0
-		return c[0].d	if not i
-		s = Spatial()
-		k = (time - c[i-1].t) / (c[i].t - c[i-1].t)
-		s.lerpDq(c[i-1].d, c[i].d, k)
-		return s
-
-public class AniData:
-	public final name		as string
-	public final length		as single
-	public final channels	= List[of BoneChannel]()
-	public def constructor(str as string, t as single):
-		name,length = str,t
-
-
-#------------------------------------------
 #	NODE
 #	hierarchy element in space
 #	has a parent, caches the world-space transform
 
-public class Node( IComparable[of Node] ):
+public class Node( kri.ani.data.Player, IComparable[of Node] ):
 	public final name	as string
-	public final anims	= List[of AniData]()
 	private parent	as Node = null
 	private local	= Spatial.Identity
 	private cached	= Spatial.Identity
@@ -131,8 +87,6 @@ public class Node( IComparable[of Node] ):
 		return name.CompareTo(n.name)
 	public def refresh() as void:
 		world.combine(local,cached)
-	public def find(str as string) as AniData:
-		return anims.Find({d| d.name == str })
 	
 	public Parent as Node:
 		get: return parent
@@ -229,11 +183,4 @@ public class Skeleton( ani.data.Player ):
 		for b in bones:
 			b.pose = Spatial.Identity
 			b.Local = b.bindPose
-		++state
-	public def moment(t as single, sd as AniData) as void:	# absolete
-		for c in sd.channels:
-			continue	if c.b > bones.Length
-			sp = c.moment(t)
-			if not c.b: node.Local = sp
-			else: bones[c.b-1].setPose(sp)
 		++state

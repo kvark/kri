@@ -4,35 +4,48 @@ import OpenTK
 import kri.ani.data
 
 public partial class Native:
-	public final adic	= Dictionary[of string, callable(byte) as callable]()
+	public final adic	= Dictionary[of string,callable]()
 
 	# should be callable(ref kri.Spatial,ref T) as void (waiting for BOO-854)
 	# generates invalid binary format if using generics, bypassing with extenions
 	[ext.spec.Method(Vector3,Quaternion)]
 	[ext.RemoveSource()]
-	private def genBone[of T(struct)](fun as callable(ref kri.Spatial, ref T)) as callable(byte) as callable:
-		return do(i as byte):
-			return do(pl as IPlayer, v as T):
-				assert i
-				bar = (pl as kri.Skeleton).bones
-				fun( bar[i-1].pose, v )	if i <= bar.Length
+	private def genBone[of T(struct)](fun as callable(ref kri.Spatial, ref T)) as callable:
+		return do(pl as IPlayer, v as T, i as byte):
+			bar = (pl as kri.Skeleton).bones
+			return if not i or i>bar.Length
+			fun( bar[i-1].pose, v )
+	
+	[ext.spec.Method(Vector3,Quaternion)]
+	[ext.RemoveSource()]
+	private def genSpatial[of T(struct)](fun as callable(ref kri.Spatial, ref T)) as callable:
+		return do(pl as IPlayer, v as T, i as byte):
+			n = pl as kri.Node
+			sp = n.Local
+			fun(sp,v)
+			n.Local = sp
 
 	# fill action dictionary
 	public def fillAdic() as void:
-		# skeleton bone
-		adic['s.location']				= genBone()	do(ref sp as kri.Spatial, ref v as Vector3) as void:
+		# spatial sub-trans
+		def fun_pos(ref sp as kri.Spatial, ref v as Vector3) as void:
 			sp.pos = v
-		adic['s.rotation_quaternion']	= genBone()	do(ref sp as kri.Spatial, ref v as Quaternion) as void:
+		def fun_rot(ref sp as kri.Spatial, ref v as Quaternion) as void:
 			sp.rot = v
-		adic['s.scale']					= genBone()	do(ref sp as kri.Spatial, ref v as Vector3) as void:
+		def fun_sca(ref sp as kri.Spatial, ref v as Vector3) as void:
 			sp.scale = v.LengthFast
+		# skeleton bone
+		adic['s.location']				= genBone(fun_pos)
+		adic['s.rotation_quaternion']	= genBone(fun_rot)
+		adic['s.scale']					= genBone(fun_sca)
+		# node
+		adic['n.location']				= genSpatial(fun_pos)
+		adic['n.rotation_quaternion']	= genSpatial(fun_rot)
+		adic['n.scale']					= genSpatial(fun_sca)
 
 
-	public def getQuat2() as Quaternion:
-		return Quaternion( W:getReal(), Xyz:getVector() )
-	
 	#---	Parse abstract action	---#
-	[ext.spec.Method( kri.Skeleton )]
+	[ext.spec.Method( kri.Skeleton, kri.Node )]
 	public def px_act[of T(Player)]() as bool:
 		player = geData[of T]()
 		return false	if not player
@@ -55,7 +68,8 @@ public partial class Native:
 	private def readX(ref x as Vector3):
 		x = getVector()
 	private def readX(ref x as Quaternion):
-		x = getQuat2()
+		x.W = getReal()
+		x.Xyz = getVector()
 	private def readX(ref x as Color4):
 		x = getColor()
 	
@@ -78,9 +92,9 @@ public partial class Native:
 		assert siz*4 == kri.Sizer[of T].Value
 		rec	= geData[of Record]()
 		return false	if not rec
-		fun = adic[ getString(STR_LEN) ](ind)
+		fun = adic[ getString(STR_LEN) ]
 		num = br.ReadUInt16()
-		chan = Channel[of T](num,fun)
+		chan = Channel[of T](num,ind,fun)
 		fixChan(chan)
 		rec.channels.Add(chan)
 		chan.extrapolate = br.ReadByte()>0

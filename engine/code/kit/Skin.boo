@@ -28,19 +28,8 @@ public def prepare(e as kri.Entity, s as kri.Skeleton) as bool:
 	return true
 
 
-#---------	SKELETON ANIMATION		--------#
-
-public class Anim( kri.ani.IBase ):
-	private final skel	as kri.Skeleton
-	private final ad	as kri.AniData
-	public def constructor(e as kri.Entity, str as string):
-		skel = e.seTag[of Tag]().skel
-		ad = skel.node.find(str)
-	def kri.ani.IBase.onFrame(time as double) as uint:
-		return 2	if not ad
-		return 1	if time > ad.length
-		skel.moment(time, ad)
-		return 0
+public def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
+	return e.seTag[of Tag]().skel.play(str)
 
 
 #---------	RENDER SKELETON SYNC		--------#

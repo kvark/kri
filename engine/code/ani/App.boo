@@ -31,7 +31,7 @@ public class Particle(Loop):
 
 ###		Spatial channel		###
 
-public class Spatial(IBase):
+/*public class Spatial(IBase):
 	public final node	as kri.Node
 	public final bc		as kri.BoneChannel
 	public final lenght	as single
@@ -53,7 +53,7 @@ public class Spatial(IBase):
 			sp.combine(s1,c0)
 		node.Local = sp
 		return (0,1)[time>lenght]
-
+*/
 
 #-------------------------------#
 #	Rotate node with mouse		#

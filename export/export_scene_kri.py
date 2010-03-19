@@ -116,7 +116,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 			if not attrib in name2type:
 				if not attrib in badlist:
 					print("\t\t(w) unknown attrib:", attrib)
-					badlist.add(attrib)
+					badlist.append(attrib)
 				continue
 			out.begin( "a%s_seq" %(name2type[attrib]) )
 			assert elem<256 and len(attrib)<24
@@ -555,7 +555,7 @@ def save_skeleton(skel):
 	out.pack('<B', nbon)
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
-		if bone.cyclic_offset or not bone.inherit_scale or not bone.deform:
+		if not (bone.inherit_scale and bone.deform):
 			print("\t\t(w) bone '%s' has weird settings" %(bone.name) )
 		if par: # old variant (same result)
 			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
@@ -681,7 +681,11 @@ def save_scene(filename, context, doQuatInt=True):
 	out.end()
 	
 	for mat in context.main.materials:
-	   save_mat(mat)
+		save_mat(mat)
+		tar = mat.texture_slots
+		for act in gather_anim(mat):
+			save_meta_action(act,'m')
+			save_meta_action(act,'t', tar,'texture_slots')
 
 	for ob in context.scene.objects:
 		save_node( ob )
@@ -699,7 +703,7 @@ def save_scene(filename, context, doQuatInt=True):
 			save_skeleton(ob.data)
 			bar = ob.data.bones.keys()
 			for act in anims:
-				save_meta_action(act, 's', bar, 'pose.bones')
+				save_meta_action(act,'s', bar,'pose.bones')
 		elif ob.type == 'LAMP':
 			save_lamp(ob.data)
 		elif ob.type == 'CAMERA':

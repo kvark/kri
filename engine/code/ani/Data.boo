@@ -29,17 +29,18 @@ public interface IChannel:
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	# proper callable definitions in generics depend on BOO-854
-	public final fup	as callable	#(IPlayer,T)
+	public final elid	as byte
+	public final fup	as callable	#(IPlayer,T,byte)
 	public lerp			as callable	#(ref T, ref T,single) as T
 	public bezier		as bool	= true
 	public extrapolate	as bool	= false
 
-	public def constructor(num as int, f as callable):
+	public def constructor(num as int, id as byte, f as callable):
 		kar = array[of Key[of T]](num)
-		fup = f
+		elid,fup = id,f
 
 	def IChannel.update(pl as IPlayer, time as single) as void:
-		fup(pl, moment(time))
+		fup(pl, moment(time), elid)
 		
 	public def moment(time as single) as T:
 		assert lerp and kar.Length
@@ -78,6 +79,7 @@ public class Player(IPlayer):
 		pass
 	public def play(name as string) as Anim:
 		rec = anims.Find({r| return r.name == name})
+		assert rec and 'Action not found'
 		return Anim(self,rec)
 
 
