@@ -44,6 +44,7 @@ public partial class Native:
 		dict['av_seq']	= px_curve_Vector3
 		dict['aq_seq']	= px_curve_Quaternion
 		dict['ac_seq']	= px_curve_Color4
+		dict['ae_seq']	= px_curve_Vector3
 		# mesh
 		dict['mesh']	= p_mesh
 		dict['v_pos']	= pv_pos
@@ -55,6 +56,7 @@ public partial class Native:
 		dict['skel']	= p_skel
 		dict['s_act']	= px_act_Skeleton
 		dict['n_act']	= px_act_Node
+		dict['m_act']	= px_act_Material
 		# particles
 		dict['part']	= p_part
 		# physics
@@ -105,6 +107,11 @@ public partial class Native:
 		return Quaternion( Xyz:getVector(), W:getReal() )
 	protected def getSpatial() as kri.Spatial:
 		return kri.Spatial( pos:getVector(), scale:getReal(), rot:getQuat() )
+	protected def getQuatRev() as Quaternion:
+		return Quaternion( W:getReal(), Xyz:getVector() )
+	protected def getQuatEuler() as Quaternion:
+		getVector()
+		return Quaternion.Identity
 	
 	public def p_sign() as bool:
 		ver = br.ReadByte()

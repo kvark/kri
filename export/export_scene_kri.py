@@ -68,14 +68,6 @@ def gather_anim(ob):
 	if not ad: return []
 	return [ns.action for nt in ad.nla_tracks for ns in nt.strips]
 
-def save_action(act,sym):
-	offset,nf = act.get_frame_range()
-	out.begin( sym + '_act' )
-	out.pack( '<24sf', act.name, nf * kFrameSec )
-	out.end()
-	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
-	return offset
-
 def save_meta_action(act,sym, indexator=None, sar=''):
 	import re
 	offset,nf = act.get_frame_range()
@@ -83,7 +75,6 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	# gather all
 	for f in act.fcurves:
 		bid,attrib = 0, f.data_path
-		#print('Tag:', attrib, 'Id:', f.array_index)
 		mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
 		if mat:
 			mg = mat.groups()
@@ -94,6 +85,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 			bid = 1 + indexator.index( mg[1] )
 			attrib = mg[2]
 		elif indexator: continue
+		print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
 		if not bid in rnas:
 			rnas[bid] = {}
 		if not attrib in rnas[bid]:
@@ -108,14 +100,16 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	out.end()
 	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 	# write in packs
-	name2type,badlist = {
-		'location':'v', 'rotation_quaternion':'q', 'scale':'v'
-		},[]
+	badlist,name2type = [],{
+		'location':'v', 'rotation_quaternion':'q',
+		'scale':'v',	'rotation_euler':'e',
+		'diffuse_color':'c'
+		}
 	for elem,it in rnas.items():
 		for attrib,sub in it.items():
 			if not attrib in name2type:
 				if not attrib in badlist:
-					print("\t\t(w) unknown attrib:", attrib)
+					print("\t\t(w) unknown %s[%d]" %(attrib.len(sub)) )
 					badlist.append(attrib)
 				continue
 			out.begin( "a%s_seq" %(name2type[attrib]) )
@@ -147,37 +141,6 @@ def save_curve_pack(curves,offset):
 		for fun in (h0,h1,h2):	# ignoring handlers time
 			out.array('f', (fun(k)[1] for k in kp) )
 
-
-###  MATERIAL:ANIM   ###
-
-def save_mat_action(act):
-	import re
-	offset = save_action(act,'m')
-	'''rnas = {}
-	for f in act.fcurves:
-		mat = re.search('(\w+)\[\"(.+)\"\]\.(\w+)', f.data_path)
-		key = (mat.groups() if mat else None)
-		chan,var = '', f.data_path
-		if mat and key[0] == 'pose':
-			if key[1] != 'bones':
-				print("\t(w) unknow IPO: ", key[1])
-				continue
-			chan,var = key[2],key[3]
-		tag = ('location','rotation_quaternion','scale').index(var)
-		val = (tag<<2) + f.array_index
-		if not (chan in rnas):
-			rnas[chan] = 12 * [None]
-		rnas[chan][val] = f
-	for key,chan in rnas.items():
-		out.begin('a_bone')
-		bid = 0	# bone ID or 0 for the root
-		if key != '':	bid = 1+data.bones.keys().index(key)
-		assert bid<256
-		out.pack('<B', bid)
-		for subord in ((0,1,2),(5,6,7,4),(8,)):
-			ipos = list(chan[i] for i in subord)
-			save_ipo(ipos,offset)
-		out.end()'''
 
 ###  MATERIAL:UNIT   ###
 
@@ -230,9 +193,6 @@ def save_mat(mat):
 	# texture units
 	for mt in mat.texture_slots:
 		if mt: save_mat_unit(mt)
-	# animations
-	for act in gather_anim(mat):
-		save_mat_action(act)
 
 
 ###  MESH   ###
@@ -606,39 +566,6 @@ def save_game(gob):
 	print("\t(i) %s physics, %s bounds, %.1f mass, %.1f radius" % (enum+phys))
 
 
-###  	NODE:ACTION	###
-
-def save_node_action(act,data):
-	import re
-	offset = save_action(act,'n')
-	rnas = {}
-	for f in act.fcurves:
-		#print('Tag:', f.data_path)
-		mat = re.search('(\w+)\.(\w+)\[\"(.+)\"\]\.(\w+)', f.data_path)
-		key = (mat.groups() if mat else None)
-		chan,var = '', f.data_path
-		if mat and key[0] == 'pose':
-			if key[1] != 'bones':
-				print("\t(w) unknow IPO: ", key[1])
-				continue
-			chan,var = key[2],key[3]
-		tag = ('location','rotation_quaternion','scale').index(var)
-		val = (tag<<2) + f.array_index
-		if not (chan in rnas):
-			rnas[chan] = 12 * [None]
-		rnas[chan][val] = f
-	for key,chan in rnas.items():
-		out.begin('a_bone')
-		bid = 0	# bone ID or 0 for the root
-		if key != '':	bid = 1+data.bones.keys().index(key)
-		assert bid<256
-		out.pack('<B', bid)
-		for subord in ((0,1,2),(5,6,7,4),(8,)):
-			ipos = list(chan[i] for i in subord)
-			save_ipo(ipos,offset)
-		out.end()
-
-
 ###  	NODE:CORE	###
 
 def save_node(ob):
@@ -652,7 +579,8 @@ def save_node(ob):
 	save_matrix( local )
 	out.end()
 
-def save_actions(ob):
+
+def gather_anim_global(ob):
 	actions = gather_anim(ob)
 	if not len(actions) and ob.type == 'ARMATURE':
 		# search from global for old-style blend files
@@ -664,8 +592,7 @@ def save_actions(ob):
 		actions += filter(affects, bpy.data.actions)
 		if len(actions):
 			print("\t(i) extracted %d actions from context" % (len(actions)) )
-	for a in actions:
-		save_node_action(a, ob.data)
+	return actions
 	
 
 ### 	 SCENE		###
@@ -689,7 +616,7 @@ def save_scene(filename, context, doQuatInt=True):
 
 	for ob in context.scene.objects:
 		save_node( ob )
-		anims = gather_anim(ob)
+		anims = gather_anim_global(ob)
 		for act in anims:
 			save_meta_action(act,'n')
 		save_game( ob.game )
@@ -709,7 +636,6 @@ def save_scene(filename, context, doQuatInt=True):
 		elif ob.type == 'CAMERA':
 			save_camera(ob.data, ob == context.scene.camera)
 
-		#save_actions( ob )
 		for p in ob.particle_systems:
 			save_particle(p)
 	print('Done.')

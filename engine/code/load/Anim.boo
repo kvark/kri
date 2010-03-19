@@ -24,6 +24,11 @@ public partial class Native:
 			sp = n.Local
 			fun(sp,v)
 			n.Local = sp
+	
+	private def genMatColor(mid as int) as callable:
+		return do(pl as IPlayer, v as Color4, i as byte):
+			((pl as kri.Material).meta[mid] as kri.meta.IColored).Color = v
+			
 
 	# fill action dictionary
 	public def fillAdic() as void:
@@ -39,13 +44,16 @@ public partial class Native:
 		adic['s.rotation_quaternion']	= genBone(fun_rot)
 		adic['s.scale']					= genBone(fun_sca)
 		# node
-		adic['n.location']				= genSpatial(fun_pos)
-		adic['n.rotation_quaternion']	= genSpatial(fun_rot)
-		adic['n.scale']					= genSpatial(fun_sca)
+		adic['n.location']			= genSpatial(fun_pos)
+		adic['n.rotation_euler']	= genSpatial(fun_rot)
+		adic['n.scale']				= genSpatial(fun_sca)
+		# material
+		adic['diffuse_color']	= genMatColor( con.ms.diffuse )
+		adic['specular_color']	= genMatColor( con.ms.specular )
 
 
 	#---	Parse abstract action	---#
-	[ext.spec.Method( kri.Skeleton, kri.Node )]
+	[ext.spec.Method( kri.Skeleton, kri.Node, kri.Material )]
 	public def px_act[of T(Player)]() as bool:
 		player = geData[of T]()
 		return false	if not player
@@ -71,7 +79,7 @@ public partial class Native:
 		x.W = getReal()
 		x.Xyz = getVector()
 	private def readX(ref x as Color4):
-		x = getColor()
+		x = Color4( getReal(), getReal(), getReal(), 1f )
 	
 	# bypassing BOO-854
 	#[ext.spec.MethodSubClass(Channel, Vector3,Quaternion)]
@@ -88,11 +96,13 @@ public partial class Native:
 		#	x as T
 		#	return x
 		ind = br.ReadByte() # element index
-		siz = br.ReadByte()	# element size in floats
-		assert siz*4 == kri.Sizer[of T].Value
+		br.ReadByte()	# element size in floats
+		#assert siz*4 == kri.Sizer[of T].Value
 		rec	= geData[of Record]()
 		return false	if not rec
-		fun = adic[ getString(STR_LEN) ]
+		fun as callable = null
+		if not adic.TryGetValue( getString(STR_LEN), fun ):
+			fun = do(pl as IPlayer, v as T, i as byte):	pass
 		num = br.ReadUInt16()
 		chan = Channel[of T](num,ind,fun)
 		fixChan(chan)
