@@ -555,6 +555,8 @@ def save_skeleton(skel):
 	out.pack('<B', nbon)
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
+		if bone.cyclic_offset or not bone.inherit_scale or not bone.deform:
+			print("\t\t(w) bone '%s' has weird settings" %(bone.name) )
 		if par: # old variant (same result)
 			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
 			parid = skel.bones.keys().index( par.name )

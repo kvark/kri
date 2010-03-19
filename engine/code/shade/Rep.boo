@@ -7,13 +7,15 @@ import OpenTK
 import OpenTK.Graphics
 import kri.shade
 
+#TODO: use simple extension blocks here
 
 public interface IBase:
 	# send data to the shader
 	def upload() as void
 
 # Uniform param representor (per shader)
-internal class Uniform[of T(struct)]( par.Cached[of T], IBase ):
+#[ext.spec.Class(int,single,Color4,Vector4,Quaternion)]
+public class Uniform[of T(struct)]( par.Cached[of T], IBase ):
 	private final loc as int
 	public def constructor(p as par.IBase[of T], newloc as int):
 		super(p)
@@ -24,10 +26,10 @@ internal class Uniform[of T(struct)]( par.Cached[of T], IBase ):
 		
 
 # Texture Unit representor
-internal class Unit(IBase):
+public class Unit(IBase):
 	private final tun	as int
 	private final p		as par.Unit
-	internal def constructor(id as int, pu as par.Unit):
+	public def constructor(id as int, pu as par.Unit):
 		tun,p = id,pu
 	def IBase.upload() as void:
 		#can't cache as long as not tracking GL bind calls
@@ -39,9 +41,10 @@ internal class Unit(IBase):
 public class Dict( SortedDictionary[of string,callable] ):
 	# could be callable(int) of IBase here
 	[ext.spec.MethodSubClass(Uniform, int,single,Color4,Vector4,Quaternion)]
+	#[ext.spec.ForkMethodEx(Uniform, int,single,Color4,Vector4,Quaternion)]
 	public def add[of T(struct)](name as string, iv as par.IBase[of T]) as void:
-		gen = def(loc as int):	return Uniform[of T](iv,loc)
-		Add(name,gen)
+		Add(name) do(loc as int):
+			return Uniform[of T](iv,loc)
 	public def attach(dict as Dict) as void:
 		for p in dict:
 			Add(p.Key, p.Value)

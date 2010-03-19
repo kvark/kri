@@ -24,7 +24,6 @@ public partial class Native:
 	public static final PATH_LEN	= 64
 	public final con	= Context()
 	public final dict	= Dictionary[of string, callable]()	# should be "callable() as bool"
-	public final adic	= Dictionary[of string, callable(byte) as callable]()
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null

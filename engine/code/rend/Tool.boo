@@ -30,7 +30,7 @@ public class Emission( tech.Meta ):
 	public def constructor():
 		super('mat.emission',
 			(kri.Ant.Inst.units.texture,),
-			(kri.Ant.Inst.slotMetas.find('mat.emissive'),),
+			(kri.Ant.Inst.slotMetas.find('emissive'),),
 			(kri.shade.Object('/mat_base_f'), kri.shade.Object('/mat_base_v'))
 			)
 		dict.add('base_color', pBase)

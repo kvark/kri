@@ -1,6 +1,8 @@
 ﻿namespace kri.ani.data
 
+import System
 import System.Collections.Generic
+import OpenTK
 
 #---------------------
 #	KEY: single curve point
@@ -22,10 +24,12 @@ public interface IChannel:
 #---------------------
 #	CHANNEL[T]: generic channel data
 
+# bypassing BOO-854
+[ext.spec.Class( Vector3, Quaternion, Graphics.Color4 )]
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	# proper callable definitions in generics depend on BOO-854
-	public final fup	as callable	#(IPlayer,byte,T)
+	public final fup	as callable	#(IPlayer,T)
 	public lerp			as callable	#(ref T, ref T,single) as T
 	public bezier		as bool	= true
 	public extrapolate	as bool	= false

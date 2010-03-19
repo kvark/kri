@@ -3,14 +3,6 @@
 import System
 import Boo.Lang.Compiler
 
-internal def getPredicate(*names as (string)) as Ast.NodePredicate:
-	return def(n as Ast.Node):
-		st = n as Ast.SimpleTypeReference
-		return false	if not st
-		for n in names:
-			return true	if st.Name == n
-		return false
-		
 
 #---	Make method specialization with specific used class cloning & specialization	---#
 
@@ -50,7 +42,7 @@ public class MethodSubClass(Method):
 		dtype = m.DeclaringType
 		orig as Ast.ClassDefinition = null
 		while not orig:
-			assert dtype is not null
+			assert dtype is not null and 'Target class not found nearby'
 			for e in dtype.Members:
 				w = e as Ast.ClassDefinition
 				continue if not w or w.Name != clTarget.Name

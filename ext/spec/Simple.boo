@@ -4,7 +4,49 @@ import System
 import System.Collections.Generic
 import Boo.Lang.Compiler
 
-#---	Make method specializations with manual modifications	---#
+
+internal def getPredicate(*names as (string)) as Ast.NodePredicate:
+	return def(n as Ast.Node):
+		st = n as Ast.SimpleTypeReference
+		return false	if not st
+		for n in names:
+			return true	if st.Name == n
+		return false
+
+
+#---	Make class specializations with name change	---#
+
+[AttributeUsage(AttributeTargets.Class)]
+public class Class(AbstractAstAttribute):
+	private final tips	= List[of Ast.SimpleTypeReference]()
+	
+	public def constructor(*types as (Ast.ReferenceExpression)):
+		for t in types:
+			st = Ast.TypeReference.Lift(t) as Ast.SimpleTypeReference
+			if not st:	raise 'not a type'
+			tips.Add(st)
+	
+	public override def Apply(node as Ast.Node) as void:
+		c = node as Ast.ClassDefinition
+		if not c:		raise 'not a class'
+		nPar = len( c.GenericParameters )
+		if not nPar:	raise 'target has to be generic'
+		if nPar > 1:	raise 'supports only one generic param'
+		klass = c.DeclaringType
+		pred = getPredicate( c.GenericParameters[0].Name )
+		#printXml(m,	'class-gen')
+		
+		for t in tips:
+			sc = c.CleanClone()
+			pred = getPredicate( sc.GenericParameters[0].Name )
+			sc.GenericParameters = null
+			sc.Name += '_' + t.Name.Split( char('.') )[-1]
+			# finish the transformation
+			sc.ReplaceNodes(pred,t)
+			klass.Members.Add(sc)
+	
+
+#---	Make method specializations with manual modifications & name change	---#
 
 [AttributeUsage(AttributeTargets.Method)]
 public class Method(AbstractAstAttribute):
@@ -33,19 +75,15 @@ public class Method(AbstractAstAttribute):
 			sm = m.CleanClone()
 			pred = getPredicate( sm.GenericParameters[0].Name )
 			sm.GenericParameters = null
+			# rename if the target generic is not in the parameter list
+			noRename = sm.Parameters.Contains() do(par as Ast.ParameterDeclaration):
+				return par.ReplaceNodes(pred,t)>0
+			if not noRename:
+				sm.Name += '_' + t.Name.Split( char('.') )[-1]
+			# finish the transformation
 			sm.ReplaceNodes(pred,t)
 			klass.Members.Add(sm)
-			Mod(sm,t)
-
-
-#---	Make specializations with name change	---#
-
-[AttributeUsage(AttributeTargets.Method)]
-public class NameMethod(Method):
-	public def constructor(*types as (Ast.ReferenceExpression)):
-		super(*types)
-	protected override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:
-		m.Name += '_' + t.Name.Split( char('.') )[-1]
+			Mod(sm,t)	# custom mod
 
 
 #---	Make specializations with substitution, change name & cleanup	---#
@@ -54,13 +92,10 @@ public class ForkMethod(Method):
 	protected final pred as Ast.NodePredicate
 	protected final fold as Ast.ReferenceExpression
 	protected final fnew as Ast.ReferenceExpression
-	public final doRename	as bool
 
-	public def constructor(ren as Ast.BoolLiteralExpression,
-	old as Ast.ReferenceExpression, new as Ast.ReferenceExpression,
-	*types as (Ast.ReferenceExpression)):
+	public def constructor(old as Ast.ReferenceExpression,
+	new as Ast.ReferenceExpression, *types as (Ast.ReferenceExpression)):
 		super(*types)
-		doRename = ren.Value
 		fold,fnew = old,new
 		pred = def(n as Ast.Node):
 			exp = n as Ast.ReferenceExpression
@@ -74,4 +109,26 @@ public class ForkMethod(Method):
 				return sdec.Declaration.Name == fold.Name
 			return false
 		m.ReplaceNodes(pred,fnew)
-		if doRename: m.Name += '_'+t.Name
+
+
+#---	Make specializations with substitution, change name & cleanup	---#
+[AttributeUsage(AttributeTargets.Method)]
+public class ForkMethodEx(Method):
+	protected final pred as Ast.NodePredicate
+	protected final fold as Ast.ReferenceExpression
+	protected final fnew = Ast.ReferenceExpression()
+
+	public def constructor(old as Ast.ReferenceExpression, *types as (Ast.ReferenceExpression)):
+		super(*types)
+		fold = old
+		pred = def(n as Ast.Node):
+			exp = n as Ast.GenericReferenceExpression
+			return false if not exp
+			target = exp.Target as Ast.ReferenceExpression
+			return false if not target or target.Name != fold.Name
+			exp.GenericArguments = null
+			return true
+		
+	protected override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:	
+		fnew.Name = fold.Name + '_' + t.Name
+		m.ReplaceNodes(pred,fnew)

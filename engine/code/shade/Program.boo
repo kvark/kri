@@ -65,8 +65,8 @@ public class Program:
 		assert linked
 		return GL.GetUniformLocation(id,name)
 	# set uniform parameter value
-	[ext.spec.ForkMethod(false, fun, GL.Uniform1, int,single)]
-	[ext.spec.ForkMethod(false, fun, GL.Uniform4, Color4,Vector4,Quaternion)]
+	[ext.spec.ForkMethod(fun, GL.Uniform1, int,single)]
+	[ext.spec.ForkMethod(fun, GL.Uniform4, Color4,Vector4,Quaternion)]
 	public static def Param[of T(struct)](loc as int, ref val as T) as void:
 		def fun(l as int, ref v as T) as void:
 			assert 'Uniform type not supported'

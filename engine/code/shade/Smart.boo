@@ -20,13 +20,6 @@ public class Smart(Program):
 	private def constructor(xid as int):
 		super(xid)
 	
-	/* //this old method dosn't work with Uniform being in different namespace
-	[ext.spec.MethodSubClass(rep.Uniform, int,single,Color4,Vector4,Quaternion)]
-	public def data[of T(struct)]( *pars as (par.Basic[of T]) ) as void:
-		for p in pars:
-			params.Add( rep.Uniform[of T](p,getVar(p.name)) )
-	*/
-	
 	public def unit_man(i as int, str as string) as void:
 		assert not string.IsNullOrEmpty(str)
 		GL.Uniform1( getVar(prefixUnit+str), i)
