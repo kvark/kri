@@ -30,40 +30,6 @@ public partial class Native:
 		s.bakePoseData(node)
 		return true
 	
-	#---	Parse abstract action	---#
-	public def px_act[of T(kri.ani.data.Player)]() as bool:
-		player = geData[of T]()
-		return false	if not player
-		name = getString(STR_LEN)
-		rec = kri.ani.data.Record( name, getReal() )
-		player.anims.Add(rec)
-		puData(rec)
-		return true
-	
-	[ext.spec.ForkMethod(true, getX, getVector, Vector3)]
-	[ext.spec.ForkMethod(true, getX, getQuat, Quaternion)]
-	[ext.spec.ForkMethod(true, getX, getColor, Color4)]
-	[ext.RemoveSource()]
-	public def px_curve[of T(struct)]() as bool:
-		def getX() as T:
-			x as T
-			return x
-		ind = br.ReadByte() # element index
-		br.ReadByte()	# element size in floats
-		#assert siz*4 == System.Runtime.InteropServices.Marshal.SizeOf(T)
-		rec	= geData[of kri.ani.data.Record]()
-		return false	if not rec
-		attrib = getString(STR_LEN)
-		fun as callable = null			# get from the dict!
-		num = br.ReadUInt16()
-		chan = kri.ani.data.Channel[of T](num,fun)
-		chan.extrapolate = br.ReadByte()>0
-		for i in range(num):
-			chan.kar[i] = kri.ani.data.Key[of T](
-				t:getReal(), co:getX(), h1:getX(), h2:getX() )
-		return true
-		
-	
 	#---	Parse skeletal action	---#
 	public def pn_act() as bool:
 		skel = geData[of kri.Skeleton]()

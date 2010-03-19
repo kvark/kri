@@ -162,28 +162,34 @@ public class Node( IComparable[of Node] ):
 #	bone node with pose sub-space
 
 public class NodeBone(Node):
-	public final pose	as Spatial
-	[getter(InvPose)]
-	private invPose		as Spatial
+	public final bindPose	as Spatial
+	private invWorldPose	as Spatial
+	public pose	= Spatial.Identity
 	
-	public def constructor(str as string, ref bindPose as Spatial):
+	public def constructor(str as string, ref initPose as Spatial):
 		super(str)
-		Local = pose = bindPose
+		Local = bindPose = initPose
 
 	public def Clone() as Object:	#imp: ICloneable
-		s = pose
+		s = bindPose
 		n = NodeBone(name,s)
 		n.Parent = Parent
 		n.Local = Local
 		return n
-	internal def setPose(s as Spatial) as void:
-		rez = p = pose
+	public def setPose(s as Spatial) as void:
+		rez = p = bindPose
 		rez.combine(s,p)
 		Local = rez
-	internal def bakeInvPose(ref s as Spatial) as void:
+	public def setPose() as void:
+		rez = bp = bindPose
+		rez.combine(pose,bp)
+		Local = rez
+	public def genTransPose(ref sloc as Spatial, ref sp as Spatial) as void:
+		sp.combine(sloc,invWorldPose)	# object local -> pose
+	public def bakeInvPose(ref s as Spatial) as void:
 		pp = World
 		pp.inverse()
-		invPose.combine(s,pp)
+		invWorldPose.combine(s,pp)
 
 
 #------------------------------------------
@@ -211,20 +217,23 @@ public class Skeleton( ani.data.Player ):
 			bones[i].Parent = bones[ind]
 
 	def ani.data.IPlayer.touch() as void:
+		for b in bones:
+			b.setPose()
 		++state
 	public def bakePoseData(np as Node) as void:
 		sw = np.World
 		for b in bones:
 			b.bakeInvPose(sw)
-		touch()
+		++state
 	public def reset() as void:
 		for b in bones:
-			b.Local = b.pose
-		touch()
+			b.pose = Spatial.Identity
+			b.Local = b.bindPose
+		++state
 	public def moment(t as single, sd as AniData) as void:	# absolete
 		for c in sd.channels:
 			continue	if c.b > bones.Length
 			sp = c.moment(t)
 			if not c.b: node.Local = sp
 			else: bones[c.b-1].setPose(sp)
-		touch()
+		++state

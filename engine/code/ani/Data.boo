@@ -14,8 +14,6 @@ public struct Key[of T(struct)]:
 
 public interface IPlayer:
 	def touch() as void
-	def lookAni(name as string) as Record
-
 
 public interface IChannel:
 	def update(pl as IPlayer, time as single) as void
@@ -27,8 +25,8 @@ public interface IChannel:
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	# proper callable definitions in generics depend on BOO-854
-	public final fup	as callable#(IPlayer,T)
-	public lerp			as callable#(ref T, ref T,single) as T
+	public final fup	as callable	#(IPlayer,byte,T)
+	public lerp			as callable	#(ref T, ref T,single) as T
 	public bezier		as bool	= true
 	public extrapolate	as bool	= false
 
@@ -39,7 +37,6 @@ public class Channel[of T(struct)](IChannel):
 	def IChannel.update(pl as IPlayer, time as single) as void:
 		fup(pl, moment(time))
 		
-	
 	public def moment(time as single) as T:
 		assert lerp and kar.Length
 		i = System.Array.FindIndex(kar) do(k as Key[of T]):
@@ -75,20 +72,20 @@ public class Player(IPlayer):
 	public final anims	= List[of Record]()
 	def IPlayer.touch() as void:
 		pass
-	def IPlayer.lookAni(name as string) as Record:
-		return anims.Find({r| return r.name == name})
+	public def play(name as string) as Anim:
+		rec = anims.Find({r| return r.name == name})
+		return Anim(self,rec)
 
 
 #---------------------
 #	ANIM: universal animation
 
 public class Anim( kri.ani.IBase ):
-	private final player	as IPlayer
-	private final record	as Record
+	public final player	as IPlayer
+	public final record	as Record
 	
-	public def constructor(pl as IPlayer, name as string):
-		player = pl
-		record = pl.lookAni(name)
+	public def constructor(pl as IPlayer, rec as Record):
+		player,record = pl,rec
 	
 	def kri.ani.IBase.onFrame(time as double) as uint:
 		return 2	if not record

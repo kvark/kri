@@ -51,6 +51,7 @@
     <Compile Include="code\lib\Param.boo" />
     <Compile Include="code\lib\par\Main.boo" />
     <Compile Include="code\lib\Slot.boo" />
+    <Compile Include="code\load\Anim.boo" />
     <Compile Include="code\load\Native.boo" />
     <Compile Include="code\load\Context.boo" />
     <Compile Include="code\load\Image.boo" />

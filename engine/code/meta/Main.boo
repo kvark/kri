@@ -9,6 +9,12 @@ public static class Scalars:
 
 #----------------------
 
+public interface IColored:
+	Color as Color4:
+		get
+		set
+
+
 public class Basic():
 	public shader	as Object	= null	# implementation shader
 	public virtual def clone() as Basic:
@@ -45,7 +51,7 @@ public class Unit():
 #----------------------
 # problem: shared pData will not be cloned properly
 
-public class Emission(Basic):
+public class Emission(Basic,IColored):
 	private final pCol	= par.Value[of Color4]()
 	portal Color		as Color4	= pCol.Value
 
@@ -59,7 +65,7 @@ public class Emission(Basic):
 		d.add('mat.emissive', pCol)
 
 
-public class Diffuse(Basic):
+public class Diffuse(Basic,IColored):
 	private final pCol	= par.Value[of Color4]()
 	private final pData	as par.Value[of Vector4]
 	portal Color		as Color4	= pCol.Value
@@ -80,7 +86,7 @@ public class Diffuse(Basic):
 			d.add(Scalars.name, pData)
 
 
-public class Specular(Basic):
+public class Specular(Basic,IColored):
 	private final pCol	= par.Value[of Color4]()
 	private final pData	as par.Value[of Vector4]
 	portal Color		as Color4	= pCol.Value

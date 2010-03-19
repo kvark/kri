@@ -24,11 +24,14 @@ public partial class Native:
 	public static final PATH_LEN	= 64
 	public final con	= Context()
 	public final dict	= Dictionary[of string, callable]()	# should be "callable() as bool"
+	public final adic	= Dictionary[of string, callable(byte) as callable]()
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
 	
 	public def constructor(*exclude as (string)):
+		fillAdic()
+		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		# objects
 		dict['entity']	= p_entity
@@ -39,9 +42,9 @@ public partial class Native:
 		dict['mat']		= p_mat
 		dict['tex']		= p_tex
 		# animations
-		dict['pv_curve']	= px_curve_Vector3
-		dict['pq_curve']	= px_curve_Quaternion
-		dict['pc_curve']	= px_curve_Color4
+		dict['av_seq']	= px_curve_Vector3
+		dict['aq_seq']	= px_curve_Quaternion
+		dict['ac_seq']	= px_curve_Color4
 		# mesh
 		dict['mesh']	= p_mesh
 		dict['v_pos']	= pv_pos
@@ -51,8 +54,8 @@ public partial class Native:
 		dict['v_ind']	= pv_ind
 		# skeleton
 		dict['skel']	= p_skel
-		dict['s_act']	= px_act[of kri.Skeleton]
-		dict['n_act']	= pn_act
+		dict['s_act']	= px_act_Skeleton
+		#dict['n_act']	= px_act[of kri.Node]
 		dict['a_bone']	= pa_bone
 		# particles
 		dict['part']	= p_part

@@ -58,7 +58,7 @@ def save_matrix(mx):
 		print("\t(w)",'non-uniform scale:',str(sca))
 	out.pack( '<8f',
 		pos.x, pos.y, pos.z, scale,
-		rot.x, rot.y, rot.z, rot.w)
+		rot.x, rot.y, rot.z, rot.w )
 
 
 ###  ANIMATION CURVES   ###
@@ -83,12 +83,13 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	# gather all
 	for f in act.fcurves:
 		bid,attrib = 0, f.data_path
+		#print('Tag:', attrib, 'Id:', f.array_index)
 		mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
 		if mat:
 			mg = mat.groups()
 			if not indexator: continue
 			if mg[0] != sar:
-				print("\t\t(w) unknown array: ", mg[0])
+				print("\t\t(w) unknown array:", mg[0])
 				continue
 			bid = 1 + indexator.index( mg[1] )
 			attrib = mg[2]
@@ -96,8 +97,10 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 		if not bid in rnas:
 			rnas[bid] = {}
 		if not attrib in rnas[bid]:
-			rnas[bid][attrib] = 4*[None]
-		rnas[bid][attrib][f.array_index] = f
+			rnas[bid][attrib] = []
+		lis = rnas[bid][attrib]
+		assert f.array_index == len(lis)
+		lis.append(f)
 	# write header or exit
 	if not len(rnas): return
 	out.begin( sym + '_act' )
@@ -105,16 +108,24 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	out.end()
 	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 	# write in packs
+	name2type,badlist = {
+		'location':'v', 'rotation_quaternion':'q', 'scale':'v'
+		},[]
 	for elem,it in rnas.items():
 		for attrib,sub in it.items():
-			out.begin('a_curve')
+			if not attrib in name2type:
+				if not attrib in badlist:
+					print("\t\t(w) unknown attrib:", attrib)
+					badlist.add(attrib)
+				continue
+			out.begin( "a%s_seq" %(name2type[attrib]) )
 			assert elem<256 and len(attrib)<24
-			out.pack('<BB24s', elem, len(sub), attrib)
-			save_curve_pack(sub,offset)
+			out.pack('<BB24s', elem, len(sub), (sym+'.'+attrib) )
+			save_curve_pack( sub, offset )
 			out.end()
 
 def save_curve_pack(curves,offset):
-	if None in curves:
+	if not len(curves):
 		print("\t\t(w) invalid curve pack")
 		out.pack('<H',0)
 		return
@@ -131,7 +142,7 @@ def save_curve_pack(curves,offset):
 		def h2(k): return k.handle2
 		kp = tuple(c.keyframe_points[i] for c in curves)
 		x = kp[0].co[0]
-		out.pack('<f', (mid-offset)*kFrameSec)
+		out.pack('<f', (x-offset)*kFrameSec)
 		#print ('Time', x, i, data)
 		for fun in (h0,h1,h2):	# ignoring handlers time
 			out.array('f', (fun(k)[1] for k in kp) )

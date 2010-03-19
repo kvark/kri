@@ -59,7 +59,7 @@ public class Object(Proxy):
 		filled = true
 	public def init[of T(struct)](ptr as (T), dyn as bool) as void:
 		bind()
-		GL.BufferData(target, IntPtr(ptr.Length * Marshal.SizeOf(T)), ptr, getHint(dyn))
+		GL.BufferData(target, IntPtr(ptr.Length * kri.Sizer[of T].Value), ptr, getHint(dyn))
 		filled = true
 	# mapping
 	public def map(ba as BufferAccess) as IntPtr:

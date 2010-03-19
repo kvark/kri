@@ -4,6 +4,11 @@ import System
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
+# Generic structures size calculator
+
+public static class Sizer[of T(struct)]:
+	public final Value = Runtime.InteropServices.Marshal.SizeOf(T)
+
 
 # Provides GL state on/off mechanics
 public class Section(IDisposable):

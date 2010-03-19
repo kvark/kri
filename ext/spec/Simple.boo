@@ -38,6 +38,16 @@ public class Method(AbstractAstAttribute):
 			Mod(sm,t)
 
 
+#---	Make specializations with name change	---#
+
+[AttributeUsage(AttributeTargets.Method)]
+public class NameMethod(Method):
+	public def constructor(*types as (Ast.ReferenceExpression)):
+		super(*types)
+	protected override def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:
+		m.Name += '_' + t.Name.Split( char('.') )[-1]
+
+
 #---	Make specializations with substitution, change name & cleanup	---#
 [AttributeUsage(AttributeTargets.Method)]
 public class ForkMethod(Method):
