@@ -81,7 +81,7 @@ def save_actions(ob,sym):
 def save_meta_action(act,sym, indexator=None, sar=''):
 	import re
 	offset,nf = act.get_frame_range()
-	rnas = {} # {elem_id}{attrib_name}[sub_id]
+	rnas,curves = {},set() # {elem_id}{attrib_name}[sub_id]
 	# gather all
 	for f in act.fcurves:
 		bid,attrib = 0, f.data_path
@@ -110,26 +110,15 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	out.end()
 	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 	# write in packs
-	badlist,name2type = [],{
-		'location':'v', 'rotation_quaternion':'q',
-		'scale':'v',	'rotation_euler':'e',
-		'diffuse_color':'c',	'specular_color':'c',	'color':'c',
-		'energy':'f',	'lens':'f',	'angle':'f',
-		'clip_start':'f',	'clip_end':'f'
-		}
 	for elem,it in rnas.items():
 		for attrib,sub in it.items():
-			if not attrib in name2type:
-				if not attrib in badlist:
-					print("\t\t(w) unknown %s[%d]" %(attrib,len(sub)) )
-					badlist.append(attrib)
-				suf = ''
-			else: suf = name2type[attrib]
-			out.begin( "a%s_seq" %(suf) )
+			curves.add( "%s[%d]" % (attrib,len(sub)) )
+			out.begin('curve')
 			assert elem<256 and len(attrib)<24
-			out.pack('<BB24s', elem, len(sub), (sym+'.'+attrib) )
+			out.pack('<24sBB', (sym+'.'+attrib), len(sub), elem )
 			save_curve_pack( sub, offset )
 			out.end()
+	print("\t\t", ', '.join(curves) )
 
 ###  ACTION:CURVES   ###
 

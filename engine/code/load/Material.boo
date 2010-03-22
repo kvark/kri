@@ -3,7 +3,7 @@
 import OpenTK.Graphics
 
 public partial class Native:
-	protected def getColor() as Color4:
+	protected def getByteColor() as Color4:
 		c = br.ReadBytes(4)	#rbga
 		return Color4(c[0],c[2],c[1],c[3])
 	protected def getTexture(str as string) as kri.Texture:
@@ -21,9 +21,9 @@ public partial class Native:
 		m.meta[ con.ms.specular	] = mSpec = kri.meta.Specular(scalars)
 		m.meta[ con.ms.parallax	] = mParx = kri.meta.Parallax(scalars)
 		# colors
-		mEmis.Color = getColor()
-		mDiff.Color = getColor()
-		mSpec.Color = getColor()
+		mEmis.Color = getByteColor()
+		mDiff.Color = getByteColor()
+		mSpec.Color = getByteColor()
 		# models
 		id = br.ReadByte()
 		assert id < 1

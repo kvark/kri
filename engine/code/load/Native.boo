@@ -43,11 +43,7 @@ public partial class Native:
 		dict['tex']		= p_tex
 		# animations
 		dict['action']	= p_action
-		dict['av_seq']	= px_curve_Vector3
-		dict['aq_seq']	= px_curve_Quaternion
-		dict['ac_seq']	= px_curve_Color4
-		dict['ae_seq']	= px_curve_Vector3
-		dict['af_seq']	= px_curve_single
+		dict['curve']	= p_curve
 		# mesh
 		dict['mesh']	= p_mesh
 		dict['v_pos']	= pv_pos
@@ -93,23 +89,31 @@ public partial class Native:
 	protected def puData[of T](r as T) as void:
 		#rep.RemoveAll(predicate)
 		rep.Remove( geData[of T] )
-		rep.Push(r)
+		rep.Insert(0,r)
 	
 	protected def getReal() as single:
 		return br.ReadSingle()
+	protected def getScale() as single:
+		return getVector().LengthFast
+	protected def getColor() as Color4:
+		return Color4( getReal(), getReal(), getReal(), 1f )
 	protected def getString(n as int) as string:
 		return string( br.ReadChars(n) ).TrimEnd( char(0) )
 	protected def getVector() as Vector3:
 		return Vector3( X:getReal(), Y:getReal(), Z:getReal() )
+	protected def getVec2() as Vector2:
+		return Vector2( X:getReal(), Y:getReal() )
+	protected def getVec4() as Vector4:
+		return Vector4( Xyz:getVector(), W:getReal() )
 	protected def getQuat() as Quaternion:
 		return Quaternion( Xyz:getVector(), W:getReal() )
-	protected def getSpatial() as kri.Spatial:
-		return kri.Spatial( pos:getVector(), scale:getReal(), rot:getQuat() )
 	protected def getQuatRev() as Quaternion:
 		return Quaternion( W:getReal(), Xyz:getVector() )
 	protected def getQuatEuler() as Quaternion:
 		getVector()
 		return Quaternion.Identity
+	protected def getSpatial() as kri.Spatial:
+		return kri.Spatial( pos:getVector(), scale:getReal(), rot:getQuat() )
 	
 	public def p_sign() as bool:
 		ver = br.ReadByte()

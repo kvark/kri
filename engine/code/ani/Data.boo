@@ -19,27 +19,33 @@ public interface IPlayer:
 
 public interface IChannel:
 	def update(pl as IPlayer, time as single) as void
+	Valid as bool:
+		get
 
 
 #---------------------
 #	CHANNEL[T]: generic channel data
 
 # bypassing BOO-854
-[ext.spec.Class( Vector3, Quaternion, Graphics.Color4, single )]
+[ext.spec.Class( Vector2, Vector3, Vector4, Quaternion, Graphics.Color4, single )]
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	# proper callable definitions in generics depend on BOO-854
 	public final elid	as byte
 	public final fup	as callable	#(IPlayer,T,byte)
-	public lerp			as callable	#(ref T, ref T,single) as T
+	public lerp			as callable	= null	#(ref T, ref T,single) as T
 	public bezier		as bool	= true
 	public extrapolate	as bool	= false
+	
+	IChannel.Valid as bool:
+		get: return fup!=null and lerp!=null
 
 	public def constructor(num as int, id as byte, f as callable):
 		kar = array[of Key[of T]](num)
 		elid,fup = id,f
 
 	def IChannel.update(pl as IPlayer, time as single) as void:
+		return	if not Valid
 		fup(pl, moment(time), elid)
 		
 	public def moment(time as single) as T:
@@ -71,6 +77,8 @@ public class Record:
 	public final channels	= List[of IChannel]()
 	public def constructor(str as string, t as single):
 		name,length = str,t
+	public def check() as bool:
+		return channels.TrueForAll({ c| return c.Valid })
 
 
 public class Player(IPlayer):
@@ -80,6 +88,7 @@ public class Player(IPlayer):
 	public def play(name as string) as Anim:
 		rec = anims.Find({r| return r.name == name})
 		assert rec and 'Action not found'
+		assert rec.check() and 'Acton not fully supported'
 		return Anim(self,rec)
 
 

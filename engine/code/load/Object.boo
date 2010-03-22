@@ -60,7 +60,7 @@ public partial class Native:
 		return false	if not n
 		l = kri.Light( node:n )
 		puData(l)
-		l.Color	= getColor()
+		l.Color	= getByteColor()
 		# attenuation
 		l.energy	= getReal()
 		l.quad1		= getReal()

@@ -4,71 +4,71 @@ import OpenTK
 import kri.ani.data
 
 public partial class Native:
-	public final adic	= Dictionary[of string,callable]()
+	public final anid		= Dictionary[of string,callable() as IChannel]()
+	public final badCurves	= Dictionary[of string,byte]()
 
 	# should be callable(ref kri.Spatial,ref T) as void (waiting for BOO-854)
 	# generates invalid binary format if using generics, bypassing with extenions
-	[ext.spec.Method(Vector3,Quaternion)]
+	[ext.spec.Method(Vector3,Quaternion,single)]
 	[ext.RemoveSource()]
-	private def genBone[of T(struct)](fun as callable(ref kri.Spatial, ref T)) as callable:
+	private def genBone		[of T(struct)](fun as callable(ref kri.Spatial, ref T)):
 		return do(pl as IPlayer, v as T, i as byte):
 			bar = (pl as kri.Skeleton).bones
 			return if not i or i>bar.Length
 			fun( bar[i-1].pose, v )
 	
-	[ext.spec.Method(Vector3,Quaternion)]
+	[ext.spec.Method(Vector3,Quaternion,single)]
 	[ext.RemoveSource()]
-	private def genSpatial[of T(struct)](fun as callable(ref kri.Spatial, ref T)) as callable:
+	private def genSpatial	[of T(struct)](fun as callable(ref kri.Spatial, ref T)):
 		return do(pl as IPlayer, v as T, i as byte):
 			n = pl as kri.Node
 			sp = n.Local
 			fun(sp,v)
 			n.Local = sp
 	
-	private def genMatColor(mid as int) as callable:
-		return do(pl as IPlayer, v as Color4, i as byte):
+	private def racMatColor(mid as int):
+		return rac(getColor) do(pl as IPlayer, v as Color4, i as byte):
 			((pl as kri.Material).meta[mid] as kri.IColored).Color = v
-	
-	private def doNothing(pl as IPlayer, v as Color4, i as byte):
-		pass
-	private def doProjNear	(pl as IPlayer, v as single, i as byte):
-		(pl as kri.Projector).rangeIn = v
-	private def doProjFar	(pl as IPlayer, v as single, i as byte):
-		(pl as kri.Projector).rangeOut = v
-			
+	private def racProject(fun as callable(kri.Projector,single)):
+		return rac(getReal) do(pl as IPlayer, v as single, i as byte):
+			assert not i
+			fun(pl as kri.Projector, v)
 
 	# fill action dictionary
 	public def fillAdic() as void:
 		# spatial sub-trans
-		def fun_pos(ref sp as kri.Spatial, ref v as Vector3) as void:
+		def fun_pos(ref sp as kri.Spatial, ref v as Vector3):
 			sp.pos = v
-		def fun_rot(ref sp as kri.Spatial, ref v as Quaternion) as void:
+		def fun_rot(ref sp as kri.Spatial, ref v as Quaternion):
 			sp.rot = v
-		def fun_sca(ref sp as kri.Spatial, ref v as Vector3) as void:
-			sp.scale = v.LengthFast
+		def fun_sca(ref sp as kri.Spatial, ref v as single):
+			sp.scale = v
+		# projector sub-trans
+		def fun_prin(pr as kri.Projector, v as single):
+			pr.rangeIn = v
+		def fun_prout(pr as kri.Projector, v as single):
+			pr.rangeOut = v
 		# skeleton bone
-		adic['s.location']				= genBone(fun_pos)
-		adic['s.rotation_quaternion']	= genBone(fun_rot)
-		adic['s.scale']					= genBone(fun_sca)
+		anid['s.location']				= rac(getVector,	genBone(fun_pos) )
+		anid['s.rotation_quaternion']	= rac(getQuat,		genBone(fun_rot) )
+		anid['s.scale']					= rac(getScale,		genBone(fun_sca) )
 		# node
-		adic['n.location']			= genSpatial(fun_pos)
-		adic['n.rotation_euler']	= genSpatial(fun_rot)
-		adic['n.scale']				= genSpatial(fun_sca)
+		anid['n.location']			= rac(getVector,	genSpatial(fun_pos) )
+		anid['n.rotation_euler']	= rac(getQuatEuler,	genSpatial(fun_rot) )
+		anid['n.scale']				= rac(getScale,		genSpatial(fun_sca) )
 		# material
-		adic['t.diffuse_color']		= genMatColor( con.ms.diffuse )
-		adic['t.specular_color']	= genMatColor( con.ms.specular )
+		anid['m.diffuse_color']		= racMatColor( con.ms.diffuse )
+		anid['m.specular_color']	= racMatColor( con.ms.specular )
 		# light
-		adic['l.energy']	= do(pl as IPlayer, v as single, i as byte):
-			(pl as kri.Light).energy = v
-		adic['l.color']		= do(pl as IPlayer, v as Color4, i as byte):
-			(pl as kri.IColored).Color = v
-		adic['l.clip_start'] = doProjNear
-		adic['l.clip_end'] = doProjFar
+		anid['l.energy']	= rac(getReal,	{pl,v,i| (pl as kri.Light).energy = v })
+		anid['l.color']		= rac(getColor,	{pl,v,i| (pl as kri.IColored).Color = v })
+		anid['l.clip_start']	= racProject(fun_prin)
+		anid['l.clip_end']		= racProject(fun_prout)
 		# camera
-		adic['c.angle']		= do(pl as IPlayer, v as single, i as byte):
-			(pl as kri.Camera).fov = v * 0.5f
-		adic['c.clip_start'] = doProjNear
-		adic['c.clip_end'] = doProjFar
+		anid['c.angle']		= rac(getReal) do(pl as IPlayer, v as single, i as byte):
+			(pl as kri.Camera).fov = v*0.5f
+		anid['c.clip_start']	= racProject(fun_prin)
+		anid['c.clip_end']		= racProject(fun_prout)
 
 
 	#---	Parse action	---#
@@ -80,10 +80,14 @@ public partial class Native:
 		player.anims.Add(rec)
 		puData(rec)
 		return true
-
-	
+		
+	#---	Channel pre-defined interpolators per type	---#
+	private def fixChan(c as Channel_Vector2):
+		c.lerp = Vector2.Lerp
 	private def fixChan(c as Channel_Vector3):
 		c.lerp = Vector3.Lerp
+	private def fixChan(c as Channel_Vector4):
+		c.lerp = Vector4.Lerp
 	private def fixChan(c as Channel_Quaternion):
 		c.lerp = Quaternion.Slerp
 		c.bezier = false
@@ -94,51 +98,48 @@ public partial class Native:
 		c.lerp = def(ref a as single, ref b as single, t as single) as single:
 			return (1-t)*a + t*b
 	
-	private def readX(ref x as Vector3):
-		x = getVector()
-	private def readX(ref x as Quaternion):
-		x.W = getReal()
-		x.Xyz = getVector()
-	private def readX(ref x as Color4):
-		x = Color4( getReal(), getReal(), getReal(), 1f )
-	private def readX(ref x as single):
-		x = getReal()
-	
+	#---	Read Abstract Channel (rac) constructor	---#
 	# bypassing BOO-854
-	#[ext.spec.MethodSubClass(Channel, Vector3,Quaternion)]
-	#[ext.spec.ForkMethod(getX, getVector, Vector3)]
-	#[ext.spec.ForkMethod(getX, getQuat2, Quaternion)]
-	#[ext.spec.ForkMethod(getX, getColor, Color4)
-	#[ext.spec.Method( Vector3, Quaternion, Color4 )]
+	[ext.spec.ForkMethodEx(Channel, single)]
+	[ext.spec.ForkMethodEx(Channel, Vector2)]
 	[ext.spec.ForkMethodEx(Channel, Vector3)]
+	[ext.spec.ForkMethodEx(Channel, Vector4)]
 	[ext.spec.ForkMethodEx(Channel, Quaternion)]
 	[ext.spec.ForkMethodEx(Channel, Color4)]
-	[ext.spec.ForkMethodEx(Channel, single)]
 	[ext.RemoveSource()]
-	public def px_curve[of T(struct)]() as bool:
-		#def getX() as T:
-		#	x as T
-		#	return x
-		ind = br.ReadByte() # element index
-		br.ReadByte()	# element size in floats
-		#assert siz*4 == kri.Sizer[of T].Value
+	public def rac[of T(struct)](fread as callable() as T, fup as callable(IPlayer,T,byte)) as callable() as IChannel:
+		return do():
+			ind = br.ReadByte() # element index
+			num = br.ReadUInt16()
+			chan = Channel[of T](num,ind,fup)
+			fixChan(chan)
+			chan.extrapolate = br.ReadByte()>0
+			for i in range(num):
+				chan.kar[i] = Key[of T]( t:getReal(),
+					co:fread(), h1:fread(), h2:fread() )
+			return chan
+	
+	#---	Unknown channel read	---#
+	protected def readNullChannel() as IChannel:
+		return null
+	protected def readDefaultChannel(size as byte) as callable() as IChannel:
+		if size == 1:	return rac( getReal, null )
+		elif size == 2:	return rac( getVec2, null )
+		elif size == 3:	return rac( getVector, null )
+		elif size == 4:	return rac( getVec4, null )
+		else: return readNullChannel
+	
+	#---	Parse curve	---#
+	public def p_curve() as bool:
 		rec	= geData[of Record]()
 		return false	if not rec
-		fun as callable = null
 		data_path = getString(STR_LEN)
-		if not adic.TryGetValue(data_path,fun):
-			fun = doNothing
-		num = br.ReadUInt16()
-		chan = Channel[of T](num,ind,fun)
-		fixChan(chan)
+		siz = br.ReadByte()	# element size in floats
+		fun as callable() as IChannel
+		if not anid.TryGetValue(data_path,fun):
+			badCurves.Add(data_path,siz)
+			fun = readDefaultChannel(siz)
+		chan = fun()
+		return false	if not chan
 		rec.channels.Add(chan)
-		chan.extrapolate = br.ReadByte()>0
-		for i in range(num):
-			t = Key[of T]( t:getReal() )
-			readX( t.co )
-			readX( t.h1 )
-			readX( t.h2 )
-			chan.kar[i] = t
-			#chan.kar[i] = Key[of T]( t:getReal(),
-			#	co:getX(), h1:getX(), h2:getX() )
 		return true
