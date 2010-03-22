@@ -33,18 +33,21 @@ public partial class Native:
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		# objects
-		dict['entity']	= p_entity
 		dict['node']	= p_node
+		dict['entity']	= p_entity
+		dict['skel']	= p_skel
 		dict['cam']		= p_cam
 		dict['lamp']	= p_lamp
 		# material
 		dict['mat']		= p_mat
 		dict['tex']		= p_tex
 		# animations
+		dict['action']	= p_action
 		dict['av_seq']	= px_curve_Vector3
 		dict['aq_seq']	= px_curve_Quaternion
 		dict['ac_seq']	= px_curve_Color4
 		dict['ae_seq']	= px_curve_Vector3
+		dict['af_seq']	= px_curve_single
 		# mesh
 		dict['mesh']	= p_mesh
 		dict['v_pos']	= pv_pos
@@ -52,11 +55,6 @@ public partial class Native:
 		dict['v_uv']	= pv_uv
 		dict['v_skin']	= pv_skin
 		dict['v_ind']	= pv_ind
-		# skeleton
-		dict['skel']	= p_skel
-		dict['s_act']	= px_act_Skeleton
-		dict['n_act']	= px_act_Node
-		dict['m_act']	= px_act_Material
 		# particles
 		dict['part']	= p_part
 		# physics
@@ -85,17 +83,17 @@ public partial class Native:
 		for m in at.mats.Values:
 			m.link()
 		return at
-	
+
 	protected def geData[of T]() as T:
-		#return rep.Find( {t| return t isa T} ) as T
+		#return rep.Find(predicate) as T
 		for ob in rep:
 			t = ob as T
 			return t	if t
 		return null as T
 	protected def puData[of T](r as T) as void:
-		#rep.RemoveAll({t| t isa T})
-		rep.Remove( geData[of T]() )
-		rep.Add(r)
+		#rep.RemoveAll(predicate)
+		rep.Remove( geData[of T] )
+		rep.Push(r)
 	
 	protected def getReal() as single:
 		return br.ReadSingle()

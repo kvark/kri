@@ -41,6 +41,7 @@ public partial class Native:
 		n = geData[of kri.Node]()
 		return false	if not n
 		c = kri.Camera( node:n )
+		puData(c)
 		br.ReadByte()	# is current
 		getProjector(c)
 		at.scene.cameras.Add(c)
@@ -51,14 +52,15 @@ public partial class Native:
 		Point
 		Sun
 		Spot
-		HEMI
-		AREA
+		Hemi
+		Area
 	#---	Parse light source	---#
 	public def p_lamp() as bool:
 		n = geData[of kri.Node]()
 		return false	if not n
 		l = kri.Light( node:n )
-		l.color	= getColor()
+		puData(l)
+		l.Color	= getColor()
 		# attenuation
 		l.energy	= getReal()
 		l.quad1		= getReal()

@@ -8,10 +8,10 @@ import OpenTK
 #	KEY: single curve point
 
 public struct Key[of T(struct)]:
-	public t	as single
-	public co	as T
-	public h1	as T
-	public h2	as T
+	public t	as single	# time moment
+	public co	as T		# actual value
+	public h1	as T		# bezier handle-left
+	public h2	as T		# bezier handle-right
 	
 
 public interface IPlayer:
@@ -25,7 +25,7 @@ public interface IChannel:
 #	CHANNEL[T]: generic channel data
 
 # bypassing BOO-854
-[ext.spec.Class( Vector3, Quaternion, Graphics.Color4 )]
+[ext.spec.Class( Vector3, Quaternion, Graphics.Color4, single )]
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	# proper callable definitions in generics depend on BOO-854

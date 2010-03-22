@@ -5,9 +5,13 @@ import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics
 
+public interface IColored:
+	Color as Color4:
+		get
+		set
 
 # Perspective projector for light & camera
-public class Projector:
+public class Projector( ani.data.Player ):
 	public node		as Node
 	public rangeIn	= 0f
 	public rangeOut	= 100f
@@ -30,11 +34,12 @@ public class Camera(Projector):
 	public static current	as Camera = null
 
 
-public class Light(Projector,IApplyable):
+public class Light(Projector,IApplyable,IColored):
 	# fov == 0 for omni type
 	# fov < 0 for directional
 	public softness	= 0f
-	public color	= Color4(1f,1f,1f,1f)
+	[Property(Color)]
+	private color	as Color4	= Color4(1f,1f,1f,1f)
 	public energy	= 1f	# initial energy
 	public quad1	= 0f	# linear factor
 	public quad2	= 0f	# quadratic factor

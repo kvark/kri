@@ -66,7 +66,17 @@ def save_matrix(mx):
 def gather_anim(ob):
 	ad = ob.animation_data
 	if not ad: return []
-	return [ns.action for nt in ad.nla_tracks for ns in nt.strips]
+	all = [ns.action for nt in ad.nla_tracks for ns in nt.strips]
+	if ad.action and not ad.action in all:
+		print("\t(w) current action is not finalized")
+		all.append( ad.action )
+	return all
+
+def save_actions(ob,sym):
+	for act in gather_anim(ob):
+		save_meta_action(act,sym)
+
+###  ACTION:META   ###
 
 def save_meta_action(act,sym, indexator=None, sar=''):
 	import re
@@ -85,7 +95,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 			bid = 1 + indexator.index( mg[1] )
 			attrib = mg[2]
 		elif indexator: continue
-		print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
+		#print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
 		if not bid in rnas:
 			rnas[bid] = {}
 		if not attrib in rnas[bid]:
@@ -95,7 +105,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 		lis.append(f)
 	# write header or exit
 	if not len(rnas): return
-	out.begin( sym + '_act' )
+	out.begin( 'action' )
 	out.pack( '<24sf', act.name, nf * kFrameSec )
 	out.end()
 	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
@@ -103,20 +113,25 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	badlist,name2type = [],{
 		'location':'v', 'rotation_quaternion':'q',
 		'scale':'v',	'rotation_euler':'e',
-		'diffuse_color':'c'
+		'diffuse_color':'c',	'specular_color':'c',	'color':'c',
+		'energy':'f',	'lens':'f',	'angle':'f',
+		'clip_start':'f',	'clip_end':'f'
 		}
 	for elem,it in rnas.items():
 		for attrib,sub in it.items():
 			if not attrib in name2type:
 				if not attrib in badlist:
-					print("\t\t(w) unknown %s[%d]" %(attrib.len(sub)) )
+					print("\t\t(w) unknown %s[%d]" %(attrib,len(sub)) )
 					badlist.append(attrib)
-				continue
-			out.begin( "a%s_seq" %(name2type[attrib]) )
+				suf = ''
+			else: suf = name2type[attrib]
+			out.begin( "a%s_seq" %(suf) )
 			assert elem<256 and len(attrib)<24
 			out.pack('<BB24s', elem, len(sub), (sym+'.'+attrib) )
 			save_curve_pack( sub, offset )
 			out.end()
+
+###  ACTION:CURVES   ###
 
 def save_curve_pack(curves,offset):
 	if not len(curves):
@@ -140,6 +155,7 @@ def save_curve_pack(curves,offset):
 		#print ('Time', x, i, data)
 		for fun in (h0,h1,h2):	# ignoring handlers time
 			out.array('f', (fun(k)[1] for k in kp) )
+
 
 
 ###  MATERIAL:UNIT   ###
@@ -633,9 +649,10 @@ def save_scene(filename, context, doQuatInt=True):
 				save_meta_action(act,'s', bar,'pose.bones')
 		elif ob.type == 'LAMP':
 			save_lamp(ob.data)
+			save_actions(ob.data, 'l')
 		elif ob.type == 'CAMERA':
 			save_camera(ob.data, ob == context.scene.camera)
-
+			save_actions(ob.data, 'c')
 		for p in ob.particle_systems:
 			save_particle(p)
 	print('Done.')

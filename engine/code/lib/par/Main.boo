@@ -11,7 +11,7 @@ public final class Light:
 	public final attenu	= kri.shade.par.Value[of Vector4]()
 	public final data	= kri.shade.par.Value[of Vector4]()
 	public def activate(l as kri.Light) as void:
-		color.Value		= l.color
+		color.Value		= l.Color
 		kdir = (1f if l.fov>0f else 0f)
 		attenu.Value	= Vector4(l.energy, l.quad1, l.quad2, l.sphere)
 		data.Value		= Vector4(l.softness, kdir, 0f, 0f)
