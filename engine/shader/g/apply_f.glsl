@@ -81,5 +81,7 @@ void main()	{
 	float spec = comp_specular(	normal, v2lit, v2cam, 100.0*g_normal.w );
 
 	float intensity = get_attenuation( length(v_lit) );
+	if( intensity*(diff+spec) < 0.01 ) discard;
+	//todo: use alpha for discard
 	gl_FragColor = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
 }

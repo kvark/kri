@@ -40,7 +40,7 @@ void main()	{
 	float intensity = rad * lit_int * get_shadow(vs);
 	//gl_FragColor = vec4(get_shadow(vs)); return;
 	if(intensity < 0.01) discard;
-	
+
 	vec4 text = mat_texture(tc);
 	vec4 bump = mat_bump(tc);
 	
