@@ -51,7 +51,7 @@ public partial class Native:
 			pr.rangeOut = v
 		# skeleton bone
 		anid['s.location']				= rac(getVector,	genBone(fun_pos) )
-		anid['s.rotation_quaternion']	= rac(getQuat,		genBone(fun_rot) )
+		anid['s.rotation_quaternion']	= rac(getQuatRev,	genBone(fun_rot) )
 		anid['s.scale']					= rac(getScale,		genBone(fun_sca) )
 		# node
 		anid['n.location']			= rac(getVector,	genSpatial(fun_pos) )
@@ -139,7 +139,7 @@ public partial class Native:
 		siz = br.ReadByte()	# element size in floats
 		fun as callable() as IChannel
 		if not anid.TryGetValue(data_path,fun):
-			badCurves.Add(data_path,siz)
+			badCurves[data_path] = siz
 			fun = readDefaultChannel(siz)
 		chan = fun()
 		return false	if not chan

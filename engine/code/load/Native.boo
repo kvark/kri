@@ -94,9 +94,12 @@ public partial class Native:
 	protected def getReal() as single:
 		return br.ReadSingle()
 	protected def getScale() as single:
-		return getVector().LengthFast
+		return getVector().LengthSquared / 3f
 	protected def getColor() as Color4:
 		return Color4( getReal(), getReal(), getReal(), 1f )
+	protected def getColorByte() as Color4:
+		c = br.ReadBytes(4)	#rbga
+		return Color4(c[0],c[2],c[1],c[3])
 	protected def getString(n as int) as string:
 		return string( br.ReadChars(n) ).TrimEnd( char(0) )
 	protected def getVector() as Vector3:
