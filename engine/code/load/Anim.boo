@@ -6,6 +6,7 @@ import kri.ani.data
 public partial class Native:
 	public final anid		= Dictionary[of string,callable() as IChannel]()
 	public final badCurves	= Dictionary[of string,byte]()
+	#todo: gen static class here? separate generator methods?
 
 	# should be callable(ref kri.Spatial,ref T) as void (waiting for BOO-854)
 	# generates invalid binary format if using generics, bypassing with extenions
@@ -99,6 +100,7 @@ public partial class Native:
 			return (1-t)*a + t*b
 	
 	#---	Read Abstract Channel (rac) constructor	---#
+	
 	# bypassing BOO-854
 	[ext.spec.ForkMethodEx(Channel, single)]
 	[ext.spec.ForkMethodEx(Channel, Vector2)]

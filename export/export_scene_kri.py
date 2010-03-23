@@ -208,19 +208,17 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	def calc_TBN(verts, uvs):
 		va = verts[1].co - verts[0].co
 		vb = verts[2].co - verts[0].co
-		n1 = va.cross(vb)
-		if uvs and n1.length > 0.0:
+		n0 = n1 = va.cross(vb)
+		if uvs and n1.dot(n1) > 0.0:
 			ta = uvs[1] - uvs[0]
 			tb = uvs[2] - uvs[0]
-			if ta.length+tb.length == 0.0:
+			if ta.dot(ta)+tb.dot(tb) == 0.0:
 				n_bad_uv += 1
 			tan = va*tb.y - vb*ta.y
 			bit = vb*ta.x - va*tb.x
-		else:
-			tan = Math.Vector(1,0,0)
-			bit = Math.Vector(0,1,0)
-		# don't care about the length for now
-		n0 = tan.cross(bit)
+			# don't care about the length for now
+			n0 = tan.cross(bit)
+		else:	tan,bit = va,vb
 		hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
 		return (tan, bit, n0, hand, n1)
 
@@ -243,17 +241,16 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 				self.hand = face.hand
 				self.mat = face.mat
 				return
-			# warning: too many Vector constructors here - slow!
+			# this section requires optimization!
 			# hint: try 'Recalculate Outside' if getting lighting problems
 			self.mat = face.material_index
 			self.vi = [ face.verts[i]	for i in ind   ]
 			self.v  = [ vs[x]		for x in self.vi ]
 			self.no = [ x.normal		for x in self.v  ]
-			self.normal = face.normal
-			if face.smooth: self.normal.zero()
+			self.normal = (face.normal,Math.Vector(0,0,0))[face.smooth]
 			self.uv = [ uves[i]	for i in ind ] if uves else None
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
-			self.wes = 3 * [0.01+nv.length]
+			self.wes = 3 * [0.01+nv.dot(nv)]
 			assert t.length > 0.0
 			self.ta = t.normalize()
 			self.hand = hand
@@ -281,14 +278,11 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	avg,set_vert = 0.0,{}
 	for face in ar_face:
 		avg += face.hand
+		nor = face.normal
 		for i in range(3):
-			v = Vertex(face.v[i])
-			if face.normal.length > 0.1:
-				v.normal = face.normal
-			else:   v.normal = face.no[i]
-			if face.uv:
-				v.tex = face.uv[i]
-			else:   v.tex = None
+			v = Vertex( face.v[i] ) 
+			v.normal = (nor if nor.dot(nor)>0.1 else face.no[i])
+			v.tex = (face.uv[i] if face.uv else None)
 			v.face = face
 			vs = str((v.coord,v.tex,v.normal,face.hand))
 			if not vs in set_vert:
@@ -342,7 +336,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			src = ar_vert[ f.vi[pos] ]
 			dst = Vertex(src.vert)
 			dst.face = f
-			dst.tex = src.tex.copy()
+			dst.tex = (src.tex.copy() if src.tex else None)
 			dst.quat = src.quat.copy().negate()
 			dst.dual = f.vi[pos]
 			f.vi[pos] = src.dual = len(ar_vert)
@@ -378,7 +372,9 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			v.coord = 0.5 * (va.coord + vb.coord)
 			v.quat = va.quat + vb.quat
 			v.quat.normalize()
-			v.tex = 0.5 * (va.tex + vb.tex)
+			if va.tex and vb.tex:
+				v.tex = 0.5 * (va.tex + vb.tex)
+			else:	v.tex = None
 			# create additional face
 			f2 = Face(f, mesh.verts)
 			mark_used(f.vi[ia])	# caution: easy to miss case
@@ -586,17 +582,18 @@ def save_node(ob):
 
 
 def gather_anim_global(ob):
-	actions = gather_anim(ob)
-	if not len(actions) and ob.type == 'ARMATURE':
+	actions = set(gather_anim(ob))
+	if ob.type == 'ARMATURE':
 		# search from global for old-style blend files
 		# new 2.5 standard places all animations locally
 		names = set( ob.data.bones.keys() )
 		def affects(a):
 			n2 = set(gr.name for gr in a.groups)
 			return not names.isdisjoint(n2)
-		actions += filter(affects, bpy.data.actions)
-		if len(actions):
-			print("\t(i) extracted %d actions from context" % (len(actions)) )
+		a2 = list( filter(affects, bpy.data.actions) )
+		if len(a2):
+			print("\t(i) extracted %d actions from context" % (len(a2)) )
+			actions.update(a2)
 	return actions
 	
 
