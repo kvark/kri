@@ -73,10 +73,9 @@ public class Apply( Basic ):
 		scam.inverse()
 		sp.combine( slit, scam )
 		p0 = c.project( sp.pos )
-		p1 = OpenTK.Vector3( l.rangeOut, 0f,0f )
-		p2 = sp.byPoint(p1)
-		p1 = OpenTK.Vector3.Subtract( c.project(p2), p0 )
-		pArea.Value = OpenTK.Vector4( p0, p1.LengthFast )
+		p2 = sp.pos + OpenTK.Vector3(1f,1f,0f) * (l.rangeOut * sp.scale)
+		p1 = c.project(p2) - p0
+		pArea.Value = OpenTK.Vector4( p0.X, p0.Y, p1.X, p1.Y )
 	# shadow 
 	private def bindShadow(t as kri.Texture) as void:
 		if t:

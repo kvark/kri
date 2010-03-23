@@ -82,5 +82,4 @@ void main()	{
 
 	float intensity = get_attenuation( length(v_lit) );
 	gl_FragColor = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
-	//gl_FragColor = g_diffuse + 0.1*lit_color;
 }
