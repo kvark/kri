@@ -6,7 +6,7 @@ import OpenTK.Graphics
 public partial class Native:
 	public final limdic		= Dictionary[of string,callable() as Named]()
 	public static final defMapin = Named()
-	
+
 	public def fillMapinDict() as void:
 		sob = Dictionary[of string, kri.shade.Object]()
 		def genFun(x as Named):
@@ -23,6 +23,9 @@ public partial class Native:
 				nd = at.nodes[name]
 				mio.par.activate(nd)
 			return mio
+		limdic['ORCO'] = do():
+			getString(NAME_LEN)	# mapping type, not supported
+			return Named( shader:sob['ORCO'], name:'orco' )
 
 	
 	#---	Map input	---#
@@ -81,11 +84,6 @@ public partial class Native:
 		Emission
 		Specular
 		Reflection
-	public enum TexMapping:
-		Sphere
-		Tube
-		Cube
-		Flat
 	
 	private struct UniData:
 		public id	as int
@@ -99,11 +97,9 @@ public partial class Native:
 		return false	if not m
 		tip		= cast(TexType,		br.ReadByte())
 		return true		if tip == TexType.None
-		mapping = cast(TexMapping,	br.ReadByte())
 		Image.bRepeat	= br.ReadByte()>0	# extend by repeat
 		Image.bMipMap	= br.ReadByte()>0	# generate mip-maps
 		Image.bFilter	= br.ReadByte()>0	# linear filtering
-		return false	if mapping != TexMapping.Flat
 		# create unit with proper shaders
 		us = kri.Ant.inst.units
 		uniDict = Dictionary[of TexType,UniData]()

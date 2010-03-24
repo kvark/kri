@@ -167,12 +167,13 @@ def save_mat_unit(mtex):
 		out.pack('<8s', mtex.layer)
 	if tc == 'OBJECT':
 		out.pack('<24s', mtex.object.name)
+	if tc == 'ORCO':
+		out.pack('<8s', mp)
 	out.end()
 	# texture unit chunk
 	out.begin('tex')
 	it = mtex.texture
-	out.pack( '<5B', tip,
-		('SPHERE','TUBE','CUBE','FLAT').index(mp),
+	out.pack( '<4B', tip,
 		('CLIP','REPEAT').index( it.extension ),
 		it.mipmap, it.interpolation)
 	# tex coords transformation
@@ -182,7 +183,7 @@ def save_mat_unit(mtex):
 		out.pack('<3f', v[0],v[1],v[2])
 	# image path
 	fullname = img.filename
-	print("\t\timage:", fullname, 'source:', img.source)
+	print("\t\tsource:",img.source, 'image:',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
 		print("\t\t(w) path cut to:", name)
