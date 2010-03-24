@@ -53,7 +53,7 @@ public class Shade:
 	public final refl_gen	= Object('/mod/refl_v')
 	public final refl_2d	= Object('/mod/refl_2d_f')
 	
-	#---	TexCoord shader storage	---#
+	# TexCoord shader storage
 	public final coordMap	= Dictionary[of string,Object]()
 	public def getCoordGen(input as string, uid as int) as Object:
 		uname = kri.Ant.Inst.slotUnits.Name[uid]
@@ -64,7 +64,7 @@ public class Shade:
 		text = """ ${kri.Ant.Inst.shaders.header}
 			uniform vec4 offset_${uname}, scale_${uname};
 			vec3 mi_${input}();	vec4 tc_${uname}()	{
-				vec4 v = vec4( mi_${input}(), 0.0 );
+				vec4 v = vec4( mi_${input}(), 1.0 );
 				return offset_${uname} + v * scale_${uname};
 			}"""
 		coordMap[skey] =rez= Object( ShaderType.VertexShader, text )

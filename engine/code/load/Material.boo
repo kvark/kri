@@ -87,8 +87,7 @@ public partial class Native:
 	
 	private struct UniData:
 		public id	as int
-		public sh	as kri.shade.Object
-		
+		public sh	as kri.shade.Object		
 	
 	#---	Parse texture slot	---#
 	public def p_tex() as bool:
