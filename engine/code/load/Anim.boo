@@ -6,7 +6,7 @@ import kri.ani.data
 public partial class Native:
 	public final anid		= Dictionary[of string,callable() as IChannel]()
 	public final badCurves	= Dictionary[of string,byte]()
-	#todo: gen static class here? separate generator methods?
+	#todo: gen static class here with separate generator methods?
 
 	# should be callable(ref kri.Spatial,ref T) as void (waiting for BOO-854)
 	# generates invalid binary format if using generics, bypassing with extenions
@@ -36,7 +36,7 @@ public partial class Native:
 			fun(pl as kri.Projector, v)
 
 	# fill action dictionary
-	public def fillAdic() as void:
+	public def fillAniDict() as void:
 		# spatial sub-trans
 		def fun_pos(ref sp as kri.Spatial, ref v as Vector3):
 			sp.pos = v
@@ -143,5 +143,6 @@ public partial class Native:
 			fun = readDefaultChannel(siz)
 		chan = fun()
 		return false	if not chan
+		chan.Tag = data_path
 		rec.channels.Add(chan)
 		return true

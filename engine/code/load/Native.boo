@@ -20,6 +20,7 @@ public class Atom:
 
 public partial class Native:
 	public static final NAME_LEN	= 8
+	public static final SHORT_LEN	= 12
 	public static final STR_LEN		= 24
 	public static final PATH_LEN	= 64
 	public final con	= Context()
@@ -27,9 +28,11 @@ public partial class Native:
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
+	private final finalActions	= List[of callable()]()
 	
 	public def constructor(*exclude as (string)):
-		fillAdic()
+		fillAniDict()
+		fillMapinDict()
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		# objects
@@ -40,6 +43,7 @@ public partial class Native:
 		dict['lamp']	= p_lamp
 		# material
 		dict['mat']		= p_mat
+		dict['mapin']	= p_mapin
 		dict['tex']		= p_tex
 		# animations
 		dict['action']	= p_action
@@ -76,8 +80,9 @@ public partial class Native:
 				assert bs.Position == size
 			else: bs.Seek(size, IO.SeekOrigin.Begin)
 		br.Close()
-		for m in at.mats.Values:
-			m.link()
+		for m in at.mats.Values:	m.link()
+		for act in finalActions:	act()
+		finalActions.Clear()
 		return at
 
 	protected def geData[of T]() as T:

@@ -8,10 +8,10 @@ import OpenTK
 # Shader Parameter Library
 public final class Param:
 	public final light		as par.Light
-	public final modelView	as par.Spatial	# object->world
-	public final lightView	as par.Spatial	# light->world
+	public final modelView	= par.spa.Shared()	# object->world
+	public final lightView	= par.spa.Shared()	# light->world
 	public final lightProj	= par.Project()	# light projection
-	public final camView	as par.Spatial	# camera->world
+	public final camView	= par.spa.Shared()	# camera->world
 	public final camProj	= par.Project()	# camera projection
 	public final parSize	= kri.shade.par.Value[of Vector4]()	# viewport size
 	public final parTime	= kri.shade.par.Value[of Vector4]()	# task time & delta
@@ -25,9 +25,9 @@ public final class Param:
 		
 	public def constructor(d as kri.shade.rep.Dict):
 		light = par.Light(d)
-		modelView	= par.Spatial(d,'s_model')
-		lightView	= par.Spatial(d,'s_lit')
-		camView		= par.Spatial(d,'s_cam')
+		modelView	.link(d,'s_model')
+		lightView	.link(d,'s_lit')
+		camView		.link(d,'s_cam')
 		d.add('proj_lit',		lightProj)
 		d.add('proj_cam',		camProj)
 		d.add('screen_size',	parSize)
@@ -36,6 +36,7 @@ public final class Param:
 
 # Shader Objects & Programs Library
 public class Shader( Dictionary[of string, kri.shade.Object] ):
+	public final header = "#version 130\n precision lowp float;\n"
 	public final gentleSet as (kri.shade.Object)
 	public def constructor():
 		super()

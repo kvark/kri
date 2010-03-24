@@ -157,26 +157,48 @@ def save_mat_unit(mtex):
 	if mtex.texture and mtex.texture.type == 'IMAGE':
 		img = mtex.texture.image
 	else:	print("\t\t(w)",'tex type is not IMAGE')
-	if not img or not tip: return
+	if not img or not tip: return tip
 	tc,mp = mtex.texture_coordinates, mtex.mapping
-	print("\ttexture: %d domain, %s coords, %s mapping" % (tip,tc,mp))
+	print("\ttexture: %d domain, %s input, %s mapping" % (tip,tc,mp))
+	# map input chunk
+	out.begin('mapin')
+	out.pack('<12s', tc)
+	if tc == 'UV':
+		out.pack('<8s', mtex.layer)
+	if tc == 'OBJECT':
+		out.pack('<24s', mtex.object.name)
+	out.end()
+	# texture unit chunk
 	out.begin('tex')
 	it = mtex.texture
-	out.pack( '<6B', tip,
-		('TANGENT','REFLECTION','NORMAL','WINDOW','UV','OBJECT','GLOBAL').index(tc),
+	out.pack( '<5B', tip,
 		('SPHERE','TUBE','CUBE','FLAT').index(mp),
 		('CLIP','REPEAT').index( it.extension ),
 		it.mipmap, it.interpolation)
 	# tex coords transformation
 	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
-		print("\t(w) tex coord swizzling not supported")
+		print("\t(w)",'tex coord swizzling not supported')
 	for v in (mtex.offset,mtex.size):
 		out.pack('<3f', v[0],v[1],v[2])
 	# image path
-	name = img.filename
-	print("\t\timage: ", name)
+	fullname = img.filename
+	print("\t\timage:", fullname, 'source:', img.source)
+	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
+	if name != fullname:
+		print("\t\t(w) path cut to:", name)
+	assert len(name)<64
 	out.pack( '<64s', name )
 	out.end()
+	if img.source == 'SEQUENCE':
+		# image sequence chunk
+		user = mtex.texture.image_user
+		out.begin('im_seq')
+		out.pack( '<3H', user.frames, user.offset, user.start_frame )
+		out.end()
+	elif img.source != 'FILE':
+		print("\t\t(w)",'bad image source')
+	return tip
+
 
 ###  MATERIAL:CORE   ###
 
@@ -196,8 +218,14 @@ def save_mat(mat):
 		mat.specular_hardness, mat.ambient )
 	out.end()
 	# texture units
+	targets,over = [],False
 	for mt in mat.texture_slots:
-		if mt: save_mat_unit(mt)
+		if not mt: continue
+		tg = save_mat_unit(mt)
+		if tg and tg in targets: over = True
+		else: targets.append(tg)
+	if over:
+		print("\t(w)",'units overlap detected')
 
 
 ###  MESH   ###
@@ -237,9 +265,9 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		__slots__ = 'v', 'vi', 'no', 'uv', 'mat', 'ta', 'hand', 'normal', 'wes'
 		def __init__(self, face, vs, ind = None, uves = None):
 			if not ind: # clone KRI face
-				self.vi = list(face.vi)
-				self.hand = face.hand
-				self.mat = face.mat
+				self.vi		= list(face.vi)
+				self.hand	= face.hand
+				self.mat	= face.mat
 				return
 			# this section requires optimization!
 			# hint: try 'Recalculate Outside' if getting lighting problems
@@ -251,7 +279,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			self.uv = [ uves[i]	for i in ind ] if uves else None
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
 			self.wes = 3 * [0.01+nv.dot(nv)]
-			assert t.length > 0.0
+			assert t.dot(t) > 0.001
 			self.ta = t.normalize()
 			self.hand = hand
 	

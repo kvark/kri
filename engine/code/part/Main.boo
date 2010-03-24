@@ -88,7 +88,7 @@ public class Manager:
 			type:VertexAttribPointerType.Float ))
 		sys_name = id2out( pc.at_sys )
 
-		s_version = "\n#version 140\n"
+		s_version = kri.Ant.Inst.shaders.header
 		code_init	= "\nvoid init()	{"
 		code_reset	= "\nvoid reset()	{"
 		code_update	= "\nfloat update()	{\n\treturn 1.0"

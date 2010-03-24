@@ -7,8 +7,8 @@ import kri.shade
 public static class Scalars:
 	public final name	= 'mat_scalars'
 
-#----------------------
 
+#---	Basic meta-data		---#
 public class Basic():
 	public shader	as Object	= null	# implementation shader
 	public virtual def clone() as Basic:
@@ -16,9 +16,20 @@ public class Basic():
 	public virtual def link(d as rep.Dict) as void:
 		pass
 
+public class Named(Basic):
+	public name	as string	= ''
 
+#---	Map Input : OBJECT		---#
+public class InputObject(Named):
+	public final par	= kri.lib.par.spa.Linked()
+	public override def link(d as rep.Dict) as void:
+		par.link(d,'s_target')
+
+
+#---	Map texture meta-unit	---#
 public class Unit():
 	public tex	as kri.Texture	= null
+	public final liMeta		as Basic	# linked meta data
 	public final generator	as Object	# to generate the coordinate
 	public final sampler	as Object	# to sample from the texture
 
@@ -27,17 +38,19 @@ public class Unit():
 	portal Offset	as Vector4	= pOffset.Value
 	portal Scale	as Vector4	= pScale.Value
 
-	public def constructor(sh_gen as Object, sh_use as Object):
-		generator,sampler = sh_gen,sh_use
+	public def constructor(linkedMeta as Basic, sh_gen as Object, sh_use as Object):
+		liMeta,generator,sampler = linkedMeta,sh_gen,sh_use
 		self.Offset	= Vector4.Zero
 		self.Scale	= Vector4.One
 	public def constructor(u as Unit):
+		liMeta = u.liMeta
 		generator = u.generator
 		sampler = u.sampler
 		tex = u.tex
 		self.Offset = u.Offset
 		self.Scale = u.Scale
 	public def link(d as rep.Dict, name as string) as void:
+		liMeta.link(d)	if liMeta
 		d.add('offset_'+name, pOffset)
 		d.add('scale_' +name, pScale)
 

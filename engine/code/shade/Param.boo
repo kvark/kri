@@ -10,7 +10,6 @@ import System
 public interface IBase[of T]:
 	Value as T:
 		get
-		set
 
 public class Value[of T](IBase[of T]):
 	[property(Value)]

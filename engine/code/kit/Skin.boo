@@ -38,7 +38,7 @@ public class Update( kri.rend.Basic ):
 	private final tf	= kri.TransFeedback()
 	private final sa	= kri.shade.Smart()
 	private final va	= kri.vb.Array()
-	private final par	= array[of kri.lib.par.Spatial](80)
+	private final par	= array( kri.lib.par.spa.Shared() for i in range(80) )
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	= at_mod + (kri.Ant.Inst.attribs.skin,)
 
@@ -46,8 +46,7 @@ public class Update( kri.rend.Basic ):
 		super(false)
 		dict = kri.shade.rep.Dict()
 		for i in range(par.Length):
-			name = "bone[${i}]"
-			par[i] = kri.lib.par.Spatial(dict,name)
+			par[i].link( dict, "bone[${i}]" )
 		# prepare shader
 		sa.add( '/skin_v', 'quat' )
 		tf.setup(sa, true, 'to_vertex', 'to_quat')

@@ -24,6 +24,7 @@ public class Material( IApplyable, ani.data.Player ):
 			continue	if not u
 			unit[i] = kri.meta.Unit(u)
 		for i in range(meta.Length):
+			#warning! shared metas are not cloned
 			b = m.meta[i]
 			continue	if not b
 			meta[i] = b.clone()
@@ -50,13 +51,14 @@ public class Material( IApplyable, ani.data.Player ):
 		def push(h as shade.Object):
 			return	if not h #or sl.Contains(h)
 			sl.Add(h)
+		def addMeta(m as meta.Basic):
+			push( m.shader )	if m
 		for i in me:
-			m = meta[i]
-			return null	if not m
-			push( m.shader )
+			addMeta(meta[i])
 		for i in un:
 			u = unit[i]
 			return null if not u
+			addMeta( u.liMeta )
 			push( u.generator )
 			push( u.sampler )
 		return sl

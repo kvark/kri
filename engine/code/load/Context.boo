@@ -1,6 +1,7 @@
 ﻿namespace kri.load
 
 import System
+import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
@@ -51,6 +52,23 @@ public class Shade:
 	public final bump_2d	= Object('/mod/bump_2d_f')
 	public final refl_gen	= Object('/mod/refl_v')
 	public final refl_2d	= Object('/mod/refl_2d_f')
+	
+	#---	TexCoord shader storage	---#
+	public final coordMap	= Dictionary[of string,Object]()
+	public def getCoordGen(input as string, uid as int) as Object:
+		uname = kri.Ant.Inst.slotUnits.Name[uid]
+		skey = "${input}:${uname}"
+		rez as Object = null
+		if coordMap.TryGetValue(skey,rez):
+			return rez
+		text = """ ${kri.Ant.Inst.shaders.header}
+			uniform vec4 offset_${uname}, scale_${uname};
+			vec3 mi_${input}();	vec4 tc_${uname}()	{
+				vec4 v = vec4( mi_${input}(), 0.0 );
+				return offset_${uname} + v * scale_${uname};
+			}"""
+		coordMap[skey] =rez= Object( ShaderType.VertexShader, text )
+		return rez
 
 
 public class Context:
@@ -75,7 +93,7 @@ public class Context:
 		mSpec.shader = slib.phong
 		mParx.shader = slib.shift0
 		un as kri.meta.Unit = null
-		mDef.unit[ kri.Ant.Inst.units.texture	] = un = kri.meta.Unit( slib.text_gen0, slib.text_2d )
+		mDef.unit[ kri.Ant.Inst.units.texture	] =un= kri.meta.Unit( null, slib.text_gen0, slib.text_2d )
 		un.tex = MakeTex(0xFF,0xFF,0xFF,0xFF)
-		mDef.unit[ kri.Ant.Inst.units.bump		] = un = kri.meta.Unit( slib.bump_gen0, slib.bump_2d )
+		mDef.unit[ kri.Ant.Inst.units.bump		] =un= kri.meta.Unit( null, slib.bump_gen0, slib.bump_2d )
 		un.tex = MakeTex(0x80,0x80,0xFF,0x80)

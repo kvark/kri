@@ -1,8 +1,41 @@
 ﻿namespace kri.load
 
+import kri.meta
 import OpenTK.Graphics
 
 public partial class Native:
+	public final limdic		= Dictionary[of string,callable() as Named]()
+	public static final defMapin = Named()
+	
+	public def fillMapinDict() as void:
+		sob = Dictionary[of string, kri.shade.Object]()
+		def genFun(x as Named):
+			return {return x}
+		for s in ('GLOBAL','OBJECT','UV','ORCO','WINDOW','NORMAL','REFLECTION','TANGENT'):
+			slow = s.ToLower()
+			sob[s] = sh = kri.shade.Object( "/mi/${slow}_v" )
+			mt = Named( shader:sh, name:slow )	# careful!
+			limdic[s] = genFun(mt)
+		limdic['OBJECT'] = do():
+			name = getString(STR_LEN)
+			mio = InputObject( shader:sob['OBJECT'], name:'object' )
+			finalActions.Add() do():
+				nd = at.nodes[name]
+				mio.par.activate(nd)
+			return mio
+
+	
+	#---	Map input	---#
+	public def p_mapin() as bool:
+		name = getString(SHORT_LEN)
+		fun as callable() as Named = null
+		if limdic.TryGetValue(name,fun):
+			mt = fun()
+		else: mt = defMapin
+		puData(mt)
+		return mt != defMapin
+
+
 	protected def getTexture(str as string) as kri.Texture:
 		#TODO: support for other formats
 		return Targa(str).Result.generate()
@@ -13,10 +46,10 @@ public partial class Native:
 		at.mats[m.name] = m
 		puData(m)
 		scalars = kri.shade.par.Value[of Vector4]()
-		m.meta[ con.ms.emissive ] = mEmis = kri.meta.Emission()
-		m.meta[ con.ms.diffuse	] = mDiff = kri.meta.Diffuse(scalars)
-		m.meta[ con.ms.specular	] = mSpec = kri.meta.Specular(scalars)
-		m.meta[ con.ms.parallax	] = mParx = kri.meta.Parallax(scalars)
+		m.meta[ con.ms.emissive ] = mEmis = Emission()
+		m.meta[ con.ms.diffuse	] = mDiff = Diffuse(scalars)
+		m.meta[ con.ms.specular	] = mSpec = Specular(scalars)
+		m.meta[ con.ms.parallax	] = mParx = Parallax(scalars)
 		# colors
 		mEmis.Color = getColorByte()
 		mDiff.Color = getColorByte()
@@ -37,9 +70,10 @@ public partial class Native:
 		# units
 		con.mDef.unit.CopyTo( m.unit,0 )
 		return true
-	
+
+
 	#---	Enumerations	---#
-	#have to be the same as the export script uses
+	#! have to be the same as the export script uses
 	public enum TexType:
 		None
 		Diffuse
@@ -47,44 +81,40 @@ public partial class Native:
 		Emission
 		Specular
 		Reflection
-	public enum TexCoord:
-		Tangent
-		Reflection
-		Normal
-		Window
-		UV
-		Object
-		Global
 	public enum TexMapping:
 		Sphere
 		Tube
 		Cube
 		Flat
+	
+	private struct UniData:
+		public id	as int
+		public sh	as kri.shade.Object
 		
+	
 	#---	Parse texture slot	---#
 	public def p_tex() as bool:
-		m = geData[of kri.Material]()
+		m	= geData[of kri.Material]()
+		inp	= geData[of Named]()
 		return false	if not m
 		tip		= cast(TexType,		br.ReadByte())
 		return true		if tip == TexType.None
-		coord	= cast(TexCoord,	br.ReadByte())
 		mapping = cast(TexMapping,	br.ReadByte())
 		Image.bRepeat	= br.ReadByte()>0	# extend by repeat
 		Image.bMipMap	= br.ReadByte()>0	# generate mip-maps
 		Image.bFilter	= br.ReadByte()>0	# linear filtering
 		return false	if mapping != TexMapping.Flat
 		# create unit with proper shaders
-		un as kri.meta.Unit	= null
-		if   tip == TexType.Diffuse:
-			assert coord == TexCoord.UV
-			m.unit[kri.Ant.inst.units.texture	] =un= kri.meta.Unit( con.slib.text_gen1, con.slib.text_2d )
-		elif tip == TexType.Normal:
-			assert coord == TexCoord.UV
-			m.unit[kri.Ant.inst.units.bump		] =un= kri.meta.Unit( con.slib.bump_gen1, con.slib.bump_2d )
-		elif tip == TexType.Reflection:
-			assert coord == TexCoord.Reflection
-			m.unit[kri.Ant.inst.units.reflect	] =un= kri.meta.Unit( con.slib.refl_gen, con.slib.refl_2d )
-		else:	return false
+		us = kri.Ant.inst.units
+		uniDict = Dictionary[of TexType,UniData]()
+		uniDict[TexType.Diffuse		] = UniData( id:us.texture,	sh:con.slib.text_2d )
+		uniDict[TexType.Normal		] = UniData( id:us.bump,	sh:con.slib.bump_2d )
+		uniDict[TexType.Reflection	] = UniData( id:us.reflect,	sh:con.slib.refl_2d )
+		udata as UniData
+		if not uniDict.TryGetValue(tip,udata):
+			return false
+		sh_gen = con.slib.getCoordGen( inp.name, udata.id ) 
+		m.unit[ udata.id ] = un = Unit( inp, sh_gen, udata.sh )
 		# texcoords & image path
 		un.Offset	= Vector4(getVector(), 0.0)
 		un.Scale	= Vector4(getVector(), 1.0)

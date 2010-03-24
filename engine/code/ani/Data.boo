@@ -21,6 +21,9 @@ public interface IChannel:
 	def update(pl as IPlayer, time as single) as void
 	Valid as bool:
 		get
+	Tag	as string:
+		get
+		set
 
 
 #---------------------
@@ -36,6 +39,8 @@ public class Channel[of T(struct)](IChannel):
 	public lerp			as callable	= null	#(ref T, ref T,single) as T
 	public bezier		as bool	= true
 	public extrapolate	as bool	= false
+	[Property(Tag)]
+	private tag	as string	= ''
 	
 	IChannel.Valid as bool:
 		get: return fup!=null and lerp!=null
@@ -87,9 +92,10 @@ public class Player(IPlayer):
 		pass
 	public def play(name as string) as Anim:
 		rec = anims.Find({r| return r.name == name})
-		assert rec and 'Action not found'
-		assert rec.check() and 'Acton not fully supported'
-		return Anim(self,rec)
+		if rec:
+			assert rec.check() and 'Acton not fully supported'
+			return Anim(self,rec)
+		else: return null
 
 
 #---------------------
