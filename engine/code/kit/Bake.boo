@@ -40,7 +40,7 @@ public class Update( kri.rend.tech.Basic ):
 			buf.init(tag.wid, tag.het)
 			a = kri.Ant.Inst.attribs
 			if	not e.va[tid]:
-				e.enable(tid, (a.vertex, a.quat, a.tex))
+				e.enable(tid, (a.vertex, a.quat, a.tex[0]))
 			else:	e.va[tid].bind()
 			buf.mask = 0
 			for i in range(units.Length):

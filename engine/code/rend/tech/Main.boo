@@ -81,13 +81,12 @@ public class Meta(General):
 		shobs = sh
 	protected def constructor(name as string, mets as (string), sh as (kri.shade.Object)):
 		super(name)
-		mList = mets
-		shobs = sh
+		mList,shobs = mets,sh
 	protected override def getUpdate(mat as kri.Material) as callable() as int:
 		return def() as int:
 			mat.apply()	# deprecated!
 			return 1
-	private static def GenerateKey(shlist as IEnumerable[of kri.shade.Object]) as string:
+	private static def GenerateKey(shlist as kri.shade.Object*) as string:
 		return String.Join(':', array(x.id.ToString() for x in shlist) )
 	
 	private override def construct(mat as kri.Material) as kri.shade.Smart:

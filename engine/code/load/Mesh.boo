@@ -27,10 +27,10 @@ public partial class Native:
 	#---	Parse mesh vertices	---#
 	public def pv_pos() as bool:
 		ai = kri.vb.attr.Info(
-			slot: kri.Ant.Inst.attribs.vertex, size:3,
+			slot: kri.Ant.Inst.attribs.vertex, size:4,
 			type: VertexAttribPointerType.Float,
 			integer:false )
-		return getArray[of Vector3](1,ai,getVector)
+		return getArray[of Vector4](1,ai,getVec4)
 	
 	#---	Parse mesh quaternions 	---#
 	public def pv_quat() as bool:
@@ -42,11 +42,14 @@ public partial class Native:
 	
 	#---	Parse mesh texture coordinates (UVh)	---#
 	public def pv_uv() as bool:
-		ai = kri.vb.attr.Info(	#warning! no multi-coord support
-			slot: kri.Ant.Inst.attribs.tex, size:3,
-			type: VertexAttribPointerType.Float,
+		m = geData[of kri.Mesh]()
+		return false	if not m
+		slot = System.Array.Find( kri.Ant.Inst.attribs.tex ) do(i as int):
+			return m.find(i) != null
+		ai = kri.vb.attr.Info( slot:slot, size:2,
+			type:VertexAttribPointerType.Float,
 			integer:false )
-		return getArray[of Vector3](1,ai,getVector)
+		return getArray[of Vector2](1,ai,getVec2)
 	
 	#---	Parse mesh armature link with bone weights	---#
 	public def pv_skin() as bool:

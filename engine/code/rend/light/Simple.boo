@@ -94,7 +94,7 @@ public class ApplyM2( rend.tech.Meta ):
 
 	public def constructor(lc as Context):
 		name = ('simple','exponent2')[lc.expo]
-		super('lit.apply', ('bump','handness','diffuse','specular','glossiness'),
+		super('lit.apply', ('bump','diffuse','specular','glossiness'),
 			array(shade.Object('/light/'+str) for str in ('apply2_v','apply2_f',"shadow/${name}_f"))
 			)
 		dict.attach(lc.dict)

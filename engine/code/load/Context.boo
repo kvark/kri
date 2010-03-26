@@ -70,8 +70,6 @@ public class Shade:
 	public final specular_u		= Object('/mod/specular_U_f')
 	public final glossiness_u	= Object('/mod/glossiness_U_f')
 	public final bump_c			= Object('/mod/bump_C_f')
-	public final handness_c		= Object('/mod/handness_C_v')
-	public final handness_a		= Object('/mod/handness_A_v')
 	
 	# TexCoord shader storage: DEPRECATED
 	public final coordMap	= Dictionary[of string,Object]()
@@ -124,4 +122,3 @@ public class Context:
 		mlis.Add(Data_Color4( Name:'specular',	shader:slib.specular_u,	Value:Color4.White ))
 		mlis.Add(Data_single( Name:'glossiness',	shader:slib.glossiness_u,	Value:0.5f ))
 		mlis.Add(Data_Color4( Name:'bump',		shader:slib.bump_c ))
-		mlis.Add(Advanced( Name:'handness',		shader:slib.handness_c ))

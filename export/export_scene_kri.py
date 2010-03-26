@@ -164,7 +164,7 @@ def save_mat_unit(mtex):
 	out.begin('mapin')
 	out.pack('<12s', tc)
 	if tc == 'UV':
-		out.pack('<8s', mtex.layer)
+		out.pack('<8s', mtex.uv_layer)
 	if tc == 'OBJECT':
 		out.pack('<24s', mtex.object.name)
 	if tc == 'ORCO':
@@ -238,16 +238,15 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		va = verts[1].co - verts[0].co
 		vb = verts[2].co - verts[0].co
 		n0 = n1 = va.cross(vb)
-		if uvs and n1.dot(n1) > 0.0:
-			ta = uvs[1] - uvs[0]
-			tb = uvs[2] - uvs[0]
-			if ta.dot(ta)+tb.dot(tb) == 0.0:
-				n_bad_uv += 1
-			tan = va*tb.y - vb*ta.y
-			bit = vb*ta.x - va*tb.x
-			# don't care about the length for now
-			n0 = tan.cross(bit)
-		else:	tan,bit = va,vb
+		tan,bit = va,vb
+		if len(uvs) and n1.dot(n1) > 0.0:
+			ta = uvs[0][1] - uvs[0][0]
+			tb = uvs[0][2] - uvs[0][0]
+			if ta.dot(ta)+tb.dot(tb) > 0.0:
+				tan = va*tb.y - vb*ta.y
+				bit = vb*ta.x - va*tb.x
+				n0 = tan.cross(bit)
+			else:	n_bad_uv += 1
 		hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
 		return (tan, bit, n0, hand, n1)
 
@@ -271,30 +270,31 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 				self.mat	= face.mat
 				return
 			# this section requires optimization!
+			# todo: try tuples instead of lists
 			# hint: try 'Recalculate Outside' if getting lighting problems
 			self.mat = face.material_index
 			self.vi = [ face.verts[i]	for i in ind   ]
 			self.v  = [ vs[x]		for x in self.vi ]
 			self.no = [ x.normal		for x in self.v  ]
 			self.normal = (face.normal,Math.Vector(0,0,0))[face.smooth]
-			self.uv = [ uves[i]	for i in ind ] if uves else None
+			self.uv = [[ layer[i]	for i in ind ] for layer in uves]
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
-			self.wes = 3 * [0.01+nv.dot(nv)]
-			assert t.dot(t) > 0.001
+			self.wes = 3 * [kEpsilon2+nv.dot(nv)]
+			assert t.dot(t) > 0.0
 			self.ta = t.normalize()
 			self.hand = hand
 	
 	#todo: support any UV layers
-	uv_act = mesh.active_uv_texture
-	if not uv_act: print("\t(w)",'no UV layers')
+	print("\t", 'UV layers:', len(mesh.uv_textures) )
 
 	#   1: convert Mesh to Triangle Mesh
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
-		uves,nvert = None,len(face.verts)
-		if uv_act:
-			d = uv_act.data[i]
-			uves = [Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4)]
+		uves,nvert = [],len(face.verts)
+		for layer in mesh.uv_textures:
+			d = layer.data[i]
+			cur = [Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4)]
+			uves.append(cur)
 		if nvert<3: continue
 		ar_face.append( Face(face, mesh.verts, [0,1,2], uves) )
 		if nvert<4: continue
@@ -311,7 +311,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		for i in range(3):
 			v = Vertex( face.v[i] ) 
 			v.normal = (nor if nor.dot(nor)>0.1 else face.no[i])
-			v.tex = (face.uv[i] if face.uv else None)
+			v.tex = [layer[i] for layer in face.uv]
 			v.face = face
 			vs = str((v.coord,v.tex,v.normal,face.hand))
 			if not vs in set_vert:
@@ -365,7 +365,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			src = ar_vert[ f.vi[pos] ]
 			dst = Vertex(src.vert)
 			dst.face = f
-			dst.tex = (src.tex.copy() if src.tex else None)
+			dst.tex = [layer.copy() for layer in src.tex]
 			dst.quat = src.quat.copy().negate()
 			dst.dual = f.vi[pos]
 			f.vi[pos] = src.dual = len(ar_vert)
@@ -401,9 +401,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			v.coord = 0.5 * (va.coord + vb.coord)
 			v.quat = va.quat + vb.quat
 			v.quat.normalize()
-			if va.tex and vb.tex:
-				v.tex = 0.5 * (va.tex + vb.tex)
-			else:	v.tex = None
+			v.tex = [0.5*(x[0]+x[1]) for x in zip(va.tex,vb.tex)]
 			# create additional face
 			f2 = Face(f, mesh.verts)
 			mark_used(f.vi[ia])	# caution: easy to miss case
@@ -433,18 +431,19 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	out.end()
 	out.begin('v_pos')
 	for v in ar_vert:
-		out.pack('<3f', v.coord.x, v.coord.y, v.coord.z)
+		out.pack('<4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
 	out.end()
 	out.begin('v_quat')
 	for v in ar_vert:
 		out.pack('<4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
 	out.end()
-	if uv_act:
+	for i,layer in enumerate(mesh.uv_textures):
 		out.begin('v_uv')
 		for v in ar_vert:
-			out.pack('<3f', v.tex.x, v.tex.y, v.face.hand)
+			assert i<len(v.tex)
+			out.pack('<2f', v.tex[i].x, v.tex[i].y)
 		out.end()
-	
+
 	out.begin('v_ind')
 	out.pack('<H', len(ar_face))
 	for face in ar_face:

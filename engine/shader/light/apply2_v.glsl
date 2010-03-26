@@ -1,8 +1,7 @@
 ﻿#version 130
 precision lowp float;
 
-in vec3 at_vertex;
-in vec4 at_quat;
+in vec4 at_vertex,at_quat;
 out vec3 v2lit,v2cam;
 out vec4 v_shadow;
 out float lit_int;
@@ -27,14 +26,13 @@ float get_proj_depth(float,vec4);
 
 //mat
 void make_tex_coords();
-float get_handness();
 
 void main()	{
 	// gen coords
 	make_tex_coords();
 
 	// vertex in world space
-	vec3 v = trans_for(at_vertex, s_model);
+	vec3 v = trans_for(at_vertex.xyz, s_model);
 	vec3 v_lit = s_lit.pos.xyz - v;
 	vec3 v_cam = s_cam.pos.xyz - v;
 	lit_int = get_attenuation( length(v_lit) );
@@ -44,11 +42,10 @@ void main()	{
 	gl_Position = get_projection(vc, proj_cam);
 	
 	// world -> tangent space transform
+	vec3 hand = vec3(at_vertex.w, 1.0,1.0);
 	vec4 quat = qinv(qmul( s_model.rot, at_quat ));
-	v2lit = qrot(quat, v_lit);
-	v2lit.x *= get_handness();
-	v2cam = qrot(quat, v_cam);
-	v2cam.x *= get_handness();
+	v2lit = hand * qrot(quat, v_lit);
+	v2cam = hand * qrot(quat, v_cam);
 	
 	// vertex in light space
 	vec3 vl = trans_inv(v, s_lit);

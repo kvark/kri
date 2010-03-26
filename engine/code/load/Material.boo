@@ -76,7 +76,6 @@ public partial class Native:
 		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:mSpec.Color )
 		m.Meta['glossiness']	= Data_single( shader:con.slib.glossiness_u,	Value:mSpec.Glossiness )
 		m.Meta['bump']		= Data_Color4( shader:con.slib.bump_c )
-		m.Meta['handness']	= Advanced( shader:con.slib.handness_c )
 		# units
 		con.mDef.unit.CopyTo( m.unit,0 )
 		return true

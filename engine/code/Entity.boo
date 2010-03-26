@@ -88,7 +88,7 @@ public class Entity( vb.attr.Storage ):
 		return null as T
 		#return tags.Find( {t| return t isa T} ) as T
 	
-	public def enable(ids as IEnumerable[of int]) as void:
+	public def enable(ids as int*) as void:
 		for i in ids:
 			continue if bind(i)
 			continue if mesh.bind(i)
@@ -96,7 +96,7 @@ public class Entity( vb.attr.Storage ):
 			assert not 'valid attrib: ' + sat.Name[i]
 		mesh.ind.bind()	if mesh.ind
 
-	public def enable(tid as int, ids as IEnumerable[of int]) as bool:
+	public def enable(tid as int, ids as int*) as bool:
 		va[tid] = vb.Array()
 		va[tid].bind()
 		enable(ids)

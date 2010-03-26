@@ -77,9 +77,10 @@ public final class Attrib:
 	public final vertex		as int
 	public final quat		as int
 	public final skin		as int
-	public final tex		as int
+	public final tex		= (of int: 0,0,0,0)
 	internal def constructor(s as Slot):
 		vertex	= s.getForced('vertex')
 		quat	= s.getForced('quat')
 		skin	= s.getForced('skin')
-		tex		= s.getForced('tex')
+		for i in range(tex.Length):
+			tex[i]	= s.getForced('tex'+i)

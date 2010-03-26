@@ -17,6 +17,7 @@ public class Context:
 	public mipmap	as bool = false
 	public smooth	as bool	= true
 	public expo		as bool	= false
+	public parallax	as bool = true
 	public final defShadow	= kri.Texture( TextureTarget.Texture2D )
 	# init
 	public def constructor(nlay as uint, qlog as uint):
