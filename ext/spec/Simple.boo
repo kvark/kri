@@ -5,15 +5,6 @@ import System.Collections.Generic
 import Boo.Lang.Compiler
 
 
-internal def getPredicate(*names as (string)) as Ast.NodePredicate:
-	return def(n as Ast.Node):
-		st = n as Ast.SimpleTypeReference
-		return false	if not st
-		for n in names:
-			return true	if st.Name == n
-		return false
-
-
 #---	Make class specializations with name change	---#
 
 [AttributeUsage(AttributeTargets.Class)]
@@ -33,16 +24,21 @@ public class Class(AbstractAstAttribute):
 		if not nPar:	raise 'target has to be generic'
 		if nPar > 1:	raise 'supports only one generic param'
 		klass = c.DeclaringType
-		pred = getPredicate( c.GenericParameters[0].Name )
+		gename = c.GenericParameters[0].Name
+		pred = getPredicate(gename)
+		razor = ParameterRazor()
+		fullpar = "${c.FullName}.${gename}"
 		#printXml(m,	'class-gen')
 		
 		for t in tips:
 			sc = c.CleanClone()
-			pred = getPredicate( sc.GenericParameters[0].Name )
+			pred = getPredicate( gename, fullpar )
 			sc.GenericParameters = null
 			sc.Name += '_' + t.Name.Split( char('.') )[-1]
 			# finish the transformation
-			sc.ReplaceNodes(pred,t)
+			sc.ReplaceNodes(pred,t)	
+			for b in sc.BaseTypes:
+				b.Accept(razor)
 			klass.Members.Add(sc)
 	
 

@@ -14,7 +14,7 @@ public interface IBase:
 	def upload() as void
 
 # Uniform param representor (per shader)
-#[ext.spec.Class(int,single,Color4,Vector4,Quaternion)]
+[ext.spec.Class(int,single,Color4,Vector4,Quaternion)]
 public class Uniform[of T(struct)]( par.Cached[of T], IBase ):
 	private final loc as int
 	public def constructor(p as par.IBase[of T], newloc as int):
@@ -28,23 +28,29 @@ public class Uniform[of T(struct)]( par.Cached[of T], IBase ):
 # Texture Unit representor
 public class Unit(IBase):
 	private final tun	as int
-	private final p		as par.Unit
-	public def constructor(id as int, pu as par.Unit):
+	private final p		as par.IBase[of kri.Texture]
+	public def constructor(id as int, pu as par.IBase[of kri.Texture]):
 		tun,p = id,pu
 	def IBase.upload() as void:
-		#can't cache as long as not tracking GL bind calls
-		#return	if not p.update()
-		p.Value.bind(tun)
+		p.Value.bind(tun)	if p.Value
 
 
 # Standard uniform dictionary
 public class Dict( SortedDictionary[of string,callable] ):
 	# could be callable(int) of IBase here
-	[ext.spec.MethodSubClass(Uniform, int,single,Color4,Vector4,Quaternion)]
-	#[ext.spec.ForkMethodEx(Uniform, int,single,Color4,Vector4,Quaternion)]
+	[ext.spec.ForkMethodEx(Uniform, int,single,Color4,Vector4,Quaternion)]
 	public def add[of T(struct)](name as string, iv as par.IBase[of T]) as void:
 		Add(name) do(loc as int):
 			return Uniform[of T](iv,loc)
+	# add texture unit representor
+	public def unit(it as par.ITexture, tun as int) as bool:
+		name = 'unit_' + it.Name2
+		return false	if ContainsKey(name)
+		Add(name) do(loc as int):
+			OpenGL.GL.Uniform1(loc,tun)
+			return rep.Unit(tun,it)
+		return true
+	# copy contents of another dictionary
 	public def attach(dict as Dict) as void:
 		for p in dict:
 			Add(p.Key, p.Value)

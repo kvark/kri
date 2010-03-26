@@ -4,26 +4,67 @@ import OpenTK
 import OpenTK.Graphics
 import kri.shade
 
-public static class Scalars:
+public static class Scalars:	# deprecated!
 	public final name	= 'mat_scalars'
+
+public interface IValued[of T(struct)]:
+	Value as T:
+		get
+		set
 
 
 #---	Basic meta-data		---#
-public class Basic():
-	public shader	as Object	= null	# implementation shader
+public class Basic:
+	public shader	as Object	= null	# shader port
 	public virtual def clone() as Basic:
 		return Basic(shader:shader)
 	public virtual def link(d as rep.Dict) as void:
 		pass
 
-public class Named(Basic):
-	public name	as string	= ''
+public class Hermit(Basic):
+	[Property(Name)]
+	protected name	as string	= ''
 
 #---	Map Input : OBJECT		---#
-public class InputObject(Named):
-	public final par	= kri.lib.par.spa.Linked()
+public class InputObject(Hermit):
+	public final pNode	= kri.lib.par.spa.Linked()
 	public override def link(d as rep.Dict) as void:
-		par.link(d,'s_target')
+		pNode.link(d,'s_target')
+
+
+public class Advanced(Hermit):
+	public unit	as AdUnit	= null
+	protected def copyTo(m as Advanced) as void:
+		m.shader = shader
+		m.unit = unit
+	public override def clone() as Basic:
+		m = Advanced()
+		copyTo(m)
+		return m
+	
+
+public class AdUnit( Hermit, par.ITexture ):
+	public input	as Hermit		= null
+	[Property(Value)]
+	private tex		as kri.Texture	= null
+	#required to bypass BOO-1294
+	public Name2 	as string:
+		get: return name
+
+	public final pOffset	= par.Value[of Vector4]()
+	public final pScale		= par.Value[of Vector4]()
+	
+	public override def link(d as rep.Dict) as void:
+		d.add('offset_'+Name, pOffset)
+		d.add('scale_' +Name, pScale)
+
+[ext.spec.Class(single,Color4)]
+[ext.RemoveSource()]
+public class Data[of T(struct)]( Advanced, IValued[of T] ):
+	private final pVal	= par.Value[of T]()
+	portal Value as T	= pVal.Value
+	public override def link(d as rep.Dict) as void:
+		d.add('mat_'+name, pVal)
 
 
 #---	Map texture meta-unit	---#

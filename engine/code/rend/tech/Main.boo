@@ -68,8 +68,9 @@ public class General(Basic):
 #---------	META TECHNIQUE	--------#
 
 public class Meta(General):
-	private final units	as (int)
-	private	final metas	as (int)
+	private final units	as (int)	= null	# deprecated
+	private	final metas	as (int)	= null	# deprecated
+	private final mList	as (string)
 	private final shobs	as (kri.shade.Object)
 	private final sMap		= SortedDictionary[of string, kri.shade.Smart]()
 	protected final dict	= kri.shade.rep.Dict()
@@ -78,22 +79,28 @@ public class Meta(General):
 		super(name)
 		units,metas = unis,mets
 		shobs = sh
+	protected def constructor(name as string, mets as (string), sh as (kri.shade.Object)):
+		super(name)
+		mList = mets
+		shobs = sh
 	protected override def getUpdate(mat as kri.Material) as callable() as int:
 		return def() as int:
-			mat.apply()
+			mat.apply()	# deprecated!
 			return 1
-	private def list2key(shlist as IEnumerable[of kri.shade.Object]) as string:
-		sar = array[of string](sh.id.ToString() for sh in shlist)
-		return String.Join('',sar)
+	private static def GenerateKey(shlist as IEnumerable[of kri.shade.Object]) as string:
+		return String.Join(':', array(x.id.ToString() for x in shlist) )
 	
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
-		sl = mat.collect(units,metas)
+		if units and metas:
+			sl = mat.collect(units,metas)
+		else: # META-2
+			sl = mat.collect(mList)
 		return kri.shade.Smart.Fixed	if not sl
-		key = list2key(sl)
+		key = GenerateKey(sl)
 		sa as kri.shade.Smart = null
 		return sa	if sMap.TryGetValue(key,sa)
 		sa = kri.shade.Smart()
 		sMap.Add(key,sa)
-		sa.add( *(kri.Ant.Inst.shaders.gentleSet + array[of kri.shade.Object](sl) + shobs) )
+		sa.add( *(kri.Ant.Inst.shaders.gentleSet + array(sl) + shobs) )
 		sa.link(kri.Ant.Inst.slotAttributes, dict, mat.dict, kri.Ant.Inst.dict) 
 		return sa

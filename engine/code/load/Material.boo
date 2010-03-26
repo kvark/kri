@@ -4,34 +4,34 @@ import kri.meta
 import OpenTK.Graphics
 
 public partial class Native:
-	public final limdic		= Dictionary[of string,callable() as Named]()
-	public static final defMapin = Named()
+	public final limdic		= Dictionary[of string,callable() as Hermit]()
+	public static final defMapin = Hermit()
 
 	public def fillMapinDict() as void:
 		sob = Dictionary[of string, kri.shade.Object]()
-		def genFun(x as Named):
+		def genFun(x as Hermit):
 			return {return x}
 		for s in ('GLOBAL','OBJECT','UV','ORCO','WINDOW','NORMAL','REFLECTION','TANGENT'):
 			slow = s.ToLower()
 			sob[s] = sh = kri.shade.Object( "/mi/${slow}_v" )
-			mt = Named( shader:sh, name:slow )	# careful!
+			mt = Hermit( shader:sh, Name:slow )	# careful!
 			limdic[s] = genFun(mt)
 		limdic['OBJECT'] = do():
 			name = getString(STR_LEN)
-			mio = InputObject( shader:sob['OBJECT'], name:'object' )
+			mio = InputObject( shader:sob['OBJECT'], Name:'object' )
 			finalActions.Add() do():
 				nd = at.nodes[name]
-				mio.par.activate(nd)
+				mio.pNode.activate(nd)
 			return mio
 		limdic['ORCO'] = do():
 			getString(NAME_LEN)	# mapping type, not supported
-			return Named( shader:sob['ORCO'], name:'orco' )
+			return Hermit( shader:sob['ORCO'], Name:'orco' )
 
 	
 	#---	Map input	---#
 	public def p_mapin() as bool:
 		name = getString(SHORT_LEN)
-		fun as callable() as Named = null
+		fun as callable() as Hermit = null
 		if limdic.TryGetValue(name,fun):
 			mt = fun()
 		else: mt = defMapin
@@ -70,6 +70,13 @@ public partial class Native:
 		mSpec.Glossiness	= getReal()
 		mParx.Shift			= getReal()
 		mParx.shader = (con.slib.shift0, con.slib.shift1)[ mParx.Shift != 0.0 ]
+		# META2 style
+		m.Meta['emissive']	= Data_Color4( shader:con.slib.emissive_u,	Value:mEmis.Color )
+		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:mDiff.Color )
+		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:mSpec.Color )
+		m.Meta['glossiness']	= Data_single( shader:con.slib.glossiness_u,	Value:mSpec.Glossiness )
+		m.Meta['bump']		= Data_Color4( shader:con.slib.bump_c )
+		m.Meta['handness']	= Advanced( shader:con.slib.handness_c )
 		# units
 		con.mDef.unit.CopyTo( m.unit,0 )
 		return true
@@ -92,7 +99,7 @@ public partial class Native:
 	#---	Parse texture slot	---#
 	public def p_tex() as bool:
 		m	= geData[of kri.Material]()
-		inp	= geData[of Named]()
+		inp	= geData[of Hermit]()
 		return false	if not m
 		tip		= cast(TexType,		br.ReadByte())
 		return true		if tip == TexType.None
@@ -108,7 +115,7 @@ public partial class Native:
 		udata as UniData
 		if not uniDict.TryGetValue(tip,udata):
 			return false
-		sh_gen = con.slib.getCoordGen( inp.name, udata.id ) 
+		sh_gen = con.slib.getCoordGen( inp.Name, udata.id ) 
 		m.unit[ udata.id ] = un = Unit( inp, sh_gen, udata.sh )
 		# texcoords & image path
 		un.Offset	= Vector4(getVector(), 0.0)

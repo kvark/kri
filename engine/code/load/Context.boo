@@ -6,6 +6,7 @@ import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 import kri.shade
+import kri.meta
 
 
 #------		LOAD CONTEXT		------#
@@ -22,6 +23,7 @@ public class Meta:
 	public final specular	as int
 	public final parallax	as int
 	public final reflection	as int
+	public final glossiness	as int
 	# create
 	public def constructor(sm as kri.lib.Slot, d as rep.Dict):
 		emissive	= sm.getForced('emissive')
@@ -29,10 +31,20 @@ public class Meta:
 		specular	= sm.getForced('specular')
 		parallax	= sm.getForced('parallax')
 		reflection	= sm.getForced('reflection')
+		glossiness	= sm.getForced('glossiness')
 		d.add('mat.emissive',	pEmissive)
 		d.add('mat.diffuse',	pDiffuse)
 		d.add('mat.specular',	pSpecular)
 		d.add('mat_scalars',	pMatData)
+
+	# META-2 creating glue for tex coords
+	public static def MakeTexCoords(dd as IDictionary[of string,string]) as Object:
+		#todo: group by inputs, gain slight optimization
+		dec_vars = String.Join(',',	array(('tc_'+x)		for x in dd.Keys))
+		dec_funs = String.Join("\n", array("vec4 mi_${x}();"	for x in dd.Values))
+		body = String.Join("\n", array(" tc_${x.Key} = mi_${x.Value};" for x in dd))
+		str = "out vec4 ${dec_vars};\n ${dec_funs}\n void make_tex_coords()	{\n ${body} \n}"
+		return Object( ShaderType.VertexShader, str )
 		
 
 public class Shade:
@@ -40,10 +52,10 @@ public class Shade:
 	public final lambert	= Object('/mod/lambert_f')
 	public final cooktorr	= Object('/mod/cooktorr_f')
 	public final phong		= Object('/mod/phong_f')
-	# parallax
+	# parallax (deprecated)
 	public final shift0		= Object('/mod/shift0_f')
 	public final shift1		= Object('/mod/shift1_f')
-	# meta units
+	# meta units (deprecated)
 	public final text_gen0	= Object('/mod/text_0_v')
 	public final text_gen1	= Object('/mod/text_uv_v')
 	public final text_2d	= Object('/mod/text_2d_f')
@@ -52,8 +64,16 @@ public class Shade:
 	public final bump_2d	= Object('/mod/bump_2d_f')
 	public final refl_gen	= Object('/mod/refl_v')
 	public final refl_2d	= Object('/mod/refl_2d_f')
+	# META-2
+	public final emissive_u		= Object('/mod/emissive_U_f')
+	public final diffuse_u		= Object('/mod/diffuse_U_f')
+	public final specular_u		= Object('/mod/specular_U_f')
+	public final glossiness_u	= Object('/mod/glossiness_U_f')
+	public final bump_c			= Object('/mod/bump_C_f')
+	public final handness_c		= Object('/mod/handness_C_v')
+	public final handness_a		= Object('/mod/handness_A_v')
 	
-	# TexCoord shader storage
+	# TexCoord shader storage: DEPRECATED
 	public final coordMap	= Dictionary[of string,Object]()
 	public def getCoordGen(input as string, uid as int) as Object:
 		uname = kri.Ant.Inst.slotUnits.Name[uid]
@@ -97,3 +117,11 @@ public class Context:
 		un.tex = MakeTex(0xFF,0xFF,0xFF,0xFF)
 		mDef.unit[ kri.Ant.Inst.units.bump		] =un= kri.meta.Unit( null, slib.bump_gen0, slib.bump_2d )
 		un.tex = MakeTex(0x80,0x80,0xFF,0x80)
+		# META-2 section
+		mlis = mDef.metaList
+		mlis.Add(Data_Color4( Name:'emissive',	shader:slib.emissive_u,	Value:Color4.DarkGray ))
+		mlis.Add(Data_Color4( Name:'diffuse',	shader:slib.diffuse_u,	Value:Color4.Gray ))
+		mlis.Add(Data_Color4( Name:'specular',	shader:slib.specular_u,	Value:Color4.White ))
+		mlis.Add(Data_single( Name:'glossiness',	shader:slib.glossiness_u,	Value:0.5f ))
+		mlis.Add(Data_Color4( Name:'bump',		shader:slib.bump_c ))
+		mlis.Add(Advanced( Name:'handness',		shader:slib.handness_c ))

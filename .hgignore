@@ -1,0 +1,12 @@
+syntax: glob
+
+archive
+blender
+export\scenes
+ext\Newton
+demo*
+test_*
+game_*
+bin
+obj
+*.cache

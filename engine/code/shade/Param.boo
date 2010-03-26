@@ -8,12 +8,20 @@ import System
 #-----------------------#
 
 public interface IBase[of T]:
-	Value as T:
+	Value	as T:
 		get
+
+public interface INamed:
+	Name2	as string:
+		get
+		
+public interface ITexture(IBase[of kri.Texture],INamed):
+	pass
 
 public class Value[of T](IBase[of T]):
 	[property(Value)]
-	private val as T
+	private val	as T
+
 	
 public def create[of T](v as T) as Value[of T]:
 	x = Value[of T]()

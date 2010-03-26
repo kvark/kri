@@ -7,6 +7,7 @@ import System
 public static class Const:
 	public final nTech		= 24	# Render Techniques
 	public final nUnit		= 16	# Map Units
+	public final offUnit	= 8		# TexUnit offset
 	public final nAttrib	= 16	# Vertex Attributes
 	public final nMeta		= 32	# Meta Parameters
 	public final nPart		= 16	# Particle Data
