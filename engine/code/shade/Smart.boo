@@ -12,7 +12,7 @@ import OpenTK.Graphics.OpenGL
 public class Smart(Program):
 	protected final params	= List[of rep.IBase]()
 	public static final prefixAttrib	as string	= 'at_'
-	public static final prefixUnit		as string	= 'unit_'
+	public static final prefixUnit		as string	= 'unit_'	# deprecated
 	public static final Fixed	= Smart(0)
 	
 	public def constructor():

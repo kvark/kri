@@ -5,7 +5,6 @@ import OpenTK.Graphics
 
 public partial class Native:
 	public final limdic		= Dictionary[of string,callable() as Hermit]()
-	public static final defMapin = Hermit()
 
 	public def fillMapinDict() as void:
 		sob = Dictionary[of string, kri.shade.Object]()
@@ -27,21 +26,29 @@ public partial class Native:
 			getString(NAME_LEN)	# mapping type, not supported
 			return Hermit( shader:sob['ORCO'], Name:'orco' )
 
-	
-	#---	Map input	---#
-	public def p_mapin() as bool:
+
+	#---	Parse texture unit	---#
+	public def pm_unit() as bool:
+		m = geData[of kri.Material]()
+		return false	if not m
+		u = AdUnit()
+		puData(u)
+		targets = { 'colordiff':'diffuse' }
+		# map targets
+		for i in range( br.ReadByte() ):
+			name = getString(STR_LEN)
+			targ = targets[name]
+			continue	if not targ
+			u.Name = targ	if System.String.IsNullOrEmpty(u.Name)
+			m.Meta[targ].unit = u
+		# map inputs
 		name = getString(SHORT_LEN)
 		fun as callable() as Hermit = null
 		if limdic.TryGetValue(name,fun):
-			mt = fun()
-		else: mt = defMapin
-		puData(mt)
-		return mt != defMapin
+			u.input = fun()
+			return true
+		return false
 
-
-	protected def getTexture(str as string) as kri.Texture:
-		#TODO: support for other formats
-		return Targa(str).Result.generate()
 
 	#---	Parse material	---#
 	public def p_mat() as bool:
@@ -58,12 +65,12 @@ public partial class Native:
 		mDiff.Color = getColorByte()
 		mSpec.Color = getColorByte()
 		# models
-		id = br.ReadByte()
-		assert id < 1
+		str = getString(SHORT_LEN)
+		assert str == 'LAMBERT'
 		mDiff.shader = con.slib.lambert
-		id = br.ReadByte()
-		assert id < 2
-		mSpec.shader = (con.slib.cooktorr, con.slib.phong)[id]
+		str = getString(SHORT_LEN)
+		assert str in ('COOKTORR','PHONG')
+		mSpec.shader = con.slib.phong
 		# params
 		mDiff.Reflection	= getReal()
 		mSpec.Specularity	= getReal()
@@ -81,43 +88,24 @@ public partial class Native:
 		return true
 
 
-	#---	Enumerations	---#
-	#! have to be the same as the export script uses
-	public enum TexType:
-		None
-		Diffuse
-		Normal
-		Emission
-		Specular
-		Reflection
+	protected def getTexture(str as string) as kri.Texture:
+		#TODO: support for other formats
+		return null	if not str.EndsWith('.tga')
+		return image.Targa(str).Result.generate()
 	
 	private struct UniData:
 		public id	as int
 		public sh	as kri.shade.Object		
 	
 	#---	Parse texture slot	---#
-	public def p_tex() as bool:
-		m	= geData[of kri.Material]()
-		inp	= geData[of Hermit]()
-		return false	if not m
-		tip		= cast(TexType,		br.ReadByte())
-		return true		if tip == TexType.None
-		Image.bRepeat	= br.ReadByte()>0	# extend by repeat
-		Image.bMipMap	= br.ReadByte()>0	# generate mip-maps
-		Image.bFilter	= br.ReadByte()>0	# linear filtering
-		# create unit with proper shaders
-		us = kri.Ant.inst.units
-		uniDict = Dictionary[of TexType,UniData]()
-		uniDict[TexType.Diffuse		] = UniData( id:us.texture,	sh:con.slib.text_2d )
-		uniDict[TexType.Normal		] = UniData( id:us.bump,	sh:con.slib.bump_2d )
-		uniDict[TexType.Reflection	] = UniData( id:us.reflect,	sh:con.slib.refl_2d )
-		udata as UniData
-		if not uniDict.TryGetValue(tip,udata):
-			return false
-		sh_gen = con.slib.getCoordGen( inp.Name, udata.id ) 
-		m.unit[ udata.id ] = un = Unit( inp, sh_gen, udata.sh )
+	public def pm_tex() as bool:
+		u = geData[of AdUnit]()
+		return false	if not u
+		image.Basic.bRepeat	= br.ReadByte()>0	# extend by repeat
+		image.Basic.bMipMap	= br.ReadByte()>0	# generate mip-maps
+		image.Basic.bFilter	= br.ReadByte()>0	# linear filtering
 		# texcoords & image path
-		un.Offset	= Vector4(getVector(), 0.0)
-		un.Scale	= Vector4(getVector(), 1.0)
-		un.tex = getTexture( 'res' + getString(PATH_LEN) )
-		return true
+		u.pOffset.Value	= Vector4(getVector(), 0.0)
+		u.pScale.Value	= Vector4(getVector(), 1.0)
+		u.Value = getTexture( 'res' + getString(PATH_LEN) )
+		return u.Value != null

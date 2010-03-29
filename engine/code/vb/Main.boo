@@ -8,11 +8,14 @@ import OpenTK.Graphics.OpenGL
 #---------
 
 public class Array:
+	public static final Default	= Array(0)
 	public final id	as int
 	public def constructor():
 		tmp = 0
 		GL.GenVertexArrays(1,tmp)
 		id = tmp
+	private def constructor(xid as int):
+		id = xid
 	def destructor():
 		tmp = id
 		kri.SafeKill({ GL.DeleteVertexArrays(1,tmp) })

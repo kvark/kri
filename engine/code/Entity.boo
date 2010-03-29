@@ -88,20 +88,31 @@ public class Entity( vb.attr.Storage ):
 		return null as T
 		#return tags.Find( {t| return t isa T} ) as T
 	
-	public def enable(ids as int*) as void:
+	public def enable(ids as int*) as bool:
 		for i in ids:
 			continue if bind(i)
 			continue if mesh.bind(i)
-			sat = kri.Ant.Inst.slotAttributes
-			assert not 'valid attrib: ' + sat.Name[i]
+			return false
 		mesh.ind.bind()	if mesh.ind
+		return true
 
 	public def enable(tid as int, ids as int*) as bool:
 		va[tid] = vb.Array()
 		va[tid].bind()
-		enable(ids)
-		return true
-		
+		return enable(ids)
+	
+	# returns null if entity does't have all attributes requested
+	# otherwise - a list of rejected materials
+	public def check(tid as int) as kri.Material*:
+		return null	if va[tid] == vb.Array.Default
+		ml = List[of kri.Material]()
+		for t in tags:
+			tm = t as TagMat
+			continue if not tm
+			m = tm.mat
+			ml.Add(m)	if m.tech[tid] == shade.Smart.Fixed
+		return ml
+
 
 #--------- Quad ---------#
 

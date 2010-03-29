@@ -42,7 +42,7 @@ public class Meta:
 		#todo: group by inputs, gain slight optimization
 		dec_vars = String.Join(',',	array(('tc_'+x)		for x in dd.Keys))
 		dec_funs = String.Join("\n", array("vec4 mi_${x}();"	for x in dd.Values))
-		body = String.Join("\n", array(" tc_${x.Key} = mi_${x.Value};" for x in dd))
+		body = String.Join("\n", array(" tc_${x.Key} = mi_${x.Value}();" for x in dd))
 		str = "out vec4 ${dec_vars};\n ${dec_funs}\n void make_tex_coords()	{\n ${body} \n}"
 		return Object( ShaderType.VertexShader, str )
 		

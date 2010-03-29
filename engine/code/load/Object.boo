@@ -47,13 +47,6 @@ public partial class Native:
 		at.scene.cameras.Add(c)
 		return true
 
-	#---	Light Types		---#
-	public enum LiType:
-		Point
-		Sun
-		Spot
-		Hemi
-		Area
 	#---	Parse light source	---#
 	public def p_lamp() as bool:
 		n = geData[of kri.Node]()
@@ -67,17 +60,17 @@ public partial class Native:
 		l.quad2		= getReal()
 		l.sphere	= getReal()
 		# main
-		lt = cast(LiType, br.ReadByte())
+		type = getString(NAME_LEN)
 		getProjector(l)
-		if lt == LiType.Sun:
+		if type == 'SUN':
 			l.makeDirectional( l.fov )
-		elif lt == LiType.Point:
+		elif type == 'POINT':
 			l.fov = 0f
 		l.softness	= getReal()
 		at.scene.lights.Add(l)
 		return true
 	
-	#---	Parse light source	---#
+	#---	Parse particle object	---#
 	public def p_part() as bool:
 		#pm = kri.part.Manager( br.ReadUInt32() )
 		//pe = kri.part.Emitter(pm,ent)

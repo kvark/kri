@@ -53,9 +53,10 @@
     <Compile Include="code\lib\par\Spatial.boo" />
     <Compile Include="code\lib\Slot.boo" />
     <Compile Include="code\load\Anim.boo" />
+    <Compile Include="code\load\image\Main.boo" />
+    <Compile Include="code\load\image\Targa.boo" />
     <Compile Include="code\load\Native.boo" />
     <Compile Include="code\load\Context.boo" />
-    <Compile Include="code\load\Image.boo" />
     <Compile Include="code\load\Material.boo" />
     <Compile Include="code\load\Mesh.boo" />
     <Compile Include="code\load\Object.boo" />
@@ -136,6 +137,7 @@
     <Folder Include="code" />
     <Folder Include="code\frame" />
     <Folder Include="code\lib\par" />
+    <Folder Include="code\load\image" />
     <Folder Include="code\meta" />
     <Folder Include="code\load" />
     <Folder Include="code\ani" />

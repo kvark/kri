@@ -43,8 +43,8 @@ public partial class Native:
 		dict['lamp']	= p_lamp
 		# material
 		dict['mat']		= p_mat
-		dict['mapin']	= p_mapin
-		dict['tex']		= p_tex
+		dict['unit']	= pm_unit
+		dict['tex']		= pm_tex
 		# animations
 		dict['action']	= p_action
 		dict['curve']	= p_curve

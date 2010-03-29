@@ -83,4 +83,4 @@ public final class Attrib:
 		quat	= s.getForced('quat')
 		skin	= s.getForced('skin')
 		for i in range(tex.Length):
-			tex[i]	= s.getForced('tex'+i)
+			tex[i]	= s.getForced("tex[${i}]")

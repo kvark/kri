@@ -150,30 +150,35 @@ def save_curve_pack(curves,offset):
 ###  MATERIAL:UNIT   ###
 
 def save_mat_unit(mtex):
-	tip,img = 0,None
-	ar = [mtex.map_colordiff, mtex.map_normal, mtex.map_coloremission,
-		mtex.map_colorspec, mtex.map_colorreflection]
-	if True in ar:  tip = 1 + ar.index(True)	# stupid python
-	if mtex.texture and mtex.texture.type == 'IMAGE':
-		img = mtex.texture.image
-	else:	print("\t\t(w)",'tex type is not IMAGE')
-	if not img or not tip: return tip
-	tc,mp = mtex.texture_coordinates, mtex.mapping
-	print("\ttexture: %d domain, %s input, %s mapping" % (tip,tc,mp))
 	# map input chunk
-	out.begin('mapin')
+	out.begin('unit')
+	colored = ('diff','emission','spec','reflection')
+	supported = ['normal'] + list('color'+x for x in colored)
+	current = list(x for x in supported	if mtex.__getattribute__('map_'+x))
+	print("\t\t",'affect:', ','.join(current))
+	out.pack('<B', len(current))
+	for x in current:
+		out.pack('<24s',x)
+	tc,mp = mtex.texture_coordinates, mtex.mapping
+	print("\t\t", tc,'input,', mp,'mapping')
 	out.pack('<12s', tc)
-	if tc == 'UV':
-		out.pack('<8s', mtex.uv_layer)
-	if tc == 'OBJECT':
-		out.pack('<24s', mtex.object.name)
-	if tc == 'ORCO':
-		out.pack('<8s', mp)
+	if tc == 'UV':		out.pack('<8s', mtex.uv_layer)
+	if tc == 'OBJECT':	out.pack('<24s', mtex.object.name)
+	if tc == 'ORCO':	out.pack('<8s', mp)
 	out.end()
+
+
+###  MATERIAL:IMAGE   ###
+
+def save_mat_image(mtex):
 	# texture unit chunk
+	if not mtex.texture or mtex.texture.type != 'IMAGE':
+		print("\t\t(w)",'tex type is not IMAGE')
+		return
+	img = mtex.texture.image
 	out.begin('tex')
 	it = mtex.texture
-	out.pack( '<4B', tip,
+	out.pack( '<3B',	# binary flags
 		('CLIP','REPEAT').index( it.extension ),
 		it.mipmap, it.interpolation)
 	# tex coords transformation
@@ -183,7 +188,7 @@ def save_mat_unit(mtex):
 		out.pack('<3f', v[0],v[1],v[2])
 	# image path
 	fullname = img.filename
-	print("\t\tsource:",img.source, 'image:',fullname)
+	print("\t\t", img.source, ':',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
 		print("\t\t(w) path cut to:", name)
@@ -198,7 +203,6 @@ def save_mat_unit(mtex):
 		out.end()
 	elif img.source != 'FILE':
 		print("\t\t(w)",'bad image source')
-	return tip
 
 
 ###  MATERIAL:CORE   ###
@@ -212,21 +216,17 @@ def save_mat(mat):
 	save_color(mat.specular_color, mat.specular_alpha, 1.0) #specular
 	sh = (mat.diffuse_shader, mat.specular_shader)
 	print("\tshading: %s %s" % sh)
-	out.pack( '<2B4f',
-		('LAMBERT',).index(sh[0]), #cut off other types support
-		('COOKTORR','PHONG').index(sh[1]),
+	out.pack( '<12s12s4f',
+		sh[0],sh[1],
 		mat.diffuse_intensity, mat.specular_intensity,
 		mat.specular_hardness, mat.ambient )
 	out.end()
 	# texture units
-	targets,over = [],False
 	for mt in mat.texture_slots:
 		if not mt: continue
-		tg = save_mat_unit(mt)
-		if tg and tg in targets: over = True
-		else: targets.append(tg)
-	if over:
-		print("\t(w)",'units overlap detected')
+		print("\t+map:", mt.name)
+		save_mat_unit(mt)
+		save_mat_image(mt)
 
 
 ###  MESH   ###
@@ -454,7 +454,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	out.begin('entity')
 	for fn,m in zip(face_num,mesh.materials):
 		out.pack('<H24s', fn, m.name)
-		print("\tentity: %d faces, [%s]" % (fn,m.name))
+		print("\t+entity: %d faces, [%s]" % (fn,m.name))
 	out.pack('<H',0)
 	out.end()
 
@@ -492,7 +492,6 @@ def save_lamp(lamp):
 	energy_threshold = 0.1
 	print("\t(i) %s type, %.1f distance" % (lamp.type, lamp.distance))
 	out.begin('lamp')
-	tip = ('POINT','SUN','SPOT','HEMI','AREA').index(lamp.type)
 	save_color(lamp.color, 1.0,1.0)
 	if not lamp.specular or not lamp.diffuse:
 		print("\t(w) specular or diffuse can't be disabled")
@@ -518,7 +517,7 @@ def save_lamp(lamp):
 	out.pack('<4f', q0,q1,q2,qs)
 	if lamp.type == 'SPOT':
 		spotAng,spotBlend = lamp.spot_size,lamp.spot_blend
-	out.pack('<B4f', tip, clip0,clip1, spotAng,spotBlend )
+	out.pack('<8s4f', lamp.type, clip0,clip1, spotAng,spotBlend )
 	out.end()
 
 

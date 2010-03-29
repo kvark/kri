@@ -32,11 +32,13 @@ public class General(Basic):
 
 	protected def addObject(e as kri.Entity) as void:
 		return	if not e.visible
-		alist as List[of int] = null
-		if not e.va[tid]:
+		#alist as List[of int] = null
+		if e.va[tid] == kri.vb.Array.Default: return
+		elif not e.va[tid]:
 			(e.va[tid] = kri.vb.Array()).bind()
 			alist = List[of int]()
 		b = kri.Batch(e:e, va:e.va[tid], off:0)
+		tempList = List[of kri.Batch]()
 		for tag in e.tags:
 			tm = tag as kri.TagMat
 			continue	if not tm
@@ -52,8 +54,10 @@ public class General(Basic):
 				alist.AddRange(a	for a in ids	if not a in alist)
 			b.sa = prog
 			b.up = getUpdate(m)
-			butch.Add(b)
-		e.enable(alist)	if alist
+			tempList.Add(b)
+		if alist and not e.enable(alist):
+			e.va[tid] = kri.vb.Array.Default
+		else:	butch.AddRange(tempList)
 
 	# shouldn't be used as some objects have to be excluded
 	protected def drawScene() as void:
