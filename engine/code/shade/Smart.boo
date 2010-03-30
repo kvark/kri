@@ -64,21 +64,13 @@ public class Smart(Program):
 		for name in nar:
 			loc = getVar(name)
 			assert loc >= 0
-			if name.StartsWith('unit_'):
-				tname = name.Substring(5)
-				tid = kri.Ant.Inst.slotUnits.find(tname)
-				assert tid >= 0
-				GL.Uniform1(loc, tid)
-				p = kri.Ant.Inst.units.Par[tid]
-				params.Add( rep.Unit(tid,p) )
-			else:
-				val	as callable = null
-				Array.Find(dicts) do(d):
-					d.TryGetValue(name,val)
-					return val != null
-				#gen as callable(int) as IRepresentable = val
-				assert val and 'uniform not found'
-				params.Add( val(loc) )
+			val	as callable = null
+			Array.Find(dicts) do(d):
+				d.TryGetValue(name,val)
+				return val != null
+			#gen as callable(int) as IRepresentable = val
+			assert val and 'uniform not found'
+			params.Add( val(loc) )
 
 	public def getAttribNum() as int:
 		assert Ready

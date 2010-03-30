@@ -46,8 +46,8 @@ public class Object:
 		compose()
 
 	# create from source
-	public def constructor(tip as ShaderType, *text as (string)):
-		tag = 'xxx'
+	public def constructor(tip as ShaderType, label as string, *text as (string)):
+		tag = label
 		id = GL.CreateShader(tip)
 		GL.ShaderSource(id, text.Length, text, null)
 		GL.CompileShader(id)

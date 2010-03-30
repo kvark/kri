@@ -28,19 +28,28 @@ public partial class Native:
 
 
 	#---	Parse texture unit	---#
+	private struct MapTarget:
+		public final name	as string
+		public final prog	as kri.shade.Object
+		public def constructor(s as string, p as kri.shade.Object):
+			name,prog = s,p
 	public def pm_unit() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
 		u = AdUnit()
 		puData(u)
-		targets = { 'colordiff':'diffuse' }
+		tarDict = Dictionary[of string,MapTarget]()
+		tarDict['colordiff']		= MapTarget( 'diffuse',		con.slib.diffuse_t2 )
+		tarDict['coloremission']	= MapTarget( 'emissive',	con.slib.emissive_t2 )
 		# map targets
 		for i in range( br.ReadByte() ):
 			name = getString(STR_LEN)
-			targ = targets[name]
-			continue	if not targ
-			u.Name = targ	if System.String.IsNullOrEmpty(u.Name)
-			m.Meta[targ].unit = u
+			targ as MapTarget
+			continue if not tarDict.TryGetValue(name,targ)
+			u.Name = targ.name	if System.String.IsNullOrEmpty(u.Name)
+			me = m.Meta[targ.name]
+			me.unit = u
+			me.shader = targ.prog
 		# map inputs
 		name = getString(SHORT_LEN)
 		fun as callable() as Hermit = null
@@ -55,36 +64,23 @@ public partial class Native:
 		m = kri.Material( getString(STR_LEN) )
 		at.mats[m.name] = m
 		puData(m)
-		scalars = kri.shade.par.Value[of Vector4]()
-		m.meta[ con.ms.emissive ] = mEmis = Emission()
-		m.meta[ con.ms.diffuse	] = mDiff = Diffuse(scalars)
-		m.meta[ con.ms.specular	] = mSpec = Specular(scalars)
-		m.meta[ con.ms.parallax	] = mParx = Parallax(scalars)
 		# colors
-		mEmis.Color = getColorByte()
-		mDiff.Color = getColorByte()
-		mSpec.Color = getColorByte()
+		m.Meta['emissive']	= Data_Color4( shader:con.slib.emissive_u,	Value:getColorByte() )
+		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:getColorByte() )
+		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:getColorByte() )
 		# models
 		str = getString(SHORT_LEN)
 		assert str == 'LAMBERT'
-		mDiff.shader = con.slib.lambert
 		str = getString(SHORT_LEN)
 		assert str in ('COOKTORR','PHONG')
-		mSpec.shader = con.slib.phong
 		# params
-		mDiff.Reflection	= getReal()
-		mSpec.Specularity	= getReal()
-		mSpec.Glossiness	= getReal()
-		mParx.Shift			= getReal()
-		mParx.shader = (con.slib.shift0, con.slib.shift1)[ mParx.Shift != 0.0 ]
+		getReal()	# reflectivity, todo!
+		getReal()	# specularity, todo!
+		glossy	= getReal()
+		getReal()	# parallax, todo!
 		# META2 style
-		m.Meta['emissive']	= Data_Color4( shader:con.slib.emissive_u,	Value:mEmis.Color )
-		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:mDiff.Color )
-		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:mSpec.Color )
-		m.Meta['glossiness']	= Data_single( shader:con.slib.glossiness_u,	Value:mSpec.Glossiness )
-		m.Meta['bump']		= Data_Color4( shader:con.slib.bump_c )
-		# units
-		con.mDef.unit.CopyTo( m.unit,0 )
+		m.Meta['glossiness']	= Data_single( shader:con.slib.glossiness_u,	Value:glossy )
+		m.Meta['bump']		= Advanced( shader:con.slib.bump_c )
 		return true
 
 
@@ -92,10 +88,6 @@ public partial class Native:
 		#TODO: support for other formats
 		return null	if not str.EndsWith('.tga')
 		return image.Targa(str).Result.generate()
-	
-	private struct UniData:
-		public id	as int
-		public sh	as kri.shade.Object		
 	
 	#---	Parse texture slot	---#
 	public def pm_tex() as bool:

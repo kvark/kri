@@ -41,5 +41,4 @@ void main()	{
 	gl_FragColor = intensity*lit_color * (
 		comp_diffuse (bump.xyz,v_lit) +
 		comp_specular(bump.xyz,v_lit,v_cam) );
-	return;
 }

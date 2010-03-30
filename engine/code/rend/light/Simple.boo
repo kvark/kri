@@ -98,6 +98,7 @@ public class ApplyM2( rend.tech.Meta ):
 			array(shade.Object('/light/'+str) for str in ('apply2_v','apply2_f',"shadow/${name}_f"))
 			)
 		dict.attach(lc.dict)
+		dict.unit(metaLit, 8)
 		licon = lc
 	# prepare
 	protected override def getUpdate(mat as Material) as callable() as int:
@@ -111,7 +112,7 @@ public class ApplyM2( rend.tech.Meta ):
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		Texture.Slot( Ant.Inst.units.light )
+		Texture.Slot(8)
 		for l in Scene.current.lights:
 			continue if l.fov == 0f
 			lit = l

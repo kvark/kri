@@ -12,11 +12,9 @@ public interface IBase[of T]:
 		get
 
 public interface INamed:
-	Name2	as string:
+	Name	as string:
 		get
 		
-public interface ITexture(IBase[of kri.Texture],INamed):
-	pass
 
 public class Value[of T](IBase[of T]):
 	[property(Value)]

@@ -12,6 +12,58 @@ public interface IValued[of T(struct)]:
 		get
 		set
 
+public interface IBase( par.INamed ):
+	def clone() as IBase
+	def link(d as rep.Dict) as void
+
+
+public class Hermit(IBase):
+	public shader	as Object	= null
+	[Property(Name)]
+	private name	as string	= ''
+	
+	def IBase.clone() as IBase:
+		return Hermit( shader:shader, Name:Name )
+	def IBase.link(d as rep.Dict):
+		pass
+
+
+#---	Map Input : OBJECT		---#
+public class InputObject(Hermit):
+	public final pNode	= kri.lib.par.spa.Linked()
+	def IBase.link(d as rep.Dict) as void:
+		pNode.link(d,'s_target')
+
+
+public class Advanced(Hermit):
+	public unit	as AdUnit	= null
+	
+
+public class AdUnit( IBase, par.Value[of kri.Texture] ):
+	public input	as Hermit		= null
+	[Property(Name)]
+	private name	as string	= ''
+
+	public final pOffset	= par.Value[of Vector4]()
+	public final pScale		= par.Value[of Vector4]()
+	
+	def IBase.clone() as IBase:
+		return null
+	def IBase.link(d as rep.Dict) as void:
+		d.add('offset_'+Name, pOffset)
+		d.add('scale_' +Name, pScale)
+
+
+[ext.spec.Class(single,Color4)]
+[ext.RemoveSource()]
+public class Data[of T(struct)]( Advanced, IValued[of T] ):
+	private final pVal	= par.Value[of T]()
+	portal Value as T	= pVal.Value
+	def IBase.link(d as rep.Dict) as void:
+		d.add('mat_'+Name, pVal)
+
+
+#!!!---	DEPRECATED META-1 CLASSES	---!!!#
 
 #---	Basic meta-data		---#
 public class Basic:
@@ -20,52 +72,6 @@ public class Basic:
 		return Basic(shader:shader)
 	public virtual def link(d as rep.Dict) as void:
 		pass
-
-public class Hermit(Basic):
-	[Property(Name)]
-	protected name	as string	= ''
-
-#---	Map Input : OBJECT		---#
-public class InputObject(Hermit):
-	public final pNode	= kri.lib.par.spa.Linked()
-	public override def link(d as rep.Dict) as void:
-		pNode.link(d,'s_target')
-
-
-public class Advanced(Hermit):
-	public unit	as AdUnit	= null
-	protected def copyTo(m as Advanced) as void:
-		m.shader = shader
-		m.unit = unit
-	public override def clone() as Basic:
-		m = Advanced()
-		copyTo(m)
-		return m
-	
-
-public class AdUnit( Hermit, par.ITexture ):
-	public input	as Hermit		= null
-	[Property(Value)]
-	private tex		as kri.Texture	= null
-	#required to bypass BOO-1294
-	public Name2 	as string:
-		get: return name
-
-	public final pOffset	= par.Value[of Vector4]()
-	public final pScale		= par.Value[of Vector4]()
-	
-	public override def link(d as rep.Dict) as void:
-		d.add('offset_'+Name, pOffset)
-		d.add('scale_' +Name, pScale)
-
-[ext.spec.Class(single,Color4)]
-[ext.RemoveSource()]
-public class Data[of T(struct)]( Advanced, IValued[of T] ):
-	private final pVal	= par.Value[of T]()
-	portal Value as T	= pVal.Value
-	public override def link(d as rep.Dict) as void:
-		d.add('mat_'+name, pVal)
-
 
 #---	Map texture meta-unit	---#
 public class Unit():

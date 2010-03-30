@@ -43,8 +43,10 @@ public class Dict( SortedDictionary[of string,callable] ):
 		Add(name) do(loc as int):
 			return Uniform[of T](iv,loc)
 	# add texture unit representor
-	public def unit(it as par.ITexture, tun as int) as bool:
-		name = 'unit_' + it.Name2
+	public def unit[of T(par.INamed,par.IBase[of kri.Texture])](it as T, tun as int) as bool:
+		return unit(it as par.IBase[of kri.Texture], it.Name, tun)
+	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
+		name = 'unit_' + name
 		return false	if ContainsKey(name)
 		Add(name) do(loc as int):
 			OpenGL.GL.Uniform1(loc,tun)

@@ -28,7 +28,6 @@ float get_proj_depth(float,vec4);
 void make_tex_coords();
 
 void main()	{
-	// gen coords
 	make_tex_coords();
 
 	// vertex in world space

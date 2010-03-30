@@ -41,21 +41,26 @@ public class Material( IApplyable, ani.data.Player ):
 	# update dictionary
 	public def link() as void:
 		dict.Clear()
-		for i in range( unit.Length ):
-			str = Ant.Inst.slotUnits.Name[i]
-			unit[i].link(dict,str)	if unit[i]
-		for m in meta:
-			m.link(dict)	if m
-		# version: META-2
-		nut = 0	# next unit index
+		lis = List[of meta.IBase]()
+		def push(h as meta.IBase):
+			return if h in lis
+			h.link(dict)
+			lis.Add(h)
+		# unit name -> slot id
+		uDic = Dictionary[of string,int]()
 		for m in metaList:
-			m.link(dict)
+			push(m)
 			u = m.unit
 			continue	if not u
-			u.link(dict)
-			u.input.link(dict)
-			if dict.unit(u,nut): ++nut
-		assert nut <= lib.Const.offUnit
+			push(u)
+			push(u.input)
+			nut = 0
+			if not uDic.TryGetValue(u.Name,nut):
+				nut = uDic.Count
+				uDic.Add(u.Name,nut)
+			assert nut <= lib.Const.offUnit
+			# passing as unit_{meta}
+			dict.unit(u, m.Name, nut)
 			
 	# set state (no need for META-2)
 	public def apply() as void:
@@ -66,26 +71,22 @@ public class Material( IApplyable, ani.data.Player ):
 	
 	# collect for META-2
 	public def collect(melist as (string)) as shade.Object*:
-		# need caching here!
-		sl = List[of shade.Object]()
-		def push(h as shade.Object):
-			return	if not h #or sl.Contains(h)
-			sl.Add(h)
-		u2h = Dictionary[of string,string]()
+		dd = Dictionary[of shade.Object,meta.Hermit]()
+		def push(m as meta.Hermit):
+			dd[m.shader] = m	if m.shader
+		cl = List[of string]()
 		for str in melist:
 			m = Meta[str]
 			return null	if not m
-			push(m.shader)
+			push(m)
 			u = m.unit
 			continue	if not u
-			u2h[u.Name] = u.input.Name
-			push(u.shader)
-			push(u.input.shader)
-		# store the TC dictionary outside material
-		sl.Add( load.Meta.MakeTexCoords(u2h) )
-		return sl
+			push(u.input)
+			cl.Add( "${m.Name},${u.Name},${u.input.Name}" )
+		dd[ load.Meta.MakeTexCoords(cl) ] = null
+		return dd.Keys
 
-	# collect objects
+	# collect objects (DEPRECATED)
 	public def collect(un as (int), me as (int)) as shade.Object*:
 		sl = List[of shade.Object]()
 		def push(h as shade.Object):
