@@ -66,7 +66,8 @@ public class Apply( rend.tech.Meta ):
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		Texture.Slot( Ant.Inst.units.light )
+		assert 'not ready'
+		#Texture.Slot( Ant.Inst.units.light )
 		for l in Scene.current.lights:
 			continue	if l.fov != 0f
 			lit = l

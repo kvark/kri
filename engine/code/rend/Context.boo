@@ -118,10 +118,7 @@ public class Context:
 
 	public def apply(r as Basic) as void:
 		# target always contains result
-		if r.bInput:
-			swapUnit(0,tInput)
-			u = kri.Ant.inst.units
-			u.Tex[ u.input ] = tInput
+		if r.bInput: swapUnit(0,tInput)
 		dirty = DirtyLevel.None
 		r.process(self)	# action here!
 		if dirty == DirtyLevel.Depth:	# restore mask

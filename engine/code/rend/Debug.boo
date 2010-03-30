@@ -12,7 +12,8 @@ public class Map( kri.rend.Basic ):
 		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
 		sa.use()
-		sa.unit_man( un, 'x' )
+		assert 'not ready'
+		#sa.unit_man( un, 'x' )
 		return if lay<0
 		flay = 1f * lay
 		vid = sa.getVar('layer')
@@ -35,9 +36,10 @@ public class MapCube( kri.rend.Basic ):
 		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
 		lit = l
 	public virtual def prepare() as void:
-		u = kri.Ant.Inst.units
-		u.Tex[u.light] = lit.depth
-		lit.depth.bind(u.light)
+		assert 'not ready'
+		#u = kri.Ant.Inst.units
+		#u.Tex[u.light] = lit.depth
+		#lit.depth.bind(u.light)
 		kri.Texture.Shadow(false)
 		ar = array[of single](4)
 		GL.GetTexImage(TextureTarget.TextureCubeMapPositiveZ, 0,
@@ -59,7 +61,7 @@ public class MapThis( Map ):
 		t = fun()
 		t.bind(0)	if t
 
-
+/*	#todo: rewrite
 public class MapLight( Map ):
 	private final lit	as kri.Light
 	public def constructor(lay as int, l as kri.Light):
@@ -70,7 +72,7 @@ public class MapLight( Map ):
 		u.Tex[u.light] = lit.depth
 		lit.depth.bind(u.light)
 		kri.Texture.Shadow(false)
-		
+*/		
 
 #---------	RENDER DEBUG ATTRIBUTE		--------#
 

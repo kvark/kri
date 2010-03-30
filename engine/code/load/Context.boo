@@ -1,7 +1,6 @@
 ﻿namespace kri.load
 
 import System.Collections.Generic
-import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 import kri.shade
@@ -10,35 +9,10 @@ import kri.meta
 
 #------		LOAD CONTEXT		------#
 
-public class Meta:
-	# params
-	public final pEmissive	= par.Value[of Color4]()
-	public final pDiffuse	= par.Value[of Color4]()
-	public final pSpecular	= par.Value[of Color4]()
-	public final pMatData	= par.Value[of Vector4]()
-	# metas
-	public final emissive	as int
-	public final diffuse	as int
-	public final specular	as int
-	public final parallax	as int
-	public final reflection	as int
-	public final glossiness	as int
-	# create
-	public def constructor(sm as kri.lib.Slot, d as rep.Dict):
-		emissive	= sm.getForced('emissive')
-		diffuse		= sm.getForced('diffuse')
-		specular	= sm.getForced('specular')
-		parallax	= sm.getForced('parallax')
-		reflection	= sm.getForced('reflection')
-		glossiness	= sm.getForced('glossiness')
-		d.add('mat.emissive',	pEmissive)
-		d.add('mat.diffuse',	pDiffuse)
-		d.add('mat.specular',	pSpecular)
-		d.add('mat_scalars',	pMatData)
-
-	# META-2 creating glue for tex coords
-	private static corDict = Dictionary[of string,Object]()
-	public static def MakeTexCoords(cl as List[of string]) as Object:
+public static class Meta:
+	private corDict = Dictionary[of string,Object]()
+	
+	public def MakeTexCoords(cl as List[of string]) as Object:
 		key = string.Join(';',array(cl))
 		rez as Object = null
 		if corDict.TryGetValue(key,rez):
@@ -76,10 +50,9 @@ public class Shade:
 	public final specular_u		= Object('/mod/specular_u_f')
 	public final glossiness_u	= Object('/mod/glossiness_u_f')
 	public final bump_c			= Object('/mod/bump_c_f')
-	
+
 
 public class Context:
-	public final ms		= Meta(kri.Ant.Inst.slotMetas, kri.Ant.Inst.dict)
 	public final slib	= Shade()
 	public final mDef	= kri.Material('default')
 	

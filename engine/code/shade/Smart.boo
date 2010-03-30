@@ -20,17 +20,6 @@ public class Smart(Program):
 	private def constructor(xid as int):
 		super(xid)
 	
-	public def unit_man(i as int, str as string) as void:
-		assert not string.IsNullOrEmpty(str)
-		GL.Uniform1( getVar(prefixUnit+str), i)
-		p = kri.Ant.Inst.units.Par[i]
-		params.Add( rep.Unit(i,p) )
-	
-	public def units(*indexes as (int)) as void:
-		super.use()
-		for i in indexes:
-			unit_man(i, kri.Ant.Inst.slotUnits.Name[i])
-	
 	public def attribs(sl as kri.lib.Slot, *ats as (int)) as void:
 		for a in ats:
 			name = sl.Name[a]

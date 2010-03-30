@@ -46,7 +46,7 @@ public class Dict( SortedDictionary[of string,callable] ):
 	public def unit[of T(par.INamed,par.IBase[of kri.Texture])](it as T, tun as int) as bool:
 		return unit(it as par.IBase[of kri.Texture], it.Name, tun)
 	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
-		name = 'unit_' + name
+		name = kri.shade.Smart.prefixUnit + name
 		return false	if ContainsKey(name)
 		Add(name) do(loc as int):
 			OpenGL.GL.Uniform1(loc,tun)

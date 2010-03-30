@@ -33,9 +33,9 @@ public class Render(kri.rend.Basic):
 	
 	public virtual def process(con as kri.rend.Context) as void:
 		con.DepTest = false
-		u = kri.Ant.Inst.units
 		# bright filter
-		u.Tex[ u.input ] = con.Input
+		assert 'not ready'
+		# u.Tex[ u.input ] = con.Input
 		buf.mask = 1
 		buf.activate()
 		sa_bright.use()

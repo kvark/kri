@@ -70,7 +70,6 @@ public class Entity( vb.attr.Storage ):
 	public mesh	as Mesh		= null
 	public visible	as bool	= true
 	public final va		= array[of vb.Array]	( lib.Const.nTech )
-	public final unit 	= array[of Texture]		( lib.Const.nUnit )
 	public final tags	= List[of ITag]()
 	
 	public def constructor():
@@ -148,7 +147,6 @@ public struct Batch:	# why struct?
 	public def draw() as void:
 		nob = up()
 		Ant.Inst.params.modelView.activate( e.node )
-		Ant.Inst.units.activate( e.unit )
 		va.bind()
 		sa.use()
 		e.mesh.draw(off,num,nob)

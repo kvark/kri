@@ -40,15 +40,11 @@ public class Shader( Dictionary[of string, kri.shade.Object] ):
 	public final gentleSet as (kri.shade.Object)
 	public def constructor():
 		super()
+		for str in ('quat','tool','fixed','orient'):
+			Add(str, kri.shade.Object("/lib/${str}_v") )
+		Add('math', kri.shade.Object('/lib/math_f'))
+		gentleSet = array(Values)
 		for str in ('copy_v','copy_f','copy_ar_f'):
 			Add(str, kri.shade.Object('/'+str))
-		gl = List[of kri.shade.Object]()
-		for str in ('quat','tool','fixed','orient'):
-			sh = kri.shade.Object("/lib/${str}_v")
-			Add(str,sh)
-			gl.Add(sh)
-		sh = kri.shade.Object('/lib/math_f')
-		Add('math',sh)
-		gl.Add(sh)
 		Add('empty', kri.shade.Object('/empty_f'))
-		gentleSet = array(gl)
+		

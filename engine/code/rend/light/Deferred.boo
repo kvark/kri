@@ -41,7 +41,7 @@ public class Fill( tech.Meta ):
 #---------	RENDER APPLY G-BUFFER	--------#
 
 public class Apply( Basic ):
-	public final gid	= kri.Ant.Inst.slotUnits.getForced('gbuf')
+	public final gid	= kri.lib.Const.offUnit
 	protected final s0	= kri.shade.Smart()
 	protected final sa	= kri.shade.Smart()
 	private final gbuf	as kri.Texture
@@ -81,10 +81,11 @@ public class Apply( Basic ):
 	# work
 	public override def process(con as Context) as void:
 		con.activate()
-		u = kri.Ant.Inst.units
-		u.Tex[ gid ] = gbuf
-		u.Tex[ u.depth ] = con.Depth
-		con.Depth.bind( u.depth )
+		assert 'not ready'
+		#u = kri.Ant.Inst.units
+		#u.Tex[ gid ] = gbuf
+		#u.Tex[ u.depth ] = con.Depth
+		#con.Depth.bind( u.depth )
 		kri.Texture.Filter(false,false)
 		kri.Texture.Shadow(false)
 		# initial fill
@@ -95,7 +96,7 @@ public class Apply( Basic ):
 			blend.add()
 			for l in kri.Scene.current.lights:
 				setArea(l)
-				kri.Texture.Slot( u.light )
+				#kri.Texture.Slot( u.light )
 				bindShadow( l.depth )
 				l.apply()
 				sa.use()

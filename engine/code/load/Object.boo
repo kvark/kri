@@ -85,7 +85,8 @@ public partial class Native:
 		if pe and 'emitting from the mesh surface':
 			e = geData[of kri.Entity]()
 			return false	if not e
-			pe.onUpdate = { kri.Ant.Inst.units.activate(e.unit) }
+			assert 'not ready'
+			#pe.onUpdate = { kri.Ant.Inst.units.activate(e.unit) }
 		at.scene.particles.Add(pe)
 		return true
 

@@ -1,7 +1,6 @@
 ﻿namespace kri.kit.bake
 
 import System
-import OpenTK.Graphics.OpenGL
 
 
 public class Tag(kri.ITag):
@@ -20,8 +19,6 @@ public class Update( kri.rend.tech.Basic ):
 	private final buf	= kri.frame.Buffer()
 	public final bWorld	as bool
 	public final size	as int
-	public final units	= Array.ConvertAll(('vert','quat')) do(s as string):
-		return kri.Ant.Inst.slotUnits.getForced('map_'+s)
 	
 	public def constructor(sord as int, world as bool):
 		super('bake.mesh')
@@ -43,13 +40,14 @@ public class Update( kri.rend.tech.Basic ):
 				e.enable(tid, (a.vertex, a.quat, a.tex[0]))
 			else:	e.va[tid].bind()
 			buf.mask = 0
+			/*	#todo: rewrite with tags
 			for i in range(units.Length):
 				continue	if not (tag.vert,tag.quat)[i]
 				u = e.unit[ units[i] ]
 				if not u:	# no rectangles for now
 					e.unit[ units[i] ] = buf.A[i].new( (32,8)[i], TextureTarget.Texture2D )
 				else:	buf.A[i].Tex = u
-				buf.mask |= 1<<i
+				buf.mask |= 1<<i*/
 			buf.activate()
 			sa.use()
 			e.mesh.draw()

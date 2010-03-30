@@ -25,7 +25,7 @@ public class Fill( rend.tech.General ):
 
 	public override def process(con as rend.Context) as void:
 		con.SetDepth(1f, true)
-		Texture.Slot( Ant.Inst.units.light )
+		Texture.Slot( kri.lib.Const.offUnit )
 		for l in Scene.current.lights:
 			continue if l.fov == 0f
 			Ant.Inst.params.lightProj.activate(l)

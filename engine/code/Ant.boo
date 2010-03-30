@@ -24,9 +24,7 @@ public class Ant(GameWindow):
 		get: return sw.Elapsed.TotalSeconds
 	# Slots
 	public final slotTechniques	= lib.Slot( lib.Const.nTech	)
-	public final slotUnits		= lib.Slot( lib.Const.nUnit	)
 	public final slotAttributes	= lib.Slot( lib.Const.nAttrib)
-	public final slotMetas		= lib.Slot( lib.Const.nMeta	)
 	public final slotParticles	= lib.Slot( lib.Const.nPart	)
 	
 	# main uniform dictionary
@@ -34,7 +32,6 @@ public class Ant(GameWindow):
 	# libraries
 	public final params		= lib.Param(dict)
 	public final shaders 	= lib.Shader()
-	public final units		= lib.Unit(slotUnits)
 	public final attribs	= lib.Attrib(slotAttributes)
 
 
@@ -65,7 +62,6 @@ public class Ant(GameWindow):
 
 	public override def OnLoad(e as EventArgs) as void:
 		slotTechniques.clear()
-		slotUnits.clear()
 		slotAttributes.clear()
 		quad = Quad()
 		

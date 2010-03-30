@@ -13,8 +13,6 @@ public class Tag(kri.ITag):
 public class Context:
 	public static final ats			= array(
 		kri.Ant.Inst.slotAttributes.getForced('fur_'+s) for s in ('pos','vel'))
-	public static final unitPattern	= kri.Ant.Inst.slotUnits.getForced('noise')
-	public static final metaFur		= kri.Ant.Inst.slotMetas.getForced('fur')
 	public final d = kri.shade.rep.Dict()
 	# parameters
 	public final pShellCoef	= kri.shade.par.Value[of single]()

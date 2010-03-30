@@ -6,10 +6,8 @@ import System
 # Constant Storage
 public static class Const:
 	public final nTech		= 24	# Render Techniques
-	public final nUnit		= 16	# Map Units
 	public final offUnit	= 8		# TexUnit offset
 	public final nAttrib	= 16	# Vertex Attributes
-	public final nMeta		= 32	# Meta Parameters
 	public final nPart		= 16	# Particle Data
 
 
@@ -40,37 +38,6 @@ public struct Slot:
 	public def getForced(name as string) as int:
 		id = find(name)
 		return (id if id>=0 else create(name))
-
-
-# Texture Units Library
-public final class Unit:
-	private final par	= array[of kri.shade.par.Unit]( Const.nUnit )
-	public Par[id as int] as kri.shade.par.Unit:
-		get: return par[id];
-	public Tex[id as int] as kri.Texture:
-		get: return par[id].Value
-		set: par[id].Value = value
-
-	public final input		as int	# quad input
-	public final depth		as int	# depth buffer
-	public final light		as int	# light depth
-	public final texture	as int	# texture
-	public final bump		as int	# bump
-	public final reflect	as int	# reflection
-
-	internal def constructor(s as Slot):
-		for i in range( Const.nUnit ):
-			par[i] = kri.shade.par.Unit()
-		input	= s.getForced('input')
-		depth	= s.getForced('depth')
-		light	= s.getForced('light')
-		texture	= s.getForced('texture')
-		bump	= s.getForced('bump')
-		reflect	= s.getForced('reflect')
-		
-	public def activate(tu as (kri.Texture)) as void:
-		for i in range( Const.nUnit ):
-			Tex[i] = tu[i]	if tu[i]
 
 
 public final class Attrib:
