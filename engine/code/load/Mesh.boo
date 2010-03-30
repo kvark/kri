@@ -24,7 +24,7 @@ public partial class Native:
 		m.nVert = br.ReadInt16()
 		return true
 	
-	#---	Parse mesh vertices	---#
+	#---	Parse mesh vertices (w = handness)	---#
 	public def pv_pos() as bool:
 		ai = kri.vb.attr.Info(
 			slot: kri.Ant.Inst.attribs.vertex, size:4,
@@ -40,12 +40,14 @@ public partial class Native:
 			integer:false )
 		return getArray[of Quaternion](1,ai,getQuat)
 	
-	#---	Parse mesh texture coordinates (UVh)	---#
+	#---	Parse mesh texture coordinates (UV)	---#
 	public def pv_uv() as bool:
 		m = geData[of kri.Mesh]()
 		return false	if not m
 		slot = System.Array.Find( kri.Ant.Inst.attribs.tex ) do(i as int):
-			return m.find(i) != null
+			return m.find(i) == null
+		assert slot
+		getString(NAME_LEN)	# skip layer name
 		ai = kri.vb.attr.Info( slot:slot, size:2,
 			type:VertexAttribPointerType.Float,
 			integer:false )

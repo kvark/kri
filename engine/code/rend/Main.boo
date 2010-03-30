@@ -50,21 +50,23 @@ public class Chain(Basic):
 #---------	GENERAL FILTER	--------#
 
 public class Filter(Basic):
-	protected final prog as kri.shade.Program
-	public def constructor(program as kri.shade.Program):
+	protected final sa		= kri.shade.Smart()
+	protected final texIn	= kri.shade.par.Texture(0, 'input')
+	protected final dict	= kri.shade.rep.Dict()
+	public def constructor():
 		super(true)
-		prog = program
+		dict.unit(texIn)
 	public override def process(con as Context) as void:
+		texIn.Value = con.Input
 		con.activate()
-		prog.use()
+		sa.use()
 		kri.Ant.inst.emitQuad()
 
 public class FilterCopy(Filter):
 	public def constructor():
-		sa = kri.shade.Smart()
+		super()
 		sa.add('copy_v','/copy_screen_f')
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-		super(sa)
+		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 
 
 #---------	RENDER PARTICLES		--------#

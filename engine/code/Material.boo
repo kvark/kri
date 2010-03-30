@@ -42,7 +42,7 @@ public class Material( ani.data.Player ):
 			continue	if not u
 			push(u)
 			push(u.input)
-			nut = 0
+			nut = -1
 			if not uDic.TryGetValue(u.Name,nut):
 				nut = uDic.Count
 				uDic.Add(u.Name,nut)
@@ -55,7 +55,7 @@ public class Material( ani.data.Player ):
 		dd = Dictionary[of shade.Object,meta.Hermit]()
 		def push(m as meta.Hermit):
 			dd[m.shader] = m	if m.shader
-		cl = List[of string]()
+		cl = List[of (string)]()
 		for str in melist:
 			m = Meta[str]
 			return null	if not m
@@ -63,6 +63,6 @@ public class Material( ani.data.Player ):
 			u = m.unit
 			continue	if not u
 			push(u.input)
-			cl.Add( "${m.Name},${u.Name},${u.input.Name}" )
+			cl.Add(( m.Name, u.Name, u.input.Name ))
 		dd[ load.Meta.MakeTexCoords(cl) ] = null
 		return dd.Keys

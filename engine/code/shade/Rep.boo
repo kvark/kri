@@ -45,12 +45,15 @@ public class Dict( SortedDictionary[of string,callable] ):
 	# add texture unit representor
 	public def unit[of T(par.INamed,par.IBase[of kri.Texture])](it as T, tun as int) as bool:
 		return unit(it as par.IBase[of kri.Texture], it.Name, tun)
+	public def unit(*its as (par.Texture)) as bool:
+		return Array.TrueForAll(its) do(it as par.Texture):
+			return unit(it, it.Name, kri.lib.Const.offUnit + it.tun)
 	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
 		name = kri.shade.Smart.prefixUnit + name
 		return false	if ContainsKey(name)
 		Add(name) do(loc as int):
 			OpenGL.GL.Uniform1(loc,tun)
-			return rep.Unit(tun,it)
+			return Unit(tun,it)
 		return true
 	# copy contents of another dictionary
 	public def attach(dict as Dict) as void:

@@ -1,7 +1,7 @@
 #version 130
 precision lowp float;
 
-in vec3 at_vertex;
+in vec4 at_vertex;
 
 uniform struct Spatial	{
 	vec4 pos,rot;
@@ -13,7 +13,7 @@ vec4 get_projection(vec3,vec4);
 
 //fixed transform: camera space
 vec3 fixed_trans(Spatial s_cam)	{
-	vec3 v = trans_for(at_vertex, s_model);
+	vec3 v = trans_for(at_vertex.xyz, s_model);
 	return trans_inv(v, s_cam);
 }
 

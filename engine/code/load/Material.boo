@@ -7,24 +7,36 @@ public partial class Native:
 	public final limdic		= Dictionary[of string,callable() as Hermit]()
 
 	public def fillMapinDict() as void:
-		sob = Dictionary[of string, kri.shade.Object]()
 		def genFun(x as Hermit):
 			return {return x}
 		for s in ('GLOBAL','OBJECT','UV','ORCO','WINDOW','NORMAL','REFLECTION','TANGENT'):
 			slow = s.ToLower()
-			sob[s] = sh = kri.shade.Object( "/mi/${slow}_v" )
+			sh = kri.shade.Object( "/mi/${slow}_v" )
 			mt = Hermit( shader:sh, Name:slow )	# careful!
 			limdic[s] = genFun(mt)
-		limdic['OBJECT'] = do():
-			name = getString(STR_LEN)
-			mio = InputObject( shader:sob['OBJECT'], Name:'object' )
-			finalActions.Add() do():
-				nd = at.nodes[name]
-				mio.pNode.activate(nd)
-			return mio
-		limdic['ORCO'] = do():
-			getString(NAME_LEN)	# mapping type, not supported
-			return Hermit( shader:sob['ORCO'], Name:'orco' )
+		def replace(str as string, fun as callable(Hermit) as callable() as Hermit):
+			h = limdic[str]()
+			limdic[str] = fun(h)
+		replace('UV') do(h as Hermit):
+			return do():
+				# uv layer name, not supported
+				getString(NAME_LEN)
+				muv = InputUV( shader:h.shader, Name:h.Name )
+				muv.pInd.Value = 0
+				return muv
+		replace('OBJECT') do(h as Hermit):
+			return do():
+				name = getString(STR_LEN)
+				mio = InputObject( shader:h.shader, Name:h.Name )
+				finalActions.Add() do():
+					nd = at.nodes[name]
+					mio.pNode.activate(nd)
+				return mio
+		replace('ORCO') do(h as Hermit):
+			return do():
+				# mapping type, not supported
+				getString(NAME_LEN)
+				return h
 
 
 	#---	Parse texture unit	---#

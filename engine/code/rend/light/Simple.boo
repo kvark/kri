@@ -47,7 +47,7 @@ public class Fill( rend.tech.General ):
 public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final licon		as Context
-	private final metaLit	= meta.AdUnit( Name:'light' )
+	private final texLit	= shade.par.Texture(0, 'light')
 
 	public def constructor(lc as Context):
 		name = ('simple','exponent2')[lc.expo]
@@ -55,25 +55,24 @@ public class Apply( rend.tech.Meta ):
 			(shade.Object('/light/'+str) for str in ('apply_v','apply_f',"shadow/${name}_f"))
 			)
 		dict.attach(lc.dict)
-		dict.unit(metaLit, 8)
+		dict.unit(texLit)
 		licon = lc
 	# prepare
 	protected override def getUpdate(mat as Material) as callable() as int:
 		metaFun = super(mat)
 		curLight = lit	# need current light only
 		return def() as int:
-			metaLit.Value = curLight.depth
+			texLit.Value = curLight.depth
 			curLight.apply()
 			return metaFun()
 	# work
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		Texture.Slot(8)
 		for l in Scene.current.lights:
 			continue if l.fov == 0f
 			lit = l
-			l.depth.bind()
+			texLit.bindSlot( l.depth )
 			Texture.Shadow(not licon.expo)
 			Texture.Filter(licon.smooth, licon.mipmap)
 			# determine subset of affect  ed objects

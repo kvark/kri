@@ -28,6 +28,12 @@ public class Hermit(IBase):
 		pass
 
 
+#---	Map Input : UV		---#
+public class InputUV(Hermit):
+	public final pInd	= par.Value[of int]()
+	def IBase.link(d as rep.Dict) as void:
+		d.add('index',pInd)
+		
 #---	Map Input : OBJECT		---#
 public class InputObject(Hermit):
 	public final pNode	= kri.lib.par.spa.Linked()

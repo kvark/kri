@@ -12,7 +12,7 @@ import OpenTK.Graphics.OpenGL
 public class Smart(Program):
 	protected final params	= List[of rep.IBase]()
 	public static final prefixAttrib	as string	= 'at_'
-	public static final prefixUnit		as string	= 'unit_'	# deprecated
+	public static final prefixUnit		as string	= 'unit_'
 	public static final Fixed	= Smart(0)
 	
 	public def constructor():
@@ -33,7 +33,7 @@ public class Smart(Program):
 	
 	# link with attributes
 	public def link(sl as kri.lib.Slot, *dicts as (rep.Dict)) as void:
-		attribs(sl, *array[of int](range(sl.Size)))
+		attribs(sl, *array(range(sl.Size)))
 		linkUni(*dicts)
 	
 	# collect used attributes

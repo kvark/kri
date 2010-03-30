@@ -1,11 +1,6 @@
 ﻿#version 130
 precision lowp float;
 
-in vec4 at_vertex,at_quat;
-out vec3 v2lit,v2cam;
-out vec4 v_shadow;
-out float lit_int;
-
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_model,s_lit,s_cam;
@@ -18,14 +13,18 @@ vec4 qmul(vec4,vec4);
 vec4 qinv(vec4);
 vec3 trans_for(vec3,Spatial);
 vec3 trans_inv(vec3,Spatial);
-
 //lib_tool
 float get_attenuation(float);
 vec4 get_projection(vec3,vec4);
 float get_proj_depth(float,vec4);
-
 //mat
 void make_tex_coords();
+
+in vec4 at_vertex,at_quat;
+out vec3 v2lit,v2cam;
+out vec4 v_shadow;
+out float lit_int;
+
 
 void main()	{
 	make_tex_coords();

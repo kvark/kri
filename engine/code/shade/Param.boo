@@ -20,17 +20,22 @@ public class Value[of T](IBase[of T]):
 	[property(Value)]
 	private val	as T
 
+public class Texture(INamed, Value[of kri.Texture]):
+	public final tun	as int
+	[Getter(Name)]
+	public final name	as string
+	public def constructor(id as int, s as string):
+		tun,name = id,s
+	public def bindSlot(t as kri.Texture) as void:
+		Value = t
+		t.bind(tun)
+	
 	
 public def create[of T](v as T) as Value[of T]:
 	x = Value[of T]()
 	x.Value = v
 	return x
 
-# Simple shader parameter
-public class Basic[of T](Value[of T]):
-	public final name as string
-	public def constructor(str as string):
-		name = str
 
 
 public class Cached[of T]():

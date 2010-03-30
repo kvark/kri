@@ -401,7 +401,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			v.coord = 0.5 * (va.coord + vb.coord)
 			v.quat = va.quat + vb.quat
 			v.quat.normalize()
-			v.tex = [0.5*(x[0]+x[1]) for x in zip(va.tex,vb.tex)]
+			v.tex = [ 0.5*(a[0]+a[1]) for a in zip(va.tex,vb.tex) ]
 			# create additional face
 			f2 = Face(f, mesh.verts)
 			mark_used(f.vi[ia])	# caution: easy to miss case
@@ -439,6 +439,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	out.end()
 	for i,layer in enumerate(mesh.uv_textures):
 		out.begin('v_uv')
+		out.pack('<8s',layer.name)
 		for v in ar_vert:
 			assert i<len(v.tex)
 			out.pack('<2f', v.tex[i].x, v.tex[i].y)

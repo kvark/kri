@@ -1,14 +1,12 @@
-#version 150
+#version 130
 precision lowp float;
 
 // Dual Quaternions support
 #define DUALQUAT
 
-in	vec3 at_vertex;
-in	vec4 at_quat;
+in	vec4 at_vertex,at_quat;
 in	uvec4 at_skin;
-out	vec3 to_vertex;
-out	vec4 to_quat;
+out	vec4 to_vertex,to_quat;
 
 struct Spatial	{
 	vec4 pos,rot;
@@ -53,13 +51,14 @@ void main()	{
 	for(int i=0; i<4; ++i)
 		addDq(rez, wes[i], bone[ids[i]]);
 	Spatial sp = normDq(rez);
-	to_vertex = trans_for(at_vertex, sp);
+	vec3 v = trans_for(at_vertex.xyz, sp);
+	to_vertex = vec4(v, at_vertex.w);
 	to_quat = qmul(sp.rot, at_quat);
 	#else
 	Spatial sp = Spatial( vec4(0.0), vec4(0.0) );
 	for(int i=0; i<4; ++i)
 		append(sp, wes[i], bone[ids[i]]);
-	to_vertex = sp.pos.xyz;
+	to_vertex = vec4(sp.pos.xyz, at_vertex.w);
 	to_quat = normalize(sp.rot);
 	#endif
 }

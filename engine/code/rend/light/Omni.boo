@@ -55,7 +55,8 @@ public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final smooth	as bool
 	public def constructor(bSmooth as bool):
-		super('lit.omni.apply', ('diffuse','specular'), '/light/omni/apply')
+		metas = ('bump','diffuse','specular','glossiness')
+		super('lit.omni.apply', metas, '/light/omni/apply')
 		smooth = bSmooth
 	protected override def getUpdate(mat as Material) as callable() as int:
 		metaFun = super(mat)
@@ -66,8 +67,7 @@ public class Apply( rend.tech.Meta ):
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		assert 'not ready'
-		#Texture.Slot( Ant.Inst.units.light )
+		Texture.Slot( lib.Const.offUnit )
 		for l in Scene.current.lights:
 			continue	if l.fov != 0f
 			lit = l

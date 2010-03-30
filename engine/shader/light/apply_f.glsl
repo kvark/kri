@@ -36,9 +36,9 @@ void main()	{
 	//gl_FragColor = vec4(get_shadow(vs)); return;
 	if(intensity < 0.01) discard;
 
-	vec4 bump = get_bump();
+	vec3 normal = get_bump().xyz;
 
 	gl_FragColor = intensity*lit_color * (
-		comp_diffuse (bump.xyz,v_lit) +
-		comp_specular(bump.xyz,v_lit,v_cam) );
+		comp_diffuse (normal,v_lit) +
+		comp_specular(normal,v_lit,v_cam) );
 }

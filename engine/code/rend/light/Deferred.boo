@@ -13,7 +13,7 @@ public class Fill( tech.Meta ):
 		get: return buf.A[0].Tex
 	# init
 	public def constructor():
-		super('g.make', ('diffuse','specular'), '/g/make')
+		super('g.make', ('bump','diffuse','specular','glossiness'), '/g/make')
 		t = kri.Texture( TextureTarget.Texture2DArray )
 		buf.A[0].layer(t,0)	# diffuse color * texture
 		buf.A[1].layer(t,1)	# specular color
@@ -44,19 +44,23 @@ public class Apply( Basic ):
 	public final gid	= kri.lib.Const.offUnit
 	protected final s0	= kri.shade.Smart()
 	protected final sa	= kri.shade.Smart()
-	private final gbuf	as kri.Texture
+	private final gbuf		= kri.shade.par.Texture(0, 'gbuf')
+	private final texLit	= kri.shade.par.Texture(1, 'light')
+	private final texDep	= kri.shade.par.Texture(2, 'depth')
 	private final context	as light.Context
 	private final pArea	= kri.shade.par.Value[of OpenTK.Vector4]()
 	# init
 	public def constructor(gt as kri.Texture, lc as light.Context):
 		super(false)
-		gbuf,context = gt,lc
+		context = lc
+		gbuf.Value = gt
 		# fill shader
 		s0.add( 'copy_v', '/g/init_f' )
 		s0.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 		# light shader
 		d = kri.shade.rep.Dict()
 		d.add('area', pArea)
+		d.unit(gbuf,texLit,texDep)
 		pArea.Value = OpenTK.Vector4( 0f,0f,0f,1f )
 		sa.add( '/g/apply_v', '/g/apply_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
@@ -74,6 +78,7 @@ public class Apply( Basic ):
 	# shadow 
 	private def bindShadow(t as kri.Texture) as void:
 		if t:
+			texLit.Value = t
 			t.bind()
 			kri.Texture.Filter(false,false)
 			kri.Texture.Shadow(false)
@@ -82,10 +87,7 @@ public class Apply( Basic ):
 	public override def process(con as Context) as void:
 		con.activate()
 		assert 'not ready'
-		#u = kri.Ant.Inst.units
-		#u.Tex[ gid ] = gbuf
-		#u.Tex[ u.depth ] = con.Depth
-		#con.Depth.bind( u.depth )
+		texDep.bindSlot( con.Depth )
 		kri.Texture.Filter(false,false)
 		kri.Texture.Shadow(false)
 		# initial fill
@@ -96,7 +98,7 @@ public class Apply( Basic ):
 			blend.add()
 			for l in kri.Scene.current.lights:
 				setArea(l)
-				#kri.Texture.Slot( u.light )
+				kri.Texture.Slot( texLit.tun )
 				bindShadow( l.depth )
 				l.apply()
 				sa.use()
