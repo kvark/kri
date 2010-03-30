@@ -13,12 +13,7 @@ public class Fill( tech.Meta ):
 		get: return buf.A[0].Tex
 	# init
 	public def constructor():
-		ms = Array.ConvertAll( ('diffuse','specular','parallax') ) do(name as string):
-			return kri.Ant.Inst.slotMetas.find(name)
-		super('g.make',
-			(kri.Ant.Inst.units.texture, kri.Ant.Inst.units.bump), ms,
-			(kri.shade.Object('/g/make_v'), kri.shade.Object('/g/make_f'))
-			)
+		super('g.make', ('diffuse','specular'), '/g/make')
 		t = kri.Texture( TextureTarget.Texture2DArray )
 		buf.A[0].layer(t,0)	# diffuse color * texture
 		buf.A[1].layer(t,1)	# specular color

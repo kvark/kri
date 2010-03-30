@@ -72,34 +72,23 @@ public class General(Basic):
 #---------	META TECHNIQUE	--------#
 
 public class Meta(General):
-	private final units	as (int)	= null	# deprecated
-	private	final metas	as (int)	= null	# deprecated
 	private final mList	as (string)
 	private final shobs	as (kri.shade.Object)
 	private final sMap		= SortedDictionary[of string, kri.shade.Smart]()
 	protected final dict	= kri.shade.rep.Dict()
 	
-	protected def constructor(name as string, unis as (int), mets as (int), sh as (kri.shade.Object)):
+	protected def constructor(name as string, mets as (string), sh as kri.shade.Object*):
 		super(name)
-		units,metas = unis,mets
-		shobs = sh
-	protected def constructor(name as string, mets as (string), sh as (kri.shade.Object)):
+		mList,shobs = mets,array(sh)
+	protected def constructor(name as string, mets as (string), prefix as string):
 		super(name)
-		mList,shobs = mets,sh
-	protected override def getUpdate(mat as kri.Material) as callable() as int:
-		return def() as int:
-			mat.apply()	# deprecated!
-			return 1
-	private static def GenerateKey(shlist as kri.shade.Object*) as string:
-		return String.Join(':', array(x.id.ToString() for x in shlist) )
-	
+		mList = mets
+		shobs = array( kri.shade.Object(prefix+s) for s in ('_v','_f') )
+
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
-		if units and metas:
-			sl = mat.collect(units,metas)
-		else: # META-2
-			sl = mat.collect(mList)
+		sl = mat.collect(mList)
 		return kri.shade.Smart.Fixed	if not sl
-		key = GenerateKey(sl)
+		key = String.Join(',', array(x.id.ToString() for x in sl) )
 		sa as kri.shade.Smart = null
 		return sa	if sMap.TryGetValue(key,sa)
 		sa = kri.shade.Smart()

@@ -1,12 +1,10 @@
 ﻿#version 130
 precision lowp float;
 
-in vec3 at_vertex;
-in vec4 at_quat;
+in vec4 at_vertex,at_quat;
 out vec3 v2lit,v2cam;
 out vec4 v_shadow;
 out float lit_int;
-out vec4 coord_text, coord_bump;
 
 uniform struct Spatial	{
 	vec4 pos,rot;
@@ -27,12 +25,13 @@ vec4 get_projection(vec3,vec4);
 float get_proj_depth(float,vec4);
 
 //mat
-vec4 tc_texture();
-vec4 tc_bump();
+void make_tex_coords();
 
 void main()	{
+	make_tex_coords();
+
 	// vertex in world space
-	vec3 v = trans_for(at_vertex, s_model);
+	vec3 v = trans_for(at_vertex.xyz, s_model);
 	vec3 v_lit = s_lit.pos.xyz - v;
 	vec3 v_cam = s_cam.pos.xyz - v;
 	lit_int = get_attenuation( length(v_lit) );
@@ -41,17 +40,11 @@ void main()	{
 	vec3 vc = trans_inv(v, s_cam);
 	gl_Position = get_projection(vc, proj_cam);
 	
-	// gen coords
-	coord_text = tc_texture();
-	coord_bump = tc_bump();
-	
 	// world -> tangent space transform
-	float handness = coord_text.z;
+	vec3 hand = vec3(at_vertex.w, 1.0,1.0);
 	vec4 quat = qinv(qmul( s_model.rot, at_quat ));
-	v2lit = qrot(quat, v_lit);
-	v2lit.x *= handness;
-	v2cam = qrot(quat, v_cam);
-	v2cam.x *= handness;
+	v2lit = hand * qrot(quat, v_lit);
+	v2cam = hand * qrot(quat, v_cam);
 	
 	// vertex in light space
 	vec3 vl = trans_inv(v, s_lit);

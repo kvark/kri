@@ -27,9 +27,9 @@ public partial class Native:
 			fun(sp,v)
 			n.Local = sp
 	
-	private def racMatColor(mid as int):
+	private def racMatColor(name as string):
 		return rac(getColor) do(pl as IPlayer, v as Color4, i as byte):
-			((pl as kri.Material).meta[mid] as kri.IColored).Color = v
+			((pl as kri.Material).Meta[name] as kri.meta.IValued[of Color4]).Value = v
 	private def racProject(fun as callable(kri.Projector,single)):
 		return rac(getReal) do(pl as IPlayer, v as single, i as byte):
 			assert not i
@@ -58,8 +58,8 @@ public partial class Native:
 		anid['n.rotation_euler']	= rac(getQuatEuler,	genSpatial(fun_rot) )
 		anid['n.scale']				= rac(getScale,		genSpatial(fun_sca) )
 		# material
-		anid['m.diffuse_color']		= racMatColor( con.ms.diffuse )
-		anid['m.specular_color']	= racMatColor( con.ms.specular )
+		anid['m.diffuse_color']		= racMatColor( 'diffuse' )
+		anid['m.specular_color']	= racMatColor( 'specular' )
 		# light
 		anid['l.energy']	= rac(getReal,	{pl,v,i| (pl as kri.Light).energy = v })
 		anid['l.color']		= rac(getColor,	{pl,v,i| (pl as kri.IColored).Color = v })

@@ -44,18 +44,13 @@ public class Context:
 
 //-----------	Meta data with settings	-----------------//
 
-public class Meta( kri.meta.Basic ):
+public class Meta( kri.meta.Hermit ):
 	private final fc	as Context
 	public shells	as int		= 0
 	public length	as single	= 0f
 	# methods
 	public def constructor(fcon as Context):
 		fc = fcon
-	public def Clone() as object:
-		m = Meta(fc)
-		m.shells = shells
-		m.length = length
-		return m
 	#public override def apply() as void:
 	#	fc.pShellCoef.Value = 1f / shells
 	#	fc.pLength.Value = length
@@ -100,13 +95,7 @@ public class Draw( kri.rend.tech.Meta ):
 	private lit	as kri.Light	= null
 	# init
 	public def constructor(fc as Context):
-		mlist = ('mat.diffuse', 'mat.specular', 'fur')
-		ms = Array.ConvertAll(mlist) do(name as string):
-			return kri.Ant.Inst.slotMetas.find(name)
-		super('fur', 
-			(kri.Ant.Inst.units.texture, kri.Ant.Inst.units.bump, Context.unitPattern), ms,
-			(kri.shade.Object('/fur/draw_v'), kri.shade.Object('/fur/draw_f'))
-			)
+		super('fur', ('diffuse','specular','fur'), '/fur/draw')
 		dict.attach( fc.d )
 	# prepare
 	protected override def getUpdate(mat as kri.Material) as callable() as int:
@@ -115,7 +104,7 @@ public class Draw( kri.rend.tech.Meta ):
 		return def() as int:
 			curLight.apply()
 			metaFun()
-			return (mat.meta[Context.metaFur] as Meta).shells
+			return (mat.Meta['fur'] as Meta).shells
 	# work	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true, 0f, false)

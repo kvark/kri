@@ -28,31 +28,7 @@ public class Emission( tech.Meta ):
 	public fillDepth	= false
 	
 	public def constructor():
-		super('mat.emission',
-			(kri.Ant.Inst.units.texture,),
-			(kri.Ant.Inst.slotMetas.find('emissive'),),
-			(kri.shade.Object('/mat_base_f'), kri.shade.Object('/mat_base_v'))
-			)
-		dict.add('base_color', pBase)
-		pBase.Value = backColor
-	public override def process(con as Context) as void:
-		if fillDepth:
-			con.activate(true, 1f, true)
-			con.ClearDepth(1f)
-		else: con.activate()
-		con.ClearColor( backColor )
-		drawScene()
-
-
-public class Emission2( tech.Meta ):
-	public final pBase	= kri.shade.par.Value[of OpenTK.Graphics.Color4]()
-	public backColor	= OpenTK.Graphics.Color4(0,0,0,0)
-	public fillDepth	= false
-	
-	public def constructor():
-		super('mat.emission', ('emissive',),
-			array(kri.shade.Object('/mat_base2_'+x) for x in ('f','v'))
-			)
+		super('mat.emission', ('emissive',), '/mat_base')
 		dict.add('base_color', pBase)
 		pBase.Value = backColor	#black
 	public override def process(con as Context) as void:

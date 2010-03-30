@@ -55,13 +55,7 @@ public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final smooth	as bool
 	public def constructor(bSmooth as bool):
-		conv = def(name as string):
-			return Ant.Inst.slotMetas.find('mat.'+name)
-		ms = Array.ConvertAll( ('diffuse','specular','parallax'), conv )
-		super('lit.omni.apply',
-			(Ant.Inst.units.texture, Ant.Inst.units.bump), ms,
-			(shade.Object('/light/omni/apply_v'), shade.Object('/light/omni/apply_f'))
-			)
+		super('lit.omni.apply', ('diffuse','specular'), '/light/omni/apply')
 		smooth = bSmooth
 	protected override def getUpdate(mat as Material) as callable() as int:
 		metaFun = super(mat)
