@@ -75,12 +75,12 @@ public partial class Native:
 		puData(m)
 		# basic properties
 		br.ReadByte()	# shadeless
+		getReal()		# parallax
 		m.Meta['bump']		= Advanced( shader:con.slib.bump_c )
 		emit = getReal()
 		m.Meta['emissive']	= Data_single( shader:con.slib.emissive_u,	Value:emit )
 		getReal()	# ambient
 		getReal()	# translucency
-		getReal()	# parallax		
 		return true
 	
 	public static def ScaleColor(ref c as Color4, v as single) as void:

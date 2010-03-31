@@ -25,16 +25,13 @@ public class EarlyZ( tech.General ):
 
 public class Emission( tech.Meta ):
 	public final pBase	= kri.shade.par.Value[of Color4]()
-	public final pFactor= kri.shade.par.Value[of single]()
 	public backColor	= Color4.Black
 	public fillDepth	= false
 	
 	public def constructor():
 		super('mat.emission', ('emissive',), '/mat_base')
 		dict.add('base_color', pBase)
-		dict.add('factor', pFactor)
 		pBase.Value = Color4.Black
-		pFactor.Value = 1f
 	public override def process(con as Context) as void:
 		if fillDepth:
 			con.activate(true, 1f, true)
