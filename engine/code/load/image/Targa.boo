@@ -31,7 +31,7 @@ public class Targa:
 			depth:	br.ReadByte(),
 			descr:	br.ReadByte() )
 		assert hd.check()	
-		img = Basic(hd.wid, hd.het)
+		img = Basic(str, hd.wid, hd.het)
 		order = (2,1,0,3)
 		for i in range(hd.wid*hd.het):
 			for j in order[0: 3+(hd.descr>>3)]:

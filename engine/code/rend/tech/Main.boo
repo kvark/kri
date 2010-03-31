@@ -74,7 +74,7 @@ public class General(Basic):
 public class Meta(General):
 	private final mList	as (string)
 	private final shobs	as (kri.shade.Object)
-	private final sMap		= SortedDictionary[of string, kri.shade.Smart]()
+	private final sMap		= SortedDictionary[of string,int]()
 	protected final dict	= kri.shade.rep.Dict()
 	
 	protected def constructor(name as string, mets as (string), sh as kri.shade.Object*):
@@ -89,10 +89,14 @@ public class Meta(General):
 		sl = mat.collect(mList)
 		return kri.shade.Smart.Fixed	if not sl
 		key = String.Join(',', array(x.id.ToString() for x in sl) )
-		sa as kri.shade.Smart = null
-		return sa	if sMap.TryGetValue(key,sa)
-		sa = kri.shade.Smart()
-		sMap.Add(key,sa)
-		sa.add( *(kri.Ant.Inst.shaders.gentleSet + array(sl) + shobs) )
-		sa.link(kri.Ant.Inst.slotAttributes, dict, mat.dict, kri.Ant.Inst.dict) 
+		sid = -1
+		if sMap.TryGetValue(key,sid):
+			sa = kri.shade.Smart( sid )
+		else:
+			sa = kri.shade.Smart()
+			sMap.Add(key, sa.id )
+			sa.add( *(kri.Ant.Inst.shaders.gentleSet + array(sl) + shobs) )
+			sa.attribs( kri.Ant.Inst.slotAttributes )
+			sa.link()
+		sa.fillPar(dict, mat.dict, kri.Ant.Inst.dict) 
 		return sa

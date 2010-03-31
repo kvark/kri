@@ -215,6 +215,7 @@ def save_mat(mat):
 	print("[%s]" % (mat.name))
 	out.begin('mat')
 	out.text( mat.name )
+	# todo: separate meta componets
 	save_color(mat.diffuse_color, 1.0, mat.emit)	#emissive
 	save_color(mat.diffuse_color, mat.alpha, 1.0)   #diffuse
 	save_color(mat.specular_color, mat.specular_alpha, 1.0) #specular

@@ -33,7 +33,7 @@ internal static class Fm:
 
 #---	General Texture class	---#
 
-public class Texture:
+public class Texture( shade.par.INamed ):
 	public enum Class:
 		Color
 		Depth
@@ -44,7 +44,8 @@ public class Texture:
 	private static final zeroPtr	= System.IntPtr.Zero
 	public final type		as TextureTarget
 	public final id			as int
-	
+	[Property(Name)]
+	private name	as string	= ''
 
 	public def constructor(tip as TextureTarget):
 		id,type = GL.GenTexture(),tip

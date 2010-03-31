@@ -72,3 +72,4 @@ public class Context:
 		mlis.Add(Data_Color4( Name:'specular',	shader:slib.specular_u,	Value:Color4.White ))
 		mlis.Add(Data_single( Name:'glossiness',	shader:slib.glossiness_u,	Value:0.5f ))
 		mlis.Add(Advanced	( Name:'bump', shader:slib.bump_c ))
+		mDef.link()

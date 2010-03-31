@@ -17,7 +17,7 @@ public class Smart(Program):
 	
 	public def constructor():
 		super()
-	private def constructor(xid as int):
+	public def constructor(xid as int):
 		super(xid)
 	
 	public def attribs(sl as kri.lib.Slot, *ats as (int)) as void:
@@ -25,6 +25,8 @@ public class Smart(Program):
 			name = sl.Name[a]
 			continue if string.IsNullOrEmpty(name)
 			attrib(a, prefixAttrib + name)
+	public def attribs(sl as kri.lib.Slot) as void:
+		attribs(sl, *array(range(sl.Size)) )
 	
 	public override def use() as void:
 		super()
@@ -33,8 +35,9 @@ public class Smart(Program):
 	
 	# link with attributes
 	public def link(sl as kri.lib.Slot, *dicts as (rep.Dict)) as void:
-		attribs(sl, *array(range(sl.Size)))
-		linkUni(*dicts)
+		attribs(sl)
+		link()
+		fillPar(*dicts)
 	
 	# collect used attributes
 	public def gatherAttribs(sl as kri.lib.Slot) as int*:
@@ -43,9 +46,9 @@ public class Smart(Program):
 			i == GL.GetAttribLocation(id, prefixAttrib + sl.Name[i])
 			)
 
-	# link, setup units & gather uniforms
-	protected def linkUni( *dicts as (rep.Dict) ) as void:
-		link()
+	# setup units & gather uniforms
+	public def fillPar( *dicts as (rep.Dict) ) as void:
+		params.Clear()
 		GL.UseProgram(id)	# for texture units
 		num = -1
 		GL.GetProgram(id, ProgramParameter.ActiveUniforms, num)

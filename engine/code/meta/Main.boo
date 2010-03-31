@@ -24,7 +24,7 @@ public class Hermit(IBase):
 	
 	def IBase.clone() as IBase:
 		return Hermit( shader:shader, Name:Name )
-	def IBase.link(d as rep.Dict):
+	def IBase.link(d as rep.Dict) as void:
 		pass
 
 
@@ -63,7 +63,7 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 
 
 #---	real value meta-data	---#
-[ext.spec.Class(single,Color4)]
+[ext.spec.Class(Color4,single)]
 [ext.RemoveSource()]
 public class Data[of T(struct)]( Advanced, IValued[of T] ):
 	private final pVal	= par.Value[of T]()

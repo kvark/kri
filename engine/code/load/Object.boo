@@ -21,10 +21,8 @@ public partial class Native:
 			e.tags.Add( kri.TagMat( off:off, num:n,
 				mat: at.mats[ getString() ] ))
 			off += n
-		n = m.nPoly - off
-		return	if not n
-		assert n > 0
-		e.tags.Add( kri.TagMat(off:off, num:n, mat:con.mDef ))
+		if (n = m.nPoly - off) > 0:
+			e.tags.Add( kri.TagMat(off:off, num:n, mat:con.mDef ))
 		return true
 	
 	#---	Parse spatial node	---#

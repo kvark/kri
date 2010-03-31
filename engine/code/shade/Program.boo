@@ -13,12 +13,13 @@ import OpenTK.Graphics.OpenGL
 public class Program:
 	public final id as int
 	[getter(Ready)]
-	linked as bool = false
+	private linked as bool = false
 
 	public def constructor():
 		id = GL.CreateProgram()
 	protected def constructor(xid as int):
 		id = xid
+		linked = true
 	def destructor():
 		kri.SafeKill({ GL.DeleteProgram(id) })
 	public def check() as void:
