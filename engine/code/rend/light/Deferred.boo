@@ -13,7 +13,7 @@ public class Fill( tech.Meta ):
 		get: return buf.A[0].Tex
 	# init
 	public def constructor():
-		super('g.make', ('bump','diffuse','specular','glossiness'), '/g/make')
+		super('g.make', kri.load.Meta.LightSet, '/g/make')
 		t = kri.Texture( TextureTarget.Texture2DArray )
 		buf.A[0].layer(t,0)	# diffuse color * texture
 		buf.A[1].layer(t,1)	# specular color

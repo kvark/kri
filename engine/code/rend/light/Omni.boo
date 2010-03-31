@@ -55,8 +55,7 @@ public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final smooth	as bool
 	public def constructor(bSmooth as bool):
-		metas = ('bump','diffuse','specular','glossiness')
-		super('lit.omni.apply', metas, '/light/omni/apply')
+		super('lit.omni.apply', kri.load.Meta.LightSet, '/light/omni/apply')
 		smooth = bSmooth
 	protected override def getUpdate(mat as Material) as callable() as int:
 		metaFun = super(mat)

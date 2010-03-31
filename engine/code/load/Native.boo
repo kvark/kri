@@ -19,10 +19,6 @@ public class Atom:
 #------		CHUNK LOADER		------#
 
 public partial class Native:
-	public static final NAME_LEN	= 8
-	public static final SHORT_LEN	= 12
-	public static final STR_LEN		= 24
-	public static final PATH_LEN	= 64
 	public final con	= Context()
 	public final dict	= Dictionary[of string, callable]()	# should be "callable() as bool"
 	private final rep	= []
@@ -70,7 +66,7 @@ public partial class Native:
 		at = Atom(path)
 		bs = br.BaseStream
 		while bs.Position != bs.Length:
-			name = getString(NAME_LEN)
+			name = getString(8)
 			size = br.ReadUInt32()
 			size += bs.Position
 			assert size <= bs.Length
@@ -105,8 +101,10 @@ public partial class Native:
 	protected def getColorByte() as Color4:
 		c = br.ReadBytes(4)	#rbga
 		return Color4(c[0],c[2],c[1],c[3])
-	protected def getString(n as int) as string:
-		return string( br.ReadChars(n) ).TrimEnd( char(0) )
+	protected def getString(size as byte) as string:
+		return string( br.ReadChars(size) ).TrimEnd( char(0) )
+	protected def getString() as string:
+		return getString( br.ReadByte() )
 	protected def getVector() as Vector3:
 		return Vector3( X:getReal(), Y:getReal(), Z:getReal() )
 	protected def getVec2() as Vector2:

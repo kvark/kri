@@ -8,6 +8,6 @@ vec4 get_emissive();
 in vec4 tc_emissive;
 
 void main()	{
-	gl_FragColor = tc_emissive;
-	//gl_FragColor = base_color + get_emissive();
+	//gl_FragColor = tc_emissive;
+	gl_FragColor = base_color + get_emissive();
 }

@@ -11,6 +11,7 @@ import kri.meta
 
 public static class Meta:
 	private corDict = Dictionary[of string,Object]()
+	public final LightSet	= ('bump','diffuse','specular','glossiness')
 	
 	public def MakeTexCoords(cl as (string)*) as Object:
 		key = string.Join(';',array( string.Join(':',s) for s in cl ))

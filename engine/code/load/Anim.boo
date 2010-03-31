@@ -76,7 +76,7 @@ public partial class Native:
 	public def p_action() as bool:
 		player = geData[of Player]()
 		return false	if not player
-		name = getString(STR_LEN)
+		name = getString()
 		rec = Record( name, getReal() )
 		player.anims.Add(rec)
 		puData(rec)
@@ -135,7 +135,7 @@ public partial class Native:
 	public def p_curve() as bool:
 		rec	= geData[of Record]()
 		return false	if not rec
-		data_path = getString(STR_LEN)
+		data_path = getString()
 		siz = br.ReadByte()	# element size in floats
 		fun as callable() as IChannel
 		if not anid.TryGetValue(data_path,fun):

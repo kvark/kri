@@ -44,11 +44,12 @@ public partial class Native:
 	public def pv_uv() as bool:
 		m = geData[of kri.Mesh]()
 		return false	if not m
-		slot = System.Array.Find( kri.Ant.Inst.attribs.tex ) do(i as int):
+		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.tex ) do(i as int):
 			return m.find(i) == null
-		assert slot
-		getString(NAME_LEN)	# skip layer name
-		ai = kri.vb.attr.Info( slot:slot, size:2,
+		assert slot < m.uvNames.Length
+		m.uvNames[ slot ] = getString()
+		ai = kri.vb.attr.Info(
+			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
 			type:VertexAttribPointerType.Float,
 			integer:false )
 		return getArray[of Vector2](1,ai,getVec2)

@@ -19,14 +19,13 @@ public partial class Native:
 			limdic[str] = fun(h)
 		replace('UV') do(h as Hermit):
 			return do():
-				# uv layer name, not supported
-				getString(NAME_LEN)
+				getString()	# uv layer name, not supported
 				muv = InputUV( shader:h.shader, Name:h.Name )
 				muv.pInd.Value = 0
 				return muv
 		replace('OBJECT') do(h as Hermit):
 			return do():
-				name = getString(STR_LEN)
+				name = getString()
 				mio = InputObject( shader:h.shader, Name:h.Name )
 				finalActions.Add() do():
 					nd = at.nodes[name]
@@ -34,8 +33,7 @@ public partial class Native:
 				return mio
 		replace('ORCO') do(h as Hermit):
 			return do():
-				# mapping type, not supported
-				getString(NAME_LEN)
+				getString()	# mapping type, not supported
 				return h
 
 
@@ -54,8 +52,7 @@ public partial class Native:
 		tarDict['colordiff']		= MapTarget( 'diffuse',		con.slib.diffuse_t2 )
 		tarDict['coloremission']	= MapTarget( 'emissive',	con.slib.emissive_t2 )
 		# map targets
-		for i in range( br.ReadByte() ):
-			name = getString(STR_LEN)
+		while (name = getString()) != '':
 			targ as MapTarget
 			continue if not tarDict.TryGetValue(name,targ)
 			u.Name = targ.name	if System.String.IsNullOrEmpty(u.Name)
@@ -63,7 +60,7 @@ public partial class Native:
 			me.unit = u
 			me.shader = targ.prog
 		# map inputs
-		name = getString(SHORT_LEN)
+		name = getString()
 		fun as callable() as Hermit = null
 		if limdic.TryGetValue(name,fun):
 			u.input = fun()
@@ -73,7 +70,7 @@ public partial class Native:
 
 	#---	Parse material	---#
 	public def p_mat() as bool:
-		m = kri.Material( getString(STR_LEN) )
+		m = kri.Material( getString() )
 		at.mats[m.name] = m
 		puData(m)
 		# colors
@@ -81,9 +78,9 @@ public partial class Native:
 		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:getColorByte() )
 		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:getColorByte() )
 		# models
-		str = getString(SHORT_LEN)
+		str = getString()
 		assert str == 'LAMBERT'
-		str = getString(SHORT_LEN)
+		str = getString()
 		assert str in ('COOKTORR','PHONG')
 		# params
 		getReal()	# reflectivity, todo!
@@ -111,5 +108,5 @@ public partial class Native:
 		# texcoords & image path
 		u.pOffset.Value	= Vector4(getVector(), 0.0)
 		u.pScale.Value	= Vector4(getVector(), 1.0)
-		u.Value = getTexture( 'res' + getString(PATH_LEN) )
+		u.Value = getTexture( 'res' + getString() )
 		return u.Value != null

@@ -14,6 +14,7 @@ class Mesh( vb.attr.Storage ):
 	public ind		as vb.Index	= null
 	public final drawMode	as BeginMode
 	public final polySize	as uint
+	public final uvNames	= array[of string]( Ant.Inst.attribs.tex.Length )
 	
 	public def constructor(dmode as BeginMode):
 		drawMode,polySize = dmode,0

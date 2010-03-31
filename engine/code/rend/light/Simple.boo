@@ -51,7 +51,7 @@ public class Apply( rend.tech.Meta ):
 
 	public def constructor(lc as Context):
 		name = ('simple','exponent2')[lc.expo]
-		super('lit.apply', ('bump','diffuse','specular','glossiness'),
+		super('lit.apply', kri.load.Meta.LightSet,
 			(shade.Object('/light/'+str) for str in ('apply_v','apply_f',"shadow/${name}_f"))
 			)
 		dict.attach(lc.dict)

@@ -27,10 +27,15 @@ class Writer:
 		self.pos = 0
 	def pack(self,tip,*args):
 		assert self.pos
-		self.fx.write( struct.pack(tip,*args) )
+		self.fx.write( struct.pack('<'+tip,*args) )
 	def array(self,tip,ar):
 		assert self.pos
 		array.array(tip,ar).tofile(self.fx)
+	def text(self,*args):
+		for s in args:
+			n = len(s)
+			assert n<256
+			self.pack("B%ds"%(n), n,s)
 	def begin(self,name):
 		assert len(name)<8 and not self.pos
 		self.fx.write( struct.pack('<8sL',name,0) )
@@ -45,7 +50,7 @@ class Writer:
 
 def save_color(rgb, a, kf):
 	for c in list(rgb)+[a]:
-		out.pack( '<B', int(255*c*kf) )
+		out.pack('B', int(255*c*kf) )
 
 def save_matrix(mx):
 	#for i in range(4):
@@ -56,7 +61,7 @@ def save_matrix(mx):
 	scale = (sca.x + sca.y + sca.z)/3.0
 	if math.fabs(sca.x-sca.y) + math.fabs(sca.x-sca.z) > 0.01:
 		print("\t(w)",'non-uniform scale:',str(sca))
-	out.pack( '<8f',
+	out.pack('8f',
 		pos.x, pos.y, pos.z, scale,
 		rot.x, rot.y, rot.z, rot.w )
 
@@ -106,7 +111,8 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 	# write header or exit
 	if not len(rnas): return
 	out.begin( 'action' )
-	out.pack( '<24sf', act.name, nf * kFrameSec )
+	out.text( act.name )
+	out.pack('f', nf * kFrameSec )
 	out.end()
 	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 	# write in packs
@@ -115,7 +121,8 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 			curves.add( "%s[%d]" % (attrib,len(sub)) )
 			out.begin('curve')
 			assert elem<256 and len(attrib)<24
-			out.pack('<24sBB', (sym+'.'+attrib), len(sub), elem )
+			out.text( sym+'.'+attrib )
+			out.pack('2B', len(sub), elem )
 			save_curve_pack( sub, offset )
 			out.end()
 	print("\t\t", ', '.join(curves) )
@@ -125,7 +132,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 def save_curve_pack(curves,offset):
 	if not len(curves):
 		print("\t\t(w) invalid curve pack")
-		out.pack('<H',0)
+		out.pack('H',0)
 		return
 	num = len( curves[0].keyframe_points )
 	extra = curves[0].extrapolation
@@ -133,14 +140,14 @@ def save_curve_pack(curves,offset):
 	for c in curves:
 		assert len(c.keyframe_points) == num
 		assert c.extrapolation == extra
-	out.pack('<HB', num, (extra == 'LINEAR'))
+	out.pack('HB', num, (extra == 'LINEAR'))
 	for i in range(num):
 		def h0(k): return k.co
 		def h1(k): return k.handle1
 		def h2(k): return k.handle2
 		kp = tuple(c.keyframe_points[i] for c in curves)
 		x = kp[0].co[0]
-		out.pack('<f', (x-offset)*kFrameSec)
+		out.pack('f', (x-offset)*kFrameSec)
 		#print ('Time', x, i, data)
 		for fun in (h0,h1,h2):	# ignoring handlers time
 			out.array('f', (fun(k)[1] for k in kp) )
@@ -156,15 +163,13 @@ def save_mat_unit(mtex):
 	supported = ['normal'] + list('color'+x for x in colored)
 	current = list(x for x in supported	if mtex.__getattribute__('map_'+x))
 	print("\t\t",'affect:', ','.join(current))
-	out.pack('<B', len(current))
-	for x in current:
-		out.pack('<24s',x)
+	out.text( *(current+['']) )
 	tc,mp = mtex.texture_coordinates, mtex.mapping
 	print("\t\t", tc,'input,', mp,'mapping')
-	out.pack('<12s', tc)
-	if tc == 'UV':		out.pack('<8s', mtex.uv_layer)
-	if tc == 'OBJECT':	out.pack('<24s', mtex.object.name)
-	if tc == 'ORCO':	out.pack('<8s', mp)
+	out.text(tc)
+	if tc == 'UV':		out.text( mtex.uv_layer )
+	if tc == 'OBJECT':	out.text( mtex.object.name )
+	if tc == 'ORCO':	out.text( mp )
 	out.end()
 
 
@@ -178,28 +183,27 @@ def save_mat_image(mtex):
 	img = mtex.texture.image
 	out.begin('tex')
 	it = mtex.texture
-	out.pack( '<3B',	# binary flags
+	out.pack( '3B',	# binary flags
 		('CLIP','REPEAT').index( it.extension ),
 		it.mipmap, it.interpolation)
 	# tex coords transformation
 	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
 		print("\t(w)",'tex coord swizzling not supported')
 	for v in (mtex.offset,mtex.size):
-		out.pack('<3f', v[0],v[1],v[2])
+		out.pack('3f', v[0],v[1],v[2])
 	# image path
 	fullname = img.filename
 	print("\t\t", img.source, ':',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
 		print("\t\t(w) path cut to:", name)
-	assert len(name)<64
-	out.pack( '<64s', name )
+	out.text( name)
 	out.end()
 	if img.source == 'SEQUENCE':
 		# image sequence chunk
 		user = mtex.texture.image_user
 		out.begin('im_seq')
-		out.pack( '<3H', user.frames, user.offset, user.start_frame )
+		out.pack( '3H', user.frames, user.offset, user.start_frame )
 		out.end()
 	elif img.source != 'FILE':
 		print("\t\t(w)",'bad image source')
@@ -210,14 +214,14 @@ def save_mat_image(mtex):
 def save_mat(mat):
 	print("[%s]" % (mat.name))
 	out.begin('mat')
-	out.pack( '<24s', mat.name )
+	out.text( mat.name )
 	save_color(mat.diffuse_color, 1.0, mat.emit)	#emissive
 	save_color(mat.diffuse_color, mat.alpha, 1.0)   #diffuse
 	save_color(mat.specular_color, mat.specular_alpha, 1.0) #specular
 	sh = (mat.diffuse_shader, mat.specular_shader)
 	print("\tshading: %s %s" % sh)
-	out.pack( '<12s12s4f',
-		sh[0],sh[1],
+	out.text( sh[0],sh[1] )
+	out.pack('4f',
 		mat.diffuse_intensity, mat.specular_intensity,
 		mat.specular_hardness, mat.ambient )
 	out.end()
@@ -233,12 +237,11 @@ def save_mat(mat):
 
 def save_mesh(mesh,armature,groups,doQuatInt):
 	import Mathutils as Math
-	n_bad_uv = 0
 	def calc_TBN(verts, uvs):
 		va = verts[1].co - verts[0].co
 		vb = verts[2].co - verts[0].co
 		n0 = n1 = va.cross(vb)
-		tan,bit = va,vb
+		tan,bit,hand = va,vb,1
 		if len(uvs) and n1.dot(n1) > 0.0:
 			ta = uvs[0][1] - uvs[0][0]
 			tb = uvs[0][2] - uvs[0][0]
@@ -246,8 +249,8 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 				tan = va*tb.y - vb*ta.y
 				bit = vb*ta.x - va*tb.x
 				n0 = tan.cross(bit)
-			else:	n_bad_uv += 1
-		hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
+				hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
+			else:	hand = 0.0		
 		return (tan, bit, n0, hand, n1)
 
 	class Vertex:
@@ -279,7 +282,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			self.normal = (face.normal,Math.Vector(0,0,0))[face.smooth]
 			self.uv = [[ layer[i]	for i in ind ] for layer in uves]
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
-			self.wes = 3 * [kEpsilon2+nv.dot(nv)]
+			self.wes = 3 * [0.1+nv.dot(nv)]
 			assert t.dot(t) > 0.0
 			self.ta = t.normalize()
 			self.hand = hand
@@ -299,6 +302,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		ar_face.append( Face(face, mesh.verts, [0,1,2], uves) )
 		if nvert<4: continue
 		ar_face.append( Face(face, mesh.verts, [0,2,3], uves) )
+	n_bad_uv = len(list( f for f in ar_face if f.hand==0.0 ))
 	if n_bad_uv:
 		print("\t(w) %d pure vertices detected" % (n_bad_uv))
 	else: print("\tconverted to tri-mesh")
@@ -427,26 +431,26 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	print("\t(i) %d vertices, %d faces" % (len(ar_vert),len(ar_face)))
 	print("\t(i) %.2f avg vertex usage" % (3.0*len(ar_face)/len(ar_vert)))
 	out.begin('mesh')
-	out.pack('<H', len(ar_vert) )
+	out.pack('H', len(ar_vert) )
 	out.end()
 	out.begin('v_pos')
 	for v in ar_vert:
-		out.pack('<4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
+		out.pack('4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
 	out.end()
 	out.begin('v_quat')
 	for v in ar_vert:
-		out.pack('<4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
+		out.pack('4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
 	out.end()
 	for i,layer in enumerate(mesh.uv_textures):
 		out.begin('v_uv')
-		out.pack('<8s',layer.name)
+		out.text( layer.name )
 		for v in ar_vert:
 			assert i<len(v.tex)
-			out.pack('<2f', v.tex[i].x, v.tex[i].y)
+			out.pack('2f', v.tex[i].x, v.tex[i].y)
 		out.end()
 
 	out.begin('v_ind')
-	out.pack('<H', len(ar_face))
+	out.pack('H', len(ar_face))
 	for face in ar_face:
 		out.array('H', face.vi)
 	out.end()
@@ -454,9 +458,10 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	#   6: materials
 	out.begin('entity')
 	for fn,m in zip(face_num,mesh.materials):
-		out.pack('<H24s', fn, m.name)
+		out.pack('H', fn)
+		out.text( m.name )
 		print("\t+entity: %d faces, [%s]" % (fn,m.name))
-	out.pack('<H',0)
+	out.pack('H',0)
 	out.end()
 
 	if not armature: return
@@ -481,7 +486,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			else: weight = min(left,weight)
 			left -= weight
 			assert weight>=0 and weight<256
-			out.pack('<2B', weight,bid)
+			out.pack('2B', weight,bid)
 	avg /= len(ar_vert)
 	out.end()
 	print("\tbone weights: %d empty, %.1f avg" % (nempty,avg))
@@ -515,10 +520,11 @@ def save_lamp(lamp):
 		else: print("\t(w) custom curve is not supported")
 		print("\tfalloff: %s, %.4f q1, %.4f q2" % (ft,q1,q2))
 	else: q1=q2=0.0
-	out.pack('<4f', q0,q1,q2,qs)
+	out.pack('4f', q0,q1,q2,qs)
 	if lamp.type == 'SPOT':
 		spotAng,spotBlend = lamp.spot_size,lamp.spot_blend
-	out.pack('<8s4f', lamp.type, clip0,clip1, spotAng,spotBlend )
+	out.text( lamp.type )
+	out.pack('4f', clip0,clip1, spotAng,spotBlend )
 	out.end()
 
 
@@ -528,9 +534,8 @@ def save_camera(cam, is_cur):
 		('A' if is_cur else '_'), cam.clip_start,
 		cam.clip_end, cam.angle) )
 	out.begin('cam')
-	out.pack('<B3f', is_cur,
-		cam.clip_start, cam.clip_end,
-		cam.angle)
+	out.pack('B3f', is_cur,
+		cam.clip_start, cam.clip_end, cam.angle)
 	out.end()
 
 
@@ -541,7 +546,7 @@ def save_skeleton(skel):
 	nbon = len(skel.bones)
 	assert nbon < kMaxBones
 	print("\t(i)", nbon ,'bones')
-	out.pack('<B', nbon)
+	out.pack('B', nbon)
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
 		if not (bone.inherit_scale and bone.deform):
@@ -550,7 +555,8 @@ def save_skeleton(skel):
 			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
 			parid = skel.bones.keys().index( par.name )
 			mx = par.matrix_local.copy().invert() * mx
-		out.pack( '<24sB', bone.name, parid+1 )
+		out.text( bone.name )
+		out.pack('B', parid+1 )
 		save_matrix(mx)
 	out.end()
 
@@ -571,7 +577,8 @@ def save_particle(part):
 	print("\t+particle: %s [%s] %d num, [%d-%d] life %d" % ((part.name, matname, st.amount) + life))
 	dist = ('JIT','RAND','GRID').index( st.distribution )
 	out.begin('part')
-	out.pack('<L24s24sBf', st.amount, part.name, matname, dist, st.jitter_factor)
+	out.text( part.name, matname )
+	out.pack('LBf', st.amount, dist, st.jitter_factor)
 	out.array('f', [x*kFrameSec for x in life] )
 	obal = tuple( st.object_aligned_factor )
 	out.array('f', add+vel+obal+force+size )
@@ -602,7 +609,7 @@ def save_node(ob):
 	# todo: parent types (bone,armature,node)
 	out.begin('node')
 	par_name = (ob.parent.name if ob.parent else '')
-	out.pack( '<24s24s', ob.name, par_name )
+	out.text( ob.name, par_name )
 	# transform matrix world->local space
 	local = (ob.matrix * ob.parent.matrix.copy().invert()) if ob.parent else ob.matrix
 	save_matrix( local )
@@ -634,7 +641,7 @@ def save_scene(filename, context, doQuatInt=True):
 		filename += file_ext
 	out = Writer(filename)
 	out.begin('kri')
-	out.pack('<B',3)
+	out.pack('B',3)
 	out.end()
 	
 	for mat in context.main.materials:

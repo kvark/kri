@@ -19,7 +19,7 @@ public partial class Native:
 			n = br.ReadUInt16()
 			break	if not n
 			e.tags.Add( kri.TagMat( off:off, num:n,
-				mat: at.mats[ getString(STR_LEN) ] ))
+				mat: at.mats[ getString() ] ))
 			off += n
 		n = m.nPoly - off
 		return	if not n
@@ -29,10 +29,10 @@ public partial class Native:
 	
 	#---	Parse spatial node	---#
 	public def p_node() as bool:
-		n = kri.Node( getString(STR_LEN) )
+		n = kri.Node( getString() )
 		at.nodes[n.name] = n
 		puData(n)
-		n.Parent = at.nodes[ getString(STR_LEN) ]
+		n.Parent = at.nodes[ getString() ]
 		n.Local = getSpatial()
 		return true
 	
@@ -60,7 +60,7 @@ public partial class Native:
 		l.quad2		= getReal()
 		l.sphere	= getReal()
 		# main
-		type = getString(NAME_LEN)
+		type = getString()
 		getProjector(l)
 		if type == 'SUN':
 			l.makeDirectional( l.fov )
@@ -75,10 +75,10 @@ public partial class Native:
 		#pm = kri.part.Manager( br.ReadUInt32() )
 		//pe = kri.part.Emitter(pm,ent)
 		pe as kri.part.Emitter = null
-		br.ReadUInt32()		# amount
-		getString(STR_LEN)	# name
-		psMat = at.mats[ getString(STR_LEN) ]
+		getString()	# name
+		psMat = at.mats[ getString() ]
 		psMat = con.mDef	if not psMat
+		br.ReadUInt32()		# amount
 		br.ReadBytes(5)	# distribution
 		for i in range(3+2+6+3+3+2):	# lifetime, velocity, force, size
 			getReal()
@@ -100,7 +100,7 @@ public partial class Native:
 		# read nodes
 		par = array[of byte](nbones)
 		for i in range(nbones):
-			name = getString(STR_LEN)
+			name = getString()
 			par[i] = br.ReadByte()
 			s.bones[i] = kri.NodeBone(name, getSpatial())
 		for i in range(nbones):
