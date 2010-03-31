@@ -14,7 +14,7 @@ public static class Meta:
 	public final LightSet	= ('bump','diffuse','specular','glossiness')
 	
 	public def MakeTexCoords(cl as (string)*) as Object:
-		key = string.Join(';',array( string.Join(':',s) for s in cl ))
+		key = join( (join(s,':') for s in cl), ';' )
 		rez as Object = null
 		if corDict.TryGetValue(key,rez):
 			return rez
@@ -23,18 +23,16 @@ public static class Meta:
 			for s in cl: dd[s] = null
 			return dd.Keys
 		layers = array[of string*](unilist(s[i] for s in cl) for i in range(3))
-		def genStr(id as int, sep as string, fun as callable(string) as string):
-			return string.Join(sep,	array(fun(x) for x in layers[id]))
+		def genStr(id as int, fun as callable(string) as string):
+			return join(map( layers[id], fun ))
 		def funBody(s as (string)) as string:
-			return "tc_${s[0]} = offset_${s[1]} + scale_${s[1]} * mr_${s[2]};"
-		dec_vars = genStr(0,',',	{s| return "tc_${s}"})
-		dec_unis = genStr(1,',',	{s| return "offset_${s},scale_${s}"})
-		dec_funs = genStr(2,"\n",	{s| return "vec3 mi_${s}();"})
-		dec_mins = genStr(2,"\n",	{s| return "vec4 mr_${s} = vec4( mi_${s}(), 1.0);"})
-		body = string.Join("\n",	array(funBody(s) for s in cl))
-		body = "void make_tex_coords()	{\n ${dec_mins}\n ${body} \n}"
-		dec_all = "uniform vec4 ${dec_unis};\n out vec4 ${dec_vars};\n ${dec_funs}\n"
-		str = kri.Ant.Inst.shaders.header + dec_all + body
+			return "tc_${s[0]} = offset_${s[1]} + scale_${s[1]} * mr_${s[2]};\n"
+		dec_vars = genStr(0, {s| return "out vec4 tc_${s};\n" })
+		dec_unis = genStr(1, {s| return "uniform vec4 offset_${s},scale_${s};\n" })
+		dec_funs = genStr(2, {s| return "vec3 mi_${s}();\n" })
+		dec_mins = genStr(2, {s| return "vec4 mr_${s} = vec4( mi_${s}(), 1.0);\n" })
+		body = "void make_tex_coords()	{\n${dec_mins}\n${join(map(cl,funBody))}}"
+		str = kri.Ant.Inst.shaders.header + dec_unis + dec_vars + dec_funs + body
 		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
 		return rez
 		

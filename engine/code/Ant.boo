@@ -104,5 +104,5 @@ public class Ant(GameWindow):
 		if fps.update(Time):
 			Title = fps.gen()
 		# redraw views
-		views.ForEach() do(v as View):
+		for v in views:
 			v.update()

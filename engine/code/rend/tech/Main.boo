@@ -88,7 +88,7 @@ public class Meta(General):
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
 		sl = mat.collect(mList)
 		return kri.shade.Smart.Fixed	if not sl
-		key = String.Join(',', array(x.id.ToString() for x in sl) )
+		key = join( (x.id.ToString() for x in sl), ',' )
 		sid = -1
 		if sMap.TryGetValue(key,sid):
 			sa = kri.shade.Smart( sid )
