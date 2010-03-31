@@ -1,7 +1,7 @@
 #version 130
 precision lowp float;
 
-uniform vec4 mat_emissive;
+uniform float mat_emissive;
 uniform sampler2D unit_emissive;
 
 in vec4 tc_emissive;

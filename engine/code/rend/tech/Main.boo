@@ -84,6 +84,10 @@ public class Meta(General):
 		super(name)
 		mList = mets
 		shobs = array( kri.shade.Object(prefix+s) for s in ('_v','_f') )
+	protected def constructor(name as string, mets as (string), slis as string*):
+		super(name)
+		mList = mets
+		shobs = array( kri.shade.Object(s) for s in slis )
 
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
 		sl = mat.collect(mList)

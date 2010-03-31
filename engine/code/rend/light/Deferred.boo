@@ -13,7 +13,8 @@ public class Fill( tech.Meta ):
 		get: return buf.A[0].Tex
 	# init
 	public def constructor():
-		super('g.make', kri.load.Meta.LightSet, '/g/make')
+		super('g.make', kri.load.Meta.LightSet,
+			('/g/make_v','/g/make_f','/light/common_f'))
 		t = kri.Texture( TextureTarget.Texture2DArray )
 		buf.A[0].layer(t,0)	# diffuse color * texture
 		buf.A[1].layer(t,1)	# specular color
@@ -63,6 +64,7 @@ public class Apply( Basic ):
 		d.unit(gbuf,texLit,texDep)
 		pArea.Value = OpenTK.Vector4( 0f,0f,0f,1f )
 		sa.add( '/g/apply_v', '/g/apply_f' )
+		sa.add( '/mod/lambert_f', '/mod/phong_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
 	# calculate
 	private def setArea(l as kri.Light) as void:

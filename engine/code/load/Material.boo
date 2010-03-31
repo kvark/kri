@@ -73,26 +73,51 @@ public partial class Native:
 		m = kri.Material( getString() )
 		at.mats[m.name] = m
 		puData(m)
-		# colors
-		m.Meta['emissive']	= Data_Color4( shader:con.slib.emissive_u,	Value:getColorByte() )
-		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:getColorByte() )
-		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:getColorByte() )
-		# models
-		str = getString()
-		assert str == 'LAMBERT'
-		str = getString()
-		assert str in ('COOKTORR','PHONG')
-		# params
-		getReal()	# reflectivity, todo!
-		getReal()	# specularity, todo!
-		glossy	= getReal()
-		getReal()	# parallax, todo!
-		# META2 style
-		m.Meta['glossiness']	= Data_single( shader:con.slib.glossiness_u,	Value:glossy )
+		# basic properties
+		br.ReadByte()	# shadeless
 		m.Meta['bump']		= Advanced( shader:con.slib.bump_c )
+		emit = getReal()
+		m.Meta['emissive']	= Data_single( shader:con.slib.emissive_u,	Value:emit )
+		getReal()	# ambient
+		getReal()	# translucency
+		getReal()	# parallax		
+		return true
+	
+	public static def ScaleColor(ref c as Color4, v as single) as void:
+		c.R *= v
+		c.G *= v
+		c.B *= v
+
+	#---	Meta: diffuse	---#
+	public def pm_diff() as bool:
+		m = geData[of kri.Material]()
+		return false	if not m
+		color = getColorByte()
+		ScaleColor( color, getReal() )
+		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:color )
+		sh = {
+			'LAMBERT':	con.slib.lambert
+			}[ getString() ]
+		m.Meta['comp_diff']	= Advanced( shader:sh )	if sh
 		return true
 
+	#---	Meta: specular	---#
+	public def pm_spec() as bool:
+		m = geData[of kri.Material]()
+		return false	if not m
+		color = getColorByte()
+		ScaleColor( color, getReal() )
+		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:color )
+		glossy = getReal()
+		m.Meta['glossiness']= Data_single( shader:con.slib.glossiness_u,Value:glossy )
+		sh = {
+			'COOKTORR':	con.slib.cooktorr,
+			'PHONG':	con.slib.phong
+			}[ getString() ]
+		m.Meta['comp_spec']	= Advanced( shader:sh )	if sh
+		return true
 
+	
 	protected def getTexture(str as string) as kri.Texture:
 		#TODO: support for other formats
 		return null	if not str.EndsWith('.tga')

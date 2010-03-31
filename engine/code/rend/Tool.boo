@@ -1,6 +1,7 @@
 ﻿namespace kri.rend
 
 import System
+import OpenTK.Graphics
 
 
 #---------	EARLY Z FILL	--------#
@@ -23,14 +24,17 @@ public class EarlyZ( tech.General ):
 #---------	INITIAL FILL EMISSION	--------#
 
 public class Emission( tech.Meta ):
-	public final pBase	= kri.shade.par.Value[of OpenTK.Graphics.Color4]()
-	public backColor	= OpenTK.Graphics.Color4(0,0,0,0)
+	public final pBase	= kri.shade.par.Value[of Color4]()
+	public final pFactor= kri.shade.par.Value[of single]()
+	public backColor	= Color4.Black
 	public fillDepth	= false
 	
 	public def constructor():
 		super('mat.emission', ('emissive',), '/mat_base')
 		dict.add('base_color', pBase)
-		pBase.Value = backColor	#black
+		dict.add('factor', pFactor)
+		pBase.Value = Color4.Black
+		pFactor.Value = 1f
 	public override def process(con as Context) as void:
 		if fillDepth:
 			con.activate(true, 1f, true)

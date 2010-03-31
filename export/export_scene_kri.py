@@ -48,9 +48,9 @@ class Writer:
 		self.fx.seek(+off+0,1)
 		self.pos = 0
 
-def save_color(rgb, a, kf):
-	for c in list(rgb)+[a]:
-		out.pack('B', int(255*c*kf) )
+def save_color(rgb):
+	for c in rgb:
+		out.pack('B', int(255*c) )
 
 def save_matrix(mx):
 	#for i in range(4):
@@ -215,16 +215,22 @@ def save_mat(mat):
 	print("[%s]" % (mat.name))
 	out.begin('mat')
 	out.text( mat.name )
-	# todo: separate meta componets
-	save_color(mat.diffuse_color, 1.0, mat.emit)	#emissive
-	save_color(mat.diffuse_color, mat.alpha, 1.0)   #diffuse
-	save_color(mat.specular_color, mat.specular_alpha, 1.0) #specular
+	parallax = 0.5
+	out.pack('B4f', mat.shadeless, parallax,
+		mat.emit, mat.ambient, mat.translucency )
+	out.end()
 	sh = (mat.diffuse_shader, mat.specular_shader)
 	print("\tshading: %s %s" % sh)
-	out.text( sh[0],sh[1] )
-	out.pack('4f',
-		mat.diffuse_intensity, mat.specular_intensity,
-		mat.specular_hardness, mat.ambient )
+	# separate metas
+	out.begin('m_diff')
+	save_color( mat.diffuse_color )
+	out.pack('f', mat.diffuse_intensity)
+	out.text( sh[0] )
+	out.end()
+	out.begin('m_spec')
+	save_color( mat.specular_color )
+	out.pack('2f', mat.specular_intensity, mat.specular_hardness)
+	out.text( sh[1] )
 	out.end()
 	# texture units
 	for mt in mat.texture_slots:
@@ -499,7 +505,7 @@ def save_lamp(lamp):
 	energy_threshold = 0.1
 	print("\t(i) %s type, %.1f distance" % (lamp.type, lamp.distance))
 	out.begin('lamp')
-	save_color(lamp.color, 1.0,1.0)
+	save_color( lamp.color )
 	if not lamp.specular or not lamp.diffuse:
 		print("\t(w) specular or diffuse can't be disabled")
 	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0

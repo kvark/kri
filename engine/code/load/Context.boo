@@ -11,7 +11,7 @@ import kri.meta
 
 public static class Meta:
 	private corDict = Dictionary[of string,Object]()
-	public final LightSet	= ('bump','diffuse','specular','glossiness')
+	public final LightSet	= ('bump','diffuse','specular','glossiness','comp_diff','comp_spec')
 	
 	public def MakeTexCoords(cl as (string)*) as Object:
 		key = join( (join(s,':') for s in cl), ';' )
@@ -65,9 +65,11 @@ public class Context:
 	
 	public def constructor():
 		mlis = mDef.metaList
-		mlis.Add(Data_Color4( Name:'emissive',	shader:slib.emissive_u,	Value:Color4.DarkGray ))
+		mlis.Add(Data_single( Name:'emissive',	shader:slib.emissive_u,	Value:0.1f ))
 		mlis.Add(Data_Color4( Name:'diffuse',	shader:slib.diffuse_u,	Value:Color4.Gray ))
 		mlis.Add(Data_Color4( Name:'specular',	shader:slib.specular_u,	Value:Color4.White ))
-		mlis.Add(Data_single( Name:'glossiness',	shader:slib.glossiness_u,	Value:0.5f ))
+		mlis.Add(Data_single( Name:'glossiness',shader:slib.glossiness_u,	Value:0.5f ))
 		mlis.Add(Advanced	( Name:'bump', shader:slib.bump_c ))
+		mlis.Add(Advanced	( Name:'comp_diff',	shader:slib.lambert ))
+		mlis.Add(Advanced	( Name:'comp_spec',	shader:slib.phong ))
 		mDef.link()

@@ -18,19 +18,9 @@ uniform vec4 lit_color, lit_data, lit_attenu;
 
 
 //---	LIGHT MODEL		---//
+float comp_diffuse(vec3,vec3);
+float comp_specular(vec3,vec3,vec3,float);
 
-float comp_diffuse(vec3 no, vec3 lit)	{
-	//lambert model
-	return max( dot(no,lit), 0.0);
-}
-float comp_specular(vec3 no, vec3 lit, vec3 cam, float power)	{
-	//cook-torrance model
-	float nh = dot(no, normalize(lit+cam) );
-	if(nh <= 0.0) return 0.0;
-	float nv = max(dot(no,cam), 0.0);
-	float sf = pow(nh, power);
-	return sf/(0.1+nv);
-}
 float get_attenuation(float d)	{
 	vec3 a = vec3(1.0) + lit_attenu.wyz * vec3(-d,d,d*d);
 	//x: spherical, y :linear, z: quadratic
@@ -77,8 +67,8 @@ void main()	{
 	vec3 v_lit = s_lit.pos.xyz - p_world;
 	vec3 v2lit = normalize( v_lit );
 	vec3 v2cam = normalize( s_cam.pos.xyz - p_world );
-	float diff = comp_diffuse(	normal, v2lit );
-	float spec = comp_specular(	normal, v2lit, v2cam, 100.0*g_normal.w );
+	float diff = comp_diffuse(  normal, v2lit );
+	float spec = comp_specular( normal, v2lit, v2cam, 100.0*g_normal.w );
 
 	float intensity = get_attenuation( length(v_lit) );
 	if( intensity*(diff+spec) < 0.01 ) discard;

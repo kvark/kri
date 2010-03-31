@@ -40,6 +40,8 @@ public partial class Native:
 		dict['lamp']	= p_lamp
 		# material
 		dict['mat']		= p_mat
+		dict['m_diff']	= pm_diff
+		dict['m_spec']	= pm_spec
 		dict['unit']	= pm_unit
 		dict['tex']		= pm_tex
 		# animations
@@ -102,8 +104,9 @@ public partial class Native:
 	protected def getColor() as Color4:
 		return Color4( getReal(), getReal(), getReal(), 1f )
 	protected def getColorByte() as Color4:
-		c = br.ReadBytes(4)	#rbga
-		return Color4(c[0],c[2],c[1],c[3])
+		c = br.ReadBytes(3)	#rbg
+		a as byte = 0xFF
+		return Color4(c[0],c[2],c[1],a)
 	protected def getString(size as byte) as string:
 		return string( br.ReadChars(size) ).TrimEnd( char(0) )
 	protected def getString() as string:

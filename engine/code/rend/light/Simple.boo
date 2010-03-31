@@ -52,8 +52,7 @@ public class Apply( rend.tech.Meta ):
 	public def constructor(lc as Context):
 		name = ('simple','exponent2')[lc.expo]
 		super('lit.apply', kri.load.Meta.LightSet,
-			(shade.Object('/light/'+str) for str in ('apply_v','apply_f',"shadow/${name}_f"))
-			)
+			('/light/apply_v','/light/apply_f','/light/common_f',"/light/shadow/${name}_f") )
 		dict.attach(lc.dict)
 		dict.unit(texLit)
 		licon = lc
