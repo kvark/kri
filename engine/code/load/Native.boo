@@ -25,7 +25,7 @@ public partial class Native:
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
-	private final finalActions	= List[of callable()]()
+	private final nodeResolve	= Dictionary[of string,callable(kri.Node)]()
 	
 	public def constructor(*exclude as (string)):
 		fillAniDict()
@@ -82,8 +82,9 @@ public partial class Native:
 				bs.Seek(size, IO.SeekOrigin.Begin)
 		br.Close()
 		for m in at.mats.Values:	m.link()
-		for act in finalActions:	act()
-		finalActions.Clear()
+		for nr in nodeResolve:
+			nr.Value( at.nodes[nr.Key] )
+		nodeResolve.Clear()
 		return at
 
 	protected def geData[of T]() as T:

@@ -171,7 +171,7 @@ def save_mat_unit(mtex):
 		primary = -1
 		for ent in bpy.context.scene.objects:
 			if ent.type != 'MESH': continue
-			mlist = []
+			mlist = []	# need 'flat' function
 			for ms in ent.material_slots:
 				mlist.extend( ms.material.texture_slots )
 			if not mtex in mlist: continue

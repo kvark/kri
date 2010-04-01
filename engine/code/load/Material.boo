@@ -27,9 +27,7 @@ public partial class Native:
 		limdic['OBJECT'] = do():
 			name = getString()
 			mio = InputObject( shader:objectShader, Name:'object' )
-			finalActions.Add() do():
-				nd = at.nodes[name]
-				mio.pNode.activate(nd)
+			nodeResolve[name] = mio.pNode.activate
 			return mio
 
 
