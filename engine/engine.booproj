@@ -44,6 +44,7 @@
     <Compile Include="code\frame\Buffer.boo" />
     <Compile Include="code\kit\Bake.boo" />
     <Compile Include="code\kit\Fur.boo" />
+    <Compile Include="code\kit\Gen.boo" />
     <Compile Include="code\kit\HDR.boo" />
     <Compile Include="code\kit\Morph.boo" />
     <Compile Include="code\kit\Pick.boo" />

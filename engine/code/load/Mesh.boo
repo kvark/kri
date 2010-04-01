@@ -46,8 +46,7 @@ public partial class Native:
 		return false	if not m
 		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.tex ) do(i as int):
 			return m.find(i) == null
-		assert slot < m.uvNames.Length
-		m.uvNames[ slot ] = getString()
+		getString()	# layer name, not used
 		ai = kri.vb.attr.Info(
 			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
 			type:VertexAttribPointerType.Float,
