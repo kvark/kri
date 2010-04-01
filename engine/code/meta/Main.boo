@@ -18,25 +18,28 @@ public interface IBase( par.INamed ):
 
 #---	Named meta-data with shader		---#
 public class Hermit(IBase):
-	public shader	as Object	= null
 	[Property(Name)]
 	private name	as string	= ''
+	public shader	as Object	= null
+
+	public def copyTo(h as Hermit) as Hermit:
+		h.name = name
+		h.shader = shader
+		return h
 	
 	def IBase.clone() as IBase:
-		return Hermit( shader:shader, Name:Name )
+		return copyTo( Hermit() )
 	def IBase.link(d as rep.Dict) as void:
 		pass
 
 
-#---	Map Input : UV		---#
-public class InputUV(Hermit):
-	public final pInd	= par.Value[of int]()
-	def IBase.link(d as rep.Dict) as void:
-		d.add('index',pInd)
-		
 #---	Map Input : OBJECT		---#
 public class InputObject(Hermit):
 	public final pNode	= kri.lib.par.spa.Linked()
+	def IBase.clone() as IBase:
+		ib = InputObject()
+		ib.pNode.activate( pNode.extract() )
+		return copyTo(ib)
 	def IBase.link(d as rep.Dict) as void:
 		pNode.link(d,'s_target')
 
@@ -44,6 +47,8 @@ public class InputObject(Hermit):
 #---	Advanced meta-data with unit link	---#
 public class Advanced(Hermit):
 	public unit	as AdUnit	= null
+	def IBase.clone() as IBase:
+		return copyTo( Advanced( unit:unit ) )
 	
 
 #---	Unit representor meta data with no shader	---#
@@ -56,17 +61,22 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 	public final pScale		= par.Value[of Vector4]()
 	
 	def IBase.clone() as IBase:
-		return null
+		un = AdUnit( input:input, Name:name )
+		un.pOffset.Value	= pOffset.Value
+		un.pScale.Value		= pScale.Value
+		return un
 	def IBase.link(d as rep.Dict) as void:
 		d.add('offset_'+Name, pOffset)
 		d.add('scale_' +Name, pScale)
 
 
 #---	real value meta-data	---#
-[ext.spec.Class(Color4,single)]
+[ext.spec.Class(single,Color4)]
 [ext.RemoveSource()]
-public class Data[of T(struct)]( Advanced, IValued[of T] ):
-	private final pVal	= par.Value[of T]()
-	portal Value as T	= pVal.Value
+public class Data[of T2(struct)]( Advanced, IValued[of T2] ):
+	private final pVal	= par.Value[of T2]()
+	portal Value as T2	= pVal.Value
+	def IBase.clone() as IBase:
+		return copyTo( Data[of T2]( Value:Value, unit:unit ))
 	def IBase.link(d as rep.Dict) as void:
 		d.add('mat_'+Name, pVal)

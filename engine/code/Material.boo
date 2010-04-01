@@ -22,9 +22,31 @@ public class Material( ani.data.Player ):
 	
 	public def constructor(str as string):
 		name = str
-	public def constructor(m as Material):
-		name = m.name
-		# todo: meta-2 clone
+	private def clone[of T(meta.IBase)](me as T) as T:
+			return me.clone() as T
+
+	# clone with all metas
+	public def constructor(mat as Material):
+		def genPred(str as string):
+			return do(n as shade.par.INamed):
+				return n.Name == str
+		name = mat.name
+		units	= List[of meta.AdUnit]()
+		inputs	= List[of meta.Hermit]()
+		for me in mat.metaList:
+			mad = clone(me)
+			metaList.Add(mad)
+			un = mad.unit
+			continue	if not un
+			mad.unit = units.Find( genPred(un.Name) )
+			continue	if mad.unit
+			un = mad.unit = clone(un)
+			units.Add(un)
+			inp = un.input
+			un.input = inputs.Find( genPred(inp.Name) )
+			continue	if un.input
+			inp = un.input = clone(inp)
+			inputs.Add(inp)
 
 	# update dictionary
 	public def link() as void:

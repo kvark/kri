@@ -4,6 +4,7 @@ import OpenTK
 import kri.shade
 
 #---	Basic spatial param holder	---#
+
 public class Basic:
 	public final position		as par.IBase[of Vector4]
 	public final orientation	as par.IBase[of Vector4]
@@ -29,8 +30,8 @@ public class Shared(Basic):
 		(position		as par.Value[of Vector4]).Value	= getPos(s)
 		(orientation	as par.Value[of Vector4]).Value	= getRot(s)
 	public override def activate(n as kri.Node) as void:
-		s = (n.World if n else kri.Spatial.Identity)
-		activate(s)
+		sp = (n.World if n else kri.Spatial.Identity)
+		activate(sp)
 	public def constructor():
 		super( par.Value[of Vector4](), par.Value[of Vector4]() )
 
@@ -54,3 +55,5 @@ public class Linked(Basic):
 	public override def activate(n as kri.Node) as void:
 		for sv in (position,orientation):
 			(sv as SomeVal).node = n
+	public def extract() as kri.Node:
+		return (position as SomeVal).node

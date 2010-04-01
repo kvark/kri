@@ -20,13 +20,13 @@ public partial class Native:
 		# non-trivial sources
 		limdic['UV'] = do():
 			lid = br.ReadByte()
-			return InputUV( shader:uvShaders[lid], Name:'uv'+lid )
+			return Hermit( shader:uvShaders[lid],	Name:'uv'+lid )
 		limdic['ORCO'] = do():
 			getString()	# mapping type, not supported
-			return Hermit( shader:orcoShader, Name:'orco' )
+			return Hermit( shader:orcoShader,		Name:'orco' )
 		limdic['OBJECT'] = do():
 			name = getString()
-			mio = InputObject( shader:objectShader, Name:'object' )
+			mio = InputObject( shader:objectShader,	Name:'object' )
 			nodeResolve[name] = mio.pNode.activate
 			return mio
 

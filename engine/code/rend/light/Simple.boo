@@ -29,7 +29,7 @@ public class Fill( rend.tech.General ):
 		for l in Scene.current.lights:
 			continue if l.fov == 0f
 			Ant.Inst.params.lightProj.activate(l)
-			Ant.Inst.params.lightView.activate(l.node)
+			Ant.Inst.params.lightView.activate( l.node )
 			buf.init(licon.size, licon.size)
 			if not l.depth:
 				l.depth = buf.A[-1].new( licon.bits, TextureTarget.Texture2D )

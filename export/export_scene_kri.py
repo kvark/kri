@@ -167,7 +167,7 @@ def save_mat_unit(mtex):
 	tc,mp = mtex.texture_coordinates, mtex.mapping
 	print("\t\t", tc,'input,', mp,'mapping')
 	out.text(tc)
-	if tc == 'UV':	# dirty code: resolving the UV layer ID
+	if tc == 'UV':	# dirty: resolving the UV layer ID
 		primary = -1
 		for ent in bpy.context.scene.objects:
 			if ent.type != 'MESH': continue

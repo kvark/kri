@@ -19,13 +19,19 @@ public class Class(AbstractAstAttribute):
 	
 	public override def Apply(node as Ast.Node) as void:
 		c = node as Ast.ClassDefinition
-		if not c:		raise 'not a class'
-		nPar = len( c.GenericParameters )
-		if not nPar:	raise 'target has to be generic'
-		if nPar > 1:	raise 'supports only one generic param'
+		if len( c.GenericParameters ) != 1:
+			raise 'target has to be generic with one param'
 		klass = c.DeclaringType
 		gename = c.GenericParameters[0].Name
 		pred = getPredicate(gename)
+		# generic predicate, used for constructors
+		def gePred(n as Ast.Node) as bool:
+			gre = n as Ast.GenericReferenceExpression
+			return false	if not gre
+			arg = gre.GenericArguments
+			rex = gre.Target as Ast.ReferenceExpression
+			return (rex.Name == c.Name) and (arg.Count!=0) and\
+				(arg[0] as Ast.SimpleTypeReference).Name == gename
 		razor = ParameterRazor()
 		fullpar = "${c.FullName}.${gename}"
 		#printXml(m,	'class-gen')
@@ -35,10 +41,14 @@ public class Class(AbstractAstAttribute):
 			pred = getPredicate( gename, fullpar )
 			sc.GenericParameters = null
 			sc.Name += '_' + t.Name.Split( char('.') )[-1]
-			# finish the transformation
-			sc.ReplaceNodes(pred,t)	
+			# replace constructors of self
+			sc.ReplaceNodes(gePred, Ast.ReferenceExpression( sc.Name ))
+			# replace generic type by simple one
+			sc.ReplaceNodes(pred,t)
+			# cut out junk generic syntax
 			for b in sc.BaseTypes:
 				b.Accept(razor)
+			# finally add the class
 			klass.Members.Add(sc)
 	
 
@@ -59,10 +69,8 @@ public class Method(AbstractAstAttribute):
 
 	public override def Apply(node as Ast.Node) as void:
 		m = node as Ast.Method
-		if not m:		raise 'not a method'
-		nPar = len(m.GenericParameters)
-		if not nPar:	raise 'target has to be generic'
-		if nPar > 1:	raise 'supports only one generic param'
+		if len( m.GenericParameters ) != 1:
+			raise 'target has to be generic with one param'
 		klass = m.DeclaringType
 		pred = getPredicate( m.GenericParameters[0].Name )
 		#printXml(m,	'method-gen')
@@ -76,8 +84,9 @@ public class Method(AbstractAstAttribute):
 				return par.ReplaceNodes(pred,t)>0
 			if not noRename:
 				sm.Name += '_' + t.Name.Split( char('.') )[-1]
-			# finish the transformation
+			# replace generic type by simple one
 			sm.ReplaceNodes(pred,t)
+			# finally add the method
 			klass.Members.Add(sm)
 			Mod(sm,t)	# custom mod
 

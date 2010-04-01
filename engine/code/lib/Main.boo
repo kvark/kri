@@ -20,8 +20,7 @@ public final class Param:
 		kri.Camera.Current = c
 		return	if not c
 		camProj.activate(c)
-		return	if not c.node
-		camView.activate(c.node)
+		camView.activate( c.node )
 		
 	public def constructor(d as kri.shade.rep.Dict):
 		light = par.Light(d)
