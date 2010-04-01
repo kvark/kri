@@ -167,7 +167,21 @@ def save_mat_unit(mtex):
 	tc,mp = mtex.texture_coordinates, mtex.mapping
 	print("\t\t", tc,'input,', mp,'mapping')
 	out.text(tc)
-	if tc == 'UV':		out.text( mtex.uv_layer )
+	if tc == 'UV':	# dirty code: resolving the UV layer ID
+		primary = -1
+		for ent in bpy.context.scene.objects:
+			if ent.type != 'MESH': continue
+			mlist = []
+			for ms in ent.material_slots:
+				mlist.extend( ms.material.texture_slots )
+			if not mtex in mlist: continue
+			cur = [ut.name for ut in ent.data.uv_textures].index( mtex.uv_layer )
+			if cur == primary: continue
+			if primary != -1:
+				print("\t\t(w)",'failed to resolve UV layer')
+			primary = cur
+		print("\t\t(i) layer: %s -> %d" % (mtex.uv_layer, primary))
+		out.pack('B',primary)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	if tc == 'ORCO':	out.text( mp )
 	out.end()
