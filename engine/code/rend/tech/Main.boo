@@ -96,6 +96,9 @@ public class Meta(General):
 		sid = -1
 		if sMap.TryGetValue(key,sid):
 			sa = kri.shade.Smart( sid )
+			# yes, we will just fill the parameters for this program ID again
+			# it's not obvious, but texture units will be assigned to the old values,
+			# because the meta-data sets already matched (kri.load.meta.MakeTexCoords)
 		else:
 			sa = kri.shade.Smart()
 			sMap.Add(key, sa.id )

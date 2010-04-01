@@ -35,4 +35,4 @@ public class Context:
 		bits = 32
 		pDark.Value	= darkness
 		pOff.Value	= kernel / size
-		pX.Value = OpenTK.Vector4(150f, 150f, 4f, kernel / size)
+		pX.Value = OpenTK.Vector4(5f, 5f, 4f, kernel / size)

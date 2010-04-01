@@ -25,7 +25,8 @@ public class Texture(INamed, Value[of kri.Texture]):
 	[Getter(Name)]
 	public final name	as string
 	public def constructor(id as int, s as string):
-		tun,name = id,s
+		tun = kri.lib.Const.offUnit + id
+		name = s
 	public def bindSlot(t as kri.Texture) as void:
 		Value = t
 		t.bind(tun)

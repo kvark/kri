@@ -47,7 +47,7 @@ public class Dict( SortedDictionary[of string,callable] ):
 		return unit(it as par.IBase[of kri.Texture], it.Name, tun)
 	public def unit(*its as (par.Texture)) as bool:
 		return Array.TrueForAll(its) do(it as par.Texture):
-			return unit(it, it.Name, kri.lib.Const.offUnit + it.tun)
+			return unit(it, it.Name, it.tun)
 	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
 		name = kri.shade.Smart.prefixUnit + name
 		return false	if ContainsKey(name)

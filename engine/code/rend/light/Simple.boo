@@ -46,7 +46,7 @@ public class Fill( rend.tech.General ):
 public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final licon		as Context
-	private final texLit	= shade.par.Texture(0, 'light')
+	private final texLit	= shade.par.Texture(0,'light')
 
 	public def constructor(lc as Context):
 		name = ('simple','exponent2')[lc.expo]
@@ -73,7 +73,7 @@ public class Apply( rend.tech.Meta ):
 			texLit.bindSlot( l.depth )
 			Texture.Shadow(not licon.expo)
 			Texture.Filter(licon.smooth, licon.mipmap)
-			# determine subset of affect  ed objects
+			# determine subset of affected objects
 			for e in Scene.Current.entities:
 				addObject(e)
 		using blend = Blender():
