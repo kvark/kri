@@ -34,7 +34,7 @@ public class Camera(Projector):
 	public static current	as Camera = null
 
 
-public class Light(Projector,IApplyable,IColored):
+public class Light(Projector,IColored):
 	# fov == 0 for omni type
 	# fov < 0 for directional
 	public softness	= 0f
@@ -45,11 +45,6 @@ public class Light(Projector,IApplyable,IColored):
 	public quad2	= 0f	# quadratic factor
 	public sphere	= 0f	# spherical bound
 	public depth	as Texture	= null
-	# copy to state
-	public def apply() as void:
-		Ant.Inst.params.light.activate(self)
-		Ant.Inst.params.lightProj.activate(self)
-		Ant.Inst.params.lightView.activate(node)
 	# parallel projection
 	public def makeDirectional(radius as single) as void:
 		fov = -2f / radius

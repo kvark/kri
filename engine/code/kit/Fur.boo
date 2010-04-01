@@ -100,7 +100,7 @@ public class Draw( kri.rend.tech.Meta ):
 		metaFun = super(mat)
 		curLight = lit
 		return def() as int:
-			curLight.apply()
+			kri.Ant.Inst.params.activate(curLight)
 			metaFun()
 			return (mat.Meta['fur'] as Meta).shells
 	# work	

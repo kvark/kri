@@ -102,6 +102,6 @@ public class Apply( Basic ):
 				setArea(l)
 				kri.Texture.Slot( texLit.tun )
 				bindShadow( l.depth )
-				l.apply()
+				kri.Ant.Inst.params.activate(l)
 				sa.use()
 				kri.Ant.Inst.emitQuad()

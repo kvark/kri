@@ -38,15 +38,15 @@ public class Update( kri.rend.Basic ):
 	private final tf	= kri.TransFeedback()
 	private final sa	= kri.shade.Smart()
 	private final va	= kri.vb.Array()
-	private final par	= array( kri.lib.par.spa.Shared() for i in range(80) )
+	private final par	= array( kri.lib.par.spa.Shared( Name:"bone[${i}]" ) for i in range(80) )
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	= at_mod + (kri.Ant.Inst.attribs.skin,)
 
 	public def constructor():
 		super(false)
 		dict = kri.shade.rep.Dict()
-		for i in range(par.Length):
-			par[i].link( dict, "bone[${i}]" )
+		for p as kri.meta.IBase in par:
+			p.link(dict)
 		# prepare shader
 		sa.add( '/skin_v', 'quat' )
 		tf.setup(sa, true, 'to_vertex', 'to_quat')

@@ -35,13 +35,13 @@ public class Hermit(IBase):
 
 #---	Map Input : OBJECT		---#
 public class InputObject(Hermit):
-	public final pNode	= kri.lib.par.spa.Linked()
+	public final pNode	= kri.lib.par.spa.Linked( Name:'s_target' )
 	def IBase.clone() as IBase:
 		ib = InputObject()
 		ib.pNode.activate( pNode.extract() )
 		return copyTo(ib)
 	def IBase.link(d as rep.Dict) as void:
-		pNode.link(d,'s_target')
+		(pNode as IBase).link(d)
 
 
 #---	Advanced meta-data with unit link	---#
@@ -71,12 +71,12 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 
 
 #---	real value meta-data	---#
-[ext.spec.Class(single,Color4)]
+[ext.spec.Class(single,Color4,Vector4)]
 [ext.RemoveSource()]
-public class Data[of T2(struct)]( Advanced, IValued[of T2] ):
-	private final pVal	= par.Value[of T2]()
-	portal Value as T2	= pVal.Value
+public class Data[of T(struct)]( Advanced, IValued[of T] ):
+	private final pVal	= par.Value[of T]()
+	portal Value as T	= pVal.Value
 	def IBase.clone() as IBase:
-		return copyTo( Data[of T2]( Value:Value, unit:unit ))
+		return copyTo( Data[of T]( Value:Value, unit:unit ))
 	def IBase.link(d as rep.Dict) as void:
 		d.add('mat_'+Name, pVal)

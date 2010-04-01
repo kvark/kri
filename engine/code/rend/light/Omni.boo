@@ -27,7 +27,7 @@ public class Fill( rend.tech.General ):
 	private override def construct(mat as Material) as shade.Smart:
 		return sa
 	private def setLight(l as Light) as void:
-		Ant.Inst.params.lightView.activate( l.node )
+		Ant.Inst.params.litView.activate( l.node )
 		k = 1f / (l.rangeOut - l.rangeIn)
 		pDist.Value = Vector4(k, l.rangeIn+l.rangeOut, 0f, 0f)
 
@@ -62,7 +62,7 @@ public class Apply( rend.tech.Meta ):
 		metaFun = super(mat)
 		curLight = lit
 		return def() as int:
-			curLight.apply()
+			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)

@@ -2,15 +2,21 @@
 
 import OpenTK
 import kri.shade
+import kri.meta
 
 #---	Basic spatial param holder	---#
 
-public class Basic:
+public class Basic( IBase ):
+	[Property(Name)]
+	private name	as string = ''
 	public final position		as par.IBase[of Vector4]
 	public final orientation	as par.IBase[of Vector4]
-	public def link(d as rep.Dict, n as string) as void:
-		d.add(n+'.pos', position)
-		d.add(n+'.rot', orientation)
+	
+	def IBase.clone() as IBase:
+		return self	# stub
+	def IBase.link(d as rep.Dict) as void:
+		d.add(name+'.pos', position)
+		d.add(name+'.rot', orientation)
 	public def constructor(*var as (par.IBase[of Vector4])):
 		position,orientation = var[0],var[1]
 	public abstract def activate(n as kri.Node) as void:
@@ -37,7 +43,7 @@ public class Shared(Basic):
 
 
 #---	Linked value	---#
-public class SomeVal( par.IBase[of Vector4] ):
+public class TransVal( par.IBase[of Vector4] ):
 	public node		as kri.Node = null
 	public final fun	as callable(ref kri.Spatial) as Vector4
 	public Value	as Vector4:
@@ -51,9 +57,9 @@ public class SomeVal( par.IBase[of Vector4] ):
 #---	Linked spatial to a concrete node, doesn't online interaction	---#
 public class Linked(Basic):
 	public def constructor():
-		super( SomeVal(getPos), SomeVal(getRot) )
+		super( TransVal(getPos), TransVal(getRot) )
 	public override def activate(n as kri.Node) as void:
 		for sv in (position,orientation):
-			(sv as SomeVal).node = n
+			(sv as TransVal).node = n
 	public def extract() as kri.Node:
-		return (position as SomeVal).node
+		return (position as TransVal).node

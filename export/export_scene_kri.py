@@ -168,6 +168,9 @@ def save_mat_unit(mtex):
 	print("\t\t", tc,'input,', mp,'mapping')
 	out.text(tc)
 	if tc == 'UV':	# dirty: resolving the UV layer ID
+		name = mtex.uv_layer
+		if not len(name):
+			print("\t\t(w)",'UV layer name is not set')
 		primary = -1
 		for ent in bpy.context.scene.objects:
 			if ent.type != 'MESH': continue
@@ -175,7 +178,11 @@ def save_mat_unit(mtex):
 			for ms in ent.material_slots:
 				mlist.extend( ms.material.texture_slots )
 			if not mtex in mlist: continue
-			cur = [ut.name for ut in ent.data.uv_textures].index( mtex.uv_layer )
+			uves = [ut.name for ut in ent.data.uv_textures]
+			if not name in uves:
+				print("\t\t\t(w)",'entity has incorrect UV names')
+				cur = 0
+			else:	cur = uves.index( name )
 			if cur == primary: continue
 			if primary != -1:
 				print("\t\t(w)",'failed to resolve UV layer')

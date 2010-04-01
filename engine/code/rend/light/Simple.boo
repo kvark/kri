@@ -28,8 +28,7 @@ public class Fill( rend.tech.General ):
 		Texture.Slot( kri.lib.Const.offUnit )
 		for l in Scene.current.lights:
 			continue if l.fov == 0f
-			Ant.Inst.params.lightProj.activate(l)
-			Ant.Inst.params.lightView.activate( l.node )
+			Ant.Inst.params.activate(l)
 			buf.init(licon.size, licon.size)
 			if not l.depth:
 				l.depth = buf.A[-1].new( licon.bits, TextureTarget.Texture2D )
@@ -62,7 +61,7 @@ public class Apply( rend.tech.Meta ):
 		curLight = lit	# need current light only
 		return def() as int:
 			texLit.Value = curLight.depth
-			curLight.apply()
+			Ant.Inst.params.activate(curLight)
 			return metaFun()
 	# work
 	public override def process(con as rend.Context) as void:

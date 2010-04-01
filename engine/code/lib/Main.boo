@@ -7,12 +7,12 @@ import OpenTK
 
 # Shader Parameter Library
 public final class Param:
-	public final light		as par.Light
-	public final modelView	= par.spa.Shared()	# object->world
-	public final lightView	= par.spa.Shared()	# light->world
-	public final lightProj	= par.Project()	# light projection
-	public final camView	= par.spa.Shared()	# camera->world
-	public final camProj	= par.Project()	# camera projection
+	public final modelView	= par.spa.Shared( Name:'s_model' )	# object->world
+	public final light		= par.Light()
+	public final litView	= par.spa.Shared( Name:'s_lit' )	# light->world
+	public final litProj	= par.Project( Name:'proj_lit' )	# light projection
+	public final camView	= par.spa.Shared( Name:'s_cam' )	# camera->world
+	public final camProj	= par.Project( Name:'proj_cam' )	# camera projection
 	public final parSize	= kri.shade.par.Value[of Vector4]()	# viewport size
 	public final parTime	= kri.shade.par.Value[of Vector4]()	# task time & delta
 	
@@ -21,14 +21,14 @@ public final class Param:
 		return	if not c
 		camProj.activate(c)
 		camView.activate( c.node )
+	public def activate(l as kri.Light) as void:
+		light.activate(l)
+		litProj.activate(l)
+		litView.activate( l.node )
 		
 	public def constructor(d as kri.shade.rep.Dict):
-		light = par.Light(d)
-		modelView	.link(d,'s_model')
-		lightView	.link(d,'s_lit')
-		camView		.link(d,'s_cam')
-		d.add('proj_lit',		lightProj)
-		d.add('proj_cam',		camProj)
+		for me in (of kri.meta.IBase: modelView, light,litView,litProj, camView,camProj):
+			me.link(d)
 		d.add('screen_size',	parSize)
 		d.add('cur_time',		parTime)
 
@@ -46,4 +46,3 @@ public class Shader( Dictionary[of string, kri.shade.Object] ):
 		for str in ('copy_v','copy_f','copy_ar_f'):
 			Add(str, kri.shade.Object('/'+str))
 		Add('empty', kri.shade.Object('/empty_f'))
-		

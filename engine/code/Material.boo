@@ -3,11 +3,6 @@
 import System.Collections.Generic
 
 
-public interface IApplyable:
-	def apply() as void
-
-#---------
-
 public class Material( ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.rep.Dict()
