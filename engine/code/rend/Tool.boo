@@ -41,6 +41,41 @@ public class Emission( tech.Meta ):
 		drawScene()
 
 
+#---------	GAUSS FILTER	--------#
+
+public class Gauss(Basic):
+	protected final sa		= kri.shade.Smart()
+	protected final sb		= kri.shade.Smart()
+	protected final texIn	= kri.shade.par.Texture(0, 'input')
+	public	buf		as kri.frame.Buffer	= null
+
+	public def constructor():
+		super(false)
+		dict = kri.shade.rep.Dict()
+		dict.unit(texIn)
+		sa.add('copy_v','/filter/gauss_hor_f')
+		sa.link( kri.Ant.Inst.slotAttributes, dict )
+		sb.add('copy_v','/filter/gauss_ver_f')
+		sb.link( kri.Ant.Inst.slotAttributes, dict )
+
+	public override def process(con as Context) as void:
+		return	if not buf
+		assert buf.A[0].Tex and buf.A[1].Tex
+		texIn.bindSlot( buf.A[0].Tex )
+		kri.Texture.Filter(false,false)
+		kri.Texture.Wrap( OpenGL.TextureWrapMode.Clamp, 2 )
+		buf.activate(2)
+		sa.use()
+		kri.Ant.inst.emitQuad()
+		texIn.bindSlot( buf.A[1].Tex )
+		kri.Texture.Filter(false,false)
+		kri.Texture.Wrap( OpenGL.TextureWrapMode.Clamp, 2 )
+		buf.activate(1)
+		sb.use()
+		kri.Ant.inst.emitQuad()
+
+
+
 #---------	RENDER SSAO	--------#
 
 

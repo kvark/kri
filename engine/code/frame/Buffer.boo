@@ -140,7 +140,10 @@ public class Buffer(Screen):
 			a.Tex.bind()
 			kri.Texture.Init(getW, getH, a.Format)
 			a.dFormat.clean()
-			
+	
+	public def activate(m as uint) as void:
+		mask = m
+		activate()
 	public override def activate() as void:
 		super()
 		if mask != oldMask:

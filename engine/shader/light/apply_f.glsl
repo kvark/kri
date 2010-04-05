@@ -21,7 +21,6 @@ void main()	{
 	vec4 vs = vec4(0.5*vlit + vec3(0.5), 1.0);
 	float rad = smoothstep( 0.0, lit_data.x, 1.0-dot(r2,r2) );
 	float intensity = rad * lit_int * get_shadow(vs);
-	gl_FragColor = vec4( get_shadow(vs) );
 	if(intensity < 0.01) discard;
 
 	gl_FragColor = intensity*lit_color *
