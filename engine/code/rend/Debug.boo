@@ -2,26 +2,21 @@
 
 import System
 import OpenTK.Graphics.OpenGL
-
+import kri.shade
 
 public class Map( kri.rend.Basic ):
-	private final sa = kri.shade.Smart()
-	public def constructor( un as int, lay as int ):
+	private final sa	= Smart()
+	public final layer	= par.Value[of single]()
+	
+	public def constructor(t as par.IBase[of kri.Texture]):
 		super(false)
-		sa.add( 'copy_v', ('copy_f' if lay<0 else 'copy_ar_f') )
-		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
-		sa.link()
-		sa.use()
-		assert 'not ready'
-		#sa.unit_man( un, 'x' )
-		return if lay<0
-		flay = 1f * lay
-		vid = sa.getVar('layer')
-		kri.shade.Program.Param(vid,flay)
-	public virtual def prepare() as void:
-		pass
+		sa.add( 'copy_v', 'copy_f' )
+		dict = kri.shade.rep.Dict()
+		dict.unit( t, 'input', 0 )
+		dict.add('layer', layer)
+		sa.link( kri.Ant.Inst.slotAttributes, dict )
+
 	public override def process(con as kri.rend.Context) as void:
-		prepare()	#unit activation
 		con.activate()
 		sa.use()
 		kri.Ant.inst.emitQuad()
@@ -51,15 +46,6 @@ public class MapCube( kri.rend.Basic ):
 		sa.use()
 		kri.Ant.inst.emitQuad()
 
-
-public class MapThis( Map ):
-	private final fun	as callable() as kri.Texture
-	public def constructor(lay as int, functor as callable() as kri.Texture):
-		fun = functor
-		super(0,lay)
-	public override def prepare() as void:
-		t = fun()
-		t.bind(0)	if t
 
 /*	#todo: rewrite
 public class MapLight( Map ):

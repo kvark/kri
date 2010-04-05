@@ -31,11 +31,13 @@ public final class Light( IBase ):
 public final class Project( IBase ):
 	[Property(Name)]
 	private name	as string	= ''
-	public final data = par.Value[of Vector4]()
+	public final data	= par.Value[of Vector4]()
+	public final range	= par.Value[of Vector4]()
 	
 	public def activate(p as kri.Projector) as void:
 		div = 1f / (p.rangeIn - p.rangeOut)
 		dad = div *(p.rangeIn + p.rangeOut)
+		range.Value = Vector4(p.rangeIn, div, 0f,0f)
 		if p.fov > 0f:
 			tn = 1f / System.Math.Tan(p.fov)
 			data.Value = Vector4(tn, tn * p.aspect, dad,
@@ -46,4 +48,5 @@ public final class Project( IBase ):
 	def IBase.clone() as IBase:
 		return self	# stub
 	def IBase.link(d as rep.Dict) as void:
-		d.add(name, data)
+		d.add('proj_'	+name, data)
+		d.add('range_'	+name, range)

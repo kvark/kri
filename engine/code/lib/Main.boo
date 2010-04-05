@@ -10,9 +10,9 @@ public final class Param:
 	public final modelView	= par.spa.Shared( Name:'s_model' )	# object->world
 	public final light		= par.Light()
 	public final litView	= par.spa.Shared( Name:'s_lit' )	# light->world
-	public final litProj	= par.Project( Name:'proj_lit' )	# light projection
+	public final litProj	= par.Project( Name:'lit' )	# light projection
 	public final camView	= par.spa.Shared( Name:'s_cam' )	# camera->world
-	public final camProj	= par.Project( Name:'proj_cam' )	# camera projection
+	public final camProj	= par.Project( Name:'cam' )	# camera projection
 	public final parSize	= kri.shade.par.Value[of Vector4]()	# viewport size
 	public final parTime	= kri.shade.par.Value[of Vector4]()	# task time & delta
 	
