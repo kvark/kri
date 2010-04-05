@@ -13,6 +13,8 @@ public static class Meta:
 	private corDict = Dictionary[of string,Object]()
 	public final LightSet	= ('bump','diffuse','specular','glossiness','comp_diff','comp_spec')
 	
+	# this method constructs a shader object code that links together:
+	#	 meta_data - texture - coordinate_source
 	public def MakeTexCoords(cl as (string)*) as Object:
 		key = join( (join(s,':') for s in cl), ';' )
 		rez as Object = null
@@ -69,7 +71,7 @@ public class Context:
 		mlis.Add(Data_Color4( Name:'diffuse',	shader:slib.diffuse_u,	Value:Color4.Gray ))
 		mlis.Add(Data_Color4( Name:'specular',	shader:slib.specular_u,	Value:Color4.Gray ))
 		mlis.Add(Data_single( Name:'glossiness',shader:slib.glossiness_u,	Value:50f ))
-		mlis.Add(Advanced	( Name:'bump', shader:slib.bump_c ))
+		mlis.Add(Advanced	( Name:'bump', 		shader:slib.bump_c ))
 		mlis.Add(Advanced	( Name:'comp_diff',	shader:slib.lambert ))
 		mlis.Add(Advanced	( Name:'comp_spec',	shader:slib.phong ))
 		mDef.link()

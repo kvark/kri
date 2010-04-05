@@ -75,12 +75,12 @@ public def plane(scale as Vector2) as kri.Mesh:
 # params: half-sizes of sides
 
 public def cube(scale as Vector3) as kri.Mesh:
-	md = MeshData( bm:BeginMode.TriangleStrip )
+	md = MeshData( bm:BeginMode.Triangles )
 	sar = (-1f,1f)
 	verts = array( Vector4(scale.X * sar[i&1], scale.Y * sar[(i>>1)&1], scale.Z * sar[i>>2], 1f)\
 		for i in range(8))
-	vi = (0,1,4,5,7,1,3,0,2,4,6,7,2,3)
-	qi = (0,0,0,0,1,5,5,3,3,4,4,1,2,2)
+	#vi = (0,1,4,5,7,1,3,0,2,4,6,7,2,3)	# tri-strip version
+	vi = (0,4,5,1, 4,6,7,5, 6,2,3,7, 2,0,1,3, 2,6,4,0, 1,5,7,3)
 	ang = 0.5f * System.Math.PI
 	quats = (of Quaternion:
 		Quaternion.FromAxisAngle( Vector3.UnitX, ang ),
@@ -90,5 +90,7 @@ public def cube(scale as Vector3) as kri.Mesh:
 		Quaternion.FromAxisAngle( Vector3.UnitY, -ang ),
 		Quaternion.FromAxisAngle( Vector3.UnitY, ang )
 		)
-	md.v = array( Vertex(verts[vi[i]], quats[qi[i]]) for i in range(14) )
+	md.v = array( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24))
+	offsets = (of ushort: 0,1,2,0,2,3)
+	md.i = array( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36))
 	return common( md )
