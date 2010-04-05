@@ -36,12 +36,15 @@ public class Unit(IBase):
 
 
 # Standard uniform dictionary
-public class Dict( SortedDictionary[of string,callable] ):
-	# could be callable(int) of IBase here
+public class Dict:
+	private final sd	= SortedDictionary[of string,callable(int) as IBase]()
+	
+	# add standard uniform
 	[ext.spec.ForkMethodEx(Uniform, int,single,Color4,Vector4,Quaternion)]
 	public def add[of T(struct)](name as string, iv as par.IBase[of T]) as void:
-		Add(name) do(loc as int):
+		sd.Add(name) do(loc as int):
 			return Uniform[of T](iv,loc)
+	
 	# add texture unit representor
 	public def unit[of T(par.INamed,par.IBase[of kri.Texture])](it as T, tun as int) as bool:
 		return unit(it as par.IBase[of kri.Texture], it.Name, tun)
@@ -50,12 +53,22 @@ public class Dict( SortedDictionary[of string,callable] ):
 			return unit(it, it.Name, it.tun)
 	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
 		name = kri.shade.Smart.prefixUnit + name
-		return false	if ContainsKey(name)
-		Add(name) do(loc as int):
+		return false	if sd.ContainsKey(name)
+		sd.Add(name) do(loc as int):
 			OpenGL.GL.Uniform1(loc,tun)
 			return Unit(tun,it)
 		return true
+	
+	# resolve value by name & location
+	public def resolve(name as string, loc as int) as IBase:
+		fun as callable(int) as IBase = null
+		sd.TryGetValue(name,fun)
+		return (fun(loc) if fun else null)
+	
 	# copy contents of another dictionary
 	public def attach(dict as Dict) as void:
-		for p in dict:
-			Add(p.Key, p.Value)
+		for p in dict.sd:
+			sd.Add(p.Key, p.Value)
+	# clear contents
+	public def clear() as void:
+		sd.Clear()

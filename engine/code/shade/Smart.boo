@@ -56,13 +56,12 @@ public class Smart(Program):
 		for name in nar:
 			loc = getVar(name)
 			assert loc >= 0
-			val	as callable = null
-			Array.Find(dicts) do(d):
-				d.TryGetValue(name,val)
-				return val != null
-			#gen as callable(int) as IRepresentable = val
+			val	as rep.IBase = null
+			for d in dicts:
+				val = d.resolve(name,loc)
+				break	if val
 			assert val and 'uniform not found'
-			params.Add( val(loc) )
+			params.Add(val)
 
 	public def getAttribNum() as int:
 		assert Ready

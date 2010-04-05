@@ -123,8 +123,7 @@ public partial class Native:
 	protected def getQuatRev() as Quaternion:
 		return Quaternion( W:getReal(), Xyz:getVector() )
 	protected def getQuatEuler() as Quaternion:
-		getVector()
-		return Quaternion.Identity
+		return kri.Spatial.EulerQuat( getVector() )
 	protected def getSpatial() as kri.Spatial:
 		return kri.Spatial( pos:getVector(), scale:getReal(), rot:getQuat() )
 	

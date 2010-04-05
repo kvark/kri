@@ -45,7 +45,7 @@ public class Material( ani.data.Player ):
 
 	# update dictionary
 	public def link() as void:
-		dict.Clear()
+		dict.clear()
 		lis = List[of meta.IBase]()
 		def push(h as meta.IBase):
 			return if h in lis

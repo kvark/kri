@@ -42,6 +42,12 @@ public struct Spatial:
 		sp as Spatial
 		sp.lerpDq(a,b,t)
 		return sp
+	public static def EulerQuat(v as Vector3) as Quaternion:
+		return\
+			Quaternion.FromAxisAngle( Vector3.UnitX, v.X )*\
+			Quaternion.FromAxisAngle( Vector3.UnitY, v.Y )*\
+			Quaternion.FromAxisAngle( Vector3.UnitZ, v.Z )
+
 
 	public def combine(ref a as Spatial, ref b as Spatial) as void:
 		rot		= b.rot * a.rot
