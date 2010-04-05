@@ -12,30 +12,29 @@ public struct Vertex:
 	public def constructor(p as Vector4, q as Quaternion):
 		pos,rot = p,q
 
-private struct MeshData:
+public struct MeshData( kri.IGenerator[of kri.Mesh] ):
 	public bm	as BeginMode
 	public v	as (Vertex)
 	public i	as (ushort)
+	public def generate() as kri.Mesh:	# IGenerator
+		m = kri.Mesh( bm )
+		if v:
+			m.nVert = v.Length
+			m.nPoly = m.nVert / m.polySize
+			vbo = kri.vb.Attrib()
+			vbo.init( v, false )
+			ai = kri.vb.attr.Info( integer:false, size:4, type:VertexAttribPointerType.Float )
+			ai.slot = kri.Ant.Inst.attribs.vertex
+			vbo.semantics.Add(ai)
+			ai.slot = kri.Ant.Inst.attribs.quat
+			vbo.semantics.Add(ai)
+			m.vbo.Add(vbo)
+		if i:
+			m.nPoly = i.Length / m.polySize
+			m.ind = kri.vb.Index()
+			m.ind.init( i, false )
+		return m
 
-
-public def common( md as MeshData ) as kri.Mesh:
-	m = kri.Mesh( md.bm )
-	if md.v:
-		m.nVert = md.v.Length
-		m.nPoly = m.nVert / m.polySize
-		vbo = kri.vb.Attrib()
-		vbo.init( md.v, false )
-		ai = kri.vb.attr.Info( integer:false, size:4, type:VertexAttribPointerType.Float )
-		ai.slot = kri.Ant.Inst.attribs.vertex
-		vbo.semantics.Add(ai)
-		ai.slot = kri.Ant.Inst.attribs.quat
-		vbo.semantics.Add(ai)
-		m.vbo.Add(vbo)
-	if md.i:
-		m.nPoly = md.i.Length / m.polySize
-		m.ind = kri.vb.Index()
-		m.ind.init( md.i, false )
-	return m
 
 public def entity( m as kri.Mesh, lc as kri.load.Context ) as kri.Entity:
 	e = kri.Entity( mesh:m )
@@ -60,7 +59,7 @@ public def line() as kri.Mesh:
 
 
 #----	PLANE OBJECT	----#
-# params: half-sizes of sides
+# param: half-size of sides
 
 public def plane(scale as Vector2) as kri.Mesh:
 	md = MeshData( bm:BeginMode.TriangleStrip, v:array[of Vertex](4) )
@@ -68,11 +67,11 @@ public def plane(scale as Vector2) as kri.Mesh:
 	for i in range(4):
 		md.v[i].pos = Vector4( scale.X * sar[i&1], scale.Y * sar[i>>1], 0f,1f)
 		md.v[i].rot = Quaternion.Identity
-	return common( md )
+	return md.generate()
 
 
 #----	CUBE OBJECT	----#
-# params: half-sizes of sides
+# param: half-size of sides
 
 public def cube(scale as Vector3) as kri.Mesh:
 	md = MeshData( bm:BeginMode.Triangles )
@@ -93,4 +92,12 @@ public def cube(scale as Vector3) as kri.Mesh:
 	md.v = array( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24))
 	offsets = (of ushort: 0,1,2,0,2,3)
 	md.i = array( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36))
-	return common( md )
+	return md.generate()
+
+
+#----	SPHERE OBJECT	----#
+# param: radius
+
+public def sphere(scale as Vector3) as kri.Mesh:
+	md = MeshData( bm:BeginMode.Triangles )
+	return md.generate()

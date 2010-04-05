@@ -9,6 +9,8 @@ import OpenTK.Graphics.OpenGL
 public static class Sizer[of T(struct)]:
 	public final Value = Runtime.InteropServices.Marshal.SizeOf(T)
 
+public interface IGenerator[of T]:
+	def generate() as T
 
 # Provides GL state on/off mechanics
 public class Section(IDisposable):
