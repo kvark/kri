@@ -24,9 +24,8 @@ public class Particle(Loop):
 		pe = em
 	protected override def onLoop() as void:
 		pe.man.reset(pe)
-	protected override def onRate(rate as double) as uint:
+	protected override def onRate(rate as double) as void:
 		pe.man.tick(pe)
-		return 0
 
 
 #-------------------------------#

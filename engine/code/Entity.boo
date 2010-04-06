@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 
 #--------- Mesh ---------#
 
-class Mesh( vb.attr.Storage ):
+public class Mesh( vb.attr.Storage ):
 	public nVert	as uint	= 0
 	public nPoly	as uint	= 0
 	public ind		as vb.Index	= null

@@ -24,16 +24,18 @@ public class Delta(IBase):
 
 public class Loop(IBase):
 	public lTime	as double = 1.0
-	private start	= 0.0
+	private start	= double.MinValue
 	[getter(Loops)]
-	private loops	as int = -1
+	private loops	as uint = 1
 	protected virtual def onLoop() as void:
 		pass
-	protected virtual def onRate(rate as double) as uint:
-		return 0
+	protected virtual def onRate(rate as double) as void:
+		pass
 	def IBase.onFrame(time as double) as uint:
 		if time > start+lTime:
-			++loops
+			return 1	if not loops
+			--loops
 			start = time
 			onLoop()
-		return onRate((time-start) / lTime)
+		else: onRate((time-start) / lTime)
+		return 0

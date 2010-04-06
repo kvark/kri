@@ -4,7 +4,9 @@ archive
 blender
 export\scenes
 ext\Newton
-demo*
+demo
+demo_dude
+demo_particle
 test_*
 game_*
 bin

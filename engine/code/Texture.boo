@@ -25,7 +25,7 @@ internal static class Fm:
 	public final index	= (of PixelInternalFormat:
 		bad,
 		PixelInternalFormat.R8ui,
-		PixelInternalFormat.R16ui,
+		PixelInternalFormat.R16,#PixelInternalFormat.R16ui,
 		bad,
 		PixelInternalFormat.R32ui
 	)
@@ -103,13 +103,14 @@ public class Texture( shade.par.INamed ):
 	private static def Fi2format(fi as PixelInternalFormat) as PixelFormat:
 		return PixelFormat.DepthStencil		if fi == Fm.stencil
 		return PixelFormat.DepthComponent	if fi in Fm.depth
-		return PixelFormat.RedInteger		if fi in Fm.index
+		#return PixelFormat.RedInteger		if fi in Fm.index
+		return PixelFormat.Red		if fi in Fm.index
 		return PixelFormat.Rgba
 	private static def Fi2type(fi as PixelInternalFormat) as PixelType:
 		return PixelType.UnsignedInt248	if fi == Fm.stencil
 		return PixelType.UnsignedByte	if fi in (Fm.color[:2] + Fm.index[:2])
-		return PixelType.UnsignedShort	if fi == Fm.index[2]
-		return PixelType.UnsignedInt	if fi == Fm.index[4]
+		#return PixelType.UnsignedShort	if fi == Fm.index[2]
+		#return PixelType.UnsignedInt	if fi == Fm.index[4]
 		return PixelType.Float
 	public static def AskFormat(cl as Class, bits as uint) as PixelInternalFormat:
 		return (Fm.color, Fm.depth, (Fm.stencil,), Fm.index, (Fm.bad,)) [cast(int,cl)] [bits>>3]

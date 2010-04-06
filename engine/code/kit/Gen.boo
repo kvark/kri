@@ -12,6 +12,15 @@ public struct Vertex:
 	public def constructor(p as Vector4, q as Quaternion):
 		pos,rot = p,q
 
+public def entity( m as kri.Mesh, lc as kri.load.Context ) as kri.Entity:
+	e = kri.Entity( mesh:m )
+	tm = kri.TagMat( num:m.nPoly, mat:lc.mDef )
+	e.tags.Add(tm)
+	return e
+
+
+#----	RAW MESH DATA	----#
+
 public struct MeshData( kri.IGenerator[of kri.Mesh] ):
 	public bm	as BeginMode
 	public v	as (Vertex)
@@ -34,13 +43,8 @@ public struct MeshData( kri.IGenerator[of kri.Mesh] ):
 			m.ind = kri.vb.Index()
 			m.ind.init( i, false )
 		return m
-
-
-public def entity( m as kri.Mesh, lc as kri.load.Context ) as kri.Entity:
-	e = kri.Entity( mesh:m )
-	tm = kri.TagMat( num:m.nPoly, mat:lc.mDef )
-	e.tags.Add(tm)
-	return e
+	public def subDivide() as void:
+		pass
 
 
 #----	LINE OBJECT (-1,1)	----#
@@ -90,7 +94,7 @@ public def cube(scale as Vector3) as kri.Mesh:
 		Quaternion.FromAxisAngle( Vector3.UnitY, ang )
 		)
 	md.v = array( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24))
-	offsets = (of ushort: 0,1,2,0,2,3)
+	offsets = (of ushort: 0,3,2,0,2,1)
 	md.i = array( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36))
 	return md.generate()
 
@@ -98,6 +102,26 @@ public def cube(scale as Vector3) as kri.Mesh:
 #----	SPHERE OBJECT	----#
 # param: radius
 
-public def sphere(scale as Vector3) as kri.Mesh:
+private def octahedron(scale as Vector3) as MeshData:
 	md = MeshData( bm:BeginMode.Triangles )
+	ar = (of Vector3:
+		-Vector3.UnitZ, Vector3.UnitX,
+		Vector3.UnitY, -Vector3.UnitX,
+		-Vector3.UnitY, Vector3.UnitZ)
+	for i in range( ar.Length ):
+		ar[i] = Vector3.Multiply(scale, ar[i])
+	md.v = array(Vertex( Vector4(p,1f), Quaternion.Identity ) for p in ar)
+	md.i = (of ushort: 0,1,4, 0,2,1, 0,3,2, 0,4,3, 5,4,1, 5,1,2, 5,2,3, 5,3,4)
+	return md
+
+public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
+	md = octahedron(scale)
+	for sub in range(stage):
+		md.subDivide()
+		for i in range( md.v.Length ):
+			(v = md.v[i].pos.Xyz).NormalizeFast()
+			md.v[i].pos.Xyz = Vector3.Multiply(scale,v)
+	for i in range( md.v.Length ):
+		pass
+		# calculate smooth quaternions
 	return md.generate()

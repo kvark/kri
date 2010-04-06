@@ -1,6 +1,5 @@
 ﻿namespace kri.shade
 
-import System
 import System.IO
 import OpenTK.Graphics.OpenGL
 

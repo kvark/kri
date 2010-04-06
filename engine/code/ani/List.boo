@@ -25,4 +25,5 @@ public class Scheduler(IBase):
 	def IBase.onFrame(time as double) as uint:		#imp: IAnimation
 		anims.RemoveAll() do(ref xan as XAniData):
 			return xan.onTime(time) != 0
-		return (0,1)[not anims.Count]
+		return 0
+		#return (0,1)[not anims.Count]
