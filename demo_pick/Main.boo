@@ -23,7 +23,7 @@ private class Task:
 	private ec	as kri.Entity	= null
 	private final al	as kri.ani.Scheduler = null
 
-	public def fun(e as kri.Entity) as void:
+	public def fun(e as kri.Entity, point as Vector3) as void:
 		if not 'Swap':
 			s = e.node.Local
 			e.node.Local = ec.node.Local
@@ -110,7 +110,7 @@ def Main(argv as (string)):
 		view.ren = rm = kri.rend.Manager(false)
 		rm.add('skin',	1,	kri.kit.skin.Update() )
 		rm.add('emi',	3,	rem, 'skin')
-		rm.add('pick',	3,	kri.kit.pick.Render(1,8), 'emi')
+		rm.add('pick',	3,	kri.kit.pick.Render(2,8), 'emi')
 		rm.add('fill',	2,	kri.rend.light.Fill(licon) )
 		rm.add('app',	4,	kri.rend.light.Apply(licon), 'emi','fill')
 		

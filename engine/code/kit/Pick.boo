@@ -1,14 +1,13 @@
 ﻿namespace kri.kit.pick
 
-import System
 import OpenTK.Graphics.OpenGL
 
-public class Tag(kri.ITag):
+public class Tag( kri.ITag ):
 	#todo: interface with pick function?
-	public pick as callable(kri.Entity, OpenTK.Vector3) as void	= null
+	public pick	as callable(kri.Entity, OpenTK.Vector3) as void	= null
 	
 
-public class Render(kri.rend.Basic):
+public class Render( kri.rend.Basic ):
 	private final buf	= kri.frame.Buffer()
 	private final va	= kri.vb.Array()
 	private final sa	= kri.shade.Smart()
@@ -49,7 +48,7 @@ public class Render(kri.rend.Basic):
 		return true
 
 	public override def process(con as kri.rend.Context) as void:
-		buf.activate()
+		buf.activate(1)
 		con.SetDepth(0f, true)
 		con.ClearDepth( 1f )
 		con.ClearColor()
@@ -71,18 +70,19 @@ public class Render(kri.rend.Basic):
 			kri.Ant.Inst.emitQuad()
 			return
 		# react, todo: use PBO and actually read on demand
-		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
-		GL.PixelStore( PixelStoreParameter.PackAlignment, 1 )
 		val = (of single: single.NaN)
+		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
 		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.Red, ptype, val)
 		active = false
 		return if val[0] == 0f
-		depth = 0.7f	# todo: read from the depth buffer
-		vin = OpenTK.Vector3(coord[0]*1f / buf.getW, coord[1]*1f / buf.getH, depth)
+		index = cast(int, val[0]*ents.Length)
+		val[0] = single.NaN	# depth read dosn't seem to work
+		GL.ReadBuffer( cast(ReadBufferMode,0) )
+		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.DepthComponent, PixelType.Float, val)
+		vin = OpenTK.Vector3(coord[0]*1f / buf.getW, coord[1]*1f / buf.getH, val[0])
 		point = kri.Camera.Current.toWorld(vin)
 		# call the react method
-		index = cast(int, val[0]*ents.Length)
 		e = ents[ index ]
 		sp = (e.node.World if e.node else kri.Spatial.Identity)
 		sp.inverse()
