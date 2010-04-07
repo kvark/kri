@@ -6,7 +6,6 @@ export\scenes
 ext\Newton
 demo
 demo_dude
-demo_particle
 test_*
 game_*
 bin
