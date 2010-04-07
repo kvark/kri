@@ -80,6 +80,4 @@ public class Particles(Basic):
 			blend.add()
 			#TODO: per-manager sorting
 			for pe in kri.Scene.Current.particles:
-				continue if not pe.obj
-				kri.Ant.Inst.params.modelView.activate( pe.obj.node )
 				pe.man.draw(pe)

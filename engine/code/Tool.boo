@@ -116,10 +116,10 @@ public class TransFeedback:
 		rez = 0
 		GL.GetQueryObject(query, GetQueryObjectParam.QueryResult, rez)
 		return rez
-	public static def setup(prog as shade.Program, separate as bool, *vars as (string)) as void:
-		GL.TransformFeedbackVaryings(prog.id, vars.Length, vars,
-			(TransformFeedbackMode.SeparateAttribs if separate else TransformFeedbackMode.InterleavedAttribs)
-			)
-	public static def bind(*buffers as (vb.Object)) as void:
-		for i in range(buffers.Length):
-			GL.BindBufferBase(BufferTarget.TransformFeedbackBuffer, i, buffers[i].Extract)
+	# could be static, but it would make no sence
+	public def setup(prog as shade.Program, separate as bool, *vars as (string)) as void:
+		GL.TransformFeedbackVaryings( prog.id, vars.Length, vars,
+			(TransformFeedbackMode.InterleavedAttribs,TransformFeedbackMode.SeparateAttribs)[separate] )
+	public def bind(*buffers as (vb.Object)) as void:
+		for i in range( buffers.Length ):
+			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].Extract )

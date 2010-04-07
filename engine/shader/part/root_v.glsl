@@ -6,6 +6,14 @@ out	vec2 to_sys;
 
 uniform vec4 cur_time;
 
+vec3 part_time()	{
+	// global time, life time, frame time
+	return vec3(cur_time.x, cur_time.x - at_sys.x, cur_time.y);
+}
+float part_sign()	{
+	return at_sys.y;
+}
+
 void reset();
 float update();
 bool born_ready();

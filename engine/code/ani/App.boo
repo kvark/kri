@@ -60,7 +60,8 @@ public class ControlMouse(IBase):
 		size	= sense * axis.LengthFast
 		
 		qrot	= Quaternion.FromAxisAngle(axis, size)
-		s		= kri.Camera.current.node.World
+		n		= kri.Camera.current.node
+		s		= (n.World	if n else kri.Spatial.Identity)
 		qrot	= s.rot * qrot * Quaternion.Invert(s.rot)
 		s		= base
 		s.rot	= qrot * s.rot

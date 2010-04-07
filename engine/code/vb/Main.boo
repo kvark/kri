@@ -126,7 +126,7 @@ public class Attrib(Object):
 		off,total = 0,unitSize()
 		bind()
 		semantics.ForEach() do(ref at as attr.Info):
-			push(at,off,total)
+			push(at, off, total)
 			off += at.fullSize()
 			
 	public def attribFirst() as void:

@@ -46,6 +46,7 @@ public class Object:
 
 	# create from source
 	public def constructor(tip as ShaderType, label as string, *text as (string)):
+		assert text.Length
 		tag = label
 		id = GL.CreateShader(tip)
 		GL.ShaderSource(id, text.Length, text, null)
