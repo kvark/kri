@@ -32,10 +32,10 @@ public class Context:
 			ai.slot = slot
 			vat.semantics.Add(ai)
 			vm.semantics.Add(ai) if vm
-		vat.initUnits( e.mesh.nVert )
+		vat.initAll( e.mesh.nVert )
 		e.vbo.Add(vat)
 		if vm:
-			vm.initUnits( e.mesh.nVert )
+			vm.initAll( e.mesh.nVert )
 			e.mesh.vbo.Add(vm)
 		return vat
 
@@ -80,7 +80,6 @@ public class Update( kri.rend.Basic ):
 				e.mesh.swap(y,x)
 				# bind
 				tf.bind(y)
-				x.attribAll()
 				kri.Ant.Inst.params.modelView.activate( e.node )
 				# draw
 				sa.use()

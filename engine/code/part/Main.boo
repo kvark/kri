@@ -4,6 +4,10 @@ import System
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
+private class DataHolder:
+	internal data	= kri.vb.Attrib()
+	internal va	= kri.vb.Array()
+
 #---------
 
 public class Behavior:
@@ -20,24 +24,31 @@ public class Behavior:
 
 #---------
 
-public class Emitter:
+public class Emitter(DataHolder):
 	public visible	as bool		= true
-	public size		as single	= 1f
-	public onUpdate	as callable() as void
+	public onUpdate	as callable()	= null
 	public final man	as Manager
 	public final obj	as kri.Entity
 	public final sa		as kri.shade.Smart
-	internal data		= kri.vb.Attrib()
+
+	private def init() as void:
+		va.bind()
+		data.semantics.AddRange( man.data.semantics )
+		data.initAll( man.total )
+		#man.reset(self)
 	public def constructor(pm as Manager, ent as kri.Entity):
 		man,obj = pm,ent
 		sa = kri.shade.Smart()
-		pm.init(self)
+		init()
 	public def constructor(pe as Emitter):
 		man		= pe.man
 		obj		= pe.obj
 		sa		= pe.sa
-		size	= pe.size
-		man.init(self)
+		init()
+	public def draw() as void:
+		va.bind()
+		sa.use()
+		GL.DrawArrays( BeginMode.Points, 0, man.total )
 
 
 #---------
@@ -45,36 +56,29 @@ public class Emitter:
 public class Context:
 	public final	v_init	= kri.shade.Object('/part/init_v')
 	public final	g_init	= kri.shade.Object('/part/init_g')
+	public final	sh_draw	= kri.shade.Object('/part/draw_v')
 	public final	sh_root	= kri.shade.Object('/part/root_v')
 	public sh_born	as kri.shade.Object	= null
 	public final	dict	= kri.shade.rep.Dict()
 	public final	at_sys	= kri.Ant.Inst.slotParticles.getForced('sys')
+	public final	pTotal	= kri.shade.par.Value[of single]()
+	public def constructor():
+		dict.add('part_total', pTotal)
 
 
 #---------
 
-public class Manager:
-	private data			= kri.vb.Attrib()
-	private final va_init	= kri.vb.Array()
-	private final va_draw	= kri.vb.Array()
-	private final tf	 	= kri.TransFeedback()
+public class Manager(DataHolder):
+	private final tf	= kri.TransFeedback()
 	private final prog_init		= kri.shade.Smart()
 	private final prog_update	= kri.shade.Smart()
-	private final parTotal	= kri.shade.par.Value[of single]()
 	
 	public final behos	= List[of Behavior]()
 	public final total	as uint
+	private parTotal	as kri.shade.par.Value[of single]	= null
 	public Ready as bool:
 		get: return prog_init.Ready and prog_update.Ready
 	
-	private def transform(sa as kri.shade.Smart, generate as bool) as void:
-		sa.use()
-		using kri.Discarder(),tf.catch():
-			if generate: #TODO: use core
-				GL.DrawArraysInstanced(	BeginMode.Points, 0, 1, total )
-			else:	GL.DrawArrays(		BeginMode.Points, 0, total )
-
-
 	public def constructor(num as uint):
 		total = num
 
@@ -87,6 +91,7 @@ public class Manager:
 			
 		
 	public def init(pc as Context) as void:
+		parTotal = pc.pTotal
 		sl = kri.Ant.Inst.slotParticles
 		def id2out(id as int) as string:
 			return 'to_' + sl.Name[id]
@@ -108,60 +113,36 @@ public class Manager:
 			prog_init.add(sh)
 			prog_update.add(sh)
 		
+		va.bind()	# has to be after behaviors
+		data.initAll(total)
+		
 		prog_init.add('quat')
 		prog_init.add( sh_init, pc.v_init )
 		tf.setup(prog_init, false, *out_names.ToArray())
-		d = kri.shade.rep.Dict()
-		d.add('k_total', parTotal)
 		#prog_init.setGeometry(total)
-		prog_init.link(sl, d, kri.Ant.Inst.dict)
+		prog_init	.link(sl, pc.dict, kri.Ant.Inst.dict)
 		
 		assert pc.sh_born
 		prog_update.add('quat')
 		prog_update.add( sh_reset, sh_update, pc.sh_root, pc.sh_born )
 		tf.setup(prog_update, false, *out_names.ToArray())
-		prog_update.link(sl, pc.dict, kri.Ant.Inst.dict)
-		
-		va_init.bind()
-		data.initUnits(total)
+		prog_update	.link(sl, pc.dict, kri.Ant.Inst.dict)
 	
-	internal def init(pe as Emitter) as void:
-		va_init.bind()
-		pe.data.semantics.Clear()
-		pe.data.semantics.AddRange( data.semantics )
-		pe.data.initUnits(total)
-		reset(pe)
-	
-	public def reset(pe as Emitter) as void:
+	private def process(pe as Emitter, prog as kri.shade.Program) as void:
 		return if	not pe.obj
-		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		kri.Ant.Inst.params.modelView.activate( pe.obj.node )
-		va_init.bind()
-		data.attribFirst()	#sys
+		va.bind()
 		tf.bind( pe.data )
-		transform(prog_init,false)
-		dr = array[of single](32)
-		pe.data.read(dr)
-		dr[0] = 0f
+		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
+		prog.use()
+		using kri.Discarder(),tf.catch():
+			GL.DrawArrays( BeginMode.Points, 0, total )
+		
+	public def reset(pe as Emitter) as void:
+		process(pe, prog_init)
 
 	public def tick(pe as Emitter) as void:
 		pe.onUpdate()	if pe.onUpdate
-		va_draw.bind()
-		tf.bind(data)
-		src = pe.data
-		src.attribAll()
-		transform(prog_update,false)
-		dr = array[of single](32)
-		data.read(dr)	# debug only
-		pe.data = data
-		data = src
-	
-	public def draw(pe as Emitter) as void:
-		va_draw.bind()
-		dr = array[of single](32)
-		pe.data.read(dr)
-		dr[0] = 0f
-		pe.data.attribAll()
-		pe.sa.use()
-		GL.PointSize( pe.size )
-		GL.DrawArrays(BeginMode.Points, 0, total)
+		kri.swap(data, pe.data)
+		kri.swap(va, pe.va)
+		process(pe, prog_update)

@@ -33,13 +33,10 @@ public class Object:
 
 	# create by name, infer the type from it
 	public def constructor(name as string):
-		tip as ShaderType
-		if		name.EndsWith('_v'):
-			tip = ShaderType.VertexShader
-		elif	name.EndsWith('_f'):
-			tip = ShaderType.FragmentShader
-		elif	name.EndsWith('_g'):
-			tip = ShaderType.GeometryShader
+		tip = cast(ShaderType,0)
+		if		name.EndsWith('_v'):	tip = ShaderType.VertexShader
+		elif	name.EndsWith('_f'):	tip = ShaderType.FragmentShader
+		elif	name.EndsWith('_g'):	tip = ShaderType.GeometryShader
 		tag = name
 		id = GL.CreateShader(tip)
 		compose()

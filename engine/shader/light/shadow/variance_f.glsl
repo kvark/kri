@@ -15,8 +15,8 @@ vec4 get_sample(vec2 tc)	{
 
 float get_shadow(vec4 sc)	{
 	vec4 mo = get_sample( sc.xy );
-	//return step(lit_depth - 1e-6, mo.x);
 	float r = lit_depth - mo.x, r2 = r*r;
 	float s2 = max(1e-5, mo.y - mo.x*mo.x);
 	return s2 / (s2 + r2);
+	//return clamp( 0.5-0.4*r2/s2, 0.0,1.0);
 }

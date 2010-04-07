@@ -12,6 +12,9 @@ public static class Sizer[of T(struct)]:
 public interface IGenerator[of T]:
 	def generate() as T
 
+public def swap[of T](ref a as T, ref b as T) as void:
+	a,b = b,a
+
 # Provides GL state on/off mechanics
 public class Section(IDisposable):
 	private final cap as EnableCap

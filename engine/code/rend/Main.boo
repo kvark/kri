@@ -1,6 +1,5 @@
 ﻿namespace kri.rend
 
-import System
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
@@ -32,8 +31,7 @@ public class Chain(Basic):
 		toScreen = true
 	
 	public override def setup(far as kri.frame.Array) as bool:
-		return renders.TrueForAll() do(r as Basic):
-			return r.setup(far)
+		return renders.TrueForAll({r| r.setup(far) })
 		
 	public override def process(con as Context) as void:
 		rout = renders.FindLast() do(r as Basic):	# first render to out
@@ -76,8 +74,13 @@ public class Particles(Basic):
 		super(false)
 	public override def process(con as Context) as void:
 		con.activate(true, 0f, false)
-		using blend = kri.Blender(), kri.Section( EnableCap.ClipPlane0 ):
+		using blend = kri.Blender(), kri.Section( EnableCap.ClipPlane0 ),\
+		kri.Section( EnableCap.VertexProgramPointSize ):
 			blend.add()
-			#TODO: per-manager sorting
-			for pe in kri.Scene.Current.particles:
-				pe.man.draw(pe)
+			lis = List[of kri.part.Emitter]( kri.Scene.Current.particles )
+			while lis.Count:
+				man = lis[0].man
+				pred = {p as kri.part.Emitter| return p.man == man }
+				for pe in lis.FindAll(pred):
+					pe.draw()
+				lis.RemoveAll(pred)

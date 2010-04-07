@@ -89,8 +89,12 @@ public class Attrib(Object):
 			rez += a.fullSize()
 		return rez
 	
-	public def initUnits(num as int) as void:
-		init(num * unitSize())
+	public def initAll(num as int) as void:
+		off,total = 0,unitSize()
+		init(num * total)
+		semantics.ForEach() do(ref at as attr.Info):
+			push(at, off, total)
+			off += at.fullSize()
 
 	private def push(ref at as attr.Info, off as int, total as int) as void:
 		GL.EnableVertexAttribArray( at.slot )
@@ -121,13 +125,6 @@ public class Attrib(Object):
 			bind()
 			push(at,off)
 			return true
-			
-	public def attribAll() as void:
-		off,total = 0,unitSize()
-		bind()
-		semantics.ForEach() do(ref at as attr.Info):
-			push(at, off, total)
-			off += at.fullSize()
 			
 	public def attribFirst() as void:
 		bind()

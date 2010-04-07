@@ -86,7 +86,7 @@ public class Ant(GameWindow):
 		GC.WaitForPendingFinalizers()
 
 	public override def OnResize(e as EventArgs) as void:
-		params.parSize.Value = Vector4(1f*Width, 1f*Height, 1f, 0f)
+		params.parSize.Value = Vector4(1f*Width, 1f*Height, 0.5f*(Width+Height), 0f)
 		for v in views:
 			continue	if v.resize(Width,Height)
 			raise 'View resize fail!'

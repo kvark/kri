@@ -127,7 +127,7 @@ public class Quad:
 		id = Ant.Inst.attribs.vertex
 		ai = vb.attr.Info(slot:id, size:2, type:VertexAttribPointerType.HalfFloat)
 		data.semantics.Add(ai)
-		data.attribAll()
+		data.attribFirst()
 		vb.Array.unbind()
 	public def draw() as void:
 		va.bind()
