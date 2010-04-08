@@ -54,7 +54,7 @@ public class Discarder(Section):
 
 
 # Provides skipping of resource unloading errors on exit
-public def SafeKill(fun as callable() as void) as void:
+public def safeKill(fun as callable() as void) as void:
 	try: fun()
 	except e as GraphicsContextMissingException:
 		pass
@@ -87,38 +87,62 @@ public class FpsCounter:
 		return rez
 
 
+#-----------#
+#	QUERY	#
+#-----------#
+
+public class Catcher(IDisposable):
+	public final t	as QueryTarget
+	public def constructor(q as Query):
+		t = q.target
+		GL.BeginQuery( t, q.qid )
+	protected virtual def destroy() as void:
+		GL.EndQuery(t)
+	def IDisposable.Dispose():
+		destroy()
+
+public class Query:
+	public final qid	as int
+	public final target	as QueryTarget
+	public def constructor( targ as QueryTarget ):
+		tmp = 0
+		GL.GenQueries(1,tmp)
+		qid,target = tmp,targ
+	def destructor():
+		tmp = qid
+		safeKill({ GL.DeleteQueries(1,tmp) })
+	public virtual def catch() as Catcher:
+		return Catcher(self)
+	public def result() as int:
+		rez = 0
+		GL.GetQueryObject(qid, GetQueryObjectParam.QueryResult, rez)
+		return rez
+
+
 #-----------------------#
 #	TRANSFORM FEEDBACK	#
 #-----------------------#
 
-private class FeedCatch(IDisposable):
+public class CatcherFeed(Catcher):
 	public static safe = true
-	public def constructor(q as int):
+	public def constructor(q as Query):
 		if safe:
 			GL.PointSize(1.0)
 			GL.ColorMask(false,false,false,false)
 			GL.Disable( EnableCap.DepthTest )
 		GL.BeginTransformFeedback( BeginFeedbackMode.Points )
-		GL.BeginQuery( QueryTarget.TransformFeedbackPrimitivesWritten, q )
-	def IDisposable.Dispose():
-		GL.EndQuery( QueryTarget.TransformFeedbackPrimitivesWritten )
+		super(q)
+	protected override def destroy() as void:
+		super()
 		GL.EndTransformFeedback()
 		if safe:
 			GL.ColorMask(true,true,true,true)
-	
 
-public class TransFeedback:
-	private final query	as int
+public class TransFeedback(Query):
 	public def constructor():
-		tmp = 0
-		GL.GenQueries(1,tmp)
-		query = tmp
-	public def catch() as FeedCatch:
-		return FeedCatch(query)
-	public def result() as int:
-		rez = 0
-		GL.GetQueryObject(query, GetQueryObjectParam.QueryResult, rez)
-		return rez
+		super( QueryTarget.TransformFeedbackPrimitivesWritten )
+	public override def catch() as Catcher:
+		return CatcherFeed(self)
 	# could be static, but it would make no sence
 	public def setup(prog as shade.Program, separate as bool, *vars as (string)) as void:
 		GL.TransformFeedbackVaryings( prog.id, vars.Length, vars,

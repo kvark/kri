@@ -21,7 +21,7 @@ public class Program:
 		id = xid
 		linked = true
 	def destructor():
-		kri.SafeKill({ GL.DeleteProgram(id) })
+		kri.safeKill({ GL.DeleteProgram(id) })
 	public def check() as void:
 		info as string
 		GL.GetProgramInfoLog(id,info)

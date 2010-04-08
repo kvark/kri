@@ -13,7 +13,7 @@ public class Tag( kri.ITag ):
 		def genTex(bits as byte) as kri.Texture:
 			return null	if not bits
 			(t = kri.Texture( TextureTarget.Texture2D )).bind()
-			fm = kri.Texture.AskFormat( kri.Texture.Class.Color, bv )
+			fm = kri.Texture.AskFormat( kri.Texture.Class.Color, bits )
 			kri.Texture.Init( wid,het, fm)
 			return t
 		tVert,tQuat = genTex(bv),genTex(bq)
@@ -28,8 +28,8 @@ public class Update( kri.rend.tech.Basic ):
 	public def constructor():
 		super('bake.mesh')
 		sa.add( '/uv/bake_v' ,'/uv/bake_f', 'quat' )
-		#sa.add( '/copy_v' ,'/uv/test_f' )
 		sa.fragout('re_vertex','re_quat')
+		#sa.add( '/copy_v' ,'/uv/test_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
 	public override def process(con as kri.rend.Context) as void:
@@ -50,5 +50,11 @@ public class Update( kri.rend.tech.Basic ):
 			buf.activate()
 			con.ClearColor()	if tag.clear
 			sa.use()
-			e.mesh.draw()
-			kri.Ant.Inst.emitQuad()
+			GL.Disable( EnableCap.DepthTest )
+			GL.Disable( EnableCap.CullFace )
+			q = kri.Query( QueryTarget.SamplesPassed )
+			using q.catch():
+				e.mesh.draw()
+			assert q.result()
+			GL.Enable( EnableCap.CullFace )
+			#kri.Ant.Inst.emitQuad()

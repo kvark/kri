@@ -52,7 +52,7 @@ public class Object:
 
 	# delete
 	def destructor():
-		kri.SafeKill({ GL.DeleteShader(id) })
+		kri.safeKill({ GL.DeleteShader(id) })
 
 	# check compilation result
 	public def check() as void:

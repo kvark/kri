@@ -125,7 +125,7 @@ public class Buffer(Screen):
 		dropMask()
 	def destructor():
 		tmp = id
-		kri.SafeKill({ GL.DeleteFramebuffers(1,tmp) })
+		kri.safeKill({ GL.DeleteFramebuffers(1,tmp) })
 	
 	public static def Check() as bool:
 		status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)

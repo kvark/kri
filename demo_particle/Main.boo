@@ -93,7 +93,7 @@ def Main(argv as (string)):
 		ent.node.local.pos.Z = -30f
 		view.scene.entities.Add(ent)
 		
-		tag = kri.kit.bake.Tag(256,256, 16,8)
+		tag = kri.kit.bake.Tag(256,256, 8,8)	# should be 32,16
 		ent.tags.Add(tag)
 		tval = kri.shade.par.Value[of kri.Texture]()
 		tval.Value = tag.tQuat
