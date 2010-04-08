@@ -13,6 +13,7 @@ private class DataHolder:
 public class Behavior:
 	public final code	as string	= null
 	public final semantics = List[of kri.vb.attr.Info]()
+
 	public def constructor(path as string):
 		code = kri.shade.Object.readText(path)
 	public def getMethod(base as string) as string:
@@ -26,7 +27,7 @@ public class Behavior:
 
 public class Emitter(DataHolder):
 	public visible	as bool		= true
-	public onUpdate	as callable()	= null
+	public onDraw	as callable()	= null
 	public final man	as Manager
 	public final obj	as kri.Entity
 	public final sa		as kri.shade.Smart
@@ -46,6 +47,7 @@ public class Emitter(DataHolder):
 		sa		= pe.sa
 		init()
 	public def draw() as void:
+		onDraw()	if onDraw
 		va.bind()
 		sa.use()
 		GL.DrawArrays( BeginMode.Points, 0, man.total )
@@ -59,11 +61,7 @@ public class Context:
 	public final	sh_draw	= kri.shade.Object('/part/draw_v')
 	public final	sh_root	= kri.shade.Object('/part/root_v')
 	public sh_born	as kri.shade.Object	= null
-	public final	dict	= kri.shade.rep.Dict()
 	public final	at_sys	= kri.Ant.Inst.slotParticles.getForced('sys')
-	public final	pTotal	= kri.shade.par.Value[of single]()
-	public def constructor():
-		dict.add('part_total', pTotal)
 
 
 #---------
@@ -73,14 +71,17 @@ public class Manager(DataHolder):
 	private final prog_init		= kri.shade.Smart()
 	private final prog_update	= kri.shade.Smart()
 	
+	public onUpdate	as callable(kri.Entity)	= null
 	public final behos	= List[of Behavior]()
+	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
-	private parTotal	as kri.shade.par.Value[of single]	= null
+	private parTotal	= kri.shade.par.Value[of single]()
 	public Ready as bool:
 		get: return prog_init.Ready and prog_update.Ready
 	
 	public def constructor(num as uint):
 		total = num
+		dict.add('part_total', parTotal)
 
 	private def collect(type as string, method as string, inter as string, oper as string) as kri.shade.Object:
 		names = [b.getMethod(method+'_') for b in behos]
@@ -91,7 +92,6 @@ public class Manager(DataHolder):
 			
 		
 	public def init(pc as Context) as void:
-		parTotal = pc.pTotal
 		sl = kri.Ant.Inst.slotParticles
 		def id2out(id as int) as string:
 			return 'to_' + sl.Name[id]
@@ -120,17 +120,17 @@ public class Manager(DataHolder):
 		prog_init.add( sh_init, pc.v_init )
 		tf.setup(prog_init, false, *out_names.ToArray())
 		#prog_init.setGeometry(total)
-		prog_init	.link(sl, pc.dict, kri.Ant.Inst.dict)
+		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 		
 		assert pc.sh_born
 		prog_update.add('quat')
 		prog_update.add( sh_reset, sh_update, pc.sh_root, pc.sh_born )
 		tf.setup(prog_update, false, *out_names.ToArray())
-		prog_update	.link(sl, pc.dict, kri.Ant.Inst.dict)
+		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 	
 	private def process(pe as Emitter, prog as kri.shade.Program) as void:
 		return if	not pe.obj
-		kri.Ant.Inst.params.modelView.activate( pe.obj.node )
+		onUpdate( pe.obj )	if onUpdate
 		va.bind()
 		tf.bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
@@ -142,7 +142,6 @@ public class Manager(DataHolder):
 		process(pe, prog_init)
 
 	public def tick(pe as Emitter) as void:
-		pe.onUpdate()	if pe.onUpdate
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
 		process(pe, prog_update)

@@ -1,10 +1,8 @@
-#version 140
+#version 130
 
-in	vec3 at_vertex;
-in	vec4 at_quat;
-in	vec3 at_tex;
-out	vec3 to_vert;
-out	vec4 to_quat;
+in	vec2 at_tex0;
+in	vec4 at_vertex, at_quat;
+out	vec4 to_vertex, to_quat;
 
 uniform struct Spatial	{
 	vec4 pos,rot;
@@ -14,8 +12,8 @@ vec3 trans_for(vec3,Spatial);
 vec4 qmul(vec4,vec4);
 
 void main()	{
-	//encoding handness bit into pos.w
-	to_vert = vec4( trans_for(at_vertex, s_model), at_tex.z );
-	to_quat = qmul(s_model.rot, at_quat);
-	gl_Position = vec4(at_tex.xy, 0.0,1.0);
+	vec3 v = trans_for( at_vertex.xyz, s_model );
+	to_vertex = vec4( v, at_vertex.w );
+	to_quat = vec4(0.5) + 0.5*qmul( s_model.rot, at_quat );
+	gl_Position = vec4( 2.0*at_tex0 - vec2(1.0), 0.0,1.0 );
 }

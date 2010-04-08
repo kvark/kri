@@ -39,7 +39,7 @@ private class RenderPoints(kri.rend.Basic):
 
 
 private def createParticle(em as kri.Entity) as kri.part.Emitter:
-	pm = kri.part.Manager(400)
+	pm = kri.part.Manager(100)
 	pcon = kri.part.Context()
 	pcon.sh_born = kri.shade.Object('/part/born_instant_v')
 	beh = kri.part.Behavior('/part/beh_simple')
@@ -51,8 +51,19 @@ private def createParticle(em as kri.Entity) as kri.part.Emitter:
 	beh.semantics.Add( kri.vb.attr.Info(
 		slot:at_speed,	size:3, type:VertexAttribPointerType.Float ))
 	pm.behos.Add(beh)
-	pm.init(pcon)
 	
+	tVert = kri.shade.par.Texture(0,'vertex')
+	tQuat = kri.shade.par.Texture(1,'quat')
+	pm.dict.unit(tVert)
+	pm.dict.unit(tQuat)
+	pm.onUpdate = def(e as kri.Entity):
+		kri.Ant.Inst.params.modelView.activate( e.node )
+		tag = e.seTag[of kri.kit.bake.Tag]()
+		if tag:
+			tVert.Value = tag.tVert
+			tQuat.Value = tag.tQuat
+	
+	pm.init(pcon)
 	pe = kri.part.Emitter(pm,em)
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( '/part/draw_simple_v', '/part/draw_simple_f', 'quat', 'tool')
@@ -74,17 +85,24 @@ def Main(argv as (string)):
 		view.cam = kri.Camera()
 		view.scene.lights.Add( kri.Light() )
 		
-		mesh = kri.kit.gen.cube( Vector3.One )
+		#mesh = kri.kit.gen.cube( Vector3.One )
+		mesh = kri.kit.gen.plane_tex( Vector2.One )
 		con = kri.load.Context()
 		ent = kri.kit.gen.entity( mesh, con )
 		ent.node = kri.Node('main')
 		ent.node.local.pos.Z = -30f
 		view.scene.entities.Add(ent)
 		
+		tag = kri.kit.bake.Tag(256,256, 16,8)
+		ent.tags.Add(tag)
+		tval = kri.shade.par.Value[of kri.Texture]()
+		tval.Value = tag.tQuat
+		
 		ps = createParticle(ent)
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.kit.skin.Update() )
+		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
 		rlis.Add( kri.rend.Particles() )
 		rlis.Add( RenderPoints() )
@@ -93,6 +111,7 @@ def Main(argv as (string)):
 			licon.setExpo(120f, 0.5f)
 			rlis.Add( kri.rend.light.Fill(licon) )
 			rlis.Add( kri.rend.light.Apply(licon) )
+			rlis.Add( kri.rend.debug.Map(tval) )
 		
 		ant.anim = al = kri.ani.Scheduler()
 		al.add( kri.ani.ControlMouse(ent.node,0.002f) )

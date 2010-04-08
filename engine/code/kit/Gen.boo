@@ -1,16 +1,24 @@
 ﻿namespace kri.kit.gen
 
+import System
 import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
 #----	COMMON DATA STORING & CREATION	----#
 
+[StructLayout(LayoutKind.Sequential)]
 public struct Vertex:
-	public pos as Vector4
-	public rot as Quaternion
+	public pos	as Vector4
+	public rot	as Quaternion
 	public def constructor(p as Vector4, q as Quaternion):
 		pos,rot = p,q
+
+[StructLayout(LayoutKind.Sequential)]
+public struct VertexUV:
+	public pos	as Vector4
+	public rot	as Quaternion
+	public uv	as Vector2
 
 public def entity( m as kri.Mesh, lc as kri.load.Context ) as kri.Entity:
 	e = kri.Entity( mesh:m )
@@ -72,6 +80,33 @@ public def plane(scale as Vector2) as kri.Mesh:
 		md.v[i].pos = Vector4( scale.X * sar[i&1], scale.Y * sar[i>>1], 0f,1f)
 		md.v[i].rot = Quaternion.Identity
 	return md.generate()
+
+public def plane_tex(scale as Vector2) as kri.Mesh:
+	v = array[of VertexUV](4)
+	sar,str = (-1f,1f),(0f,1f)
+	for i in range(4):
+		v[i].uv = Vector2( str[i&1], str[i>>1] )
+		v[i].pos = Vector4( scale.X * sar[i&1], scale.Y * sar[i>>1], 0f,1f)
+		v[i].rot = Quaternion.Identity
+	# create mesh
+	m = kri.Mesh( BeginMode.TriangleStrip )
+	m.nVert = 4
+	m.nPoly = 4
+	# fill vbo
+	vbo = kri.vb.Attrib()
+	vbo.init( v, false )
+	# fill semantics
+	ai = kri.vb.attr.Info( integer:false, size:4, type:VertexAttribPointerType.Float )
+	ai.slot = kri.Ant.Inst.attribs.vertex
+	vbo.semantics.Add(ai)
+	ai.slot = kri.Ant.Inst.attribs.quat
+	vbo.semantics.Add(ai)
+	ai.size = 2
+	ai.slot = kri.Ant.Inst.attribs.tex[0]
+	vbo.semantics.Add(ai)
+	# return
+	m.vbo.Add(vbo)
+	return m
 
 
 #----	CUBE OBJECT	----#

@@ -5,6 +5,8 @@ out	vec3 to_pos;
 in	vec3 at_speed;
 out	vec3 to_speed;
 
+uniform sampler2D unit_vertex, unit_quat;
+
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_model;
@@ -21,9 +23,17 @@ void reset_simple()	{
 	to_pos = s_model.pos.xyz;
 	vec3 pt = part_time();
 	float uni = part_uni(),
-		r = fract( pow(pt.x, 1.0+uni+pt.z) );
-	vec3 dir = normalize(vec3( r-0.5, 1.0, 0.0 ));
-	to_speed = (0.1 + 10.0*r) * qrot(s_model.rot, dir);
+		r1 = fract( 1000.0 * pt.z * (uni+pt.x) + 1.0*uni ),
+		r2 = fract( 9999.0 * pt.z * (uni+pt.x) + 9.9*uni );
+	float a = r1 * 2.0*3.1416;
+	vec3 dir = vec3( sin(a), cos(a), 0.0 );
+	to_speed = (1.0 + 10.0*r2) * qrot(s_model.rot, dir);
+	//new func
+	vec4 pos = texture(unit_vertex, vec2(r1,r2));
+	to_pos = pos.xyz;
+	vec4 quat = texture(unit_quat, vec2(r1,r2)); 
+	to_speed = qrot(quat, vec3(0.0,0.0,1.0));
+	to_speed.x *= pos.w;
 }
 
 float update_simple()	{

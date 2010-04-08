@@ -4,13 +4,20 @@ import System
 import System.Collections.Generic
 
 
-public class Basic(kri.rend.Basic):
+public class Basic( kri.rend.Basic ):
 	protected	final tid	as int		# technique ID
 	protected def constructor(name as string):
 		super(false)
 		tid = kri.Ant.Inst.slotTechniques.create(name)
 	def destructor():
 		kri.Ant.Inst.slotTechniques.delete(tid)
+	protected def attribs(e as kri.Entity, *ats as (int)) as bool:
+		return false	if e.va[tid] == kri.vb.Array.Default
+		if e.va[tid]:	e.va[tid].bind()
+		elif not e.enable(tid,ats):
+			e.va[tid] = kri.vb.Array.Default
+			return false
+		return true
 
 
 #public class Object(Basic):

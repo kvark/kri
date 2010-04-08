@@ -1,11 +1,10 @@
 #version 130
 
-in vec4 to_vert;
-in vec4 to_quat;
-out vec4 r_vert;
-out vec4 r_quat;
+in	vec4 to_vertex, to_quat;
+out	vec4 re_vertex, re_quat;
 
 void main()	{
-	r_vert = to_vert;
-	r_quat = to_quat;
+	re_vertex = to_vertex;
+	re_quat = to_quat;
+	re_vertex = re_quat = vec4(1.0);
 }
