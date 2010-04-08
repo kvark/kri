@@ -72,25 +72,26 @@ public class General(Basic):
 #---------	META TECHNIQUE	--------#
 
 public class Meta(General):
-	private final mList	as (string)
+	private final lMets	as (string)
+	private final lOuts	as (string)
 	private final shobs	as (kri.shade.Object)
 	private final sMap		= SortedDictionary[of string,int]()
 	protected final dict	= kri.shade.rep.Dict()
 	
-	protected def constructor(name as string, mets as (string), sh as kri.shade.Object*):
+	protected def constructor(name as string, outs as (string), mets as (string), sh as kri.shade.Object*):
 		super(name)
-		mList,shobs = mets,array(sh)
-	protected def constructor(name as string, mets as (string), prefix as string):
+		lMets,lOuts,shobs = mets,outs,array(sh)
+	protected def constructor(name as string, outs as (string), mets as (string), prefix as string):
 		super(name)
-		mList = mets
+		lMets,lOuts = mets,outs
 		shobs = array( kri.shade.Object(prefix+s) for s in ('_v','_f') )
-	protected def constructor(name as string, mets as (string), slis as string*):
+	protected def constructor(name as string, outs as (string), mets as (string), slis as string*):
 		super(name)
-		mList = mets
+		lMets,lOuts = mets,outs
 		shobs = array( kri.shade.Object(s) for s in slis )
 
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
-		sl = mat.collect(mList)
+		sl = mat.collect(lMets)
 		return kri.shade.Smart.Fixed	if not sl
 		key = join( (x.id.ToString() for x in sl), ',' )
 		sid = -1
@@ -104,6 +105,7 @@ public class Meta(General):
 			sMap.Add(key, sa.id )
 			sa.add( *(kri.Ant.Inst.shaders.gentleSet + array(sl) + shobs) )
 			sa.attribs( kri.Ant.Inst.slotAttributes )
+			sa.fragout( *lOuts )	if lOuts
 			sa.link()
 		sa.fillPar(dict, mat.dict, kri.Ant.Inst.dict) 
 		return sa

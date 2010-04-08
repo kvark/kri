@@ -35,7 +35,6 @@ public final class Param:
 
 # Shader Objects & Programs Library
 public class Shader( Dictionary[of string, kri.shade.Object] ):
-	public final header = "#version 130\n precision lowp float;\n"
 	public final gentleSet as (kri.shade.Object)
 	public def constructor():
 		super()

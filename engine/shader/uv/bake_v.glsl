@@ -1,5 +1,4 @@
 #version 140
-precision lowp float;
 
 in	vec3 at_vertex;
 in	vec4 at_quat;

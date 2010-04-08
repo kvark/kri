@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 vec4 sample_reflect();
 

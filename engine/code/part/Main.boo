@@ -86,7 +86,7 @@ public class Manager(DataHolder):
 		names = [b.getMethod(method+'_') for b in behos]
 		decl = join("${type} ${n};\n"	for n in names)
 		body = join("${oper}\n\t${n}"	for n in names)
-		all = "${kri.Ant.Inst.shaders.header}\n${decl}\n${type} ${method}()\t{${inter}${body};\n}"
+		all = "#version 130\n${decl}\n${type} ${method}()\t{${inter}${body};\n}"
 		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
 			
 		

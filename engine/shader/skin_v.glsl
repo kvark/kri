@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 // Dual Quaternions support
 #define DUALQUAT

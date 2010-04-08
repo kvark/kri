@@ -1,8 +1,8 @@
 #version 130
-precision lowp float;
 
 in float depth;
+out vec2 rez_color;
 
 void main()	{
-	gl_FragColor = vec4(depth, depth*depth, 0.0,1.0);
+	rez_color = vec2(depth, depth*depth);
 }

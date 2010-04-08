@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 vec3 dir_world(vec3);
 

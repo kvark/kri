@@ -1,9 +1,9 @@
 #version 130
-precision lowp float;
 
 uniform usampler2D unit_input;
 in vec2 tex_coord;
+out vec4 rez_color;
 
 void main()	{
-	gl_FragColor = vec4(texture(unit_input, tex_coord).r);
+	rez_color = vec4(texture(unit_input, tex_coord).r);
 }

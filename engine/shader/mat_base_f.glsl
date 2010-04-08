@@ -1,12 +1,12 @@
 #version 130
-precision lowp float;
 
 uniform vec4 base_color;
 
 vec4 get_emissive();
 
 in vec4 tc_emissive;
+out vec4 rez_color;
 
 void main()	{
-	gl_FragColor = base_color + get_emissive();
+	rez_color = base_color + get_emissive();
 }

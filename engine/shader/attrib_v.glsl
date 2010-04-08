@@ -1,3 +1,5 @@
+#version 130
+
 in vec4 at_quat;
 out vec4 color;
 

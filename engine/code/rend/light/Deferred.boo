@@ -13,11 +13,12 @@ public class Fill( tech.Meta ):
 		get: return buf.A[0].Tex
 	# init
 	public def constructor():
-		super('g.make', kri.load.Meta.LightSet,
-			('/g/make_v','/g/make_f','/light/common_f'))
+		super('g.make', ('c_diffuse','c_specular','c_normal'),
+			kri.load.Meta.LightSet,
+			('/g/make_v','/g/make_f','/light/common_f') )
 		t = kri.Texture( TextureTarget.Texture2DArray )
-		buf.A[0].layer(t,0)	# diffuse color * texture
-		buf.A[1].layer(t,1)	# specular color
+		buf.A[0].layer(t,0) # diffuse
+		buf.A[1].layer(t,1) # specular
 		buf.A[2].layer(t,2)	# world space normal
 		buf.mask = 0x7
 	# resize

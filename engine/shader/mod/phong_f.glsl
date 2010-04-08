@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 float comp_specular(vec3 no, vec3 lit, vec3 cam, float glossy)	{
 	vec3 ha = normalize(lit+cam);	//half-vector

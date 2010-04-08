@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 out vec3 pos;
 

@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform struct Spatial	{
 	vec4 pos,rot;

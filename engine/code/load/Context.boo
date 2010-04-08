@@ -34,7 +34,7 @@ public static class Meta:
 		dec_funs = genStr(2, {s| return "vec3 mi_${s}();\n" })
 		dec_mins = genStr(2, {s| return "vec4 mr_${s} = vec4( mi_${s}(), 1.0);\n" })
 		body = "void make_tex_coords()	{\n${dec_mins}\n${join(map(cl,funBody))}}"
-		str = kri.Ant.Inst.shaders.header + dec_unis + dec_vars + dec_funs + body
+		str = "#version 130\n" + dec_unis + dec_vars + dec_funs + body
 		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
 		return rez
 		

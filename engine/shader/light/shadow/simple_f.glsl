@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform sampler2DShadow unit_light;
 

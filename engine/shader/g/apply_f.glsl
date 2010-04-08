@@ -1,7 +1,4 @@
 #version 130
-precision lowp float;
-
-in vec2 tex_coord;
 
 //---	UNIFORMS	---//
 
@@ -49,6 +46,11 @@ vec3 unproject(vec3 v, vec4 pr)	{
 	return z * vec3(-ndc.xy / pr.xy, 1.0);
 }
 
+//---	VARYINGS	---//
+
+in vec2 tex_coord;
+out vec4 rez_color;
+
 
 //---	MAIN	---//
 
@@ -73,5 +75,5 @@ void main()	{
 	float intensity = get_attenuation( length(v_lit) );
 	if( intensity*(diff+spec) < 0.01 ) discard;
 	//todo: use alpha for discard
-	gl_FragColor = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
+	rez_color = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
 }

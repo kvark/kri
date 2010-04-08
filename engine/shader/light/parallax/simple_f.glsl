@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform vec4 mat_bump;
 vec4 get_bump();

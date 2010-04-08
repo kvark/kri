@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform vec4 mat_diffuse;
 uniform sampler2D unit_diffuse;

@@ -1,5 +1,4 @@
 #version 140
-precision lowp float;
 
 void main()	{
 	gl_PointSize = gl_PointSizeIn[0];

@@ -64,7 +64,7 @@ public class Apply( rend.tech.Meta ):
 		shadow = 'simple'
 		shadow = 'exponent2'	if lc.type == LiType.EXPONENT
 		shadow = 'variance'		if lc.type == LiType.VARIANCE
-		super('lit.apply', kri.load.Meta.LightSet,
+		super('lit.apply', null, kri.load.Meta.LightSet,
 			('/light/apply_v','/light/apply_f','/light/common_f',"/light/shadow/${shadow}_f") )
 		dict.attach(lc.dict)
 		dict.unit(texLit)

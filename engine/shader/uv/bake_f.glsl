@@ -1,10 +1,11 @@
-#version 140
-precision lowp float;
+#version 130
 
 in vec4 to_vert;
 in vec4 to_quat;
+out vec4 r_vert;
+out vec4 r_quat;
 
 void main()	{
-	gl_FragData[0] = to_vert;
-	gl_FragData[1] = to_quat;
+	r_vert = to_vert;
+	r_quat = to_quat;
 }

@@ -55,11 +55,9 @@ public class Program:
 	public def attrib(index as int, name as string) as void:
 		GL.BindAttribLocation(id, index, name)
 	# assign fragment output slot
-	public def fragout(index as int, name as string) as void:
-		GL.BindFragDataLocation(id, index, name)
 	public def fragout(*names as (string)) as void:
 		for i in range(names.Length):
-			fragout(i, names[i])
+			GL.BindFragDataLocation(id, i, names[i])
 	
 	# get uniform location by name
 	public def getVar(name as string) as int:

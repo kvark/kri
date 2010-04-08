@@ -1,6 +1,5 @@
 #version 140
 #extension GL_EXT_geometry_shader4 : require
-precision lowp float;
 
 //in	vec2 to_xxx[1];
 out	vec2 to_sys;

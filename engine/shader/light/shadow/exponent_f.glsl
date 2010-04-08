@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform sampler2D unit_light;
 uniform float k_dark, texel_offset;

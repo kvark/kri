@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform float k_dark;
 

@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 in vec3 at_vertex;
 out vec2 tex_coord;

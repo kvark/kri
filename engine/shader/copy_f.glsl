@@ -1,10 +1,11 @@
 #version 130
-precision lowp float;
 
-in vec2 tex_coord;
 uniform sampler2D unit_input;
 
+in vec2 tex_coord;
+out vec4 rez_color;
+
 void main()	{
-	gl_FragColor = texture(unit_input, tex_coord);
-	//gl_FragColor = vec4( pow(gl_FragColor.r,50.0) );
+	rez_color = texture(unit_input, tex_coord);
+	//rez_color = vec4( pow(rez_color.r,50.0) );
 }

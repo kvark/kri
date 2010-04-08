@@ -1,5 +1,4 @@
 ﻿#version 130
-precision lowp float;
 
 uniform vec4 lit_color, lit_data, proj_lit;
 
@@ -9,7 +8,7 @@ vec4 get_lighting(vec3,vec3);
 in vec3 v2lit, v2cam;
 in vec4 v_shadow;
 in float lit_int;
-
+out vec4 rez_color;
 
 void main()	{
 	vec3 v_lit = normalize(v2lit);
@@ -23,6 +22,6 @@ void main()	{
 	float intensity = rad * lit_int * get_shadow(vs);
 	if(intensity < 0.01) discard;
 
-	gl_FragColor = intensity*lit_color *
+	rez_color = intensity*lit_color *
 		get_lighting(v_lit,v_cam);
 }

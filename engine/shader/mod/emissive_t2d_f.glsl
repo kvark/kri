@@ -1,5 +1,4 @@
 #version 130
-precision lowp float;
 
 uniform float mat_emissive;
 uniform sampler2D unit_emissive;
