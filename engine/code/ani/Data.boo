@@ -86,10 +86,8 @@ public class Record:
 		return channels.TrueForAll({ c| return c.Valid })
 
 
-public class Player(IPlayer):
+public abstract class Player(IPlayer):
 	public final anims	= List[of Record]()
-	def IPlayer.touch() as void:
-		pass
 	public def play(name as string) as Anim:
 		rec = anims.Find({r| return r.name == name})
 		if rec:

@@ -78,7 +78,8 @@ public struct Spatial:
 public class Node( kri.ani.data.Player, IComparable[of Node] ):
 	public final name	as string
 	private parent	as Node = null
-	private local	= Spatial.Identity
+	private dirty	= true
+	public local	= Spatial.Identity
 	private cached	= Spatial.Identity
 	private world	= Spatial.Identity
 	
@@ -91,8 +92,8 @@ public class Node( kri.ani.data.Player, IComparable[of Node] ):
 	#TODO: explicit interface imp, when supported
 	public def CompareTo(n as Node) as int:	#imp: IComparable
 		return name.CompareTo(n.name)
-	public def refresh() as void:
-		world.combine(local,cached)
+	public def touch() as void:	#imp: IPlayer
+		dirty = true
 	
 	public Parent as Node:
 		get: return parent
@@ -100,19 +101,15 @@ public class Node( kri.ani.data.Player, IComparable[of Node] ):
 			parent = value
 			return	if not value
 			cached = parent.World
-			refresh()
-	public Local as Spatial:
-		get: return local
-		set:
-			local = value
-			refresh()	
+			touch()
 	public World as Spatial:
 		get:
 			if parent:
 				pw = parent.World
-				if pw != cached:
+				if dirty or pw != cached:
 					cached = pw
-					refresh()
+					world.combine(local,pw)
+				dirty = false
 				return world
 			else:	return local
 	
@@ -124,26 +121,14 @@ public class Node( kri.ani.data.Player, IComparable[of Node] ):
 public class NodeBone(Node):
 	public final bindPose	as Spatial
 	private invWorldPose	as Spatial
-	public pose	= Spatial.Identity
 	
 	public def constructor(str as string, ref initPose as Spatial):
 		super(str)
-		Local = bindPose = initPose
+		local = bindPose = initPose
+	public def constructor(nb as NodeBone):
+		super(nb)
+		local = bindPose = nb.bindPose
 
-	public def Clone() as Object:	#imp: ICloneable
-		s = bindPose
-		n = NodeBone(name,s)
-		n.Parent = Parent
-		n.Local = Local
-		return n
-	public def setPose(s as Spatial) as void:
-		rez = p = bindPose
-		rez.combine(s,p)
-		Local = rez
-	public def setPose() as void:
-		rez = bp = bindPose
-		rez.combine(pose,bp)
-		Local = rez
 	public def genTransPose(ref sloc as Spatial, ref sp as Spatial) as void:
 		sp.combine(sloc,invWorldPose)	# object local -> pose
 	public def bakeInvPose(ref s as Spatial) as void:
@@ -176,17 +161,15 @@ public class Skeleton( ani.data.Player ):
 			continue	if ind < 0
 			bones[i].Parent = bones[ind]
 
-	def ani.data.IPlayer.touch() as void:
-		for b in bones:
-			b.setPose()
+	public def touch() as void:
 		++state
 	public def bakePoseData(np as Node) as void:
 		sw = np.World
 		for b in bones:
 			b.bakeInvPose(sw)
-		++state
+		touch()
 	public def reset() as void:
 		for b in bones:
-			b.pose = Spatial.Identity
-			b.Local = b.bindPose
-		++state
+			b.local = b.bindPose
+			b.touch()
+		touch()

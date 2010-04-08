@@ -31,7 +31,7 @@ public partial class Native:
 		at.nodes[n.name] = n
 		puData(n)
 		n.Parent = at.nodes[ getString() ]
-		n.Local = getSpatial()
+		n.local = getSpatial()	# touched by Parent
 		return true
 	
 	#---	Parse camera	---#

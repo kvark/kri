@@ -19,32 +19,32 @@ public class Basic(kri.ani.Delta):
 	public final fAngular	= List[of IField]()
 	public def constructor(s as kri.Scene):
 		scene = s
-	private abstract def assembly(ref s as kri.Spatial, d as double,
-			b as kri.Body, *v as (Vector3)) as void:
+	private abstract def assembly(d as double, b as kri.Body,
+	ref vlin as Vector3, ref vang as Vector3) as void:
 		pass
 	protected override def onDelta(delta as double) as uint:
 		for b in scene.bodies:
+			continue	if not b.node
 			lin = ang = Vector3(0f,0f,0f)
-			s = b.node.Local
 			for f in fLinear:
-				lin += f.effect(s)
+				lin += f.effect( b.node.local )
 			for f in fAngular:
-				ang += f.effect(s)
-			assembly(s, delta, b, lin,ang)
-			b.node.Local = s
+				ang += f.effect( b.node.local )
+			assembly( delta, b, lin, ang )
 		return 0
 
 
 public class Native(Basic):
 	public def constructor(s as kri.Scene):
 		super(s)
-	private override def assembly(ref s as kri.Spatial, d as double,
-			b as kri.Body, *v as (Vector3)) as void:
-		b.vLinear	+= d*v[0]
-		b.vAngular	+= d*v[1]
-		s.pos += d * b.vLinear
-		s.rot += Quaternion(Xyz: 0.5f*d*b.vAngular, W:0f) * s.rot
-		s.rot.Normalize()
+	private override def assembly(d as double, b as kri.Body,
+	ref vlin as Vector3, ref vang as Vector3) as void:
+		b.vLinear	+= d*vlin
+		b.vAngular	+= d*vang
+		b.node.local.pos += d * b.vLinear
+		b.node.local.rot += Quaternion(Xyz: 0.5f*d*b.vAngular, W:0f) * b.node.local.rot
+		b.node.local.rot.Normalize()
+		b.node.touch()
 
 
 public class Render(Native):
@@ -57,7 +57,7 @@ public class Render(Native):
 		#pr.tick(scene)
 		return 0
 
-
+/*
 public class Newton(Basic):
 	#private final world	= Newton.Create(0,0)
 	public def constructor(s as kri.Scene):
@@ -73,3 +73,4 @@ public class Newton(Basic):
 		s.pos += d * b.vLinear
 		s.rot += Quaternion(Xyz: 0.5f*d*b.vAngular, W:0f) * s.rot
 		s.rot.Normalize()
+*/

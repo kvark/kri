@@ -46,7 +46,7 @@ public class ControlMouse(IBase):
 		mouse.ButtonDown	+= def():
 			x = mouse.X
 			y = mouse.Y
-			base = n.Local
+			base = n.local
 			active = true
 		mouse.ButtonUp		+= def():
 			active = false
@@ -65,5 +65,6 @@ public class ControlMouse(IBase):
 		qrot	= s.rot * qrot * Quaternion.Invert(s.rot)
 		s		= base
 		s.rot	= qrot * s.rot
-		node.Local = s
+		node.local = s
+		node.touch()
 		return 0

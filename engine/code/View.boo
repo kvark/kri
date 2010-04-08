@@ -17,6 +17,9 @@ public class Projector( ani.data.Player ):
 	public rangeOut	= 100f
 	public fov		= 0.4f	# ~23 degrees (half)
 	public aspect	= 1f
+	
+	public def touch() as void:	#imp: IPlayer
+		pass
 	public def project(ref v as Vector3) as Vector3:
 		dz = -1f / v.Z
 		tn = dz / Math.Tan(fov)

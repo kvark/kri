@@ -71,9 +71,10 @@ public class Update( kri.rend.Basic ):
 				# run the transform
 				spa as kri.Spatial
 				for i in range(tag.skel.bones.Length):
-					s0 = e.node.Local	# model->
-					tag.skel.bones[i].genTransPose(s0,spa)	# ->pose
-					s1 = tag.skel.bones[i].World
+					b = tag.skel.bones[i]
+					# model->pose
+					b.genTransPose( e.node.local, spa )
+					s0 = s1 = b.World
 					s0.combine(spa,s1)	# ->world
 					s1 = e.node.World
 					s1.inverse()

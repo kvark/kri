@@ -19,6 +19,8 @@ public class Material( ani.data.Player ):
 		name = str
 	private def clone[of T(meta.IBase)](me as T) as T:
 			return me.clone() as T
+	public def touch() as void:	#imp: IPlayer
+		pass
 
 	# clone with all metas
 	public def constructor(mat as Material):

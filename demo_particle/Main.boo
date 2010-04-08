@@ -11,9 +11,7 @@ private class RenderPoints(kri.rend.Basic):
 	final node	= kri.Node('x')
 	public def constructor():
 		super(false)
-		sp = node.Local
-		sp.pos.Z = -10f
-		node.Local = sp
+		node.local.pos.Z = -10f
 		
 		sa.add('./text/point_v', './text/point_f', 'tool', 'quat', 'fixed')
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
@@ -80,9 +78,7 @@ def Main(argv as (string)):
 		con = kri.load.Context()
 		ent = kri.kit.gen.entity( mesh, con )
 		ent.node = kri.Node('main')
-		sp = kri.Spatial.Identity
-		sp.pos.Z = -30f
-		ent.node.Local = sp
+		ent.node.local.pos.Z = -30f
 		view.scene.entities.Add(ent)
 		
 		ps = createParticle(ent)

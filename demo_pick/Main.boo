@@ -8,14 +8,13 @@ public class AniTrans( kri.ani.Loop ):
 	private final n	as kri.Node
 	private s0	as kri.Spatial
 	private s1	as kri.Spatial
-	public def constructor(node as kri.Node, targ as kri.Spatial):
+	public def constructor(node as kri.Node, ref targ as kri.Spatial):
 		n = node
-		s0 = n.Local
+		s0 = n.local
 		s1 = targ
 	protected override def onRate(rate as double) as void:
-		sp	as kri.Spatial
-		sp.lerpDq(s0,s1,rate)
-		n.Local = sp
+		n.local.lerpDq(s0,s1,rate)
+		n.touch()
 
 
 private class Task:
@@ -25,12 +24,12 @@ private class Task:
 
 	public def fun(e as kri.Entity, point as Vector3) as void:
 		if not 'Swap':
-			s = e.node.Local
-			e.node.Local = ec.node.Local
-			ec.node.Local = s
+			kri.swap[of kri.Spatial]( e.node.local, ec.node.local )
+			e.node.touch()
 			ec = e
-		al.add( AniTrans(e.node, ec.node.Local) )
-		ec.node.Local = e.node.Local
+		al.add( AniTrans(e.node, ec.node.local) )
+		ec.node.local = e.node.local
+		ec.node.touch()
 		#al.add( e.node.play('rotate') )
 	
 	private def makeMat() as kri.Material:
@@ -51,9 +50,8 @@ private class Task:
 	private def makeRec() as kri.ani.data.Record:
 		def fani(pl as kri.ani.data.IPlayer, val as Vector3, id as byte):
 			n = pl as kri.Node
-			sp = n.Local
-			sp.pos = val
-			n.Local = sp
+			n.local.pos = val
+			n.touch()
 		rec = kri.ani.data.Record('rotate',3f)
 		ch = kri.ani.data.Channel_Vector3(4,0,fani)
 		ch.lerp = Vector3.Lerp
@@ -76,13 +74,9 @@ private class Task:
 			n.anims.Add(rec)
 			if e.node:
 				n.Parent = e.node.Parent
-				sp = e.node.Local
-			else: sp = kri.Spatial.Identity
+				n.local = e.node.local
 			x,y = (i % size),(i / size)
-			sp.pos.Y = (y+y+1-size)*2f
-			sp.pos.X = (x+x+1-size)*3f
-			sp.pos.Z = -40f
-			n.Local = sp
+			n.local.pos = Vector3( (x+x+1-size)*3f, (y+y+1-size)*2f, -40f )
 			ar.Add(ec)
 		(ec = ar[0]).visible = false
 		ec.tags.RemoveAll() do(t as kri.ITag):
