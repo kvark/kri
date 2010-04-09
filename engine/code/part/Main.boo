@@ -67,7 +67,7 @@ public class Context:
 #---------
 
 public class Manager(DataHolder):
-	private final tf	= kri.TransFeedback()
+	private final tf	= kri.TransFeedback(1)
 	private final prog_init		= kri.shade.Smart()
 	private final prog_update	= kri.shade.Smart()
 	

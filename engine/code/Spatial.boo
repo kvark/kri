@@ -48,7 +48,6 @@ public struct Spatial:
 			Quaternion.FromAxisAngle( Vector3.UnitY, v.Y )*\
 			Quaternion.FromAxisAngle( Vector3.UnitZ, v.Z )
 
-
 	public def combine(ref a as Spatial, ref b as Spatial) as void:
 		rot		= b.rot * a.rot
 		scale	= b.scale * a.scale

@@ -57,7 +57,7 @@ public class Meta( kri.meta.Hermit ):
 //-----------	Updating physics using TF	-----------------//
 
 public class Update( kri.rend.Basic ):
-	private final tf	= kri.TransFeedback()
+	private final tf	= kri.TransFeedback(2)
 	private final sa	= kri.shade.Smart()
 	private final va	= kri.vb.Array()
 	

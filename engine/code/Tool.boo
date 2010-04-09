@@ -132,18 +132,20 @@ public class Query:
 #-----------------------#
 
 public class CatcherFeed(Catcher):
-	public def constructor(q as Query):
-		GL.BeginTransformFeedback( BeginFeedbackMode.Points )
+	public def constructor(q as Query, m as BeginFeedbackMode):
+		GL.BeginTransformFeedback(m)
 		super(q)
 	public override def Dispose() as void:
 		super()
 		GL.EndTransformFeedback()
 
 public class TransFeedback(Query):
-	public def constructor():
+	public final mode	as BeginFeedbackMode
+	public def constructor(nv as byte):
 		super( QueryTarget.TransformFeedbackPrimitivesWritten )
+		mode = (BeginFeedbackMode.Points, BeginFeedbackMode.Lines, BeginFeedbackMode.Triangles)[nv-1]
 	public override def catch() as Catcher:
-		return CatcherFeed(self)
+		return CatcherFeed(self,mode)
 	# could be static, but it would make no sence
 	public def setup(prog as shade.Program, separate as bool, *vars as (string)) as void:
 		GL.TransformFeedbackVaryings( prog.id, vars.Length, vars,

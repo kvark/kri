@@ -9,7 +9,7 @@ private class RenderPoints(kri.rend.Basic):
 	final vbo	= kri.vb.Attrib()
 	final va	= kri.vb.Array()
 	final node	= kri.Node('x')
-	final tf	= kri.TransFeedback()
+	final tf	= kri.TransFeedback(1)
 	public def constructor():
 		super(false)
 		node.local.pos.Z = -10f

@@ -9,7 +9,7 @@ public class Main:
 	public final va		= kri.vb.Array()
 	public final sa		= kri.shade.Smart()
 	public final pTime	= kri.shade.par.Value[of single]()
-	public final tf		= kri.TransFeedback()
+	public final tf		= kri.TransFeedback(1)
 	public static final max	=	4
 
 	public def apply(mar as (kri.Mesh), t as single) as void:

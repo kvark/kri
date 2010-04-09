@@ -35,25 +35,22 @@ public def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
 #---------	RENDER SKELETON SYNC		--------#
 
 public class Update( kri.rend.tech.Basic ):
-	private final tf	= kri.TransFeedback()
+	private final tf	= kri.TransFeedback(1)
 	private final sa	= kri.shade.Smart()
 	private final par	= array( kri.lib.par.spa.Shared( Name:"bone[${i}]" ) for i in range(80) )
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	as (int)
-	public final zcull	as bool	= true
 
-	public def constructor(zc as bool, dq as bool):
+	public def constructor(dq as bool):
 		super('skin')
-		zcull = zc
 		dict = kri.shade.rep.Dict()
 		for p as kri.meta.IBase in par:
 			p.link(dict)
 		# prepare shader
 		sa.add( 'quat', '/skin/main_v' )
 		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
-		if zcull:	# doesn't work!
-				sa.add( '/skin/zcull_v', 'tool', 'empty' )
-		else:	sa.add( '/skin/empty_v' )
+		#old: sa.add( '/skin/zcull_v', 'tool', 'empty' )
+		sa.add( '/skin/empty_v' )
 		tf.setup(sa, true, 'to_vertex', 'to_quat')
 		sl = kri.Ant.Inst.slotAttributes
 		sa.link(sl, dict, kri.Ant.Inst.dict)
@@ -63,10 +60,7 @@ public class Update( kri.rend.tech.Basic ):
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.Context) as void:
-		if zcull:
-			con.activate(false, 1f, true)
-			con.ClearDepth(1f)
-		#using kri.Discarder():
+		using kri.Discarder(true):
 			for e in kri.Scene.Current.entities:
 				kri.Ant.Inst.params.modelView.activate( e.node )
 				tag = e.seTag[of Tag]()
