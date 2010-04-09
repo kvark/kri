@@ -69,7 +69,7 @@ public class Update( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.Context) as void:
 		va.bind()
-		using kri.Discarder():
+		using kri.Discarder(true):
 			for e in kri.Scene.Current.entities:
 				fp = e.seTag[of Tag]()
 				continue	if not fp

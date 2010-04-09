@@ -9,6 +9,7 @@ private class RenderPoints(kri.rend.Basic):
 	final vbo	= kri.vb.Attrib()
 	final va	= kri.vb.Array()
 	final node	= kri.Node('x')
+	final tf	= kri.TransFeedback()
 	public def constructor():
 		super(false)
 		node.local.pos.Z = -10f
@@ -101,7 +102,6 @@ def Main(argv as (string)):
 		ps = createParticle(ent)
 		view.scene.particles.Add(ps)
 		
-		rlis.Add( kri.kit.skin.Update(true,true) )
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
 		rlis.Add( kri.rend.Particles() )

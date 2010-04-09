@@ -37,7 +37,6 @@ public def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
 public class Update( kri.rend.tech.Basic ):
 	private final tf	= kri.TransFeedback()
 	private final sa	= kri.shade.Smart()
-	private final va	= kri.vb.Array()
 	private final par	= array( kri.lib.par.spa.Shared( Name:"bone[${i}]" ) for i in range(80) )
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	as (int)
@@ -52,21 +51,24 @@ public class Update( kri.rend.tech.Basic ):
 		# prepare shader
 		sa.add( 'quat', '/skin/main_v' )
 		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
-		if zcull:
-				sa.add( '/skin/zcull_v', 'empty' )
+		if zcull:	# doesn't work!
+				sa.add( '/skin/zcull_v', 'tool', 'empty' )
 		else:	sa.add( '/skin/empty_v' )
 		tf.setup(sa, true, 'to_vertex', 'to_quat')
 		sl = kri.Ant.Inst.slotAttributes
-		sa.link(sl, dict)
+		sa.link(sl, dict, kri.Ant.Inst.dict)
 		at_all = array( sa.gatherAttribs(sl) )
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.Context) as void:
-		va.bind()
-		using kri.Discarder():
+		if zcull:
+			con.activate(false, 1f, true)
+			con.ClearDepth(1f)
+		#using kri.Discarder():
 			for e in kri.Scene.Current.entities:
+				kri.Ant.Inst.params.modelView.activate( e.node )
 				tag = e.seTag[of Tag]()
 				continue	if not e.visible or not tag or tag.Sync\
 					or not attribs(false, e, *at_all)
@@ -77,8 +79,7 @@ public class Update( kri.rend.tech.Basic ):
 				# run the transform
 				spa as kri.Spatial
 				for i in range( tag.skel.bones.Length ):
-					b = tag.skel.bones[i]
-					# model->pose
+					b = tag.skel.bones[i]	# model->pose
 					b.genTransPose( e.node.local, spa )
 					s0 = s1 = b.World
 					s0.combine(spa,s1)	# ->world

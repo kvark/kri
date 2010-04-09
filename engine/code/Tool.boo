@@ -22,7 +22,7 @@ public class Section(IDisposable):
 		cap = state
 		assert not GL.IsEnabled(cap)
 		GL.Enable(cap)
-	def IDisposable.Dispose() as void:
+	public virtual def Dispose() as void:
 		assert GL.IsEnabled(cap)
 		GL.Disable(cap)
 
@@ -49,8 +49,18 @@ public class Blender(Section):
 
 # Provide standard blending options
 public class Discarder(Section):
-	public def constructor():
+	public final safe	as bool
+	public def constructor(safety as bool):
 		super( EnableCap.RasterizerDiscard )
+		safe = safety
+		if safe:
+			GL.PointSize(1.0)
+			GL.ColorMask(false,false,false,false)
+			GL.Disable( EnableCap.DepthTest )
+	public virtual def Dispose() as void:
+		if safe:
+			GL.ColorMask(true,true,true,true)
+		super()
 
 
 # Provides skipping of resource unloading errors on exit
@@ -96,10 +106,8 @@ public class Catcher(IDisposable):
 	public def constructor(q as Query):
 		t = q.target
 		GL.BeginQuery( t, q.qid )
-	protected virtual def destroy() as void:
+	public virtual def Dispose() as void:
 		GL.EndQuery(t)
-	def IDisposable.Dispose():
-		destroy()
 
 public class Query:
 	public final qid	as int
@@ -124,19 +132,12 @@ public class Query:
 #-----------------------#
 
 public class CatcherFeed(Catcher):
-	public static safe = true
 	public def constructor(q as Query):
-		if safe:
-			GL.PointSize(1.0)
-			GL.ColorMask(false,false,false,false)
-			GL.Disable( EnableCap.DepthTest )
 		GL.BeginTransformFeedback( BeginFeedbackMode.Points )
 		super(q)
-	protected override def destroy() as void:
+	public override def Dispose() as void:
 		super()
 		GL.EndTransformFeedback()
-		if safe:
-			GL.ColorMask(true,true,true,true)
 
 public class TransFeedback(Query):
 	public def constructor():

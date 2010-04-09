@@ -134,7 +134,7 @@ public class Manager(DataHolder):
 		tf.bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		prog.use()
-		using kri.Discarder(),tf.catch():
+		using kri.Discarder(true), tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, total )
 		
 	public def reset(pe as Emitter) as void:

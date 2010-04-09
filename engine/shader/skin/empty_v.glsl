@@ -1,4 +1,3 @@
 #version 130
 
-void finish(vec3 pos)	{
-}
+void finish(vec3 pos)	{}
