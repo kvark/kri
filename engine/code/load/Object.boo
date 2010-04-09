@@ -68,26 +68,6 @@ public partial class Native:
 		at.scene.lights.Add(l)
 		return true
 	
-	#---	Parse particle object	---#
-	public def p_part() as bool:
-		#pm = kri.part.Manager( br.ReadUInt32() )
-		//pe = kri.part.Emitter(pm,ent)
-		pe as kri.part.Emitter = null
-		getString()	# name
-		psMat = at.mats[ getString() ]
-		psMat = con.mDef	if not psMat
-		br.ReadUInt32()		# amount
-		br.ReadBytes(5)	# distribution
-		for i in range(3+2+6+3+3+2):	# lifetime, velocity, force, size
-			getReal()
-		if pe and 'emitting from the mesh surface':
-			e = geData[of kri.Entity]()
-			return false	if not e
-			assert 'not ready'
-			#pe.onUpdate = { kri.Ant.Inst.units.activate(e.unit) }
-		at.scene.particles.Add(pe)
-		return true
-
 	#---	Parse skeleton	---#
 	public def p_skel() as bool:
 		node = geData[of kri.Node]()

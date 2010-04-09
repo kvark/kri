@@ -39,10 +39,9 @@ private class RenderPoints(kri.rend.Basic):
 			GL.DrawArrays( BeginMode.Points, 0, 4 )
 
 
-private def createParticle(em as kri.Entity) as kri.part.Emitter:
+private def createParticle() as kri.part.Emitter:
 	pm = kri.part.Manager(100)
-	pcon = kri.part.Context()
-	pcon.sh_born = kri.shade.Object('/part/born_instant_v')
+	pm.sh_born = kri.shade.Object('/part/born_instant_v')
 	beh = kri.part.Behavior('/part/beh_simple')
 	sl = kri.Ant.Inst.slotParticles
 	at_pos		= sl.getForced('pos')
@@ -64,8 +63,9 @@ private def createParticle(em as kri.Entity) as kri.part.Emitter:
 			tVert.Value = tag.tVert
 			tQuat.Value = tag.tQuat
 	
+	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe = kri.part.Emitter(pm,em)
+	pe = kri.part.Emitter(pm,'test')
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( '/part/draw_simple_v', '/part/draw_simple_f', 'quat', 'tool')
 	pe.sa.link( sl, kri.Ant.Inst.dict )	
@@ -99,7 +99,8 @@ def Main(argv as (string)):
 		tval = kri.shade.par.Value[of kri.Texture]()
 		tval.Value = tag.tVert
 		
-		ps = createParticle(ent)
+		ps = createParticle()
+		ps.obj = ent
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.kit.bake.Update() )

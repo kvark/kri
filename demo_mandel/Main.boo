@@ -17,8 +17,7 @@ private def createParticle() as kri.part.Emitter:
 	pLimt.Value = 100f
 	
 	pm = kri.part.Manager( root*root )
-	pcon = kri.part.Context()
-	pcon.sh_born = kri.shade.Object('/part/born_instant_v')
+	pm.sh_born = kri.shade.Object('/part/born_instant_v')
 	beh = kri.part.Behavior('text/beh')
 	sl = kri.Ant.Inst.slotParticles
 	beh.semantics.Add( kri.vb.attr.Info(
@@ -31,8 +30,10 @@ private def createParticle() as kri.part.Emitter:
 	d.add('bright',pBrit)
 	pm.dict.add('root',pRoot)
 	pm.dict.add('limit',pLimt)
+	
+	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe = kri.part.Emitter(pm,null)
+	pe = kri.part.Emitter(pm,'mand')
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( './text/draw_v', './text/draw_f')
 	pe.sa.link( sl, d, kri.Ant.Inst.dict )	

@@ -61,6 +61,7 @@
     <Compile Include="code\load\Material.boo" />
     <Compile Include="code\load\Mesh.boo" />
     <Compile Include="code\load\Object.boo" />
+    <Compile Include="code\load\Particle.boo" />
     <Compile Include="code\Material.boo" />
     <Compile Include="code\meta\Main.boo" />
     <Compile Include="code\part\Main.boo" />

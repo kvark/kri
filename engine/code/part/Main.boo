@@ -28,8 +28,9 @@ public class Behavior:
 public class Emitter(DataHolder):
 	public visible	as bool		= true
 	public onDraw	as callable()	= null
+	public obj		as kri.Entity	= null
 	public final man	as Manager
-	public final obj	as kri.Entity
+	public final name	as string
 	public final sa		as kri.shade.Smart
 
 	private def init() as void:
@@ -37,12 +38,13 @@ public class Emitter(DataHolder):
 		data.semantics.AddRange( man.data.semantics )
 		data.initAll( man.total )
 		#man.reset(self)
-	public def constructor(pm as Manager, ent as kri.Entity):
-		man,obj = pm,ent
+	public def constructor(pm as Manager, str as string):
+		man,name = pm,str
 		sa = kri.shade.Smart()
 		init()
 	public def constructor(pe as Emitter):
 		man		= pe.man
+		name	= pe.name
 		obj		= pe.obj
 		sa		= pe.sa
 		init()
@@ -60,7 +62,6 @@ public class Context:
 	public final	g_init	= kri.shade.Object('/part/init_g')
 	public final	sh_draw	= kri.shade.Object('/part/draw_v')
 	public final	sh_root	= kri.shade.Object('/part/root_v')
-	public sh_born	as kri.shade.Object	= null
 	public final	at_sys	= kri.Ant.Inst.slotParticles.getForced('sys')
 
 
@@ -75,6 +76,9 @@ public class Manager(DataHolder):
 	public final behos	= List[of Behavior]()
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
+	public final shaders	= List[of kri.shade.Object]()
+	public sh_born		as kri.shade.Object	= null
+
 	private parTotal	= kri.shade.par.Value[of single]()
 	public Ready as bool:
 		get: return prog_init.Ready and prog_update.Ready
@@ -121,9 +125,10 @@ public class Manager(DataHolder):
 		tf.setup(prog_init, false, *out_names.ToArray())
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 		
-		assert pc.sh_born
+		assert sh_born
+		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
-		prog_update.add( sh_reset, sh_update, pc.sh_root, pc.sh_born )
+		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root )
 		tf.setup(prog_update, false, *out_names.ToArray())
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 	
@@ -143,3 +148,12 @@ public class Manager(DataHolder):
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
 		process(pe, prog_update)
+
+
+#---------
+
+public class ManStandard(Manager):
+	public final parSize	= kri.shade.par.Value[of OpenTK.Vector4]()
+
+	public def constructor(num as uint):
+		super(num)

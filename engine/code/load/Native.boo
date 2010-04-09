@@ -56,6 +56,11 @@ public partial class Native:
 		dict['v_ind']	= pv_ind
 		# particles
 		dict['part']	= p_part
+		dict['p_dist']	= pp_dist
+		dict['p_life']	= pp_life
+		dict['p_vel']	= pp_vel
+		dict['p_rot']	= pp_rot
+		dict['p_force']	= pp_force
 		# physics
 		#dict['body']	= Read.body
 		for ex in exclude:
