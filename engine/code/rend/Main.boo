@@ -70,10 +70,13 @@ public class FilterCopy(Filter):
 #---------	RENDER PARTICLES		--------#
 
 public class Particles(Basic):
-	public def constructor():
+	public final dTest	as bool
+	public def constructor(depth as bool):
 		super(false)
+		dTest = depth
 	public override def process(con as Context) as void:
-		con.activate(true, 0f, false)
+		if dTest: con.activate(true, 0f, false)
+		else: con.activate()
 		using blend = kri.Blender(), kri.Section( EnableCap.ClipPlane0 ),\
 		kri.Section( EnableCap.VertexProgramPointSize ):
 			blend.add()

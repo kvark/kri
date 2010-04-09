@@ -119,7 +119,6 @@ public class Manager(DataHolder):
 		prog_init.add('quat')
 		prog_init.add( sh_init, pc.v_init )
 		tf.setup(prog_init, false, *out_names.ToArray())
-		#prog_init.setGeometry(total)
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 		
 		assert pc.sh_born
