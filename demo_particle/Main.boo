@@ -93,15 +93,15 @@ def Main(argv as (string)):
 		ent.node.local.pos.Z = -30f
 		view.scene.entities.Add(ent)
 		
-		tag = kri.kit.bake.Tag(256,256, 8,8)	# should be 32,16
+		tag = kri.kit.bake.Tag(256,256, 16,8, true)
 		ent.tags.Add(tag)
 		tval = kri.shade.par.Value[of kri.Texture]()
-		tval.Value = tag.tQuat
+		tval.Value = tag.tVert
 		
 		ps = createParticle(ent)
 		view.scene.particles.Add(ps)
 		
-		rlis.Add( kri.kit.skin.Update() )
+		rlis.Add( kri.kit.skin.Update(true,true) )
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
 		rlis.Add( kri.rend.Particles() )
@@ -111,7 +111,7 @@ def Main(argv as (string)):
 			licon.setExpo(120f, 0.5f)
 			rlis.Add( kri.rend.light.Fill(licon) )
 			rlis.Add( kri.rend.light.Apply(licon) )
-			rlis.Add( kri.rend.debug.Map(tval) )
+			#rlis.Add( kri.rend.debug.Map(tval) )
 		
 		ant.anim = al = kri.ani.Scheduler()
 		al.add( kri.ani.ControlMouse(ent.node,0.002f) )

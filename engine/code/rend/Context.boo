@@ -30,7 +30,7 @@ public class Context:
 	[getter(Depth)]
 	private tDepth	as kri.Texture	= null
 	public Aspect as single:
-		get: return buf.getW * 1f / buf.getH
+		get: return buf.Width * 1f / buf.Height
 	
 	public Screen as bool:
 		get: return target == last

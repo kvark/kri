@@ -66,12 +66,12 @@ public class Unit:
 
 public class Array:
 	protected dirtyPort = true	# need to update Viewport
-	[getter(getW)]
-	private wid as int = 0
-	[getter(getH)]
-	private het as int = 0
+	[getter(Width)]
+	private wid as uint = 0
+	[getter(Height)]
+	private het as uint = 0
 
-	public def init(x as int, y as int) as void:
+	public def init(x as uint, y as uint) as void:
 		dirtyPort = true
 		wid,het = x,y
 	public static def Clear(depth as bool) as void:
@@ -95,9 +95,10 @@ public class Screen(Array):
 		dirtyPort = true
 		ofx,ofy = x,y
 	public virtual def activate() as void:
+		assert Width*Height
 		GL.BindFramebuffer(FramebufferTarget.Framebuffer, id)
 		#return if not dirtyPort
-		GL.Viewport(ofx,ofy, ofx+getW,ofy+getH)
+		GL.Viewport(ofx,ofy, ofx+Width,ofy+Height)
 		dirtyPort = false
 
 
@@ -138,7 +139,7 @@ public class Buffer(Screen):
 		for a in at:
 			continue	if not a.Tex
 			a.Tex.bind()
-			kri.Texture.Init(getW, getH, a.Format)
+			kri.Texture.Init(Width, Height, a.Format)
 			a.dFormat.clean()
 	
 	public def activate(m as uint) as void:
@@ -163,7 +164,7 @@ public class Buffer(Screen):
 			if t and a.dFormat.Dirty:	#change attachment texture format
 				a.dFormat.clean()
 				t.bind()
-				kri.Texture.Init(getW, getH, a.Format)
+				kri.Texture.Init(Width, Height, a.Format)
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				a.dLayer.clean()
 				GL.FramebufferTextureLayer(FramebufferTarget.Framebuffer,

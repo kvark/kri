@@ -45,7 +45,7 @@ public class Fill( rend.tech.General ):
 				l.depth = buf.A[index].new( pif, TextureTarget.Texture2D )
 			else:	buf.A[index].Tex = l.depth
 			buf.activate()
-			con.ClearColor( OpenTK.Graphics.Color4.White )
+			con.ClearColor( OpenTK.Graphics.Color4.White )	if not index
 			con.ClearDepth( 1f )
 			drawScene()
 			if licon.mipmap:

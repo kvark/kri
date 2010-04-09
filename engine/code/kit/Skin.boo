@@ -34,23 +34,31 @@ public def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
 
 #---------	RENDER SKELETON SYNC		--------#
 
-public class Update( kri.rend.Basic ):
+public class Update( kri.rend.tech.Basic ):
 	private final tf	= kri.TransFeedback()
 	private final sa	= kri.shade.Smart()
 	private final va	= kri.vb.Array()
 	private final par	= array( kri.lib.par.spa.Shared( Name:"bone[${i}]" ) for i in range(80) )
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
-	public final at_all	= at_mod + (kri.Ant.Inst.attribs.skin,)
+	public final at_all	as (int)
+	public final zcull	as bool	= true
 
-	public def constructor():
-		super(false)
+	public def constructor(zc as bool, dq as bool):
+		super('skin')
+		zcull = zc
 		dict = kri.shade.rep.Dict()
 		for p as kri.meta.IBase in par:
 			p.link(dict)
 		# prepare shader
-		sa.add( '/skin_v', 'quat' )
+		sa.add( 'quat', '/skin/main_v' )
+		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
+		if zcull:
+				sa.add( '/skin/zcull_v', 'empty' )
+		else:	sa.add( '/skin/empty_v' )
 		tf.setup(sa, true, 'to_vertex', 'to_quat')
-		sa.link(kri.Ant.Inst.slotAttributes, dict)
+		sl = kri.Ant.Inst.slotAttributes
+		sa.link(sl, dict)
+		at_all = array( sa.gatherAttribs(sl) )
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)
@@ -60,17 +68,15 @@ public class Update( kri.rend.Basic ):
 		using kri.Discarder():
 			for e in kri.Scene.Current.entities:
 				tag = e.seTag[of Tag]()
-				continue	if not e.visible or not tag or tag.Sync
+				continue	if not e.visible or not tag or tag.Sync\
+					or not attribs(false, e, *at_all)
 				vos = Array.ConvertAll(at_mod) do(a as int):
 					return e.find(a)
 				continue	if null in vos
 				tf.bind( *vos )
-				for at in sa.gatherAttribs( kri.Ant.Inst.slotAttributes ):
-					rez = e.mesh.bind(at)
-					assert rez
 				# run the transform
 				spa as kri.Spatial
-				for i in range(tag.skel.bones.Length):
+				for i in range( tag.skel.bones.Length ):
 					b = tag.skel.bones[i]
 					# model->pose
 					b.genTransPose( e.node.local, spa )

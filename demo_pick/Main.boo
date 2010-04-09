@@ -102,7 +102,7 @@ def Main(argv as (string)):
 		licon = kri.rend.light.Context(2,8)
 		
 		view.ren = rm = kri.rend.Manager(false)
-		rm.add('skin',	1,	kri.kit.skin.Update() )
+		rm.add('skin',	1,	kri.kit.skin.Update(true,true) )
 		rm.add('emi',	3,	rem, 'skin')
 		rm.add('pick',	3,	kri.kit.pick.Render(2,8), 'emi')
 		rm.add('fill',	2,	kri.rend.light.Fill(licon) )

@@ -44,7 +44,7 @@ public class Render( kri.rend.Basic ):
 		mouse.ButtonDown -= ev
 
 	public override def setup(far as kri.frame.Array) as bool:
-		buf.init(far.getW>>qlog, far.getH>>qlog)
+		buf.init(far.Width>>qlog, far.Height>>qlog)
 		return true
 
 	public override def process(con as kri.rend.Context) as void:
@@ -59,7 +59,7 @@ public class Render( kri.rend.Basic ):
 		for i in range(ents.Length):
 			pInd.Value = (i+0.5f) / ents.Length
 			e = ents[i]
-			e.enable( (kri.Ant.Inst.attribs.vertex,) )
+			e.enable( true, (kri.Ant.Inst.attribs.vertex,) )
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			sa.use()
 			e.mesh.draw()
@@ -80,7 +80,7 @@ public class Render( kri.rend.Basic ):
 		val[0] = single.NaN	# depth read dosn't seem to work
 		GL.ReadBuffer( cast(ReadBufferMode,0) )
 		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.DepthComponent, PixelType.Float, val)
-		vin = OpenTK.Vector3(coord[0]*1f / buf.getW, coord[1]*1f / buf.getH, val[0])
+		vin = OpenTK.Vector3(coord[0]*1f / buf.Width, coord[1]*1f / buf.Height, val[0])
 		point = kri.Camera.Current.toWorld(vin)
 		# call the react method
 		e = ents[ index ]
@@ -92,4 +92,4 @@ public class Render( kri.rend.Basic ):
 	public def ev(ob as object, arg as OpenTK.Input.MouseButtonEventArgs) as void:
 		active = true
 		coord[0] = (mouse.X >> qlog)
-		coord[1] = buf.getH - (mouse.Y >> qlog)
+		coord[1] = buf.Height - (mouse.Y >> qlog)

@@ -11,10 +11,10 @@ public class Basic( kri.rend.Basic ):
 		tid = kri.Ant.Inst.slotTechniques.create(name)
 	def destructor():
 		kri.Ant.Inst.slotTechniques.delete(tid)
-	protected def attribs(e as kri.Entity, *ats as (int)) as bool:
+	protected def attribs(local as bool, e as kri.Entity, *ats as (int)) as bool:
 		return false	if e.va[tid] == kri.vb.Array.Default
 		if e.va[tid]:	e.va[tid].bind()
-		elif not e.enable(tid,ats):
+		elif not e.enable(local,tid,ats):
 			e.va[tid] = kri.vb.Array.Default
 			return false
 		return true
@@ -62,7 +62,7 @@ public class General(Basic):
 			b.sa = prog
 			b.up = getUpdate(m)
 			tempList.Add(b)
-		if alist and not e.enable(alist):
+		if alist and not e.enable(true,alist):
 			e.va[tid] = kri.vb.Array.Default
 		else:	butch.AddRange(tempList)
 

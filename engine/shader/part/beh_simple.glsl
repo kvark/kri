@@ -31,9 +31,10 @@ void reset_simple()	{
 	//new func
 	vec4 pos = texture(unit_vertex, vec2(r1,r2));
 	to_pos = pos.xyz;
-	vec4 quat = texture(unit_quat, vec2(r1,r2)); 
+	vec4 quat = 2.0*texture(unit_quat, vec2(r1,r2)) - vec4(1.0);
 	to_speed = qrot(quat, vec3(0.0,0.0,1.0));
 	to_speed.x *= pos.w;
+	to_speed *= 2.0 + 3.0*r1;
 }
 
 float update_simple()	{

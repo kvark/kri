@@ -129,7 +129,6 @@ public class Manager(DataHolder):
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 	
 	private def process(pe as Emitter, prog as kri.shade.Program) as void:
-		return if	not pe.obj
 		onUpdate( pe.obj )	if onUpdate
 		va.bind()
 		tf.bind( pe.data )

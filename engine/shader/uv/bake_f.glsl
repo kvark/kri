@@ -6,5 +6,4 @@ out	vec4 re_vertex, re_quat;
 void main()	{
 	re_vertex = to_vertex;
 	re_quat = to_quat;
-	re_vertex = re_quat = vec4(1.0);
 }

@@ -6,15 +6,19 @@ public class Tag( kri.ITag ):
 	public world	as bool = true	# in world space
 	public clear	as bool = true	# clear textures
 	public texid	as byte = 0		# tex-coord channel
+	public final wid	as uint	= 0
+	public final het	as uint = 0
 	public final tVert	as kri.Texture	= null
 	public final tQuat	as kri.Texture	= null
 	
-	public def constructor(wid as uint, het as uint, bv as byte, bq as byte):
+	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
+		wid,het = w,h
 		def genTex(bits as byte) as kri.Texture:
 			return null	if not bits
 			(t = kri.Texture( TextureTarget.Texture2D )).bind()
 			fm = kri.Texture.AskFormat( kri.Texture.Class.Color, bits )
-			kri.Texture.Init( wid,het, fm)
+			kri.Texture.Init(w,h,fm)
+			kri.Texture.Filter(filt,false)
 			return t
 		tVert,tQuat = genTex(bv),genTex(bq)
 
@@ -38,10 +42,11 @@ public class Update( kri.rend.tech.Basic ):
 			tag = e.seTag[of Tag]()
 			a = kri.Ant.Inst.attribs
 			continue if not e.visible or not tag or\
-				not attribs(e, a.vertex, a.quat, a.tex[0])
+				not attribs(true, e, a.vertex,a.quat,a.tex[0])
 			assert tag.texid == 0
 			n = (e.node if tag.world else null)
 			kri.Ant.Inst.params.modelView.activate(n)
+			buf.init( tag.wid, tag.het )
 			buf.mask = 0
 			for i in range(2):
 				buf.A[i].Tex = t = (tag.tVert,tag.tQuat)[i]
@@ -50,11 +55,10 @@ public class Update( kri.rend.tech.Basic ):
 			buf.activate()
 			con.ClearColor()	if tag.clear
 			sa.use()
-			GL.Disable( EnableCap.DepthTest )
-			GL.Disable( EnableCap.CullFace )
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():
 				e.mesh.draw()
 			assert q.result()
-			GL.Enable( EnableCap.CullFace )
-			#kri.Ant.Inst.emitQuad()
+
+
+

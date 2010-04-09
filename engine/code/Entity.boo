@@ -87,18 +87,18 @@ public class Entity( vb.attr.Storage ):
 		return null as T
 		#return tags.Find( {t| return t isa T} ) as T
 	
-	public def enable(ids as int*) as bool:
+	public def enable(local as bool, ids as int*) as bool:
 		for i in ids:
-			continue if bind(i)
+			continue if local and bind(i)
 			continue if mesh.bind(i)
 			return false
 		mesh.ind.bind()	if mesh.ind
 		return true
 
-	public def enable(tid as int, ids as int*) as bool:
+	public def enable(local as bool, tid as int, ids as int*) as bool:
 		va[tid] = vb.Array()
 		va[tid].bind()
-		return enable(ids)
+		return enable(local,ids)
 	
 	# returns null if entity does't have all attributes requested
 	# otherwise - a list of rejected materials

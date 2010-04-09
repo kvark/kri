@@ -27,7 +27,7 @@ public class Render(kri.rend.Basic):
 		buf.A[0].new(16)
 	
 	public virtual def setup(far as kri.frame.Array) as bool:
-		buf.init(far.getW>>reduct, far.getH>>reduct)
+		buf.init(far.Width>>reduct, far.Height>>reduct)
 		buf.resizeFrames()
 		return true
 	

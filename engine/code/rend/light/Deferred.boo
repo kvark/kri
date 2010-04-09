@@ -23,11 +23,11 @@ public class Fill( tech.Meta ):
 		buf.mask = 0x7
 	# resize
 	public override def setup(far as kri.frame.Array) as bool:
-		buf.init( far.getW, far.getH )
+		buf.init( far.Width, far.Height )
 		buf.A[0].Tex.bind()
 		fm = kri.Texture.AskFormat( kri.Texture.Class.Color, 8 )
 		fm = PixelInternalFormat.Rgb10A2
-		kri.Texture.InitArray(fm, far.getW, far.getH, 3)
+		kri.Texture.InitArray(fm, far.Width, far.Height, 3)
 		kri.Texture.Filter(false,false)
 		return true
 	# work	

@@ -48,7 +48,7 @@ void main()	{
 	#ifdef DUALQUAT
 	DualQuat rez = DualQuat( vec4(0.0), vec4(0.0), 0.0 );
 	for(int i=0; i<4; ++i)
-		addDq(rez, wes[i], bone[ids[i]]);
+		addDq(rez, wes[i], bone[int(ids[i])]);
 	Spatial sp = normDq(rez);
 	vec3 v = trans_for(at_vertex.xyz, sp);
 	to_vertex = vec4(v, at_vertex.w);
@@ -56,7 +56,7 @@ void main()	{
 	#else
 	Spatial sp = Spatial( vec4(0.0), vec4(0.0) );
 	for(int i=0; i<4; ++i)
-		append(sp, wes[i], bone[ids[i]]);
+		append(sp, wes[i], bone[int(ids[i])]);
 	to_vertex = vec4(sp.pos.xyz, at_vertex.w);
 	to_quat = normalize(sp.rot);
 	#endif
