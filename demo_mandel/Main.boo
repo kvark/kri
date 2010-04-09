@@ -21,11 +21,9 @@ private def createParticle() as kri.part.Emitter:
 	pcon.sh_born = kri.shade.Object('/part/born_instant_v')
 	beh = kri.part.Behavior('text/beh')
 	sl = kri.Ant.Inst.slotParticles
-	ai = kri.vb.attr.Info( integer:false, size:2, type:VertexAttribPointerType.Float )
-	ai.slot = sl.getForced('p')
-	beh.semantics.Add(ai)
-	ai.slot = sl.getForced('c')
-	beh.semantics.Add(ai)
+	beh.semantics.Add( kri.vb.attr.Info(
+		slot: sl.getForced('pos'), integer:false,
+		size:4, type:VertexAttribPointerType.Float ))
 	pm.behos.Add(beh)
 	
 	d = rep.Dict()
@@ -56,11 +54,11 @@ def Main(argv as (string)):
 		ps = createParticle()
 		view.scene.particles.Add(ps)
 		
-		rlis.Add( kri.rend.Emission( fillDepth:false ) )
+		rlis.Add( kri.rend.Clear() )
 		rlis.Add( kri.rend.Particles(false) )
 		ant.anim = al = kri.ani.Scheduler()
 		part = kri.ani.Particle(ps)
 		part.lTime = 10000.0
 		al.add(part)
 		ant.Keyboard.KeyDown += { ps.man.tick(ps) }
-		ant.Run(30.0,30.0)
+		ant.Run(30.0,5.0)

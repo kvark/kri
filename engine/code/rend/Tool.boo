@@ -3,6 +3,16 @@
 import System
 import OpenTK.Graphics
 
+#---------	COLOR CLEAR	--------#
+
+public class Clear( Basic ):
+	public backColor	= Color4.Black
+	public def constructor():
+		super(false)
+	public override def process(con as Context) as void:
+		con.activate()
+		con.ClearColor( backColor )
+
 
 #---------	EARLY Z FILL	--------#
 
@@ -25,8 +35,8 @@ public class EarlyZ( tech.General ):
 
 public class Emission( tech.Meta ):
 	public final pBase	= kri.shade.par.Value[of Color4]()
-	public backColor	= Color4.Black
 	public fillDepth	= false
+	public backColor	= Color4.Black
 	
 	public def constructor():
 		super('mat.emission', null, ('emissive',), '/mat_base')
