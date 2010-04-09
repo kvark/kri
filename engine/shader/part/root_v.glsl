@@ -13,6 +13,9 @@ vec3 part_time()	{
 float part_uni()	{
 	return at_sys.y * part_total;
 }
+float random(float seed)	{
+	return fract(sin( 78.233*seed ) * 43758.5453);
+}
 
 void reset();
 float update();
