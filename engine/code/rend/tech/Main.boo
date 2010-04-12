@@ -81,38 +81,27 @@ public class General(Basic):
 public class Meta(General):
 	private final lMets	as (string)
 	private final lOuts	as (string)
-	private final shobs	as (kri.shade.Object)
-	private final sMap		= SortedDictionary[of string,int]()
+	private final factory	= kri.ShaderLinker( kri.Ant.Inst.slotAttributes )
+	protected shobs	= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.rep.Dict()
 	
-	protected def constructor(name as string, outs as (string), mets as (string), sh as kri.shade.Object*):
-		super(name)
-		lMets,lOuts,shobs = mets,outs,array(sh)
-	protected def constructor(name as string, outs as (string), mets as (string), prefix as string):
+	protected def constructor(name as string, outs as (string), *mets as (string)):
 		super(name)
 		lMets,lOuts = mets,outs
-		shobs = array( kri.shade.Object(prefix+s) for s in ('_v','_f') )
-	protected def constructor(name as string, outs as (string), mets as (string), slis as string*):
-		super(name)
-		lMets,lOuts = mets,outs
-		shobs = array( kri.shade.Object(s) for s in slis )
+		factory.onLink = setup
+	
+	protected def shade(prefix as string) as void:
+		for s in ('_v','_f'):
+			shobs.Add( kri.shade.Object(prefix+s) )
+	protected def shade(slis as string*) as void:
+		shobs.AddRange( kri.shade.Object(s) for s in slis )
+	
+	private def setup(sa as kri.shade.Smart) as void:
+		sa.fragout( *lOuts )	if lOuts
+		sa.add( *kri.Ant.Inst.shaders.gentleSet )
+		sa.add( *array(shobs) )
 
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
 		sl = mat.collect(lMets)
 		return kri.shade.Smart.Fixed	if not sl
-		key = join( (x.id.ToString() for x in sl), ',' )
-		sid = -1
-		if sMap.TryGetValue(key,sid):
-			sa = kri.shade.Smart( sid )
-			# yes, we will just fill the parameters for this program ID again
-			# it's not obvious, but texture units will be assigned to the old values,
-			# because the meta-data sets already matched (kri.load.meta.MakeTexCoords)
-		else:
-			sa = kri.shade.Smart()
-			sMap.Add(key, sa.id )
-			sa.add( *(kri.Ant.Inst.shaders.gentleSet + array(sl) + shobs) )
-			sa.attribs( kri.Ant.Inst.slotAttributes )
-			sa.fragout( *lOuts )	if lOuts
-			sa.link()
-		sa.fillPar(dict, mat.dict, kri.Ant.Inst.dict) 
-		return sa
+		return factory.link( sl, (dict, mat.dict, kri.Ant.Inst.dict) )

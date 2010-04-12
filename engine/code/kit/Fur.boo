@@ -92,7 +92,8 @@ public class Draw( kri.rend.tech.Meta ):
 	private lit	as kri.Light	= null
 	# init
 	public def constructor(fc as Context):
-		super('fur', null, ('diffuse','specular','fur'), '/fur/draw')
+		super('fur', null, 'diffuse','specular','fur')
+		shade('/fur/draw')
 		dict.attach( fc.d )
 	# prepare
 	protected override def getUpdate(mat as kri.Material) as callable() as int:

@@ -2,14 +2,13 @@
 
 import System
 import OpenTK.Graphics.OpenGL
-import kri
 
 	
 #---------	LIGHT MAP FILL	--------#
 
-public class Fill( rend.tech.General ):
-	public final buf		= frame.Buffer()
-	protected final sa		= shade.Smart()
+public class Fill( kri.rend.tech.General ):
+	public final buf		= kri.frame.Buffer()
+	protected final sa		= kri.shade.Smart()
 	protected final licon	as Context
 
 	public def constructor(lc as Context):
@@ -27,20 +26,20 @@ public class Fill( rend.tech.General ):
 		baker = '/light/bake_exp_f'	if lc.type == LiType.EXPONENT
 		baker = '/light/bake_var_f'	if lc.type == LiType.VARIANCE
 		sa.add( '/light/bake_v', baker, 'tool', 'quat', 'fixed' )
-		sa.link( Ant.Inst.slotAttributes, lc.dict, Ant.Inst.dict )
+		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
 
-	private override def construct(mat as Material) as shade.Smart:
+	private override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 
-	public override def process(con as rend.Context) as void:
+	public override def process(con as kri.rend.Context) as void:
 		con.SetDepth(1f, true)
-		Texture.Slot( lib.Const.offUnit )
-		for l in Scene.current.lights:
+		kri.Texture.Slot( kri.lib.Const.offUnit )
+		for l in kri.Scene.current.lights:
 			continue if l.fov == 0f
-			Ant.Inst.params.activate(l)
+			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.type == LiType.VARIANCE]
 			if not l.depth:
-				ask = Texture.AskFormat(Texture.Class.Depth, licon.bits)
+				ask = kri.Texture.AskFormat( kri.Texture.Class.Depth, licon.bits )
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
 				l.depth = buf.A[index].new( pif, TextureTarget.Texture2D )
 			else:	buf.A[index].Tex = l.depth
@@ -50,48 +49,48 @@ public class Fill( rend.tech.General ):
 			drawScene()
 			if licon.mipmap:
 				l.depth.bind()
-				Texture.GenLevels()
+				kri.Texture.GenLevels()
 
 
 #---------	LIGHT MAP APPLY	--------#
 
-public class Apply( rend.tech.Meta ):
-	private lit as Light	= null
+public class Apply( kri.rend.tech.Meta ):
+	private lit as kri.Light	= null
 	private final licon		as Context
-	private final texLit	= shade.par.Texture(0,'light')
+	private final texLit	= kri.shade.par.Texture(0,'light')
 
 	public def constructor(lc as Context):
 		shadow = 'simple'
 		shadow = 'exponent2'	if lc.type == LiType.EXPONENT
 		shadow = 'variance'		if lc.type == LiType.VARIANCE
-		super('lit.apply', null, kri.load.Meta.LightSet,
-			('/light/apply_v','/light/apply_f','/light/common_f',"/light/shadow/${shadow}_f") )
+		super('lit.apply', null, *kri.load.Meta.LightSet)
+		shade(('/light/apply_v','/light/apply_f','/light/common_f',"/light/shadow/${shadow}_f"))
 		dict.attach(lc.dict)
 		dict.unit(texLit)
 		licon = lc
 	# prepare
-	protected override def getUpdate(mat as Material) as callable() as int:
+	protected override def getUpdate(mat as kri.Material) as callable() as int:
 		metaFun = super(mat)
 		curLight = lit	# need current light only
 		return def() as int:
 			texLit.Value = curLight.depth
-			Ant.Inst.params.activate(curLight)
+			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	# work
-	public override def process(con as rend.Context) as void:
+	public override def process(con as kri.rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		for l in Scene.current.lights:
+		for l in kri.Scene.current.lights:
 			continue if l.fov == 0f
 			lit = l
 			texLit.bindSlot( l.depth )
-			Texture.Shadow( licon.type == LiType.SIMPLE )
-			Texture.Filter(licon.smooth, licon.mipmap)
+			kri.Texture.Shadow( licon.type == LiType.SIMPLE )
+			kri.Texture.Filter(licon.smooth, licon.mipmap)
 			# determine subset of affected objects
-			for e in Scene.Current.entities:
+			for e in kri.Scene.Current.entities:
 				addObject(e)
-		using blend = Blender():
+		using blend = kri.Blender():
 			blend.add()
-			butch.Sort( Batch.cMat )
+			butch.Sort( kri.Batch.cMat )
 			for b in butch:
 				b.draw()
