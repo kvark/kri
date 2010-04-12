@@ -1,6 +1,6 @@
 #version 130
 
-in vec2 at_sys;
+in vec3 at_sys;
 in vec4 at_pos;
 out float time;
 

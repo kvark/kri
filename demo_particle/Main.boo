@@ -39,7 +39,7 @@ private class RenderPoints(kri.rend.Basic):
 			GL.DrawArrays( BeginMode.Points, 0, 4 )
 
 
-private def createParticle() as kri.part.Emitter:
+private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
 	pm.sh_born = kri.shade.Object('/part/born_instant_v')
 	beh = kri.part.Behavior('/part/beh_simple')
@@ -56,19 +56,33 @@ private def createParticle() as kri.part.Emitter:
 	tQuat = kri.shade.par.Texture(1,'quat')
 	pm.dict.unit(tVert)
 	pm.dict.unit(tQuat)
-	pm.onUpdate = def(e as kri.Entity):
-		kri.Ant.Inst.params.modelView.activate( e.node )
-		tag = e.seTag[of kri.kit.bake.Tag]()
-		if tag:
-			tVert.Value = tag.tVert
-			tQuat.Value = tag.tQuat
+	if 'face':
+		pm.onUpdate = def(e as kri.Entity):
+			assert e
+			kri.Ant.Inst.params.modelView.activate( e.node )
+			tag = e.seTag[of kri.kit.bake.Tag]()
+			if tag:
+				tVert.Value = tag.tVert
+				tQuat.Value = tag.tQuat
+	else: #vertex
+		a = kri.Ant.Inst.attribs
+		tVert.Value = kri.Texture( TextureTarget.TextureBuffer )
+		tVert.Value.bind()
+		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.vertex) )
+		tQuat.Value = kri.Texture( TextureTarget.TextureBuffer )
+		tQuat.Value.bind()
+		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.quat) )
+		pm.onUpdate = def(e as kri.Entity):
+			assert e
+			kri.Ant.Inst.params.modelView.activate( e.node )
 	
 	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe = kri.part.Emitter(pm,'test')
+	pe = kri.part.Emitter(pm,'test',null)
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( '/part/draw_simple_v', '/part/draw_simple_f', 'quat', 'tool')
 	pe.sa.link( sl, kri.Ant.Inst.dict )	
+	pe.obj = ent
 	return pe
 
 
@@ -99,8 +113,7 @@ def Main(argv as (string)):
 		tval = kri.shade.par.Value[of kri.Texture]()
 		tval.Value = tag.tVert
 		
-		ps = createParticle()
-		ps.obj = ent
+		ps = createParticle(ent)
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.kit.bake.Update() )

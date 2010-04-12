@@ -4,42 +4,115 @@ import OpenTK
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
+	public final behavior =	kri.part.Behavior('/part/beh_load')
+	public final program = kri.shade.Smart()
 	
-	#---	Parse particle object	---#
+	public def initParticles() as void:
+		# main behavior
+		ai = kri.vb.attr.Info( integer:false, size:4,
+			type: VertexAttribPointerType.Float )
+		ai.slot = kri.Ant.Inst.slotParticles.getForced('pos')
+		behavior.semantics.Add(ai)
+		ai.slot = kri.Ant.Inst.slotParticles.getForced('speed')
+		behavior.semantics.Add(ai)
+		# draw shader
+		program.add( pcon.sh_draw )
+		program.add( '/part/draw_simple_v', '/part/draw_simple_f', 'quat', 'tool')
+		program.link( kri.Ant.Inst.slotParticles, kri.Ant.Inst.dict )
+
+	public def finishParticles() as void:
+		for pe in at.scene.particles:
+			pe.man.init(pcon)	if not pe.man.Ready
+			pe.init()
+
+
+	#---	Parse emitter object	---#
 	public def p_part() as bool:
-		pm = kri.part.ManStandard( br.ReadUInt32() )
+		pm = kri.part.Standard( br.ReadUInt32() )
 		puData(pm)
+		pm.behos.Add( behavior )
+		pm.sh_born = pcon.sh_born_time
 		pm.parSize.Value = Vector4( getVec2() )
-		pe = kri.part.Emitter(pm, getString() )
+		pe = kri.part.Emitter(pm, getString(), program )
 		puData(pe)
+		pe.obj = geData[of kri.Entity]()
 		at.scene.particles.Add(pe)
 		psMat = at.mats[ getString() ]
 		psMat = con.mDef	if not psMat
 		return true
-	
+
+
+	#---	Parse distribution		---#	
 	public def pp_dist() as bool:
-		br.ReadByte()	# type
+		def upNode(e as kri.Entity):
+			assert e
+			kri.Ant.Inst.params.modelView.activate( e.node )
+		ent = geData[of kri.Entity]()
+		source = getString()
+		getString()		# type
 		br.ReadSingle()	# jitter factor
-		if 'emitting from the mesh surface':
-			e = geData[of kri.Entity]()
-			return false	if not e
-			assert 'not ready'
-			#pe.onUpdate = { kri.Ant.Inst.units.activate(e.unit) }
+		pm = geData[of kri.part.Manager]()
+		return false	if not pm
+		sh as kri.shade.Object	= null
+		if source == '':
+			sh = pcon.sh_surf_node
+			pm.onUpdate = upNode
+		elif source == 'VERT':
+			return false	if not ent
+			for i in range(2):
+				t = kri.shade.par.Texture(i, ('vertex','quat')[i] )
+				pm.dict.unit(t)
+				t.Value = kri.Texture( TextureTarget.TextureBuffer )
+				t.Value.bind()
+				ats = (kri.Ant.Inst.attribs.vertex, kri.Ant.inst.attribs.quat)
+				kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.findAny(ats[i]) )
+				pm.onUpdate = upNode
+			parNumber = kri.shade.par.Value[of single]( Value: 1f * ent.mesh.nVert )
+			pm.dict.add('num_vertices', parNumber)
+			sh = pcon.sh_surf_vertex
+		elif source == 'FACE':
+			tVert = kri.shade.par.Texture(0,'vertex')
+			tQuat = kri.shade.par.Texture(1,'quat')
+			pm.dict.unit(tVert)
+			pm.dict.unit(tQuat)
+			if not ent.seTag[of kri.kit.bake.Tag]():
+				ent.tags.Add( kri.kit.bake.Tag(256,256, 16,8, false) )
+			pm.onUpdate = def(e as kri.Entity):
+				upNode(e)
+				tag = e.seTag[of kri.kit.bake.Tag]()
+				if tag:
+					tVert.Value = tag.tVert
+					tQuat.Value = tag.tQuat
+			sh = pcon.sh_surf_face
+		else: assert not 'supported :('
+		pm.shaders.Add(sh)
 		return true
-	
+
+	#---	Parse life data		---#
 	public def pp_life() as bool:
-		getVec4()	# start,end, life time, random
+		ps = geData[of kri.part.Standard]()
+		return false	if not ps
+		data = getVec4()	# start,end, life time, random
+		ps.parLife.Value = Vector4( data.Z, data.W, data.X, data.Y )
 		return true
 	
 	public def pp_vel() as bool:
-		getVector()	# object-aligned factor
-		getVector()	# normal, tangent, tan-phase
-		getVec2()	# object speed, random
+		ps = geData[of kri.part.Standard]()
+		return false	if not ps
+		objFactor	= getVector()	# object-aligned factor
+		ps.parVelObj.Value = Vector4( objFactor )
+		tanFactor	= getVector()	# normal, tangent, tan-phase
+		ps.parVelTan.Value = Vector4( tanFactor.Y, 0f, tanFactor.X, tanFactor.Z )
+		getVec2()		# object speed, random
+		ps.parVelKeep.Value = Vector4.Zero
 		return true
 	
 	public def pp_rot() as bool:
 		return true
 	
 	public def pp_force() as bool:
-		getVector()	# brownian, drag, damp
+		ps = geData[of kri.part.Standard]()
+		return false	if not ps
+		data = getVector()	# brownian, drag, damp
+		ps.parForce.Value = Vector4(data)
 		return true

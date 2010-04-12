@@ -36,7 +36,7 @@ public partial class Native:
 			fun(pl as kri.Projector, v)
 
 	# fill action dictionary
-	public def fillAniDict() as void:
+	public def initAnimations() as void:
 		# skeleton sub-trans
 		def fs_pos(b as kri.NodeBone, ref v as Vector3):
 			b.local.pos = b.bindPose.byPoint(v)

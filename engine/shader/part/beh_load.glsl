@@ -13,10 +13,12 @@ uniform vec4 part_speed_tan;	//w == tangental rotation
 uniform vec4 part_speed_obj;	//w == ?
 uniform vec4 object_speed;	//pre-multiplied already
 uniform vec4 part_life;		//x +- y
+uniform vec4 part_force;	//brownian, drag, damp
 
 
 vec3 part_time();
-float part_uni();
+vec2 part_uni();
+float random(float);
 Spatial get_surface(vec2);
 vec3 qrot(vec4,vec3);
 
@@ -27,10 +29,11 @@ void init_load()	{
 
 void reset_load()	{
 	vec3 pt = part_time();
-	float uni = part_uni(), rand = 0.0; //[-1,1]
-	float life = part_life.x + rand * part_life.y;
-	surf = get_surface( vec2(0.5,0.5) );	//todo: random
-	to_pos = vec4(surf.pos.xyz, life);
+	float uni = part_uni().x, rand = random(uni + pt.x),
+		rs1 = 2.0*(rand-0.5), r2 = random(rand + pt.x+pt.z);
+	float life = part_life.x + rs1 * part_life.y;
+	Spatial surf = get_surface( vec2(rand,r2) );	//todo: random
+	to_pos = vec4( surf.pos.xyz, life );
 	vec3 hand = vec3( surf.pos.w, 1.0,1.0);
 	to_speed.xyz = object_speed.xyz + //add random
 		qrot( surf.rot, hand *	part_speed_tan.xyz )  +
@@ -38,9 +41,8 @@ void reset_load()	{
 }
 
 float update_load()	{
-	vec3 pt = part_time();
-	float delta = pt.z;
+	float delta = part_time().x;
 	to_speed = at_speed;
-	to_pos = at_pos + delta * vec4( at_speed.xyz, 0.0 );
-	return step(pt.y, at_pos.w);
+	to_pos = at_pos + delta * vec4( at_speed.xyz, -1.0 );
+	return step(0.0, at_pos.w);
 }

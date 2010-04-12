@@ -30,7 +30,6 @@ internal static class Fm:
 		PixelInternalFormat.R32ui
 	)
 
-
 #---	General Texture class	---#
 
 public class Texture( shade.par.INamed ):
@@ -43,12 +42,13 @@ public class Texture( shade.par.INamed ):
 	private static curType	as TextureTarget = TextureTarget.Texture1D
 	private static final zeroPtr	= System.IntPtr.Zero
 	public final type		as TextureTarget
-	public final id			as int
+	public final id		as int
 	[Property(Name)]
 	private name	as string	= ''
 
 	public def constructor(tip as TextureTarget):
-		id,type = GL.GenTexture(),tip
+		id = GL.GenTexture()
+		type = tip
 	def destructor():
 		safeKill({ GL.DeleteTexture(id) })
 
@@ -120,6 +120,9 @@ public class Texture( shade.par.INamed ):
 		GL.TexImage2D[of T](curType, 0, fi, sx, sy, 0, Fi2format(fi), Fi2type(fi), ptr)
 	public static def Init(sx as int, sy as int, fi as PixelInternalFormat) as void:
 		GL.TexImage2D(curType, 0, fi, sx, sy, 0, Fi2format(fi), Fi2type(fi), zeroPtr)
+	# init VBO link
+	public static def Init(sif as SizedInternalFormat, buf as kri.vb.Object) as void:
+		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.Extract )
 		
 	# init TextureArray format
 	public static def InitArray(fi as PixelInternalFormat, sx as int, sy as int, sz as int) as void:
@@ -136,3 +139,4 @@ public class Texture( shade.par.INamed ):
 			TextureTarget.TextureCubeMapNegativeY,	TextureTarget.TextureCubeMapPositiveY,
 			TextureTarget.TextureCubeMapNegativeZ,	TextureTarget.TextureCubeMapPositiveZ):
 			GL.TexImage2D(t, 0, fi, siz, siz, 0, format, pixtype, zeroPtr)
+	

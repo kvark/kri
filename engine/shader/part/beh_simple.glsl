@@ -12,7 +12,7 @@ uniform struct Spatial	{
 }s_model;
 
 vec3 part_time();
-float part_uni();
+vec2 part_uni();
 float random(float);
 vec3 qrot(vec4,vec3);
 
@@ -23,8 +23,8 @@ void init_simple()	{
 void reset_simple()	{
 	to_pos = s_model.pos.xyz;
 	vec3 pt = part_time();
-	float uni = part_uni(),
-		r1 = random(uni), r2 = random(uni+pt.x);
+	float uni = part_uni().x,
+		r1 = random(uni), r2 = random(uni+pt.z);
 	float a = r1 * 2.0*3.1416;
 	vec3 dir = vec3( sin(a), cos(a), 0.0 );
 	to_speed = (1.0 + 10.0*r2) * qrot(s_model.rot, dir);
@@ -38,7 +38,7 @@ void reset_simple()	{
 }
 
 float update_simple()	{
-	float delta = part_time().z;
+	float delta = part_time().x;
 	to_speed = at_speed;
 	to_pos = at_pos + delta * at_speed;
 	vec3 diff = to_pos - s_model.pos.xyz;

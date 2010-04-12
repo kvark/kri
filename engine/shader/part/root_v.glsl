@@ -1,17 +1,17 @@
 #version 130
 
-in	vec2 at_sys;
-out	vec2 to_sys;
+in	vec3 at_sys;
+out	vec3 to_sys;
 
 uniform vec4 cur_time;
 uniform float part_total;
 
 vec3 part_time()	{
-	// global time, life time, frame time
-	return vec3(cur_time.x, cur_time.x - at_sys.x, cur_time.y);
+	// frame time, life time, global time, last death moment
+	return vec3(cur_time.y, cur_time.x - at_sys.x, cur_time.x);
 }
-float part_uni()	{
-	return at_sys.y * part_total;
+vec2 part_uni()	{
+	return vec2( at_sys.y * part_total, at_sys.z );
 }
 float random(float seed)	{
 	return fract(sin( 78.233*seed ) * 43758.5453);
@@ -29,5 +29,6 @@ void main()	{
 	}else if( born_ready() )	{
 		reset();
 		to_sys.x = cur_time.x;
+		to_sys.z += 1.0;
 	}
 }

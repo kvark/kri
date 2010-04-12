@@ -29,7 +29,7 @@ public class Mesh( vb.attr.Storage ):
 		ind		= m.ind
 		drawMode	= m.drawMode
 		polySize	= m.polySize
-		vbo.AddRange( m.vbo )
+		vbo.AddRange( m.vbo )	
 	
 	public def draw(off as uint, num as uint, nob as uint) as void:
 		assert off>=0 and num>=0 and num+off<=nPoly
@@ -86,6 +86,10 @@ public class Entity( vb.attr.Storage ):
 			return t	if t
 		return null as T
 		#return tags.Find( {t| return t isa T} ) as T
+	
+	public def findAny(id as int) as kri.vb.Attrib:
+		at = find(id)
+		return (at	if at else	mesh.find(id))
 	
 	public def enable(local as bool, ids as int*) as bool:
 		for i in ids:

@@ -1,5 +1,5 @@
 #version 130
-const float size = 1.0;
+const float size = 0.1;
 
 in vec3 at_pos;
 

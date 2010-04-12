@@ -4,11 +4,15 @@ import System
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
+
 private class DataHolder:
 	internal data	= kri.vb.Attrib()
 	internal va	= kri.vb.Array()
 
-#---------
+
+#---------------------------------------#
+#	PARTICLE GENERIC BEHAVIOR			#
+#---------------------------------------#
 
 public class Behavior:
 	public final code	as string	= null
@@ -23,7 +27,10 @@ public class Behavior:
 		assert pos>=0 and p2>=0
 		return code.Substring(pos,p2+2-pos)
 
-#---------
+
+#---------------------------------------#
+#	PARTICLE EMITTER 					#
+#---------------------------------------#
 
 public class Emitter(DataHolder):
 	public visible	as bool		= true
@@ -33,15 +40,14 @@ public class Emitter(DataHolder):
 	public final name	as string
 	public final sa		as kri.shade.Smart
 
-	private def init() as void:
+	public def init() as void:
 		va.bind()
 		data.semantics.AddRange( man.data.semantics )
 		data.initAll( man.total )
 		#man.reset(self)
-	public def constructor(pm as Manager, str as string):
+	public def constructor(pm as Manager, str as string, prog as kri.shade.Smart):
 		man,name = pm,str
-		sa = kri.shade.Smart()
-		init()
+		sa = (prog	if prog else	kri.shade.Smart())
 	public def constructor(pe as Emitter):
 		man		= pe.man
 		name	= pe.name
@@ -55,17 +61,29 @@ public class Emitter(DataHolder):
 		GL.DrawArrays( BeginMode.Points, 0, man.total )
 
 
-#---------
+#---------------------------------------#
+#	PARTICLE CREATION CONTEXT			#
+#---------------------------------------#
 
 public class Context:
+	public final	at_sys	= kri.Ant.Inst.slotParticles.getForced('sys')
+	# root shaders
 	public final	v_init	= kri.shade.Object('/part/init_v')
 	public final	g_init	= kri.shade.Object('/part/init_g')
 	public final	sh_draw	= kri.shade.Object('/part/draw_v')
 	public final	sh_root	= kri.shade.Object('/part/root_v')
-	public final	at_sys	= kri.Ant.Inst.slotParticles.getForced('sys')
+	# born shaders
+	public final	sh_born_instant	= kri.shade.Object('/part/born/instant_v')
+	public final	sh_born_time	= kri.shade.Object('/part/born/time_v')
+	# emit surface shaders
+	public final	sh_surf_node	= kri.shade.Object('/part/surf/node_v')
+	public final	sh_surf_vertex	= kri.shade.Object('/part/surf/vertex_v')
+	public final	sh_surf_face	= kri.shade.Object('/part/surf/face_v')
 
 
-#---------
+#---------------------------------------#
+#	ABSTRACT PARTICLE MANAGER			#
+#---------------------------------------#
 
 public class Manager(DataHolder):
 	private final tf	= kri.TransFeedback(1)
@@ -101,7 +119,7 @@ public class Manager(DataHolder):
 			return 'to_' + sl.Name[id]
 		data.semantics.Clear()
 		data.semantics.Add( kri.vb.attr.Info(
-			slot:pc.at_sys, size:2,
+			slot:pc.at_sys, size:3,
 			type:VertexAttribPointerType.Float ))
 
 		sh_init = collect('void', 'init', '', ';')
@@ -140,6 +158,9 @@ public class Manager(DataHolder):
 		prog.use()
 		using kri.Discarder(true), tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, total )
+		ar = array[of single](40)
+		pe.data.read(ar)
+		ar[0] = 0f
 		
 	public def reset(pe as Emitter) as void:
 		process(pe, prog_init)
@@ -150,10 +171,24 @@ public class Manager(DataHolder):
 		process(pe, prog_update)
 
 
-#---------
+#---------------------------------------------------#
+#	STANDARD MANAGER FOR LOADED PARTICLES			#
+#---------------------------------------------------#
 
-public class ManStandard(Manager):
+public class Standard(Manager):
 	public final parSize	= kri.shade.par.Value[of OpenTK.Vector4]()
+	public final parLife	= kri.shade.par.Value[of OpenTK.Vector4]()
+	public final parVelTan	= kri.shade.par.Value[of OpenTK.Vector4]()
+	public final parVelObj	= kri.shade.par.Value[of OpenTK.Vector4]()
+	public final parVelKeep	= kri.shade.par.Value[of OpenTK.Vector4]()
+	public final parForce	= kri.shade.par.Value[of OpenTK.Vector4]()
 
 	public def constructor(num as uint):
 		super(num)
+		dict.add('part_size',	parSize)
+		dict.add('part_life',	parLife)
+		dict.add('part_speed_tan',	parVelTan)
+		dict.add('part_speed_obj',	parVelObj)
+		dict.add('object_speed',	parVelKeep)
+		dict.add('part_force',	parForce)
+	

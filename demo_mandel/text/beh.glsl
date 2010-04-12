@@ -6,14 +6,14 @@ out	vec4 to_pos;
 uniform float root,limit;
 
 vec3 part_time();
-float part_uni();
+vec2 part_uni();
 
 void init_mand()	{
 	to_pos = vec4(0.0);
 }
 
 void reset_mand()	{
-	float uni = part_uni();
+	float uni = part_uni().x;
 	float y = trunc(uni*root)/root, x = root*(uni-y);
 	to_pos = 2.0*vec4(x,y,x,y) - vec4(1.0);
 }

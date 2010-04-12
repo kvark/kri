@@ -25,11 +25,11 @@ public partial class Native:
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
-	private final nodeResolve	= Dictionary[of string,callable(kri.Node)]()
 	
 	public def constructor(*exclude as (string)):
-		fillAniDict()
-		fillMapinDict()
+		initAnimations()
+		initMaterials()
+		initParticles()
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		# objects
@@ -86,10 +86,8 @@ public partial class Native:
 				skipt[name] = size
 				bs.Seek(size, IO.SeekOrigin.Begin)
 		br.Close()
-		for m in at.mats.Values:	m.link()
-		for nr in nodeResolve:
-			nr.Value( at.nodes[nr.Key] )
-		nodeResolve.Clear()
+		finishMaterials()
+		finishParticles()
 		return at
 
 	protected def geData[of T]() as T:

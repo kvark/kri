@@ -4,9 +4,10 @@ import kri.meta
 import OpenTK.Graphics
 
 public partial class Native:
-	public final limdic		= Dictionary[of string,callable() as Hermit]()
+	public final limdic			= Dictionary[of string,callable() as Hermit]()
+	private final nodeResolve	= Dictionary[of string,callable(kri.Node)]()
 
-	public def fillMapinDict() as void:
+	public def initMaterials() as void:
 		uvShaders = [	kri.shade.Object("/mi/uv${i}_v") for i in range(4) ]
 		orcoShader =	kri.shade.Object('/mi/orco_v')
 		objectShader = 	kri.shade.Object('/mi/object_v')
@@ -29,6 +30,12 @@ public partial class Native:
 			mio = InputObject( shader:objectShader,	Name:'object' )
 			nodeResolve[name] = mio.pNode.activate
 			return mio
+	
+	public def finishMaterials() as void:
+		for m in at.mats.Values:	m.link()
+		for nr in nodeResolve:
+			nr.Value( at.nodes[nr.Key] )
+		nodeResolve.Clear()
 
 
 	#---	Parse texture unit	---#
