@@ -15,6 +15,8 @@ uniform vec4 object_speed;	//pre-multiplied already
 uniform vec4 part_life;		//x +- y
 uniform vec4 part_force;	//brownian, drag, damp
 uniform vec4 part_size;		//x +- y
+uniform vec4 force_world;	//gravity + wind + ...
+
 
 vec3 part_time();
 vec2 part_uni();
@@ -44,7 +46,7 @@ void reset_load()	{
 
 float update_load()	{
 	vec3 t = part_time();
-	to_speed = at_speed;
 	to_pos = at_pos + t.x * vec4( at_speed.xyz, 0.0 );
+	to_speed = at_speed + t.x * vec4( force_world.xyz, 0.0 );
 	return step( t.y, at_speed.w );
 }

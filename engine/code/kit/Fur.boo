@@ -63,7 +63,7 @@ public class Update( kri.rend.Basic ):
 	
 	public def constructor(fc as Context):
 		super(false)
-		tf.setup(sa, false, 'to_pos','to_vel')
+		tf.Setup(sa, false, 'to_pos','to_vel')
 		sa.add('quat', '/fur/update_v')
 		sa.link(kri.Ant.Inst.slotAttributes, fc.d)
 	
@@ -79,7 +79,7 @@ public class Update( kri.rend.Basic ):
 				e.swap(x,y)
 				e.mesh.swap(y,x)
 				# bind
-				tf.bind(y)
+				tf.Bind(y)
 				kri.Ant.Inst.params.modelView.activate( e.node )
 				# draw
 				sa.use()

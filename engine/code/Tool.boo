@@ -148,10 +148,10 @@ public class TransFeedback(Query):
 	public override def catch() as Catcher:
 		return CatcherFeed(self,mode)
 	# could be static, but it would make no sence
-	public def setup(prog as shade.Program, separate as bool, *vars as (string)) as void:
+	public static def Setup(prog as shade.Program, separate as bool, *vars as (string)) as void:
 		GL.TransformFeedbackVaryings( prog.id, vars.Length, vars,
 			(TransformFeedbackMode.InterleavedAttribs,TransformFeedbackMode.SeparateAttribs)[separate] )
-	public def bind(*buffers as (vb.Object)) as void:
+	public static def Bind(*buffers as (vb.Object)) as void:
 		for i in range( buffers.Length ):
 			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].Extract )
 

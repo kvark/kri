@@ -51,7 +51,7 @@ public class Update( kri.rend.tech.Basic ):
 		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
 		#old: sa.add( '/skin/zcull_v', 'tool', 'empty' )
 		sa.add( '/skin/empty_v' )
-		tf.setup(sa, true, 'to_vertex', 'to_quat')
+		tf.Setup(sa, true, 'to_vertex', 'to_quat')
 		sl = kri.Ant.Inst.slotAttributes
 		sa.link(sl, dict, kri.Ant.Inst.dict)
 		at_all = array( sa.gatherAttribs(sl) )
@@ -69,7 +69,7 @@ public class Update( kri.rend.tech.Basic ):
 				vos = Array.ConvertAll(at_mod) do(a as int):
 					return e.find(a)
 				continue	if null in vos
-				tf.bind( *vos )
+				tf.Bind( *vos )
 				# run the transform
 				spa as kri.Spatial
 				for i in range( tag.skel.bones.Length ):

@@ -17,9 +17,11 @@ private class DataHolder:
 public class Behavior:
 	public final code	as string	= null
 	public final semantics = List[of kri.vb.attr.Info]()
+	public final sh		as kri.shade.Object
 
 	public def constructor(path as string):
 		code = kri.shade.Object.readText(path)
+		sh = kri.shade.Object( ShaderType.VertexShader, 'beh', code )
 	public def getMethod(base as string) as string:
 		return ''	if string.IsNullOrEmpty(code)
 		pos = code.IndexOf(base)
@@ -89,6 +91,7 @@ public class Manager(DataHolder):
 	private final tf	= kri.TransFeedback(1)
 	private final prog_init		= kri.shade.Smart()
 	private final prog_update	= kri.shade.Smart()
+	private final factory	= kri.ShaderLinker( kri.Ant.Inst.slotParticles )
 	
 	public onUpdate	as callable(kri.Entity)	= null
 	public final behos	= List[of Behavior]()
@@ -131,29 +134,28 @@ public class Manager(DataHolder):
 			for at in b.semantics:
 				out_names.Add( id2out(at.slot) )
 				data.semantics.Add( at )
-			sh = kri.shade.Object( ShaderType.VertexShader, 'beh', b.code )
-			prog_init.add(sh)
-			prog_update.add(sh)
+			prog_init.add( b.sh )
+			prog_update.add( b.sh )
 		
 		va.bind()	# has to be after behaviors
 		data.initAll(total)
 		
 		prog_init.add('quat')
 		prog_init.add( sh_init, pc.v_init )
-		tf.setup(prog_init, false, *out_names.ToArray())
+		tf.Setup(prog_init, false, *out_names.ToArray())
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 		
 		assert sh_born
 		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
 		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root )
-		tf.setup(prog_update, false, *out_names.ToArray())
+		tf.Setup(prog_update, false, *out_names.ToArray())
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 	
 	private def process(pe as Emitter, prog as kri.shade.Program) as void:
 		onUpdate( pe.obj )	if onUpdate
 		va.bind()
-		tf.bind( pe.data )
+		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		prog.use()
 		using kri.Discarder(true), tf.catch():
@@ -179,6 +181,7 @@ public class Standard(Manager):
 	public final parVelObj	= kri.shade.par.Value[of OpenTK.Vector4]()
 	public final parVelKeep	= kri.shade.par.Value[of OpenTK.Vector4]()
 	public final parForce	= kri.shade.par.Value[of OpenTK.Vector4]()
+	public final parForceWorld	= kri.shade.par.Value[of OpenTK.Vector4]()
 
 	public def constructor(num as uint):
 		super(num)
@@ -188,4 +191,4 @@ public class Standard(Manager):
 		dict.add('part_speed_obj',	parVelObj)
 		dict.add('object_speed',	parVelKeep)
 		dict.add('part_force',	parForce)
-	
+		dict.add('force_world', parForceWorld)
