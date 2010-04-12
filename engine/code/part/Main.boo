@@ -158,9 +158,6 @@ public class Manager(DataHolder):
 		prog.use()
 		using kri.Discarder(true), tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, total )
-		ar = array[of single](40)
-		pe.data.read(ar)
-		ar[0] = 0f
 		
 	public def reset(pe as Emitter) as void:
 		process(pe, prog_init)

@@ -3,18 +3,20 @@
 in	vec4 at_pos;
 out	vec4 to_pos;
 
-uniform float root,limit;
+uniform float limit;
 
 vec3 part_time();
 vec2 part_uni();
+float random(float);
 
 void init_mand()	{
 	to_pos = vec4(0.0);
 }
 
 void reset_mand()	{
+	vec3 pt = part_time();
 	float uni = part_uni().x;
-	float y = trunc(uni*root)/root, x = root*(uni-y);
+	float x = random(uni+pt.y*pt.x), y = random(x+pt.z*pt.x);
 	to_pos = 2.0*vec4(x,y,x,y) - vec4(1.0);
 }
 

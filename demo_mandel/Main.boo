@@ -7,17 +7,14 @@ import kri.shade
 
 private def createParticle() as kri.part.Emitter:
 	pSize = par.Value[of single]()
-	pRoot = par.Value[of single]()
 	pBrit = par.Value[of single]()
 	pLimt = par.Value[of single]()
-	root = 100
-	pSize.Value = 10f
-	pRoot.Value = 1f * root
-	pBrit.Value = 0.05f
-	pLimt.Value = 100f
+	pSize.Value = 5f
+	pBrit.Value = 0.025f
+	pLimt.Value = 2.5f
 	
-	pm = kri.part.Manager( root*root )
-	pm.sh_born = kri.shade.Object('/part/born_instant_v')
+	pm = kri.part.Manager( 100000 )
+	pm.sh_born = kri.shade.Object('./text/born_v')
 	beh = kri.part.Behavior('text/beh')
 	sl = kri.Ant.Inst.slotParticles
 	beh.semantics.Add( kri.vb.attr.Info(
@@ -28,7 +25,6 @@ private def createParticle() as kri.part.Emitter:
 	d = rep.Dict()
 	d.add('size',pSize)
 	d.add('bright',pBrit)
-	pm.dict.add('root',pRoot)
 	pm.dict.add('limit',pLimt)
 	
 	pcon = kri.part.Context()
@@ -60,7 +56,6 @@ def Main(argv as (string)):
 		rlis.Add( kri.rend.Particles(false) )
 		ant.anim = al = kri.ani.Scheduler()
 		part = kri.ani.Particle(ps)
-		part.lTime = 10000.0
 		al.add(part)
 		ant.Keyboard.KeyDown += { ps.man.tick(ps) }
-		ant.Run(30.0,5.0)
+		ant.Run(30.0,30.0)

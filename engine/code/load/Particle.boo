@@ -6,6 +6,7 @@ public partial class Native:
 	public final pcon =	kri.part.Context()
 	public final behavior =	kri.part.Behavior('/part/beh_load')
 	public final program = kri.shade.Smart()
+	public final sh_draw = kri.shade.Object('/part/draw_load_v')
 	
 	public def initParticles() as void:
 		# main behavior
@@ -16,8 +17,8 @@ public partial class Native:
 		ai.slot = kri.Ant.Inst.slotParticles.getForced('speed')
 		behavior.semantics.Add(ai)
 		# draw shader
-		program.add( pcon.sh_draw )
-		program.add( '/part/draw_simple_v', '/part/draw_simple_f', 'quat', 'tool')
+		program.add( pcon.sh_draw, sh_draw )
+		program.add( '/part/draw_simple_f', 'quat', 'tool')
 		program.link( kri.Ant.Inst.slotParticles, kri.Ant.Inst.dict )
 
 	public def finishParticles() as void:
@@ -88,6 +89,7 @@ public partial class Native:
 		pm.shaders.Add(sh)
 		return true
 
+
 	#---	Parse life data		---#
 	public def pp_life() as bool:
 		ps = geData[of kri.part.Standard]()
@@ -96,6 +98,7 @@ public partial class Native:
 		ps.parLife.Value = Vector4( data.Z, data.W, data.X, data.Y )
 		return true
 	
+	#---	Parse velocity setup		---#
 	public def pp_vel() as bool:
 		ps = geData[of kri.part.Standard]()
 		return false	if not ps
