@@ -32,7 +32,15 @@ public partial class Native:
 			return mio
 	
 	public def finishMaterials() as void:
-		for m in at.mats.Values:	m.link()
+		for m in at.mats.Values:
+			m.link()
+			# pass material texture to halo if needed
+			h = m.Meta['halo']	as kri.meta.Halo
+			if h and h.shader == con.slib.halo_t2:
+				md = m.Meta['diffuse'] as kri.meta.Data_Color4
+				h.Color = md.Value		if md
+				h.Tex = md.unit.Value	if md and md.unit
+		# resolve node links
 		for nr in nodeResolve:
 			nr.Value( at.nodes[nr.Key] )
 		nodeResolve.Clear()
@@ -58,6 +66,7 @@ public partial class Native:
 			continue if not tarDict.TryGetValue(name,targ)
 			u.Name = targ.name	if System.String.IsNullOrEmpty(u.Name)
 			me = m.Meta[targ.name]
+			continue	if not me
 			me.unit = u
 			me.shader = targ.prog
 		# map inputs
@@ -80,10 +89,10 @@ public partial class Native:
 	public def pm_halo() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		color = getColorByte()
-		data = getVec4()
-		color.A = data.W
-		m.Meta['halo']	= Halo( shader:con.slib.halo_u, Color:color, Data:data )
+		data = getVector()
+		m.Meta['halo']	=h= Halo( Data:Vector4(data) )
+		tex = br.ReadByte()
+		h.shader = (con.slib.halo_u, con.slib.halo_t2)[tex]
 		return true
 	
 	#---	Surface properties	---#
@@ -99,19 +108,13 @@ public partial class Native:
 		getReal()	# translucency
 		return true
 	
-	public static def ScaleColor(ref c as Color4, v as single) as void:
-		c.R *= v
-		c.G *= v
-		c.B *= v
-
 	#---	Meta: diffuse	---#
 	public def pm_diff() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		color = getColorByte()
-		ScaleColor( color, getReal() )
+		color = getColorFull()
 		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:color )
-		sh = {
+		sh = { '': null,
 			'LAMBERT':	con.slib.lambert
 			}[ getString() ]
 		m.Meta['comp_diff']	= Advanced( shader:sh )	if sh
@@ -121,8 +124,7 @@ public partial class Native:
 	public def pm_spec() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		color = getColorByte()
-		ScaleColor( color, getReal() )
+		color = getColorFull()
 		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:color )
 		glossy = getReal()
 		m.Meta['glossiness']= Data_single( shader:con.slib.glossiness_u,Value:glossy )

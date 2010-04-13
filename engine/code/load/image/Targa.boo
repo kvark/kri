@@ -12,11 +12,11 @@ public class Targa:
 		public yrig		as ushort
 		public wid		as ushort
 		public het		as ushort
-		public depth	as byte
+		public bits		as byte
 		public descr	as byte
 		public def check() as bool:
 			return false	if magic[0] or magic[1] or magic[2]!=2
-			return false	if xrig + yrig or depth != 24 + descr
+			return false	if xrig + yrig or bits != 24 + descr
 			return true
 
 	public def constructor(str as string):
@@ -28,11 +28,14 @@ public class Targa:
 			yrig:	br.ReadUInt16(),
 			wid:	br.ReadUInt16(),
 			het:	br.ReadUInt16(),
-			depth:	br.ReadByte(),
+			bits:	br.ReadByte(),
 			descr:	br.ReadByte() )
 		assert hd.check()	
 		img = Basic(str, hd.wid, hd.het)
 		order = (2,1,0,3)
 		for i in range(hd.wid*hd.het):
-			for j in order[0: 3+(hd.descr>>3)]:
-				img.scan[(i<<2)+j] = br.ReadByte()
+			data = br.ReadBytes( hd.bits>>8 )
+			for j in range(order.Length):
+				img.scan[(i<<2)+j] = data[order[j]]
+			if not hd.descr:	# set alpha
+				img.scan[(i<<2)+3] = 0xFF

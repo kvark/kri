@@ -54,6 +54,7 @@ public class Shade:
 	public final bump_c			= Object('/mod/bump_c_f')
 	# halo
 	public final halo_u			= Object('/mod/halo_u_f')
+	public final halo_t2		= Object('/mod/halo_t2d_f')
 
 
 public class Context:

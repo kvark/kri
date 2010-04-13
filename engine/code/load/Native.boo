@@ -113,6 +113,15 @@ public partial class Native:
 		c = br.ReadBytes(3)	#rbg
 		a as byte = 0xFF
 		return Color4(c[0],c[2],c[1],a)
+	protected def getColorFull() as Color4:
+		c = getColorByte()
+		c.A = getReal()	# alpha
+		v = getReal()	# intensity
+		c.R *= v
+		c.G *= v
+		c.B *= v
+		return c
+
 	protected def getString(size as byte) as string:
 		return string( br.ReadChars(size) ).TrimEnd( char(0) )
 	protected def getString() as string:

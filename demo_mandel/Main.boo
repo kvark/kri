@@ -54,7 +54,7 @@ def Main(argv as (string)):
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.rend.Clear() )
-		rlis.Add( kri.rend.Particles(false) )
+		rlis.Add( kri.rend.Particles(false,true) )
 		ant.anim = al = kri.ani.Scheduler()
 		part = kri.ani.Particle(ps)
 		al.add(part)

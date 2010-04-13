@@ -41,8 +41,8 @@ private class RenderPoints(kri.rend.Basic):
 
 private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
-	pm.sh_born = kri.shade.Object('/part/born_instant_v')
-	beh = kri.part.Behavior('/part/beh_simple')
+	pm.sh_born = kri.shade.Object('/part/born/instant_v')
+	beh = kri.part.Behavior('./text/beh_simple')
 	sl = kri.Ant.Inst.slotParticles
 	at_pos		= sl.getForced('pos')
 	at_speed	= sl.getForced('speed')
@@ -81,9 +81,10 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pe = kri.part.Emitter(pm,'test')
 	pe.sa = kri.shade.Smart()
 	pe.sa.add( pcon.sh_draw )
-	pe.sa.add( '/part/draw_simple_v', '/part/draw_simple_f', 'quat', 'tool')
+	pe.sa.add( './text/draw_simple_v', './text/draw_simple_f', 'quat', 'tool')
 	pe.sa.link( sl, kri.Ant.Inst.dict )	
 	pe.obj = ent
+	pe.init()
 	return pe
 
 
@@ -119,7 +120,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		rlis.Add( kri.rend.Particles(true) )
+		rlis.Add( kri.rend.Particles(true,false) )
 		rlis.Add( RenderPoints() )
 		if 'Light':
 			licon = kri.rend.light.Context(2,6)

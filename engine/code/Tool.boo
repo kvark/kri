@@ -32,20 +32,29 @@ public class Section(IDisposable):
 public class Blender(Section):
 	public def constructor():
 		super( EnableCap.Blend )
-	public static def alpha(alpha as single) as void:
-		GL.BlendColor(0f,0f,0f, alpha)
+	public Alpha as single:
+		set: GL.BlendColor(0f,0f,0f, value)
+	public static def alpha() as void:
+		GL.BlendFunc( BlendingFactorSrc.SrcAlpha,\
+			BlendingFactorDest.OneMinusSrcAlpha )
 	public static def add() as void:
-		GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.One)
+		GL.BlendFunc( BlendingFactorSrc.One,\
+			BlendingFactorDest.One )
 	public static def over() as void:
-		GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.Zero)
+		GL.BlendFunc( BlendingFactorSrc.One,\
+			BlendingFactorDest.Zero )
 	public static def skip() as void:
-		GL.BlendFunc(BlendingFactorSrc.Zero, BlendingFactorDest.One)
+		GL.BlendFunc( BlendingFactorSrc.Zero,\
+			BlendingFactorDest.One )
 	public static def multiply() as void:
-		GL.BlendFunc(BlendingFactorSrc.DstColor, BlendingFactorDest.Zero)
+		GL.BlendFunc( BlendingFactorSrc.DstColor,\
+			BlendingFactorDest.Zero )
 	public static def overAlpha() as void:
-		GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.ConstantAlpha)
+		GL.BlendFunc( BlendingFactorSrc.One,\
+			BlendingFactorDest.ConstantAlpha )
 	public static def skipAlpha() as void:
-		GL.BlendFunc(BlendingFactorSrc.ConstantAlpha, BlendingFactorDest.One)
+		GL.BlendFunc( BlendingFactorSrc.ConstantAlpha,\
+			BlendingFactorDest.One )
 
 
 # Provide standard blending options

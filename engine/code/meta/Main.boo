@@ -86,11 +86,14 @@ public class Data[of T(struct)]( Advanced, IValued[of T] ):
 public class Halo(Advanced):
 	private final pColor	= par.Value[of Color4]()
 	private final pData		= par.Value[of Vector4]()
+	private final pTex		= par.Texture(0,'halo')
 	portal Color	as Color4	= pColor.Value
 	portal Data		as Vector4	= pData.Value
+	portal Tex		as kri.Texture	= pTex.Value
 	
 	def IBase.clone() as IBase:
-		return copyTo( Halo( Color:Color, Data:Data, unit:unit ))
+		return copyTo( Halo( Color:Color, Data:Data, Tex:Tex ))
 	def IBase.link(d as rep.Dict) as void:
 		d.add('halo_color', pColor)
 		d.add('halo_data', pData)
+		d.unit(pTex)

@@ -237,14 +237,24 @@ def save_mat(mat):
 	out.begin('mat')
 	out.text( mat.name )
 	out.end()
+	# diffuse subroutine
+	def save_diffuse(model):
+		out.begin('m_diff')
+		save_color( mat.diffuse_color )
+		out.pack('2f', mat.alpha, mat.diffuse_intensity )
+		out.text(model)
+		out.end()
+	# halo material (used for particles)
 	if	mat.type == 'HALO':
 		out.begin('m_halo')
-		save_color( mat.diffuse_color )
 		halo = mat.halo
-		data = (halo.size, halo.hardness, halo.add, mat.alpha)
+		data = (halo.size, halo.hardness, halo.add)
 		out.array('f', data)
-		print("\tsize: %.2f, hardness: %.0f, add: %.2f, alpha: %.2f" % data)
+		out.pack('B', halo.texture)
+		print("\tsize: %.2f, hardness: %.0f, add: %.2f" % data)
 		out.end()
+		save_diffuse('')
+	# regular surface material
 	elif	mat.type == 'SURFACE':
 		out.begin('m_surf')
 		parallax = 0.5
@@ -253,15 +263,12 @@ def save_mat(mat):
 		out.end()
 		sh = (mat.diffuse_shader, mat.specular_shader)
 		print("\tshading: %s %s" % sh)
-		# separate metas
-		out.begin('m_diff')
-		save_color( mat.diffuse_color )
-		out.pack('f', mat.diffuse_intensity)
-		out.text( sh[0] )
-		out.end()
+		save_diffuse(sh[0])
+		# specular
 		out.begin('m_spec')
 		save_color( mat.specular_color )
-		out.pack('2f', mat.specular_intensity, mat.specular_hardness)
+		out.pack('3f', mat.specular_alpha,\
+			mat.specular_intensity, mat.specular_hardness)
 		out.text( sh[1] )
 		out.end()
 	else: print("\t(w)",'unsupported type')

@@ -4,13 +4,14 @@ import OpenTK
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
-	public final behavior =	kri.part.Behavior('/part/beh_load')
-	public final sh_draw = kri.shade.Object('/part/draw_load_v')
+	public final behavior	= kri.part.Behavior('/part/beh_load')
+	public final halo_draw_v	= kri.shade.Object('/part/draw_load_v')
+	public final halo_draw_f	= kri.shade.Object('/part/draw_load_f')
 	public final partFactory	= kri.ShaderLinker( kri.Ant.Inst.slotParticles )
 	
 	public def initParticles() as void:
 		partFactory.onLink = do(sa as kri.shade.Smart):
-			sa.add( pcon.sh_draw, sh_draw )
+			sa.add( pcon.sh_draw, halo_draw_v, halo_draw_f )
 			sa.add( 'quat', 'tool')
 		# main behavior
 		ai = kri.vb.attr.Info( integer:false, size:4,
@@ -29,15 +30,14 @@ public partial class Native:
 				if pe.halo in m.metaList:
 					mat = m
 					break
-			pe.sa = partFactory.link( (pe.halo.shader,), (mat.dict, kri.Ant.Inst.dict) )
+			pe.sa = partFactory.link( (pe.halo.shader,),\
+				(mat.dict, kri.Ant.Inst.dict) )
 		
 
 
 	#---	Parse emitter object	---#
 	public def p_part() as bool:
-		#pm = kri.part.Standard( br.ReadUInt32() )
-		br.ReadUInt32()
-		pm = kri.part.Standard( 100 )
+		pm = kri.part.Standard( br.ReadUInt32() )
 		puData(pm)
 		pm.behos.Add( behavior )
 		pm.sh_born = pcon.sh_born_time
@@ -46,14 +46,14 @@ public partial class Native:
 		# link to material
 		psMat = at.mats[ getString() ]
 		psMat = con.mDef	if not psMat.Meta['halo']
-		halo = psMat.Meta['halo']
+		halo = psMat.Meta['halo'] as kri.meta.Halo
 		return false	if not halo
 		# create emitter
 		pe = kri.part.Emitter(pm,name)
 		puData(pe)
 		pe.obj = geData[of kri.Entity]()
 		at.scene.particles.Add(pe)
-		pe.halo = halo as kri.meta.Halo
+		pe.halo = halo
 		return true
 
 

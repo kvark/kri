@@ -110,9 +110,10 @@ public class All( tech.General ):
 
 public class Particles(Basic):
 	public final dTest	as bool
-	public def constructor(depth as bool):
+	public final bAdd	as bool
+	public def constructor(depth as bool, add as bool):
 		super(false)
-		dTest = depth
+		dTest,bAdd = depth,add
 	public def draw(pe as kri.part.Emitter) as void:
 		# assemble the shader from material's meta data
 		pe.draw()
@@ -122,7 +123,8 @@ public class Particles(Basic):
 		using blend = kri.Blender(),\
 		kri.Section( OpenGL.EnableCap.ClipPlane0 ),\
 		kri.Section( OpenGL.EnableCap.VertexProgramPointSize ):
-			blend.add()
+			if bAdd:	blend.add()
+			else:		blend.alpha()
 			lis = List[of kri.part.Emitter]( kri.Scene.Current.particles )
 			while lis.Count:
 				man = lis[0].man

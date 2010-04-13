@@ -44,7 +44,7 @@ public class Render(kri.rend.Basic):
 		kri.Texture.GenLevels()
 		# read a pixel
 		using blend = kri.Blender():
-			blend.alpha(0.1f)
+			blend.Alpha = 0.1f
 			blend.skipAlpha()
 			for i in range(scale):
 				#set base level = scale-i
