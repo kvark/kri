@@ -42,6 +42,8 @@
     <Compile Include="code\Ant.boo" />
     <Compile Include="code\Entity.boo" />
     <Compile Include="code\frame\Buffer.boo" />
+    <Compile Include="code\frame\Main.boo" />
+    <Compile Include="code\frame\Unit.boo" />
     <Compile Include="code\kit\Bake.boo" />
     <Compile Include="code\kit\Fur.boo" />
     <Compile Include="code\kit\Gen.boo" />
