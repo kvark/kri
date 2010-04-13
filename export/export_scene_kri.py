@@ -233,26 +233,38 @@ def save_mat_image(mtex):
 ###  MATERIAL:CORE   ###
 
 def save_mat(mat):
-	print("[%s]" % (mat.name))
+	print("[%s] %s" % (mat.name,mat.type))
 	out.begin('mat')
 	out.text( mat.name )
-	parallax = 0.5
-	out.pack('B4f', mat.shadeless, parallax,
-		mat.emit, mat.ambient, mat.translucency )
 	out.end()
-	sh = (mat.diffuse_shader, mat.specular_shader)
-	print("\tshading: %s %s" % sh)
-	# separate metas
-	out.begin('m_diff')
-	save_color( mat.diffuse_color )
-	out.pack('f', mat.diffuse_intensity)
-	out.text( sh[0] )
-	out.end()
-	out.begin('m_spec')
-	save_color( mat.specular_color )
-	out.pack('2f', mat.specular_intensity, mat.specular_hardness)
-	out.text( sh[1] )
-	out.end()
+	if	mat.type == 'HALO':
+		out.begin('m_halo')
+		save_color( mat.diffuse_color )
+		halo = mat.halo
+		data = (halo.size, halo.hardness, halo.add, mat.alpha)
+		out.array('f', data)
+		print("\tsize: %.2f, hardness: %.0f, add: %.2f, alpha: %.2f" % data)
+		out.end()
+	elif	mat.type == 'SURFACE':
+		out.begin('m_surf')
+		parallax = 0.5
+		out.pack('B4f', mat.shadeless, parallax,
+			mat.emit, mat.ambient, mat.translucency )
+		out.end()
+		sh = (mat.diffuse_shader, mat.specular_shader)
+		print("\tshading: %s %s" % sh)
+		# separate metas
+		out.begin('m_diff')
+		save_color( mat.diffuse_color )
+		out.pack('f', mat.diffuse_intensity)
+		out.text( sh[0] )
+		out.end()
+		out.begin('m_spec')
+		save_color( mat.specular_color )
+		out.pack('2f', mat.specular_intensity, mat.specular_hardness)
+		out.text( sh[1] )
+		out.end()
+	else: print("\t(w)",'unsupported type')
 	# texture units
 	for mt in mat.texture_slots:
 		if not mt: continue
@@ -486,6 +498,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	#   6: materials
 	out.begin('entity')
 	for fn,m in zip(face_num,mesh.materials):
+		if not fn: break
 		out.pack('H', fn)
 		out.text( m.name )
 		print("\t+entity: %d faces, [%s]" % (fn,m.name))
@@ -591,14 +604,15 @@ def save_skeleton(skel):
 
 ###	PARTICLES	###
 
-def save_particle(part):
+def save_particle(obj,part):
 	st = part.settings
 	assert st.type == 'EMITTER'
 	life = (st.start, st.end, st.lifetime)
-	mat = bpy.data.materials[ st.material-1 ]
+	mat = obj.material_slots[ st.material-1 ].material
 	matname = (mat.name if mat else '')
 	info = (part.name, matname, st.amount)
-	print("\t+particle: %s [%s] %d num, [%d-%d] life %d" % (info+life))
+	print("\t+particle: %s [%s]" % (info[0],info[1]) )
+	print("\t\t(i) %d num, [%d-%d] life %d" % ((info[2],)+life))
 	out.begin('part')
 	out.pack('L2f', st.amount, st.particle_size, st.random_size )
 	out.text( part.name, matname )
@@ -713,7 +727,7 @@ def save_scene(filename, context, doQuatInt=True):
 			save_camera(ob.data, ob == context.scene.camera)
 			save_actions(ob.data, 'c')
 		for p in ob.particle_systems:
-			save_particle(p)
+			save_particle(ob,p)
 	print('Done.')
 	out.fx.close()
 

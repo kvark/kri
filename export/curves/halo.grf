@@ -1,0 +1,82 @@
+;This file was created by Graph (http://www.padowan.dk)
+;Do not change this file from other programs.
+[Graph]
+Version = 4.3.0.384
+MinVersion = 2.5
+OS = Windows XP 5.1 Service Pack 3
+
+[Axes]
+xMin = -0.180364164938953
+xMax = 2.31314396741504
+xTickUnit = 0.2
+xGridUnit = 0.2
+yMin = -0.70119389827396
+yMax = 1.79231423408003
+yTickUnit = 0.5
+yGridUnit = 0.5
+AxesColor = clBlue
+GridColor = 0x00FF9999
+ShowLegend = 1
+Radian = 1
+
+[Func1]
+FuncType = 0
+y = x*x
+LegendText = 0-20
+From = 0
+To = 1
+Color = clPurple
+Size = 4
+
+[Func2]
+FuncType = 0
+y = x
+LegendText = 20-30
+From = 0
+To = 1
+Color = clTeal
+Size = 4
+
+[Func3]
+FuncType = 0
+y = sqrt(x)
+LegendText = 30-40
+From = 0
+To = 1
+Color = clRed
+Size = 4
+
+[Func4]
+FuncType = 0
+y = sin(sqrt(x)*Pi/2)
+LegendText = 40-50
+From = 0
+To = 1
+Color = clLime
+Size = 4
+
+[Func5]
+FuncType = 0
+y = sqrt(sin(sqrt(x)*Pi/2))
+LegendText = 50-100
+From = 0
+To = 1
+Color = clBlue
+Size = 4
+
+[Func6]
+FuncType = 0
+y = 1-(1-x^(1/0.7))^0.7
+From = 0
+To = 1
+Color = clAqua
+Size = 4
+
+[Data]
+TextLabelCount = 0
+FuncCount = 6
+PointSeriesCount = 0
+ShadeCount = 0
+RelationCount = 0
+OleObjectCount = 0
+

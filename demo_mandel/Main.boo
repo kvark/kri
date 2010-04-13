@@ -29,7 +29,8 @@ private def createParticle() as kri.part.Emitter:
 	
 	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe = kri.part.Emitter(pm,'mand',null)
+	pe = kri.part.Emitter(pm,'mand')
+	pe.sa = kri.shade.Smart()
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( './text/draw_v', './text/draw_f')
 	pe.sa.link( sl, d, kri.Ant.Inst.dict )	

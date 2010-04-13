@@ -38,25 +38,29 @@ public class Emitter(DataHolder):
 	public visible	as bool		= true
 	public onDraw	as callable()	= null
 	public obj		as kri.Entity	= null
+	public sa		as kri.shade.Smart	= null
+	public halo		as kri.meta.Halo	= null
 	public final man	as Manager
 	public final name	as string
-	public final sa		as kri.shade.Smart
 
 	public def init() as void:
 		va.bind()
 		data.semantics.AddRange( man.data.semantics )
 		data.initAll( man.total )
 		#man.reset(self)
-	public def constructor(pm as Manager, str as string, prog as kri.shade.Smart):
+	public def constructor(pm as Manager, str as string):
 		man,name = pm,str
-		sa = (prog	if prog else	kri.shade.Smart())
 	public def constructor(pe as Emitter):
-		man		= pe.man
-		name	= pe.name
+		visible	= pe.visible
+		onDraw	= pe.onDraw
 		obj		= pe.obj
 		sa		= pe.sa
+		halo	= pe.halo
+		man		= pe.man
+		name	= pe.name
 		init()
 	public def draw() as void:
+		assert sa
 		onDraw()	if onDraw
 		va.bind()
 		sa.use()

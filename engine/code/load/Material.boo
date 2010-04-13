@@ -74,7 +74,22 @@ public partial class Native:
 		m = kri.Material( getString() )
 		at.mats[m.name] = m
 		puData(m)
-		# basic properties
+		return true
+	
+	#---	Halo properties		---#
+	public def pm_halo() as bool:
+		m = geData[of kri.Material]()
+		return false	if not m
+		color = getColorByte()
+		data = getVec4()
+		color.A = data.W
+		m.Meta['halo']	= Halo( shader:con.slib.halo_u, Color:color, Data:data )
+		return true
+	
+	#---	Surface properties	---#
+	public def pm_surf() as bool:
+		m = geData[of kri.Material]()
+		return false	if not m
 		br.ReadByte()	# shadeless
 		getReal()		# parallax
 		m.Meta['bump']		= Advanced( shader:con.slib.bump_c )

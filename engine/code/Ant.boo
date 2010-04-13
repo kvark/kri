@@ -66,18 +66,18 @@ public class Ant(GameWindow):
 		quad = Quad()
 		
 		# restrictions
-		print GL.GetString(StringName.Version)
-		print GL.GetString(StringName.ShadingLanguageVersion)
+		print GL.GetString( StringName.Version )
+		print GL.GetString( StringName.ShadingLanguageVersion )
 		mb = 0
 		GL.GetInteger( GetPName.MaxDrawBuffers, mb )
 		
 		# GL context init
-		GL.ClearColor(System.Drawing.Color.Black)
-		GL.Enable(EnableCap.CullFace)
-		GL.CullFace(CullFaceMode.Back)
+		GL.ClearColor( Color4.Black )
+		GL.Enable( EnableCap.CullFace )
+		GL.CullFace( CullFaceMode.Back )
 		GL.ClearDepth(1f)
 		GL.DepthRange(0f,1f)
-		GL.DepthFunc(DepthFunction.Lequal)
+		GL.DepthFunc( DepthFunction.Lequal )
 	
 	public override def OnUnload(e as EventArgs) as void:
 		views.Clear()

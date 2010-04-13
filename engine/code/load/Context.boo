@@ -52,6 +52,8 @@ public class Shade:
 	public final specular_u		= Object('/mod/specular_u_f')
 	public final glossiness_u	= Object('/mod/glossiness_u_f')
 	public final bump_c			= Object('/mod/bump_c_f')
+	# halo
+	public final halo_u			= Object('/mod/halo_u_f')
 
 
 public class Context:
@@ -74,4 +76,6 @@ public class Context:
 		mlis.Add(Advanced	( Name:'bump', 		shader:slib.bump_c ))
 		mlis.Add(Advanced	( Name:'comp_diff',	shader:slib.lambert ))
 		mlis.Add(Advanced	( Name:'comp_spec',	shader:slib.phong ))
+		mlis.Add(Halo		( Name:'halo',		shader:slib.halo_u,\
+			Color:Color4.White, Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
 		mDef.link()

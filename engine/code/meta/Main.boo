@@ -80,3 +80,17 @@ public class Data[of T(struct)]( Advanced, IValued[of T] ):
 		return copyTo( Data[of T]( Value:Value, unit:unit ))
 	def IBase.link(d as rep.Dict) as void:
 		d.add('mat_'+Name, pVal)
+
+
+#---	halo	---#
+public class Halo(Advanced):
+	private final pColor	= par.Value[of Color4]()
+	private final pData		= par.Value[of Vector4]()
+	portal Color	as Color4	= pColor.Value
+	portal Data		as Vector4	= pData.Value
+	
+	def IBase.clone() as IBase:
+		return copyTo( Halo( Color:Color, Data:Data, unit:unit ))
+	def IBase.link(d as rep.Dict) as void:
+		d.add('halo_color', pColor)
+		d.add('halo_data', pData)

@@ -104,3 +104,29 @@ public class All( tech.General ):
 		con.ClearDepth(1f)
 		con.ClearColor()
 		drawScene()
+
+
+#---------	RENDER PARTICLES		--------#
+
+public class Particles(Basic):
+	public final dTest	as bool
+	public def constructor(depth as bool):
+		super(false)
+		dTest = depth
+	public def draw(pe as kri.part.Emitter) as void:
+		# assemble the shader from material's meta data
+		pe.draw()
+	public override def process(con as Context) as void:
+		if dTest: con.activate(true, 0f, false)
+		else: con.activate()
+		using blend = kri.Blender(),\
+		kri.Section( OpenGL.EnableCap.ClipPlane0 ),\
+		kri.Section( OpenGL.EnableCap.VertexProgramPointSize ):
+			blend.add()
+			lis = List[of kri.part.Emitter]( kri.Scene.Current.particles )
+			while lis.Count:
+				man = lis[0].man
+				pred = {p as kri.part.Emitter| return p.man == man }
+				for pe in lis.FindAll(pred):
+					draw(pe)
+				lis.RemoveAll(pred)

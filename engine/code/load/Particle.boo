@@ -5,10 +5,13 @@ import OpenTK
 public partial class Native:
 	public final pcon =	kri.part.Context()
 	public final behavior =	kri.part.Behavior('/part/beh_load')
-	public final program = kri.shade.Smart()
 	public final sh_draw = kri.shade.Object('/part/draw_load_v')
+	public final partFactory	= kri.ShaderLinker( kri.Ant.Inst.slotParticles )
 	
 	public def initParticles() as void:
+		partFactory.onLink = do(sa as kri.shade.Smart):
+			sa.add( pcon.sh_draw, sh_draw )
+			sa.add( 'quat', 'tool')
 		# main behavior
 		ai = kri.vb.attr.Info( integer:false, size:4,
 			type: VertexAttribPointerType.Float )
@@ -16,34 +19,45 @@ public partial class Native:
 		behavior.semantics.Add(ai)
 		ai.slot = kri.Ant.Inst.slotParticles.getForced('speed')
 		behavior.semantics.Add(ai)
-		# draw shader
-		program.add( pcon.sh_draw, sh_draw )
-		program.add( '/part/draw_simple_f', 'quat', 'tool')
-		program.link( kri.Ant.Inst.slotParticles, kri.Ant.Inst.dict )
 
 	public def finishParticles() as void:
 		for pe in at.scene.particles:
 			pe.man.init(pcon)	if not pe.man.Ready
 			pe.init()
+			mat = con.mDef
+			for m in at.mats.Values:
+				if pe.halo in m.metaList:
+					mat = m
+					break
+			pe.sa = partFactory.link( (pe.halo.shader,), (mat.dict, kri.Ant.Inst.dict) )
+		
 
 
 	#---	Parse emitter object	---#
 	public def p_part() as bool:
-		pm = kri.part.Standard( br.ReadUInt32() )
+		#pm = kri.part.Standard( br.ReadUInt32() )
+		br.ReadUInt32()
+		pm = kri.part.Standard( 100 )
 		puData(pm)
 		pm.behos.Add( behavior )
 		pm.sh_born = pcon.sh_born_time
 		pm.parSize.Value = Vector4( getVec2() )
-		pe = kri.part.Emitter(pm, getString(), program )
+		name = getString()
+		# link to material
+		psMat = at.mats[ getString() ]
+		psMat = con.mDef	if not psMat.Meta['halo']
+		halo = psMat.Meta['halo']
+		return false	if not halo
+		# create emitter
+		pe = kri.part.Emitter(pm,name)
 		puData(pe)
 		pe.obj = geData[of kri.Entity]()
 		at.scene.particles.Add(pe)
-		psMat = at.mats[ getString() ]
-		psMat = con.mDef	if not psMat
+		pe.halo = halo as kri.meta.Halo
 		return true
 
 
-	#---	Parse distribution		---#	
+	#---	Parse distribution		---#
 	public def pp_dist() as bool:
 		def upNode(e as kri.Entity):
 			assert e

@@ -1,7 +1,6 @@
 ﻿namespace kri.rend
 
 import System.Collections.Generic
-import OpenTK.Graphics.OpenGL
 
 
 #---------	BASIC RENDER	--------#
@@ -65,25 +64,3 @@ public class FilterCopy(Filter):
 		super()
 		sa.add('copy_v','/copy_screen_f')
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
-
-
-#---------	RENDER PARTICLES		--------#
-
-public class Particles(Basic):
-	public final dTest	as bool
-	public def constructor(depth as bool):
-		super(false)
-		dTest = depth
-	public override def process(con as Context) as void:
-		if dTest: con.activate(true, 0f, false)
-		else: con.activate()
-		using blend = kri.Blender(), kri.Section( EnableCap.ClipPlane0 ),\
-		kri.Section( EnableCap.VertexProgramPointSize ):
-			blend.add()
-			lis = List[of kri.part.Emitter]( kri.Scene.Current.particles )
-			while lis.Count:
-				man = lis[0].man
-				pred = {p as kri.part.Emitter| return p.man == man }
-				for pe in lis.FindAll(pred):
-					pe.draw()
-				lis.RemoveAll(pred)
