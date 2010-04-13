@@ -84,6 +84,7 @@
     <Compile Include="code\shade\Param.boo" />
     <Compile Include="code\shade\Program.boo" />
     <Compile Include="code\shade\Rep.boo" />
+    <Compile Include="code\sound\Main.boo" />
     <Compile Include="code\Spatial.boo" />
     <Compile Include="code\Texture.boo" />
     <Compile Include="code\Tool.boo" />
@@ -147,6 +148,7 @@
     <Folder Include="code\ani" />
     <Folder Include="code\lib" />
     <Folder Include="code\kit" />
+    <Folder Include="code\sound" />
     <Folder Include="code\res" />
     <Folder Include="code\rend\tech" />
     <Folder Include="code\vb" />
