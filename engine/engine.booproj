@@ -77,6 +77,7 @@
     <Compile Include="code\rend\light\Simple.boo" />
     <Compile Include="code\rend\Main.boo" />
     <Compile Include="code\rend\Physics.boo" />
+    <Compile Include="code\rend\tech\General.boo" />
     <Compile Include="code\rend\tech\Main.boo" />
     <Compile Include="code\rend\Tool.boo" />
     <Compile Include="code\rend\Manager.boo" />

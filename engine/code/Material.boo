@@ -6,7 +6,7 @@ import System.Collections.Generic
 public class Material( ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.rep.Dict()
-	public final tech = array[of shade.Smart]	( lib.Const.nTech )
+	public final tech	= array[of shade.Smart]( lib.Const.nTech )
 	public final metaList = List[of meta.Advanced]()
 	public Meta[str as string] as meta.Advanced:
 		get: return metaList.Find({m| return m.Name == str})

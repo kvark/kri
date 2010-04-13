@@ -1,9 +1,6 @@
 namespace kri
 
 import System
-import System.Diagnostics
-import System.Collections.Generic
-
 import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
@@ -11,13 +8,13 @@ import OpenTK.Graphics.OpenGL
 
 # Main engine class Ant
 # Controls all events
-public class Ant(GameWindow):
+public class Ant( OpenTK.GameWindow ):
 	[getter(Inst)]
 	public static inst as Ant = null		# Singleton
 	public final views	= List[of View]()	# *View
-	private quad	as kri.kit.gen.Quad		# Standard quad
+	private quad	as kri.kit.gen.Quad	= null	# Standard quad
 	# time
-	private sw	= Stopwatch()				# Time counter
+	private sw	= Diagnostics.Stopwatch()	# Time counter
 	private final fps	= FpsCounter(1.0)	# FPS counter
 	public anim	as ani.IBase	= null		# Animation
 	public Time as double:
@@ -70,6 +67,7 @@ public class Ant(GameWindow):
 		print GL.GetString( StringName.ShadingLanguageVersion )
 		mb = 0
 		GL.GetInteger( GetPName.MaxDrawBuffers, mb )
+		assert mb>=4
 		
 		# GL context init
 		GL.ClearColor( Color4.Black )

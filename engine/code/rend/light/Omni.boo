@@ -80,6 +80,6 @@ public class Apply( rend.tech.Meta ):
 				addObject(e)
 		using blend = Blender():
 			blend.add()
-			butch.Sort( Batch.cMat )
+			butch.Sort( kri.rend.tech.Batch.cMat )
 			for b in butch:
 				b.draw()

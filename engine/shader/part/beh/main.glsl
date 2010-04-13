@@ -33,8 +33,8 @@ void reset_main()	{
 	vec3 pt = part_time();
 	float uni = part_uni().x, rand = random(uni + pt.x),
 		rs1 = 2.0*(rand-0.5), r2 = random(rand + pt.x+pt.z);
-	float life = part_life.x + rs1 * part_life.y;
-	float size = part_size.x + rs1 * part_size.y;
+	float life = part_life.x*(1.0 + rs1 * part_life.y);
+	float size = part_size.x*(1.0 + rs1 * part_size.y);
 	Spatial surf = get_surface( vec2(rand,r2) );	//todo: random
 	to_pos = vec4( surf.pos.xyz, size );
 	vec3 hand = vec3( surf.pos.w, 1.0,1.0);

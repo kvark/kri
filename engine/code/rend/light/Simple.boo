@@ -91,6 +91,6 @@ public class Apply( kri.rend.tech.Meta ):
 				addObject(e)
 		using blend = kri.Blender():
 			blend.add()
-			butch.Sort( kri.Batch.cMat )
+			butch.Sort( kri.rend.tech.Batch.cMat )
 			for b in butch:
 				b.draw()

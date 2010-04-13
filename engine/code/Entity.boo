@@ -114,29 +114,3 @@ public class Entity( vb.attr.Storage ):
 			m = tm.mat
 			ml.Add(m)	if m.tech[tid] == shade.Smart.Fixed
 		return ml
-
-
-#--------- Batch ---------#
-
-public struct Batch:	# why struct?
-	public e	as Entity
-	public va	as vb.Array
-	public sa	as shade.Smart
-	public up	as callable() as int
-	public off	as int
-	public num	as int
-
-	public def draw() as void:
-		nob = up()
-		Ant.Inst.params.modelView.activate( e.node )
-		va.bind()
-		sa.use()
-		e.mesh.draw(off,num,nob)
-		
-	public class CompMat( IComparer[of Batch] ):
-		public def Compare(a as Batch, b as Batch) as int:
-			r = a.sa.id - b.sa.id
-			return r	if r
-			r = a.va.id - b.va.id
-			return r
-	public static cMat	= CompMat()
