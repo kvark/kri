@@ -4,7 +4,7 @@ import OpenTK
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
-	public final behavior	= kri.part.Behavior('/part/beh_load')
+	public final behavior	= kri.part.Standard()
 	public final halo_draw_v	= kri.shade.Object('/part/draw_load_v')
 	public final halo_draw_f	= kri.shade.Object('/part/draw_load_f')
 	public final partFactory	= kri.ShaderLinker( kri.Ant.Inst.slotParticles )
@@ -13,18 +13,10 @@ public partial class Native:
 		partFactory.onLink = do(sa as kri.shade.Smart):
 			sa.add( pcon.sh_draw, halo_draw_v, halo_draw_f )
 			sa.add( 'quat', 'tool')
-		# main behavior
-		ai = kri.vb.attr.Info( integer:false, size:4,
-			type: VertexAttribPointerType.Float )
-		ai.slot = kri.Ant.Inst.slotParticles.getForced('pos')
-		behavior.semantics.Add(ai)
-		ai.slot = kri.Ant.Inst.slotParticles.getForced('speed')
-		behavior.semantics.Add(ai)
 
 	public def finishParticles() as void:
 		for pe in at.scene.particles:
 			pe.man.init(pcon)	if not pe.man.Ready
-			pe.init()
 			mat = con.mDef
 			for m in at.mats.Values:
 				if pe.halo in m.metaList:
@@ -37,11 +29,13 @@ public partial class Native:
 
 	#---	Parse emitter object	---#
 	public def p_part() as bool:
-		pm = kri.part.Standard( br.ReadUInt32() )
+		pm = kri.part.Manager( br.ReadUInt32() )
 		puData(pm)
-		pm.behos.Add( behavior )
+		beh = kri.part.Standard(behavior)
+		puData(beh)
+		pm.behos.Add( beh )
 		pm.sh_born = pcon.sh_born_time
-		pm.parSize.Value = Vector4( getVec2() )
+		beh.parSize.Value = Vector4( getVec2() )
 		name = getString()
 		# link to material
 		psMat = at.mats[ getString() ]

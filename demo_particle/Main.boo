@@ -39,38 +39,52 @@ private class RenderPoints(kri.rend.Basic):
 			GL.DrawArrays( BeginMode.Points, 0, 4 )
 
 
+private class BehSimple( kri.part.Behavior ):
+	public final tVert	= kri.shade.par.Texture(0,'vertex')
+	public final tQuat	= kri.shade.par.Texture(1,'quat')
+	public final parPlane	= kri.shade.par.Value[of Vector4]()
+	public final parCoef	= kri.shade.par.Value[of single]()
+	
+	public def constructor():
+		super('./text/beh_simple')
+		at_pos		= kri.Ant.Inst.slotParticles.getForced('pos')
+		at_speed	= kri.Ant.Inst.slotParticles.getForced('speed')
+		semantics.Add( kri.vb.attr.Info(
+			slot:at_pos,	size:3, type:VertexAttribPointerType.Float ))
+		semantics.Add( kri.vb.attr.Info(
+			slot:at_speed,	size:3, type:VertexAttribPointerType.Float ))
+	
+	public override def link(d as kri.shade.rep.Dict) as void:
+		d.unit(tVert)
+		d.unit(tQuat)
+		d.add('coord_plane', parPlane)
+		d.add('reflect_koef', parCoef)
+		
+
 private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
 	pm.sh_born = kri.shade.Object('/part/born/instant_v')
-	beh = kri.part.Behavior('./text/beh_simple')
-	sl = kri.Ant.Inst.slotParticles
-	at_pos		= sl.getForced('pos')
-	at_speed	= sl.getForced('speed')
-	beh.semantics.Add( kri.vb.attr.Info(
-		slot:at_pos,	size:3, type:VertexAttribPointerType.Float ))
-	beh.semantics.Add( kri.vb.attr.Info(
-		slot:at_speed,	size:3, type:VertexAttribPointerType.Float ))
-	pm.behos.Add(beh)
+	beh = BehSimple()
+	beh.parPlane.Value = Vector4(1f,0f,0f,2f)
+	beh.parCoef.Value = 0.9f
+	pm.behos.Add( beh )
+	pm.behos.Add( kri.part.Behavior('/part/beh/bounce_plane') )
 	
-	tVert = kri.shade.par.Texture(0,'vertex')
-	tQuat = kri.shade.par.Texture(1,'quat')
-	pm.dict.unit(tVert)
-	pm.dict.unit(tQuat)
 	if 'face':
 		pm.onUpdate = def(e as kri.Entity):
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			tag = e.seTag[of kri.kit.bake.Tag]()
 			if tag:
-				tVert.Value = tag.tVert
-				tQuat.Value = tag.tQuat
+				beh.tVert.Value = tag.tVert
+				beh.tQuat.Value = tag.tQuat
 	else: #vertex
 		a = kri.Ant.Inst.attribs
-		tVert.Value = kri.Texture( TextureTarget.TextureBuffer )
-		tVert.Value.bind()
+		beh.tVert.Value = kri.Texture( TextureTarget.TextureBuffer )
+		beh.tVert.Value.bind()
 		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.vertex) )
-		tQuat.Value = kri.Texture( TextureTarget.TextureBuffer )
-		tQuat.Value.bind()
+		beh.tQuat.Value = kri.Texture( TextureTarget.TextureBuffer )
+		beh.tQuat.Value.bind()
 		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.quat) )
 		pm.onUpdate = def(e as kri.Entity):
 			assert e
@@ -82,9 +96,8 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pe.sa = kri.shade.Smart()
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( './text/draw_simple_v', './text/draw_simple_f', 'quat', 'tool')
-	pe.sa.link( sl, kri.Ant.Inst.dict )	
+	pe.sa.link( kri.Ant.Inst.slotParticles, kri.Ant.Inst.dict )	
 	pe.obj = ent
-	pe.init()
 	return pe
 
 

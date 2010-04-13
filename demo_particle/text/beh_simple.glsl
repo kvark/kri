@@ -1,9 +1,7 @@
 #version 130
 
-in	vec3 at_pos;
-out	vec3 to_pos;
-in	vec3 at_speed;
-out	vec3 to_speed;
+in	vec3 at_pos,at_speed;
+out	vec3 to_pos,to_speed;
 
 uniform sampler2D unit_vertex, unit_quat;
 

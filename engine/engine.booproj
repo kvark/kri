@@ -65,6 +65,8 @@
     <Compile Include="code\Material.boo" />
     <Compile Include="code\meta\Main.boo" />
     <Compile Include="code\part\Main.boo" />
+    <Compile Include="code\part\Manager.boo" />
+    <Compile Include="code\part\Behavior.boo" />
     <Compile Include="code\rend\Context.boo" />
     <Compile Include="code\rend\Debug.boo" />
     <Compile Include="code\rend\light\Context.boo" />

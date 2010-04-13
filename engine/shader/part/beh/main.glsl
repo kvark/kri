@@ -25,11 +25,11 @@ Spatial get_surface(vec2);
 vec3 qrot(vec4,vec3);
 
 
-void init_load()	{
+void init_main()	{
 	to_speed = to_pos = vec4(0.0);
 }
 
-void reset_load()	{
+void reset_main()	{
 	vec3 pt = part_time();
 	float uni = part_uni().x, rand = random(uni + pt.x),
 		rs1 = 2.0*(rand-0.5), r2 = random(rand + pt.x+pt.z);
@@ -44,7 +44,7 @@ void reset_load()	{
 	to_speed.w = life;
 }
 
-float update_load()	{
+float update_main()	{
 	vec3 t = part_time();
 	to_pos = at_pos + t.x * vec4( at_speed.xyz, 0.0 );
 	to_speed = at_speed + t.x * vec4( force_world.xyz, 0.0 );

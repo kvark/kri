@@ -32,10 +32,10 @@ public class Targa:
 			descr:	br.ReadByte() )
 		assert hd.check()	
 		img = Basic(str, hd.wid, hd.het)
-		order = (2,1,0,3)
+		order = (2,1,0)
 		for i in range(hd.wid*hd.het):
-			data = br.ReadBytes( hd.bits>>8 )
-			for j in range(order.Length):
+			data = br.ReadBytes( hd.bits>>3 )
+			for j in range(3):
 				img.scan[(i<<2)+j] = data[order[j]]
 			if not hd.descr:	# set alpha
 				img.scan[(i<<2)+3] = 0xFF
