@@ -22,7 +22,7 @@ public class Particle(Loop):
 	private final pe	as kri.part.Emitter
 	public def constructor(em as kri.part.Emitter):
 		pe = em
-		lTime = 100f
+		lTime = 100.0
 	protected override def onLoop() as void:
 		pe.man.reset(pe)
 	protected override def onRate(rate as double) as void:

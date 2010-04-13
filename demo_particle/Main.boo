@@ -43,6 +43,7 @@ private class BehSimple( kri.part.Behavior ):
 	public final tVert	= kri.shade.par.Texture(0,'vertex')
 	public final tQuat	= kri.shade.par.Texture(1,'quat')
 	public final parPlane	= kri.shade.par.Value[of Vector4]()
+	public final parSphere	= kri.shade.par.Value[of Vector4]()
 	public final parCoef	= kri.shade.par.Value[of single]()
 	
 	public def constructor():
@@ -57,18 +58,21 @@ private class BehSimple( kri.part.Behavior ):
 	public override def link(d as kri.shade.rep.Dict) as void:
 		d.unit(tVert)
 		d.unit(tQuat)
-		d.add('coord_plane', parPlane)
-		d.add('reflect_koef', parCoef)
+		d.add('coord_plane',	parPlane)
+		d.add('coord_sphere',	parSphere)
+		d.add('reflect_koef',	parCoef)
 		
 
 private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
 	pm.sh_born = kri.shade.Object('/part/born/instant_v')
 	beh = BehSimple()
-	beh.parPlane.Value = Vector4(1f,0f,0f,2f)
+	beh.parPlane.Value	= Vector4(1f,0f,0f,1f)
+	beh.parSphere.Value	= Vector4( ent.node.local.pos, 3f )
 	beh.parCoef.Value = 0.9f
 	pm.behos.Add( beh )
 	pm.behos.Add( kri.part.Behavior('/part/beh/bounce_plane') )
+	pm.behos.Add( kri.part.Behavior('/part/beh/bounce_sphere') )
 	
 	if 'face':
 		pm.onUpdate = def(e as kri.Entity):
@@ -121,6 +125,7 @@ def Main(argv as (string)):
 		ent = kri.kit.gen.entity( mesh, con )
 		ent.node = kri.Node('main')
 		ent.node.local.pos.Z = -30f
+		ent.node.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
 		view.scene.entities.Add(ent)
 		
 		tag = kri.kit.bake.Tag(256,256, 16,8, true)
