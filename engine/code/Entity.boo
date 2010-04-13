@@ -2,7 +2,6 @@ namespace kri
 
 import System
 import System.Collections.Generic
-import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
@@ -115,27 +114,6 @@ public class Entity( vb.attr.Storage ):
 			m = tm.mat
 			ml.Add(m)	if m.tech[tid] == shade.Smart.Fixed
 		return ml
-
-
-#--------- Quad ---------#
-
-public class Quad:
-	public final	va = vb.Array()
-	protected final	data = vb.Attrib()
-	public def constructor():
-		va.bind()
-		data.init[of Vector2h]((
-			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
-			Vector2h(-1f,1f),	Vector2h(1f,1f),
-			), false)
-		id = Ant.Inst.attribs.vertex
-		ai = vb.attr.Info(slot:id, size:2, type:VertexAttribPointerType.HalfFloat)
-		data.semantics.Add(ai)
-		data.attribFirst()
-		vb.Array.unbind()
-	public def draw() as void:
-		va.bind()
-		GL.DrawArrays( BeginMode.TriangleStrip, 0, 4 )
 
 
 #--------- Batch ---------#

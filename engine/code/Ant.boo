@@ -15,7 +15,7 @@ public class Ant(GameWindow):
 	[getter(Inst)]
 	public static inst as Ant = null		# Singleton
 	public final views	= List[of View]()	# *View
-	private quad	as Quad					# Standard quad
+	private quad	as kri.kit.gen.Quad		# Standard quad
 	# time
 	private sw	= Stopwatch()				# Time counter
 	private final fps	= FpsCounter(1.0)	# FPS counter
@@ -63,7 +63,7 @@ public class Ant(GameWindow):
 	public override def OnLoad(e as EventArgs) as void:
 		slotTechniques.clear()
 		slotAttributes.clear()
-		quad = Quad()
+		quad = kri.kit.gen.Quad()
 		
 		# restrictions
 		print GL.GetString( StringName.Version )

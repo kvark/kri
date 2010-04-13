@@ -1,8 +1,28 @@
 ﻿namespace kri.kit.gen
 
-import System
 import OpenTK
 import OpenTK.Graphics.OpenGL
+
+
+#--------- QUAD ---------#
+
+public class Quad:
+	public final	va		= kri.vb.Array()
+	protected final	data	= kri.vb.Attrib()
+	public def constructor():
+		va.bind()
+		data.init[of Vector2h]((
+			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
+			Vector2h(-1f,1f),	Vector2h(1f,1f),
+			), false)
+		id = kri.Ant.Inst.attribs.vertex
+		ai = kri.vb.attr.Info(slot:id, size:2, type:VertexAttribPointerType.HalfFloat)
+		data.semantics.Add(ai)
+		data.attribFirst()
+		kri.vb.Array.unbind()
+	public def draw() as void:
+		va.bind()
+		GL.DrawArrays( BeginMode.TriangleStrip, 0, 4 )
 
 
 #----	COMMON DATA STORING & CREATION	----#
