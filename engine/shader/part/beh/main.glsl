@@ -29,7 +29,7 @@ void init_main()	{
 	to_speed = to_pos = vec4(0.0);
 }
 
-void reset_main()	{
+float reset_main()	{
 	vec3 pt = part_time();
 	float uni = part_uni().x, rand = random(uni + pt.x),
 		rs1 = 2.0*(rand-0.5), r2 = random(rand + pt.x+pt.z);
@@ -42,6 +42,7 @@ void reset_main()	{
 		qrot( surf.rot, hand *	part_speed_tan.xyz )  +
 		qrot( s_model.rot,	part_speed_obj.xyz );
 	to_speed.w = life;
+	return step(0.01, dot(surf.pos.xyz, surf.pos.xyz) );
 }
 
 float update_main()	{

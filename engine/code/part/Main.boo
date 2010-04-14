@@ -8,8 +8,8 @@ private class DataHolder:
 	internal data	as kri.vb.Attrib	= null
 	internal va		= kri.vb.Array()
 	internal def init(sem as kri.vb.attr.Info*, num as uint):
-		assert not data
-		data = kri.vb.Attrib()
+		if data:	data.semantics.Clear()
+		else:		data = kri.vb.Attrib()
 		data.semantics.AddRange(sem)
 		va.bind()
 		data.initAll( num )

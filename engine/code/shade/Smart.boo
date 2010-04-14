@@ -39,6 +39,11 @@ public class Smart(Program):
 		link()
 		fillPar(*dicts)
 	
+	# clear objects
+	public override def clear() as int:
+		params.Clear()
+		return super()
+	
 	# collect used attributes
 	public def gatherAttribs(sl as kri.lib.Slot) as int*:
 		return (i for i in range(sl.Size)
@@ -79,3 +84,4 @@ public class Smart(Program):
 			GL.GetActiveAttrib(id, i, size, tip)
 			total += size
 		return total
+	

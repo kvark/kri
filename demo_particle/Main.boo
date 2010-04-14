@@ -51,9 +51,9 @@ private class BehSimple( kri.part.Behavior ):
 		at_pos		= kri.Ant.Inst.slotParticles.getForced('pos')
 		at_speed	= kri.Ant.Inst.slotParticles.getForced('speed')
 		semantics.Add( kri.vb.attr.Info(
-			slot:at_pos,	size:3, type:VertexAttribPointerType.Float ))
+			slot:at_pos,	size:4, type:VertexAttribPointerType.Float ))
 		semantics.Add( kri.vb.attr.Info(
-			slot:at_speed,	size:3, type:VertexAttribPointerType.Float ))
+			slot:at_speed,	size:4, type:VertexAttribPointerType.Float ))
 	
 	public override def link(d as kri.shade.rep.Dict) as void:
 		d.unit(tVert)

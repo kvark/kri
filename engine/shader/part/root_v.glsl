@@ -17,18 +17,19 @@ float random(float seed)	{
 	return fract(sin( 78.233*seed ) * 43758.5453);
 }
 
-void reset();
+float reset();
 float update();
 bool born_ready();
 
 void main()	{
 	to_sys = at_sys;
-	if(at_sys.x > 0.0)	{
-		float live = update();
-		to_sys.x *= 2.0*live-1.0;
-	}else if( born_ready() )	{
+	float live = 1.0;
+	if(at_sys.x > 0.0)
+		live = update();
+	else if( born_ready() )	{
 		to_sys.x = cur_time.x;
 		to_sys.z += 1.0;
-		reset();
+		live = reset();
 	}
+	to_sys.x *= 2.0*live-1.0;
 }

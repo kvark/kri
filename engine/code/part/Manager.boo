@@ -38,6 +38,9 @@ public class Manager(DataHolder):
 			
 		
 	public def init(pc as Context) as void:
+		if data:
+			prog_init.clear()
+			prog_update.clear()	
 		sl = kri.Ant.Inst.slotParticles
 		def id2out(id as int) as string:
 			return 'to_' + sl.Name[id]
@@ -46,9 +49,9 @@ public class Manager(DataHolder):
 			slot:pc.at_sys, size:3,
 			type:VertexAttribPointerType.Float ))
 
-		sh_init = collect('void', 'init', '', ";\n\t", '')
-		sh_reset = collect('void', 'reset', '', ";\n\t", '')
-		sh_update = collect('float', 'update', 'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
+		sh_init		= collect('void', 'init', '', ";\n\t", '')
+		sh_reset	= collect('float','reset',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
+		sh_update	= collect('float','update',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
 		out_names = List[of string]()
 		out_names.Add( id2out( pc.at_sys ) )
 		for b in behos:

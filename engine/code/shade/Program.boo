@@ -71,3 +71,14 @@ public class Program:
 			assert 'Uniform type not supported'
 		assert loc >= 0
 		fun(loc,val)
+
+	# clear everything
+	public virtual def clear() as int:
+		linked = false
+		num = 0
+		GL.GetProgram(id, ProgramParameter.AttachedShaders, num)
+		sar = array[of int](num)
+		GL.GetAttachedShaders(id, num, num, sar[0])
+		for sh in sar:
+			GL.DetachShader(id,sh)
+		return num

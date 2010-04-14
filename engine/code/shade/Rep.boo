@@ -42,7 +42,7 @@ public class Dict:
 	# add standard uniform
 	[ext.spec.ForkMethodEx(Uniform, int,single,Color4,Vector4,Quaternion)]
 	public def add[of T(struct)](name as string, iv as par.IBase[of T]) as void:
-		sd.Add(name) do(loc as int):
+		sd[name] = do(loc as int):
 			return Uniform[of T](iv,loc)
 	
 	# add texture unit representor
@@ -54,7 +54,7 @@ public class Dict:
 	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
 		name = kri.shade.Smart.prefixUnit + name
 		return false	if sd.ContainsKey(name)
-		sd.Add(name) do(loc as int):
+		sd[name] = do(loc as int):
 			OpenGL.GL.Uniform1(loc,tun)
 			return Unit(tun,it)
 		return true
@@ -68,7 +68,7 @@ public class Dict:
 	# copy contents of another dictionary
 	public def attach(dict as Dict) as void:
 		for p in dict.sd:
-			sd.Add(p.Key, p.Value)
+			sd[p.Key] = p.Value
 	# clear contents
 	public def clear() as void:
 		sd.Clear()
