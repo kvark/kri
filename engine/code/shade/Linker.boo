@@ -24,10 +24,12 @@ public class Linker:
 			# because the meta-data sets already matched (kri.load.meta.MakeTexCoords)
 		else:
 			sa = kri.shade.Smart()
-			samap.Add( key, sa.id )
 			sa.add( *array(sl) )
 			sa.attribs( attribs )
 			onLink(sa)	if onLink
 			sa.link()
+			# critical concept error here!
+			# we can't allow duplication of cached params
+			#samap.Add( key, sa.id )
 		sa.fillPar( *array(dc) ) 
 		return sa

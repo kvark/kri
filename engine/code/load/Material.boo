@@ -35,11 +35,12 @@ public partial class Native:
 		for m in at.mats.Values:
 			m.link()
 			# pass material texture to halo if needed
-			h = m.Meta['halo']	as kri.meta.Halo
-			if h and h.shader == con.slib.halo_t2:
-				md = m.Meta['diffuse'] as kri.meta.Data_Color4
-				h.Color = md.Value		if md
-				h.Tex = md.unit.Value	if md and md.unit
+			h  = m.Meta['halo']		as kri.meta.Halo
+			md = m.Meta['diffuse']	as kri.meta.Data_Color4
+			continue if not h or not md
+			h.Color = md.Value
+			if h.shader == con.slib.halo_t2 and md.unit:
+				h.Tex = md.unit.Value
 		# resolve node links
 		for nr in nodeResolve:
 			nr.Value( at.nodes[nr.Key] )

@@ -40,7 +40,7 @@ public class Emission( tech.Meta ):
 	
 	public def constructor():
 		super('mat.emission', null, 'emissive')
-		shade('/mat_base2')
+		shade('/mat_base')
 		dict.add('base_color', pBase)
 		pBase.Value = Color4.Black
 	public override def process(con as Context) as void:

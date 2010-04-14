@@ -20,7 +20,7 @@ public class Atom:
 
 public partial class Native:
 	public final con	= Context()
-	public final dict	= Dictionary[of string,callable]()	# should be "callable() as bool"
+	public final dict	= Dictionary[of string,callable() as bool]()
 	public final skipt	= Dictionary[of string,uint]()
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
@@ -80,8 +80,7 @@ public partial class Native:
 			size = br.ReadUInt32()
 			size += bs.Position
 			assert size <= bs.Length
-			#p as callable() as bool = null
-			p as callable = null
+			p as callable() as bool = null
 			if dict.TryGetValue(name,p) and p():
 				assert bs.Position == size
 			else:
