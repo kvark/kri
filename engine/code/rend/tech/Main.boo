@@ -27,7 +27,7 @@ public class Basic( kri.rend.Basic ):
 public class Meta(General):
 	private final lMets	as (string)
 	private final lOuts	as (string)
-	private final factory	= kri.ShaderLinker( kri.Ant.Inst.slotAttributes )
+	private final factory	= kri.shade.Linker( kri.Ant.Inst.slotAttributes )
 	protected shobs			= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.rep.Dict()
 	

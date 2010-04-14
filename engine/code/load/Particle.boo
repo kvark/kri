@@ -7,7 +7,7 @@ public partial class Native:
 	public final behavior	= kri.part.Standard()
 	public final halo_draw_v	= kri.shade.Object('/part/draw_load_v')
 	public final halo_draw_f	= kri.shade.Object('/part/draw_load_f')
-	public final partFactory	= kri.ShaderLinker( kri.Ant.Inst.slotParticles )
+	public final partFactory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
 	
 	public def initParticles() as void:
 		partFactory.onLink = do(sa as kri.shade.Smart):

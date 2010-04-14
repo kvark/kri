@@ -11,7 +11,7 @@ public class Manager(DataHolder):
 	private final tf	= kri.TransFeedback(1)
 	private final prog_init		= kri.shade.Smart()
 	private final prog_update	= kri.shade.Smart()
-	private final factory	= kri.ShaderLinker( kri.Ant.Inst.slotParticles )
+	private final factory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
 	
 	public onUpdate	as callable(kri.Entity)	= null
 	public final behos	= List[of Behavior]()
@@ -83,6 +83,10 @@ public class Manager(DataHolder):
 		prog.use()
 		using kri.Discarder(true), tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, total )
+		if 'Debug':
+			ar = array[of single](40)
+			pe.data.read(ar)
+			ar[0] = 0f
 
 	public def reset(pe as Emitter) as void:
 		process(pe, prog_init)

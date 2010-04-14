@@ -59,6 +59,3 @@ public class Update( kri.rend.tech.Basic ):
 			using q.catch():
 				e.mesh.draw()
 			assert q.result()
-
-
-

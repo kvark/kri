@@ -1,7 +1,6 @@
 namespace kri
 
 import System
-import System.Collections.Generic
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
@@ -35,26 +34,19 @@ public class Blender(Section):
 	public Alpha as single:
 		set: GL.BlendColor(0f,0f,0f, value)
 	public static def alpha() as void:
-		GL.BlendFunc( BlendingFactorSrc.SrcAlpha,\
-			BlendingFactorDest.OneMinusSrcAlpha )
+		GL.BlendFunc( BlendingFactorSrc.SrcAlpha,		BlendingFactorDest.OneMinusSrcAlpha )
 	public static def add() as void:
-		GL.BlendFunc( BlendingFactorSrc.One,\
-			BlendingFactorDest.One )
+		GL.BlendFunc( BlendingFactorSrc.One,			BlendingFactorDest.One )
 	public static def over() as void:
-		GL.BlendFunc( BlendingFactorSrc.One,\
-			BlendingFactorDest.Zero )
+		GL.BlendFunc( BlendingFactorSrc.One,			BlendingFactorDest.Zero )
 	public static def skip() as void:
-		GL.BlendFunc( BlendingFactorSrc.Zero,\
-			BlendingFactorDest.One )
+		GL.BlendFunc( BlendingFactorSrc.Zero,			BlendingFactorDest.One )
 	public static def multiply() as void:
-		GL.BlendFunc( BlendingFactorSrc.DstColor,\
-			BlendingFactorDest.Zero )
+		GL.BlendFunc( BlendingFactorSrc.DstColor,		BlendingFactorDest.Zero )
 	public static def overAlpha() as void:
-		GL.BlendFunc( BlendingFactorSrc.One,\
-			BlendingFactorDest.ConstantAlpha )
+		GL.BlendFunc( BlendingFactorSrc.One,			BlendingFactorDest.ConstantAlpha )
 	public static def skipAlpha() as void:
-		GL.BlendFunc( BlendingFactorSrc.ConstantAlpha,\
-			BlendingFactorDest.One )
+		GL.BlendFunc( BlendingFactorSrc.ConstantAlpha,	BlendingFactorDest.One )
 
 
 # Provide standard blending options
@@ -163,34 +155,3 @@ public class TransFeedback(Query):
 	public static def Bind(*buffers as (vb.Object)) as void:
 		for i in range( buffers.Length ):
 			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].Extract )
-
-
-#-----------------------#
-#	SHADER CHACHE		#
-#-----------------------#
-
-public class ShaderLinker:
-	private final attribs	as kri.lib.Slot
-	public final samap = Dictionary[of string,int]()
-	public onLink	as callable(kri.shade.Smart)	= null
-	
-	public def constructor(ats as kri.lib.Slot):
-		attribs = ats
-	
-	public def link(sl as kri.shade.Object*, dc as kri.shade.rep.Dict*) as kri.shade.Smart:
-		key = join( (x.id.ToString() for x in sl), ',' )
-		sid = -1
-		if samap.TryGetValue(key,sid):
-			sa = kri.shade.Smart( sid )
-			# yes, we will just fill the parameters for this program ID again
-			# it's not obvious, but texture units will be assigned to the old values,
-			# because the meta-data sets already matched (kri.load.meta.MakeTexCoords)
-		else:
-			sa = kri.shade.Smart()
-			samap.Add( key, sa.id )
-			sa.add( *array(sl) )
-			sa.attribs( attribs )
-			onLink(sa)	if onLink
-			sa.link()
-		sa.fillPar( *array(dc) ) 
-		return sa
