@@ -128,6 +128,11 @@ def Main(argv as (string)):
 		ent.node.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
 		view.scene.entities.Add(ent)
 		
+		m2 = kri.kit.gen.sphere(2, 2f*Vector3.One)
+		e2 = kri.kit.gen.entity( m2, con )
+		e2.node = ent.node
+		view.scene.entities.Add(e2)
+		
 		tag = kri.kit.bake.Tag(256,256, 16,8, true)
 		ent.tags.Add(tag)
 		tval = kri.shade.par.Value[of kri.Texture]()

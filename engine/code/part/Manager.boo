@@ -30,13 +30,13 @@ public class Manager(DataHolder):
 
 	private def collect(type as string, method as string, inter as string, oper as string, end as string) as kri.shade.Object:
 		names = [b.getMethod(method+'_') for b in behos]
-		names.Remove(null)
+		names.RemoveAll({n| return string.IsNullOrEmpty(n) })
 		decl = join("${type} ${n};\n"	for n in names)
 		body = join( oper+n				for n in names)
 		all = "#version 130\n${decl}\n${type} ${method}()\t{${inter}${body}${end};\n}"
 		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
-			
-		
+	
+
 	public def init(pc as Context) as void:
 		if data:
 			prog_init.clear()
@@ -70,7 +70,7 @@ public class Manager(DataHolder):
 		prog_init.add( sh_init, pc.v_init )
 		tf.Setup( prog_init, false, *out_names.ToArray() )
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
-		
+
 		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
 		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root )

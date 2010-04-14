@@ -7,8 +7,7 @@ vec2 part_uni();
 
 
 bool born_ready()	{
-	vec3 t = part_time();
+	float t = part_time().z;
 	vec2 u = part_uni();
-	float moment = mix( part_life.z, part_life.w, u.x );
-	return t.z>moment && u.y<0.5;
+	return t > u.x*part_life.z && u.y < part_life.w;
 }

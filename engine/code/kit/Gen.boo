@@ -1,5 +1,6 @@
 ﻿namespace kri.kit.gen
 
+import System.Math
 import OpenTK
 import OpenTK.Graphics.OpenGL
 
@@ -53,6 +54,7 @@ public struct MeshData( kri.IGenerator[of kri.Mesh] ):
 	public bm	as BeginMode
 	public v	as (Vertex)
 	public i	as (ushort)
+	# generate a mesh from stored data
 	public def generate() as kri.Mesh:	# IGenerator
 		m = kri.Mesh( bm )
 		if v:
@@ -71,8 +73,28 @@ public struct MeshData( kri.IGenerator[of kri.Mesh] ):
 			m.ind = kri.vb.Index()
 			m.ind.init( i, false )
 		return m
+	# triangle mesh subdivision
 	public def subDivide() as void:
-		pass
+		assert bm == BeginMode.Triangles
+		assert v and i and i.Length%3 == 0
+		nPoly = i.Length / 3
+		v2 = array[of Vertex]( v.Length + 3*nPoly )
+		v.CopyTo(v2,0)
+		i2 = array[of ushort]( 3*nPoly * 4 )
+		# iterating over polygons
+		def avg(ref a as Vertex, ref b as Vertex):
+			return Vertex( Vector4.Lerp(a.pos,b.pos,0.5), a.rot )
+		for j in range(nPoly):
+			i0 = array(i[j*3+k] for k in range(3))
+			x = array(v[k] for k in i0)
+			j2 = v.Length + j*3
+			array(avg(x[k],x[(k+1)%3]) for k in range(3)).CopyTo(v2,j2)
+			j3 = 3*j*4
+			(of ushort: j2+0,j2+1,j2+2) .CopyTo(i2,j3+0)
+			(of ushort: i0[0],j2+0,j2+2).CopyTo(i2,j3+3)
+			(of ushort: j2+0,i0[1],j2+1).CopyTo(i2,j3+6)
+			(of ushort: j2+2,j2+1,i0[2]).CopyTo(i2,j3+9)
+		i,v = i2,v2
 
 
 #----	LINE OBJECT (-1,1)	----#
@@ -139,7 +161,7 @@ public def cube(scale as Vector3) as kri.Mesh:
 		for i in range(8))
 	#vi = (0,1,4,5,7,1,3,0,2,4,6,7,2,3)	# tri-strip version
 	vi = (0,4,5,1, 4,6,7,5, 6,2,3,7, 2,0,1,3, 2,6,4,0, 1,5,7,3)
-	ang = 0.5f * System.Math.PI
+	ang = 0.5f * PI
 	quats = (of Quaternion:
 		Quaternion.FromAxisAngle( Vector3.UnitX, ang ),
 		Quaternion.Identity,
@@ -163,20 +185,35 @@ private def octahedron(scale as Vector3) as MeshData:
 		-Vector3.UnitZ, Vector3.UnitX,
 		Vector3.UnitY, -Vector3.UnitX,
 		-Vector3.UnitY, Vector3.UnitZ)
-	for i in range( ar.Length ):
-		ar[i] = Vector3.Multiply(scale, ar[i])
-	md.v = array(Vertex( Vector4(p,1f), Quaternion.Identity ) for p in ar)
+	vert = array(Vector4( Vector3.Multiply(scale,x),1f ) for x in ar)
+	# no quaternions needed at this stage
+	md.v = array(Vertex(vert[i],Quaternion.Identity) for i in range(ar.Length))
 	md.i = (of ushort: 0,1,4, 0,2,1, 0,3,2, 0,4,3, 5,4,1, 5,1,2, 5,2,3, 5,3,4)
 	return md
 
+
 public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
 	md = octahedron(scale)
+	# subdivide iterations
 	for sub in range(stage):
 		md.subDivide()
+		# renormalize
 		for i in range( md.v.Length ):
-			(v = md.v[i].pos.Xyz).NormalizeFast()
+			v = md.v[i].pos.Xyz
+			v.NormalizeFast()
 			md.v[i].pos.Xyz = Vector3.Multiply(scale,v)
+	# calculate smooth quaternions
 	for i in range( md.v.Length ):
-		pass
-		# calculate smooth quaternions
+		rv = md.v[i].pos.Xyz
+		xyz = rv.LengthFast
+		alpha = Asin(rv.Z / xyz)
+		xy = rv.Xy.LengthFast
+		if xy > 0.0:
+			beta = Asin(rv.Y / xy)
+			if rv.X < 0.0:	beta = PI+PI-beta
+		else: beta = 0f
+		md.v[i].rot =\
+			Quaternion.FromAxisAngle( Vector3.UnitY, alpha )*\
+			Quaternion.FromAxisAngle( Vector3.UnitZ, beta )
+	# finish
 	return md.generate()

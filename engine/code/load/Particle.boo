@@ -103,7 +103,7 @@ public partial class Native:
 		ps = geData[of kri.part.Standard]()
 		return false	if not ps
 		data = getVec4()	# start,end, life time, random
-		ps.parLife.Value = Vector4( data.Z, data.W, data.X, data.Y )
+		ps.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
 		return true
 	
 	#---	Parse velocity setup		---#
