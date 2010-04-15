@@ -33,7 +33,7 @@ public class Fill( kri.rend.tech.General ):
 
 	public override def process(con as kri.rend.Context) as void:
 		con.SetDepth(1f, true)
-		kri.Texture.Slot( kri.lib.Const.offUnit )
+		kri.Texture.Slot(8)
 		for l in kri.Scene.current.lights:
 			continue if l.fov == 0f
 			kri.Ant.Inst.params.activate(l)
@@ -57,7 +57,7 @@ public class Fill( kri.rend.tech.General ):
 public class Apply( kri.rend.tech.Meta ):
 	private lit as kri.Light	= null
 	private final licon		as Context
-	private final texLit	= kri.shade.par.Texture(0,'light')
+	private final texLit	= kri.shade.par.Value[of kri.Texture]('light')
 
 	public def constructor(lc as Context):
 		shadow = 'simple'
@@ -66,7 +66,7 @@ public class Apply( kri.rend.tech.Meta ):
 		super('lit.apply', null, *kri.load.Meta.LightSet)
 		shade(('/light/apply_v','/light/apply_f','/light/common_f',"/light/shadow/${shadow}_f"))
 		dict.attach(lc.dict)
-		dict.unit(texLit)
+		dict.unit(texLit.Name,texLit)
 		licon = lc
 	# prepare
 	protected override def getUpdate(mat as kri.Material) as callable() as int:
@@ -83,9 +83,10 @@ public class Apply( kri.rend.tech.Meta ):
 		for l in kri.Scene.current.lights:
 			continue if l.fov == 0f
 			lit = l
-			texLit.bindSlot( l.depth )
+			texLit.Value = l.depth
+			l.depth.bind()
 			kri.Texture.Shadow( licon.type == LiType.SIMPLE )
-			kri.Texture.Filter(licon.smooth, licon.mipmap)
+			kri.Texture.Filter( licon.smooth, licon.mipmap )
 			# determine subset of affected objects
 			for e in kri.Scene.Current.entities:
 				addObject(e)

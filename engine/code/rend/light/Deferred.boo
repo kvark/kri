@@ -42,14 +42,13 @@ public class Fill( tech.Meta ):
 #---------	RENDER APPLY G-BUFFER	--------#
 
 public class Apply( Basic ):
-	public final gid	= kri.lib.Const.offUnit
 	protected final s0	= kri.shade.Smart()
 	protected final sa	= kri.shade.Smart()
-	private final gbuf		= kri.shade.par.Texture(0, 'gbuf')
-	private final texLit	= kri.shade.par.Texture(1, 'light')
-	private final texDep	= kri.shade.par.Texture(2, 'depth')
+	private final gbuf		= kri.shade.par.Value[of kri.Texture]('gbuf')
+	private final texLit	= kri.shade.par.Value[of kri.Texture]('light')
+	private final texDep	= kri.shade.par.Value[of kri.Texture]('depth')
 	private final context	as light.Context
-	private final pArea	= kri.shade.par.Value[of OpenTK.Vector4]()
+	private final pArea	= kri.shade.par.Value[of OpenTK.Vector4]('area')
 	# init
 	public def constructor(gt as kri.Texture, lc as light.Context):
 		super(false)
@@ -60,7 +59,7 @@ public class Apply( Basic ):
 		s0.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 		# light shader
 		d = kri.shade.rep.Dict()
-		d.add('area', pArea)
+		d.var(pArea)
 		d.unit(gbuf,texLit,texDep)
 		pArea.Value = OpenTK.Vector4( 0f,0f,0f,1f )
 		sa.add( '/g/apply_v', '/g/apply_f' )
@@ -89,7 +88,7 @@ public class Apply( Basic ):
 	public override def process(con as Context) as void:
 		con.activate()
 		assert 'not ready'
-		texDep.bindSlot( con.Depth )
+		con.Depth.bind()
 		kri.Texture.Filter(false,false)
 		kri.Texture.Shadow(false)
 		# initial fill
@@ -100,7 +99,6 @@ public class Apply( Basic ):
 			blend.add()
 			for l in kri.Scene.current.lights:
 				setArea(l)
-				kri.Texture.Slot( texLit.tun )
 				bindShadow( l.depth )
 				kri.Ant.Inst.params.activate(l)
 				sa.use()

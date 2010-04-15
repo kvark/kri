@@ -16,18 +16,18 @@ public partial class Native:
 		for s in ('GLOBAL','WINDOW','NORMAL','REFLECTION','TANGENT'):
 			slow = s.ToLower()
 			sh = kri.shade.Object( "/mi/${slow}_v" )
-			mt = Hermit( shader:sh, Name:slow )	# careful!
+			mt = Hermit( Shader:sh, Name:slow )	# careful!
 			limdic[s] = genFun(mt)
 		# non-trivial sources
 		limdic['UV'] = do():
 			lid = br.ReadByte()
-			return Hermit( shader:uvShaders[lid],	Name:'uv'+lid )
+			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
 		limdic['ORCO'] = do():
 			getString()	# mapping type, not supported
-			return Hermit( shader:orcoShader,		Name:'orco' )
+			return Hermit( Shader:orcoShader,		Name:'orco' )
 		limdic['OBJECT'] = do():
 			name = getString()
-			mio = InputObject( shader:objectShader,	Name:'object' )
+			mio = InputObject( Shader:objectShader,	Name:'object' )
 			nodeResolve[name] = mio.pNode.activate
 			return mio
 	
@@ -39,8 +39,8 @@ public partial class Native:
 			md = m.Meta['diffuse']	as kri.meta.Data_Color4
 			continue if not h or not md
 			h.Color = md.Value
-			if h.shader == con.slib.halo_t2 and md.unit:
-				h.Tex = md.unit.Value
+			if h.Shader == con.slib.halo_t2 and md.Unit:
+				h.Tex = md.Unit.Value
 		# resolve node links
 		for nr in nodeResolve:
 			nr.Value( at.nodes[nr.Key] )
@@ -56,21 +56,22 @@ public partial class Native:
 	public def pm_unit() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		u = AdUnit()
-		puData(u)
 		tarDict = Dictionary[of string,MapTarget]()
 		tarDict['colordiff']		= MapTarget( 'diffuse',		con.slib.diffuse_t2 )
 		tarDict['coloremission']	= MapTarget( 'emissive',	con.slib.emissive_t2 )
 		# map targets
+		u as AdUnit = null
 		while (name = getString()) != '':
 			targ as MapTarget
 			continue if not tarDict.TryGetValue(name,targ)
-			u.Name = targ.name	if System.String.IsNullOrEmpty(u.Name)
-			me = m.Meta[targ.name]
+			u = AdUnit(targ.name)	if not u
+			me = m.Meta[targ.name] as Advanced
 			continue	if not me
-			me.unit = u
-			me.shader = targ.prog
+			me.Unit = u
+			me.Shader = targ.prog
 		# map inputs
+		u = AdUnit(null)	if not u
+		puData(u)
 		name = getString()
 		fun as callable() as Hermit = null
 		if limdic.TryGetValue(name,fun):
@@ -90,10 +91,9 @@ public partial class Native:
 	public def pm_halo() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		data = getVector()
-		m.Meta['halo']	=h= Halo( Data:Vector4(data) )
-		tex = br.ReadByte()
-		h.shader = (con.slib.halo_u, con.slib.halo_t2)[tex]
+		mh = Halo( Name:'halo', Data:Vector4(getVector()) )
+		mh.Shader = (con.slib.halo_u, con.slib.halo_t2)[ br.ReadByte() ]
+		m.metaList.Add(mh)
 		return true
 	
 	#---	Surface properties	---#
@@ -102,9 +102,10 @@ public partial class Native:
 		return false	if not m
 		br.ReadByte()	# shadeless
 		getReal()		# parallax
-		m.Meta['bump']		= Advanced( shader:con.slib.bump_c )
-		emit = getReal()
-		m.Meta['emissive']	= Data_single( shader:con.slib.emissive_u,	Value:emit )
+		m.metaList.Add(Advanced( Name:'bump', Shader:con.slib.bump_c ))
+		m.metaList.Add(memi = Data_single('emissive'))
+		memi.Shader = con.slib.emissive_u
+		memi.Value = getReal()
 		getReal()	# ambient
 		getReal()	# translucency
 		return true
@@ -113,27 +114,31 @@ public partial class Native:
 	public def pm_diff() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		color = getColorFull()
-		m.Meta['diffuse']	= Data_Color4( shader:con.slib.diffuse_u,	Value:color )
+		m.metaList.Add(mdif = Data_Color4('diffuse'))
+		mdif.Value = getColorFull()
+		mdif.Shader = con.slib.diffuse_u
 		sh = { '': null,
 			'LAMBERT':	con.slib.lambert
 			}[ getString() ]
-		m.Meta['comp_diff']	= Advanced( shader:sh )	if sh
+		m.metaList.Add(Advanced( Name:'comp_diff', Shader:sh ))	if sh
 		return true
 
 	#---	Meta: specular	---#
 	public def pm_spec() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		color = getColorFull()
-		m.Meta['specular']	= Data_Color4( shader:con.slib.specular_u,	Value:color )
-		glossy = getReal()
-		m.Meta['glossiness']= Data_single( shader:con.slib.glossiness_u,Value:glossy )
-		sh = {
+		mspec = Data_Color4('specular')
+		mspec.Shader = con.slib.specular_u
+		mspec.Value = getColorFull()
+		mglos = Data_single('glossiness')
+		mglos.Shader = con.slib.glossiness_u
+		mglos.Value = getReal()
+		mcomp = Advanced( Name:'comp_spec' )
+		mcomp.Shader = {
 			'COOKTORR':	con.slib.cooktorr,
 			'PHONG':	con.slib.phong
 			}[ getString() ]
-		m.Meta['comp_spec']	= Advanced( shader:sh )	if sh
+		m.metaList.AddRange((of IAdvanced: mspec,mglos,mcomp))
 		return true
 
 	

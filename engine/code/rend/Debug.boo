@@ -6,14 +6,14 @@ import kri.shade
 
 public class Map( kri.rend.Basic ):
 	private final sa	= Smart()
-	public final layer	= par.Value[of single]()
+	public final layer	= par.Value[of single]('layer')
 	
 	public def constructor(t as par.IBase[of kri.Texture]):
 		super(false)
 		sa.add( 'copy_v', 'copy_f' )
 		dict = kri.shade.rep.Dict()
-		dict.unit( t, 'input', 0 )
-		dict.add('layer', layer)
+		dict.unit( 'input', t )
+		dict.var(layer)
 		sa.link( kri.Ant.Inst.slotAttributes, dict )
 
 	public override def process(con as kri.rend.Context) as void:

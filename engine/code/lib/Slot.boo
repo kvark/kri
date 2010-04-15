@@ -6,7 +6,6 @@ import System
 # Constant Storage
 public static class Const:
 	public final nTech		= 24	# Render Techniques
-	public final offUnit	= 8		# TexUnit offset
 	public final nAttrib	= 16	# Vertex Attributes
 	public final nPart		= 16	# Particle Data
 

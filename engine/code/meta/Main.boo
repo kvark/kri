@@ -15,20 +15,31 @@ public interface IBase( par.INamed ):
 	def clone() as IBase
 	def link(d as rep.Dict) as void
 
+public interface IUnited:
+	Unit as AdUnit:
+		get
+
+public interface IShaded:
+	Shader as Object:
+		get
+
+public interface IAdvanced(IBase,IShaded,IUnited):
+	pass
+
 
 #---	Named meta-data with shader		---#
-public class Hermit(IBase):
+public class Hermit(IBase,IShaded):
 	[Property(Name)]
 	private name	as string	= ''
-	public shader	as Object	= null
+	[Property(Shader)]
+	private shader	as Object	= null
 
 	public def copyTo(h as Hermit) as Hermit:
 		h.name = name
 		h.shader = shader
 		return h
-	
 	def IBase.clone() as IBase:
-		return copyTo( Hermit() )
+		return copyTo(Hermit())
 	def IBase.link(d as rep.Dict) as void:
 		pass
 
@@ -36,6 +47,7 @@ public class Hermit(IBase):
 #---	Map Input : OBJECT		---#
 public class InputObject(Hermit):
 	public final pNode	= kri.lib.par.spa.Linked( Name:'s_target' )
+	#don't inherit as the name is different
 	def IBase.clone() as IBase:
 		ib = InputObject()
 		ib.pNode.activate( pNode.extract() )
@@ -45,48 +57,61 @@ public class InputObject(Hermit):
 
 
 #---	Advanced meta-data with unit link	---#
-public class Advanced(Hermit):
-	public unit	as AdUnit	= null
+public class Advanced(IAdvanced,Hermit):
+	[Property(Unit)]
+	private unit	as AdUnit	= null
 	def IBase.clone() as IBase:
-		return copyTo( Advanced( unit:unit ) )
+		return copyTo( Advanced( Unit:unit ) )
 	
 
 #---	Unit representor meta data with no shader	---#
 public class AdUnit( IBase, par.Value[of kri.Texture] ):
 	public input	as Hermit		= null
-	[Property(Name)]
-	private name	as string	= ''
-
-	public final pOffset	= par.Value[of Vector4]()
-	public final pScale		= par.Value[of Vector4]()
+	public final pOffset	as par.Value[of Vector4]
+	public final pScale		as par.Value[of Vector4]
 	
+	public def constructor(s as string):
+		super(s)
+		pOffset	= par.Value[of Vector4]('offset_'+s)
+		pScale	= par.Value[of Vector4]('scale_' +s)
 	def IBase.clone() as IBase:
-		un = AdUnit( input:input, Name:name )
+		un = AdUnit(Name)
+		un.input = input
 		un.pOffset.Value	= pOffset.Value
 		un.pScale.Value		= pScale.Value
 		return un
 	def IBase.link(d as rep.Dict) as void:
-		d.add('offset_'+Name, pOffset)
-		d.add('scale_' +Name, pScale)
+		d.var(pOffset,pScale)
 
 
 #---	real value meta-data	---#
 [ext.spec.Class(single,Color4,Vector4)]
-[ext.RemoveSource()]
-public class Data[of T(struct)]( Advanced, IValued[of T] ):
-	private final pVal	= par.Value[of T]()
-	portal Value as T	= pVal.Value
+#[ext.RemoveSource()]
+public class Data[of T(struct)]( IAdvanced, par.Value[of T] ):
+	[Property(Unit)]
+	private unit	as AdUnit	= null
+	[Property(Shader)]
+	private shader	as Object	= null
+
+	public def constructor(name as string):
+		super( 'mat_'+name )
+	public def constructor(un as AdUnit, sh as Object, pv as par.Value[of T]):
+		super( pv.Name )
+		unit = un
+		shader = sh
+		Value = pv.Value
 	def IBase.clone() as IBase:
-		return copyTo( Data[of T]( Value:Value, unit:unit ))
+		return Data[of T](unit,shader,self)
 	def IBase.link(d as rep.Dict) as void:
-		d.add('mat_'+Name, pVal)
+		d.var(self)
+
 
 
 #---	halo	---#
 public class Halo(Advanced):
-	private final pColor	= par.Value[of Color4]()
-	private final pData		= par.Value[of Vector4]()
-	private final pTex		= par.Texture(0,'halo')
+	private final pColor	= par.Value[of Color4]('halo_color')
+	private final pData		= par.Value[of Vector4]('halo_data')
+	private final pTex		= par.Value[of kri.Texture]('halo')
 	portal Color	as Color4	= pColor.Value
 	portal Data		as Vector4	= pData.Value
 	portal Tex		as kri.Texture	= pTex.Value
@@ -94,6 +119,6 @@ public class Halo(Advanced):
 	def IBase.clone() as IBase:
 		return copyTo( Halo( Color:Color, Data:Data, Tex:Tex ))
 	def IBase.link(d as rep.Dict) as void:
-		d.add('halo_color', pColor)
-		d.add('halo_data', pData)
+		d.var(pColor)
+		d.var(pData)
 		d.unit(pTex)

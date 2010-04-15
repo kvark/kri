@@ -40,13 +40,13 @@ public class Behavior( kri.meta.IBase ):
 #---------------------------------------------------#
 
 public class Standard(Behavior):
-	public final parSize	= par.Value[of OpenTK.Vector4]()
-	public final parLife	= par.Value[of OpenTK.Vector4]()
-	public final parVelTan	= par.Value[of OpenTK.Vector4]()
-	public final parVelObj	= par.Value[of OpenTK.Vector4]()
-	public final parVelKeep	= par.Value[of OpenTK.Vector4]()
-	public final parForce	= par.Value[of OpenTK.Vector4]()
-	public final parForceWorld	= par.Value[of OpenTK.Vector4]()
+	public final parSize	= par.Value[of OpenTK.Vector4]('part_size')
+	public final parLife	= par.Value[of OpenTK.Vector4]('part_life')
+	public final parVelTan	= par.Value[of OpenTK.Vector4]('part_speed_tan')
+	public final parVelObj	= par.Value[of OpenTK.Vector4]('part_speed_obj')
+	public final parVelKeep	= par.Value[of OpenTK.Vector4]('object_speed')
+	public final parForce	= par.Value[of OpenTK.Vector4]('part_force')
+	public final parForceWorld	= par.Value[of OpenTK.Vector4]('force_world')
 
 	public def constructor():
 		super('/part/beh/main')
@@ -62,10 +62,5 @@ public class Standard(Behavior):
 		super(std)
 
 	public override def link(d as rep.Dict) as void:
-		d.add('part_size',		parSize)
-		d.add('part_life',		parLife)
-		d.add('part_speed_tan',	parVelTan)
-		d.add('part_speed_obj',	parVelObj)
-		d.add('object_speed',	parVelKeep)
-		d.add('part_force',		parForce)
-		d.add('force_world', 	parForceWorld)
+		d.var(parSize,parLife,parVelTan,parVelObj,\
+			parVelKeep,parForce,parForceWorld)

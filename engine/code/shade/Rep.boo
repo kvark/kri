@@ -7,68 +7,71 @@ import OpenTK
 import OpenTK.Graphics
 import kri.shade
 
-#TODO: use simple extension blocks here
 
-public interface IBase:
+public class Base:
+	public final loc	as int
+	# uniform location
+	protected def constructor(id as int):
+		loc = id
 	# send data to the shader
-	def upload() as void
+	public abstract def upload(iv as par.IBaseRoot) as void:
+		pass
+	# generate an uniform representor
+	public static def Create(iv as par.IBaseRoot, loc as int) as Base:
+		T = iv.GetType().GetGenericArguments()[0]
+		assert T.IsValueType
+		if T == int:
+			return Uniform_int(loc)
+		elif T == single:
+			return Uniform_single(loc)
+		elif T == Vector4:
+			return Uniform_Vector4(loc)
+		elif T == Quaternion:
+			return Uniform_Quaternion(loc)
+		elif T == Color4:
+			return Uniform_Color4(loc)
+		return null
 
-# Uniform param representor (per shader)
+
+# Uniform param representor
 [ext.spec.Class(int,single,Color4,Vector4,Quaternion)]
-public class Uniform[of T(struct)]( par.Cached[of T], IBase ):
-	private final loc as int
-	public def constructor(p as par.IBase[of T], newloc as int):
-		super(p)
-		loc = newloc
-	def IBase.upload() as void:
-		return if not update()
-		Program.Param(loc,cached)
-		
+public class Uniform[of T(struct)](Base):
+	public data	as T
+	public def constructor(lid as int):
+		super(lid)
+	public override def upload(iv as par.IBaseRoot) as void:
+		val = (iv as par.IBase[of T]).Value
+		if data != val:
+			data = val
+			Program.Param(loc,data)
+
 
 # Texture Unit representor
-public class Unit(IBase):
-	private final tun	as int
-	private final p		as par.IBase[of kri.Texture]
-	public def constructor(id as int, pu as par.IBase[of kri.Texture]):
-		tun,p = id,pu
-	def IBase.upload() as void:
-		p.Value.bind(tun)	if p.Value
+public class Unit(Base):
+	public final tun	as int
+	public def constructor(lid as int,tid as int):
+		super(lid)
+		Program.Param(lid,tid)
+		tun = tid
+	public override def upload(iv as par.IBaseRoot) as void:
+		tex = (iv as par.IBase[of kri.Texture]).Value
+		tex.bind(tun)	if tex
 
 
 # Standard uniform dictionary
-public class Dict:
-	private final sd	= SortedDictionary[of string,callable(int) as IBase]()
-	
-	# add standard uniform
-	[ext.spec.ForkMethodEx(Uniform, int,single,Color4,Vector4,Quaternion)]
-	public def add[of T(struct)](name as string, iv as par.IBase[of T]) as void:
-		sd[name] = do(loc as int):
-			return Uniform[of T](iv,loc)
-	
-	# add texture unit representor
-	public def unit[of T(par.INamed,par.IBase[of kri.Texture])](it as T, tun as int) as bool:
-		return unit(it as par.IBase[of kri.Texture], it.Name, tun)
-	public def unit(*its as (par.Texture)) as bool:
-		return Array.TrueForAll(its) do(it as par.Texture):
-			return unit(it, it.Name, it.tun)
-	public def unit(it as par.IBase[of kri.Texture], name as string, tun as int) as bool:
-		name = kri.shade.Smart.prefixUnit + name
-		return false	if sd.ContainsKey(name)
-		sd[name] = do(loc as int):
-			OpenGL.GL.Uniform1(loc,tun)
-			return Unit(tun,it)
-		return true
-	
-	# resolve value by name & location
-	public def resolve(name as string, loc as int) as IBase:
-		fun as callable(int) as IBase = null
-		sd.TryGetValue(name,fun)
-		return (fun(loc) if fun else null)
-	
+public class Dict( SortedDictionary[of string,par.IBaseRoot] ):
 	# copy contents of another dictionary
-	public def attach(dict as Dict) as void:
-		for p in dict.sd:
-			sd[p.Key] = p.Value
-	# clear contents
-	public def clear() as void:
-		sd.Clear()
+	public def attach(d as Dict) as void:
+		for u in d:
+			Item[u.Key] = u.Value
+	# add standard uniform
+	public def var[of T](*var as (par.Value[of T])) as void:
+		for v in var:
+			Item[v.Name] = v
+	# add custom unit
+	public def unit(name as string, v as par.IBase[of kri.Texture]) as void:
+		Item[Smart.prefixUnit + name] = v
+	# add texture unit representor
+	public def unit(*vat as (par.Value[of kri.Texture])) as void:
+		for v in vat:
+			unit(v.Name,v)

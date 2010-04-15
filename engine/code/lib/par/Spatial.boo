@@ -8,15 +8,15 @@ import kri.meta
 
 public class Basic( IBase ):
 	[Property(Name)]
-	private name	as string = ''
+	private name	as string	= null
 	public final position		as par.IBase[of Vector4]
 	public final orientation	as par.IBase[of Vector4]
 	
 	def IBase.clone() as IBase:
 		return self	# stub
 	def IBase.link(d as rep.Dict) as void:
-		d.add(name+'.pos', position)
-		d.add(name+'.rot', orientation)
+		d[name+'.pos']	= position
+		d[name+'.rot']	= orientation
 	public def constructor(*var as (par.IBase[of Vector4])):
 		position,orientation = var[0],var[1]
 	public abstract def activate(n as kri.Node) as void:
@@ -39,7 +39,7 @@ public class Shared(Basic):
 		sp = (n.World if n else kri.Spatial.Identity)
 		activate(sp)
 	public def constructor():
-		super( par.Value[of Vector4](), par.Value[of Vector4]() )
+		super( par.Value[of Vector4](null), par.Value[of Vector4](null) )
 
 
 #---	Linked value	---#

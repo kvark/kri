@@ -11,7 +11,7 @@ public class Fill( rend.tech.General ):
 	protected final buf		= frame.Buffer()
 	protected final sa		= shade.Smart()
 	protected final context	as rend.light.Context
-	protected final pDist	= shade.par.Value[of Vector4]()
+	protected final pDist	= shade.par.Value[of Vector4]('uni_dist')
 
 	public def constructor(lc as rend.light.Context):
 		super('lit.omni.bake')
@@ -21,7 +21,7 @@ public class Fill( rend.tech.General ):
 		sa.add( '/light/omni/bake_v', '/light/omni/bake_g', 'empty' )
 		sa.add( *Ant.Inst.shaders.gentleSet )
 		dict = shade.rep.Dict()
-		dict.add( 'uni_dist', pDist )
+		dict.var(pDist)
 		sa.link( Ant.Inst.slotAttributes, dict, lc.dict, Ant.Inst.dict )
 
 	private override def construct(mat as Material) as shade.Smart:
@@ -67,7 +67,7 @@ public class Apply( rend.tech.Meta ):
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		Texture.Slot( lib.Const.offUnit )
+		Texture.Slot(8)
 		for l in Scene.current.lights:
 			continue	if l.fov != 0f
 			lit = l

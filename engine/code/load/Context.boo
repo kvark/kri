@@ -70,13 +70,22 @@ public class Context:
 	
 	public def constructor():
 		mlis = mDef.metaList
-		mlis.Add(Data_single( Name:'emissive',	shader:slib.emissive_u,	Value:0f ))
-		mlis.Add(Data_Color4( Name:'diffuse',	shader:slib.diffuse_u,	Value:Color4.Gray ))
-		mlis.Add(Data_Color4( Name:'specular',	shader:slib.specular_u,	Value:Color4.Gray ))
-		mlis.Add(Data_single( Name:'glossiness',shader:slib.glossiness_u,	Value:50f ))
-		mlis.Add(Advanced	( Name:'bump', 		shader:slib.bump_c ))
-		mlis.Add(Advanced	( Name:'comp_diff',	shader:slib.lambert ))
-		mlis.Add(Advanced	( Name:'comp_spec',	shader:slib.phong ))
-		mlis.Add(Halo		( Name:'halo',		shader:slib.halo_u,\
+		mEmis = Data_single('emissive')
+		mEmis.Shader = slib.emissive_u
+		mEmis.Value = 0f
+		mDiff = Data_Color4('diffuse')
+		mDiff.Shader = slib.diffuse_u
+		mDiff.Value = Color4.Gray
+		mSpec = Data_Color4('specular')
+		mSpec.Shader = slib.specular_u
+		mSpec.Value = Color4.Gray
+		mGlos = Data_single('glossiness')
+		mGlos.Shader = slib.glossiness_u
+		mGlos.Value = 50f
+		mlis.AddRange((of IAdvanced: mEmis,mDiff,mSpec,mGlos))
+		mlis.Add(Advanced	( Name:'bump', 		Shader:slib.bump_c ))
+		mlis.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
+		mlis.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
+		mlis.Add(Halo		( Name:'halo',		Shader:slib.halo_u,\
 			Color:Color4.White, Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
 		mDef.link()

@@ -22,7 +22,7 @@ public partial class Native:
 				if pe.halo in m.metaList:
 					mat = m
 					break
-			pe.sa = partFactory.link( (pe.halo.shader,),\
+			pe.sa = partFactory.link( (pe.halo.Shader,),\
 				(mat.dict, kri.Ant.Inst.dict) )
 		
 
@@ -69,21 +69,21 @@ public partial class Native:
 		elif source == 'VERT':
 			return false	if not ent
 			for i in range(2):
-				t = kri.shade.par.Texture(i, ('vertex','quat')[i] )
-				pm.dict.unit(t)
+				t = kri.shade.par.Value[of kri.Texture]( ('vertex','quat')[i] )
+				pm.dict.unit(t.Name,t)
 				t.Value = kri.Texture( TextureTarget.TextureBuffer )
 				t.Value.bind()
 				ats = (kri.Ant.Inst.attribs.vertex, kri.Ant.inst.attribs.quat)
 				kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.findAny(ats[i]) )
 				pm.onUpdate = upNode
-			parNumber = kri.shade.par.Value[of single]( Value: 1f * ent.mesh.nVert )
-			pm.dict.add('num_vertices', parNumber)
+			parNumber = kri.shade.par.Value[of single]('num_vertices')
+			parNumber.Value = 1f * ent.mesh.nVert
+			pm.dict.var(parNumber)
 			sh = pcon.sh_surf_vertex
 		elif source == 'FACE':
-			tVert = kri.shade.par.Texture(0,'vertex')
-			tQuat = kri.shade.par.Texture(1,'quat')
-			pm.dict.unit(tVert)
-			pm.dict.unit(tQuat)
+			tVert = kri.shade.par.Value[of kri.Texture]('vertex')
+			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
+			pm.dict.unit(tVert,tQuat)
 			if not ent.seTag[of kri.kit.bake.Tag]():
 				ent.tags.Add( kri.kit.bake.Tag(256,256, 16,8, false) )
 			pm.onUpdate = def(e as kri.Entity):

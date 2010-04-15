@@ -12,13 +12,13 @@ public class Render( kri.rend.Basic ):
 	private final va	= kri.vb.Array()
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint
-	private final pInd	= kri.shade.par.Value[of single]()
+	private final pInd	= kri.shade.par.Value[of single]('index')
 	private final ptype	as PixelType
 	private final mouse	= kri.Ant.Inst.Mouse
 	private coord	=	(of uint: 0,0)
 	#debug data
 	private final sb	= kri.shade.Smart()
-	private final pTex	= kri.shade.par.Texture(0,'input')
+	private final pTex	= kri.shade.par.Value[of kri.Texture]('input')
 
 	public def constructor(reduct as uint, numorder as uint):
 		super(false)
@@ -32,9 +32,9 @@ public class Render( kri.rend.Basic ):
 		# make shader
 		sa.add('/zcull_v', '/pick_f', 'tool', 'quat', 'fixed')
 		d = kri.shade.rep.Dict()
-		d.add('index',pInd)
+		d.var(pInd)
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict, d )
-		d.unit( pTex )
+		d.unit(pTex)
 		sb.add('/copy_v', '/copy_f')
 		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict, d )
 		# set pix type

@@ -10,14 +10,15 @@ import OpenTK.Graphics.OpenGL
 #-----------------------#
 
 public class Smart(Program):
-	protected final params	= List[of rep.IBase]()
+	private final repList	= List[of rep.Base]()
+	private sourceList		as (par.IBaseRoot)
 	public static final prefixAttrib	as string	= 'at_'
 	public static final prefixUnit		as string	= 'unit_'
 	public static final Fixed	= Smart(0)
 	
 	public def constructor():
 		super()
-	public def constructor(xid as int):
+	private def constructor(xid as int):
 		super(xid)
 	
 	public def attribs(sl as kri.lib.Slot, *ats as (int)) as void:
@@ -30,18 +31,20 @@ public class Smart(Program):
 	
 	public override def use() as void:
 		super()
-		for p in params:
-			p.upload()
+		for rp in repList:
+			iv = sourceList[ rp.loc ]
+			rp.upload(iv)
 	
 	# link with attributes
 	public def link(sl as kri.lib.Slot, *dicts as (rep.Dict)) as void:
 		attribs(sl)
 		link()
-		fillPar(*dicts)
+		fillPar(true,*dicts)
 	
 	# clear objects
 	public override def clear() as int:
-		params.Clear()
+		repList.Clear()
+		sourceList = null
 		return super()
 	
 	# collect used attributes
@@ -50,23 +53,34 @@ public class Smart(Program):
 			if not string.IsNullOrEmpty(sl.Name[i]) and
 			i == GL.GetAttribLocation(id, prefixAttrib + sl.Name[i])
 			)
-
+	
 	# setup units & gather uniforms
-	public def fillPar( *dicts as (rep.Dict) ) as void:
-		params.Clear()
-		GL.UseProgram(id)	# for texture units
-		num = -1
+	public def fillPar( reset as bool, *dicts as (rep.Dict) ) as void:
+		num,tun = -1,0
 		GL.GetProgram(id, ProgramParameter.ActiveUniforms, num)
+		if reset:
+			GL.UseProgram(id)	# for texture units
+			sourceList = array[of par.IBaseRoot](num)
+			repList.Clear()
 		nar = ( GL.GetActiveUniformName(id,i) for i in range(num) )
 		for name in nar:
-			loc = getVar(name)
-			assert loc >= 0
-			val	as rep.IBase = null
+			iv	as par.IBaseRoot = null
 			for d in dicts:
-				val = d.resolve(name,loc)
-				break	if val
-			assert val and 'uniform not found'
-			params.Add(val)
+				d.TryGetValue(name,iv)
+				break	if iv
+			if iv or reset:
+				loc = getVar(name)
+				assert iv and loc >= 0
+				sourceList[loc] = iv
+			continue	if not reset
+			rp as rep.Base	= null
+			if name.StartsWith(prefixUnit):
+				rp = rep.Unit(loc,tun)
+				++tun
+			else: rp = rep.Base.Create(iv,loc)
+			assert rp
+			repList.Add(rp)
+
 
 	public def getAttribNum() as int:
 		assert Ready

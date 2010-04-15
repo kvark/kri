@@ -8,7 +8,7 @@ public class Main:
 	public static final ats	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final va		= kri.vb.Array()
 	public final sa		= kri.shade.Smart()
-	public final pTime	= kri.shade.par.Value[of single]()
+	public final pTime	= kri.shade.par.Value[of single]('xxx_time')
 	public final tf		= kri.TransFeedback(1)
 	public static final max	=	4
 

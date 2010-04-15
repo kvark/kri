@@ -6,9 +6,9 @@ import OpenTK.Graphics.OpenGL
 import kri.shade
 
 private def createParticle() as kri.part.Emitter:
-	pSize = par.Value[of single]()
-	pBrit = par.Value[of single]()
-	pLimt = par.Value[of single]()
+	pSize = par.Value[of single]('size')
+	pBrit = par.Value[of single]('bright')
+	pLimt = par.Value[of single]('limit')
 	pSize.Value = 5f
 	pBrit.Value = 0.025f
 	pLimt.Value = 2.5f
@@ -23,9 +23,8 @@ private def createParticle() as kri.part.Emitter:
 	pm.behos.Add(beh)
 	
 	d = rep.Dict()
-	d.add('size',pSize)
-	d.add('bright',pBrit)
-	pm.dict.add('limit',pLimt)
+	d.var(pSize,pBrit)
+	pm.dict.var(pLimt)
 	
 	pcon = kri.part.Context()
 	pm.init(pcon)

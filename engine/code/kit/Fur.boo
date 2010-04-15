@@ -15,11 +15,11 @@ public class Context:
 		kri.Ant.Inst.slotAttributes.getForced('fur_'+s) for s in ('pos','vel'))
 	public final d = kri.shade.rep.Dict()
 	# parameters
-	public final pShellCoef	= kri.shade.par.Value[of single]()
-	public final pLength	= kri.shade.par.Value[of single]()
+	public final pShellCoef	= kri.shade.par.Value[of single]('shell_kf')
+	public final pLength	= kri.shade.par.Value[of single]('fur_length')
 	
 	public def constructor():
-		d.add('shell_kf',	pShellCoef)
+		d.var(pShellCoef,pLength)
 
 	public static def prepare(e as kri.Entity) as kri.vb.Attrib:
 		assert not e.seTag[of Tag]()

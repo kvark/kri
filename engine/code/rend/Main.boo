@@ -48,7 +48,7 @@ public class Chain(Basic):
 
 public class Filter(Basic):
 	protected final sa		= kri.shade.Smart()
-	protected final texIn	= kri.shade.par.Texture(0, 'input')
+	protected final texIn	= kri.shade.par.Value[of kri.Texture]('input')
 	protected final dict	= kri.shade.rep.Dict()
 	public def constructor():
 		super(true)

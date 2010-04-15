@@ -40,11 +40,11 @@ private class RenderPoints(kri.rend.Basic):
 
 
 private class BehSimple( kri.part.Behavior ):
-	public final tVert	= kri.shade.par.Texture(0,'vertex')
-	public final tQuat	= kri.shade.par.Texture(1,'quat')
-	public final parPlane	= kri.shade.par.Value[of Vector4]()
-	public final parSphere	= kri.shade.par.Value[of Vector4]()
-	public final parCoef	= kri.shade.par.Value[of single]()
+	public final tVert	= kri.shade.par.Value[of kri.Texture]('vertex')
+	public final tQuat	= kri.shade.par.Value[of kri.Texture]('quat')
+	public final parPlane	= kri.shade.par.Value[of Vector4]('coord_plane')
+	public final parSphere	= kri.shade.par.Value[of Vector4]('coord_sphere')
+	public final parCoef	= kri.shade.par.Value[of single]('reflect_koef')
 	
 	public def constructor():
 		super('./text/beh_simple')
@@ -56,11 +56,9 @@ private class BehSimple( kri.part.Behavior ):
 			slot:at_speed,	size:4, type:VertexAttribPointerType.Float ))
 	
 	public override def link(d as kri.shade.rep.Dict) as void:
-		d.unit(tVert)
-		d.unit(tQuat)
-		d.add('coord_plane',	parPlane)
-		d.add('coord_sphere',	parSphere)
-		d.add('reflect_koef',	parCoef)
+		d.unit(tVert,tQuat)
+		d.var(parPlane,parSphere)
+		d.var(parCoef)
 		
 
 private def createParticle(ent as kri.Entity) as kri.part.Emitter:
@@ -135,7 +133,7 @@ def Main(argv as (string)):
 		
 		tag = kri.kit.bake.Tag(256,256, 16,8, true)
 		ent.tags.Add(tag)
-		tval = kri.shade.par.Value[of kri.Texture]()
+		tval = kri.shade.par.Value[of kri.Texture](null)
 		tval.Value = tag.tVert
 		
 		ps = createParticle(ent)

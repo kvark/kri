@@ -7,9 +7,9 @@ import kri.meta
 
 # light settings
 public final class Light( IBase ):
-	public final color	= par.Value[of Color4]()
-	public final attenu	= par.Value[of Vector4]()
-	public final data	= par.Value[of Vector4]()
+	public final color	= par.Value[of Color4]('lit_color')
+	public final attenu	= par.Value[of Vector4]('lit_attenu')
+	public final data	= par.Value[of Vector4]('lit_data')
 
 	public def activate(l as kri.Light) as void:
 		color.Value		= l.Color
@@ -22,17 +22,21 @@ public final class Light( IBase ):
 	def IBase.clone() as IBase:
 		return self	# stub
 	def IBase.link(d as rep.Dict) as void:
-		d.add('lit_color',	color)
-		d.add('lit_attenu',	attenu)
-		d.add('lit_data',	data)
+		d.var(color)
+		d.var(attenu,data)
 
 
 # basic projector settins
 public final class Project( IBase ):
-	[Property(Name)]
-	private name	as string	= ''
-	public final data	= par.Value[of Vector4]()
-	public final range	= par.Value[of Vector4]()
+	[getter(Name)]
+	private final name	as string
+	public final data	as par.Value[of Vector4]
+	public final range	as par.Value[of Vector4]
+	
+	public def constructor(s as string):
+		name = s
+		data	= par.Value[of Vector4]('proj_'+s)
+		range	= par.Value[of Vector4]('range_'+s)
 	
 	public def activate(p as kri.Projector) as void:
 		div = 1f / (p.rangeIn - p.rangeOut)
@@ -48,5 +52,4 @@ public final class Project( IBase ):
 	def IBase.clone() as IBase:
 		return self	# stub
 	def IBase.link(d as rep.Dict) as void:
-		d.add('proj_'	+name, data)
-		d.add('range_'	+name, range)
+		d.var(data,range)

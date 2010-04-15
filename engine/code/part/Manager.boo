@@ -20,13 +20,13 @@ public class Manager(DataHolder):
 	public final shaders	= List[of kri.shade.Object]()
 	public sh_born		as kri.shade.Object	= null
 
-	private parTotal	= kri.shade.par.Value[of single]()
+	private parTotal	= kri.shade.par.Value[of single]('part_total')
 	public Ready as bool:
 		get: return prog_init.Ready and prog_update.Ready
 	
 	public def constructor(num as uint):
 		total = num
-		dict.add('part_total', parTotal)
+		dict.var(parTotal)
 
 	private def collect(type as string, method as string, inter as string, oper as string, end as string) as kri.shade.Object:
 		names = [b.getMethod(method+'_') for b in behos]

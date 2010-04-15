@@ -7,13 +7,9 @@ public class Material( ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.rep.Dict()
 	public final tech	= array[of shade.Smart]( lib.Const.nTech )
-	public final metaList = List[of meta.Advanced]()
-	public Meta[str as string] as meta.Advanced:
+	public final metaList = List[of meta.IAdvanced]()
+	public Meta[str as string] as meta.IAdvanced:
 		get: return metaList.Find({m| return m.Name == str})
-		set:
-			metaList.RemoveAll({m| return m.Name == str})
-			value.Name = str
-			metaList.Add(value)
 	
 	public def constructor(str as string):
 		name = str
@@ -31,13 +27,13 @@ public class Material( ani.data.Player ):
 		units	= List[of meta.AdUnit]()
 		inputs	= List[of meta.Hermit]()
 		for me in mat.metaList:
-			mad = clone(me)
+			mad = clone(me) as meta.Advanced
 			metaList.Add(mad)
-			un = mad.unit
+			un = mad.Unit
 			continue	if not un
-			mad.unit = units.Find( genPred(un.Name) )
-			continue	if mad.unit
-			un = mad.unit = clone(un)
+			mad.Unit = units.Find( genPred(un.Name) )
+			continue	if mad.Unit
+			un = mad.Unit = clone(un)
 			units.Add(un)
 			inp = un.input
 			un.input = inputs.Find( genPred(inp.Name) )
@@ -47,41 +43,38 @@ public class Material( ani.data.Player ):
 
 	# update dictionary
 	public def link() as void:
-		dict.clear()
+		dict.Clear()
 		lis = List[of meta.IBase]()
 		def push(h as meta.IBase):
 			return if h in lis
 			h.link(dict)
 			lis.Add(h)
 		# unit name -> slot id
-		uDic = Dictionary[of string,int]()
+		ulis = List[of string]()
 		for m in metaList:
 			push(m)
-			u = m.unit
+			u = m.Unit
 			continue	if not u
 			push(u)
 			push(u.input)
-			nut = -1
-			if not uDic.TryGetValue(u.Name,nut):
-				nut = uDic.Count
-				uDic.Add(u.Name,nut)
-			assert nut <= lib.Const.offUnit
+			if not u.Name in ulis:
+				ulis.Add(u.Name)
 			# passing as unit_{meta}
-			dict.unit(u, m.Name, nut)
+			dict.unit(m.Name,u)
 	
 	# collect shaders for meta data
 	public def collect(melist as (string)) as shade.Object*:
-		dd = Dictionary[of shade.Object,meta.Hermit]()
-		def push(m as meta.Hermit):
-			dd[m.shader] = m	if m.shader
+		dd = Dictionary[of shade.Object,meta.IShaded]()
+		def push(m as meta.IShaded):
+			dd[m.Shader] = m	if m.Shader
 		cl = List[of (string)]()
 		for str in melist:
 			m = Meta[str]
 			return null	if not m
 			push(m)
-			u = m.unit
+			u = m.Unit
 			continue	if not u
-			push(u.input)
+			push( u.input )
 			cl.Add(( m.Name, u.Name, u.input.Name ))
 		dd[ load.Meta.MakeTexCoords(cl) ] = null
 		return dd.Keys
