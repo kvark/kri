@@ -27,9 +27,10 @@ public class Basic( kri.rend.Basic ):
 public class Meta(General):
 	private final lMets	as (string)
 	private final lOuts	as (string)
-	private final factory	= kri.shade.Linker( kri.Ant.Inst.slotAttributes )
 	protected shobs			= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.rep.Dict()
+	private final factory	= kri.shade.Linker(\
+		kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	
 	protected def constructor(name as string, outs as (string), *mets as (string)):
 		super(name)
@@ -50,4 +51,4 @@ public class Meta(General):
 	private override def construct(mat as kri.Material) as kri.shade.Smart:
 		sl = mat.collect(lMets)
 		return kri.shade.Smart.Fixed	if not sl
-		return factory.link( sl, (dict, mat.dict, kri.Ant.Inst.dict) )
+		return factory.link( sl, mat.dict )

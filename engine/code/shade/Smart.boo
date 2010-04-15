@@ -20,6 +20,11 @@ public class Smart(Program):
 		super()
 	private def constructor(xid as int):
 		super(xid)
+	public def constructor(sa as Smart):
+		super( sa.id )
+		repList.AddRange( sa.repList )
+		sourceList = array[of par.IBaseRoot]( sa.sourceList.Length )
+		sa.sourceList.CopyTo( sourceList, 0 )
 	
 	public def attribs(sl as kri.lib.Slot, *ats as (int)) as void:
 		for a in ats:

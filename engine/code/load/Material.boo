@@ -36,7 +36,7 @@ public partial class Native:
 			m.link()
 			# pass material texture to halo if needed
 			h  = m.Meta['halo']		as kri.meta.Halo
-			md = m.Meta['diffuse']	as kri.meta.Data_Color4
+			md = m.Meta['diffuse']	as kri.meta.Data[of Color4]
 			continue if not h or not md
 			h.Color = md.Value
 			if h.Shader == con.slib.halo_t2 and md.Unit:
@@ -103,7 +103,7 @@ public partial class Native:
 		br.ReadByte()	# shadeless
 		getReal()		# parallax
 		m.metaList.Add(Advanced( Name:'bump', Shader:con.slib.bump_c ))
-		m.metaList.Add(memi = Data_single('emissive'))
+		m.metaList.Add(memi = Data[of single]('emissive'))
 		memi.Shader = con.slib.emissive_u
 		memi.Value = getReal()
 		getReal()	# ambient
@@ -114,7 +114,7 @@ public partial class Native:
 	public def pm_diff() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		m.metaList.Add(mdif = Data_Color4('diffuse'))
+		m.metaList.Add(mdif = Data[of Color4]('diffuse'))
 		mdif.Value = getColorFull()
 		mdif.Shader = con.slib.diffuse_u
 		sh = { '': null,
@@ -127,10 +127,10 @@ public partial class Native:
 	public def pm_spec() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		mspec = Data_Color4('specular')
+		mspec = Data[of Color4]('specular')
 		mspec.Shader = con.slib.specular_u
 		mspec.Value = getColorFull()
-		mglos = Data_single('glossiness')
+		mglos = Data[of single]('glossiness')
 		mglos.Shader = con.slib.glossiness_u
 		mglos.Value = getReal()
 		mcomp = Advanced( Name:'comp_spec' )

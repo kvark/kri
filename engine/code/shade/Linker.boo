@@ -7,30 +7,28 @@ import System.Collections.Generic
 #-------------------------------#
 
 public class Linker:
-	private final attribs	as kri.lib.Slot
-	public final samap = Dictionary[of string,int]()
-	public onLink	as callable(kri.shade.Smart)	= null
+	private final aslot		as kri.lib.Slot
+	private final condict	as (rep.Dict)
+	public final samap = Dictionary[of string,Smart]()
+	public onLink	as callable(Smart)	= null
 	
-	public def constructor(ats as kri.lib.Slot):
-		attribs = ats
+	public def constructor(ats as kri.lib.Slot, *cad as (rep.Dict)):
+		aslot = ats
+		condict = array(cad)
 	
-	public def link(sl as kri.shade.Object*, dc as kri.shade.rep.Dict*) as kri.shade.Smart:
+	public def link(sl as Object*, dc as rep.Dict) as Smart:
 		key = join( (x.id.ToString() for x in sl), ',' )
-		sid = -1
-		if samap.TryGetValue(key,sid):
-			#sa = kri.shade.Smart( sid )
-			sa as kri.shade.Smart = null
+		sa as Smart = null
+		if samap.TryGetValue(key,sa):
+			sa = Smart(sa)
+			sa.fillPar(false,dc)
 			# yes, we will just fill the parameters for this program ID again
 			# it's not obvious, but texture units will be assigned to the old values,
 			# because the meta-data sets already matched (kri.load.meta.MakeTexCoords)
 		else:
-			sa = kri.shade.Smart()
-			onLink(sa)	if onLink
+			sa = Smart()
 			sa.add( *array(sl) )
-			sa.attribs( attribs )
-			sa.link()
-			# critical concept error here!
-			# we can't allow duplication of cached params
-			#samap.Add( key, sa.id )
-		sa.fillPar( true,*array(dc) ) 
+			onLink(sa)	if onLink
+			sa.link( aslot, *(condict+(dc,)) )
+			samap.Add(key,sa)
 		return sa

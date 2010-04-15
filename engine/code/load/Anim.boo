@@ -29,7 +29,7 @@ public partial class Native:
 	
 	private def racMatColor(name as string):
 		return rac(getColor) do(pl as IPlayer, v as Color4, i as byte):
-			((pl as kri.Material).Meta[name] as kri.meta.IValued[of Color4]).Value = v
+			((pl as kri.Material).Meta[name] as kri.meta.Data[of Color4]).Value = v
 	private def racProject(fun as callable(kri.Projector,single)):
 		return rac(getReal) do(pl as IPlayer, v as single, i as byte):
 			assert not i

@@ -4,11 +4,6 @@ import OpenTK
 import OpenTK.Graphics
 import kri.shade
 
-public interface IValued[of T(struct)]:
-	Value as T:
-		get
-		set
-
 
 #---	stand-alone meta interface	---#
 public interface IBase( par.INamed ):
@@ -69,6 +64,8 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 	public input	as Hermit		= null
 	public final pOffset	as par.Value[of Vector4]
 	public final pScale		as par.Value[of Vector4]
+	portal Offset	as Vector4	= pOffset.Value
+	portal Scale	as Vector4	= pScale.Value
 	
 	public def constructor(s as string):
 		super(s)
@@ -77,16 +74,14 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 	def IBase.clone() as IBase:
 		un = AdUnit(Name)
 		un.input = input
-		un.pOffset.Value	= pOffset.Value
-		un.pScale.Value		= pScale.Value
+		un.Offset	= Offset
+		un.Scale	= Scale
 		return un
 	def IBase.link(d as rep.Dict) as void:
 		d.var(pOffset,pScale)
 
 
 #---	real value meta-data	---#
-[ext.spec.Class(single,Color4,Vector4)]
-#[ext.RemoveSource()]
 public class Data[of T(struct)]( IAdvanced, par.Value[of T] ):
 	[Property(Unit)]
 	private unit	as AdUnit	= null
@@ -97,8 +92,7 @@ public class Data[of T(struct)]( IAdvanced, par.Value[of T] ):
 		super( 'mat_'+name )
 	public def constructor(un as AdUnit, sh as Object, pv as par.Value[of T]):
 		super( pv.Name )
-		unit = un
-		shader = sh
+		unit,shader = un,sh
 		Value = pv.Value
 	def IBase.clone() as IBase:
 		return Data[of T](unit,shader,self)

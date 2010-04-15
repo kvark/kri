@@ -70,16 +70,16 @@ public class Context:
 	
 	public def constructor():
 		mlis = mDef.metaList
-		mEmis = Data_single('emissive')
+		mEmis = Data[of single]('emissive')
 		mEmis.Shader = slib.emissive_u
 		mEmis.Value = 0f
-		mDiff = Data_Color4('diffuse')
+		mDiff = Data[of Color4]('diffuse')
 		mDiff.Shader = slib.diffuse_u
 		mDiff.Value = Color4.Gray
-		mSpec = Data_Color4('specular')
+		mSpec = Data[of Color4]('specular')
 		mSpec.Shader = slib.specular_u
 		mSpec.Value = Color4.Gray
-		mGlos = Data_single('glossiness')
+		mGlos = Data[of single]('glossiness')
 		mGlos.Shader = slib.glossiness_u
 		mGlos.Value = 50f
 		mlis.AddRange((of IAdvanced: mEmis,mDiff,mSpec,mGlos))
