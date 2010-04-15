@@ -313,23 +313,22 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 
 	class Face:
 		__slots__ = 'v', 'vi', 'no', 'uv', 'mat', 'ta', 'hand', 'normal', 'wes'
-		def __init__(self, face, vs, ind = None, uves = None):
+		def __init__(self, face, m, ind = None, uves = None):
 			if not ind: # clone KRI face
 				self.vi		= list(face.vi)
 				self.hand	= face.hand
 				self.mat	= face.mat
 				return
 			# this section requires optimization!
-			# todo: try tuples instead of lists
 			# hint: try 'Recalculate Outside' if getting lighting problems
 			self.mat = face.material_index
 			self.vi = [ face.verts[i]	for i in ind   ]
-			self.v  = [ vs[x]		for x in self.vi ]
-			self.no = [ x.normal		for x in self.v  ]
-			self.normal = (face.normal,Math.Vector(0,0,0))[face.smooth]
-			self.uv = [[ layer[i]	for i in ind ] for layer in uves]
+			self.v  = tuple( m.verts[x]	for x in self.vi )
+			self.no = tuple( x.normal	for x in self.v  )
+			self.normal = ( face.normal, Math.Vector(0,0,0) )[face.smooth]
+			self.uv = tuple(tuple( layer[i]	for i in ind ) for layer in uves)
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
-			self.wes = 3 * [0.1+nv.dot(nv)]
+			self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
 			assert t.dot(t) > 0.0
 			self.ta = t.normalize()
 			self.hand = hand
@@ -343,12 +342,10 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		uves,nvert = [],len(face.verts)
 		for layer in mesh.uv_textures:
 			d = layer.data[i]
-			cur = [Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4)]
+			cur = tuple(Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
 			uves.append(cur)
-		if nvert<3: continue
-		ar_face.append( Face(face, mesh.verts, [0,1,2], uves) )
-		if nvert<4: continue
-		ar_face.append( Face(face, mesh.verts, [0,2,3], uves) )
+		if nvert>=3:	ar_face.append( Face(face, mesh, (0,1,2), uves) )
+		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves) )
 	n_bad_uv = len(list( f for f in ar_face if f.hand==0.0 ))
 	if n_bad_uv:
 		print("\t(w) %d pure vertices detected" % (n_bad_uv))
@@ -397,7 +394,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 
 	#   4: unlock quaternions to make all the faces QI-friendly
 	def qi_check(f):	# check Quaternion Interpolation friendliness
-		qx = [ar_vert[x].quat for x in f.vi]
+		qx = tuple( ar_vert[x].quat for x in f.vi )
 		assert qx[0].dot(qx[1]) >= 0 and qx[0].dot(qx[2]) >= 0
 	def mark_used(ind):	# mark quaternion as used
 		v = ar_vert[ind]
@@ -416,14 +413,14 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			src = ar_vert[ f.vi[pos] ]
 			dst = Vertex(src.vert)
 			dst.face = f
-			dst.tex = [layer.copy() for layer in src.tex]
+			dst.tex = tuple( layer.copy() for layer in src.tex )
 			dst.quat = src.quat.copy().negate()
 			dst.dual = f.vi[pos]
 			f.vi[pos] = src.dual = len(ar_vert)
 			ar_vert.append(dst)
 			return 1
 		for j in range(3):
-			qx = [ar_vert[f.vi[x]].quat for x in (vx[j],vx[vx[j]])]
+			qx = tuple( ar_vert[f.vi[x]].quat for x in (vx[j],vx[vx[j]]) )
 			cs[j] = qx[0].dot(qx[1])
 			if cs[j] > cs[pos]: pos = j
 			if(cs[j] < 0): n_neg += 1
@@ -452,9 +449,9 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			v.coord = 0.5 * (va.coord + vb.coord)
 			v.quat = va.quat + vb.quat
 			v.quat.normalize()
-			v.tex = [ 0.5*(a[0]+a[1]) for a in zip(va.tex,vb.tex) ]
+			v.tex = tuple( 0.5*(a[0]+a[1]) for a in zip(va.tex,vb.tex) )
 			# create additional face
-			f2 = Face(f, mesh.verts)
+			f2 = Face(f, mesh)
 			mark_used(f.vi[ia])	# caution: easy to miss case
 			v.dual = f.vi[ia] = f2.vi[ib] = len(ar_vert)
 			# it's mathematically proven that both faces are QI friendly now!
@@ -694,8 +691,10 @@ def gather_anim_global(ob):
 ### 	 SCENE		###
 
 def save_scene(filename, context, doQuatInt=True):
-	print("\nExporting...")
+	import time
 	global out,file_ext
+	timeStart = time.clock()
+	print("\nExporting...")
 	if not filename.lower().endswith(file_ext):
 		filename += file_ext
 	out = Writer(filename)
@@ -737,6 +736,7 @@ def save_scene(filename, context, doQuatInt=True):
 			save_particle(ob,p)
 	print('Done.')
 	out.fx.close()
+	print('Export time:', time.clock()-timeStart)
 
 
 ### 	 EXPORT MODULE		###
