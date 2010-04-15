@@ -11,7 +11,8 @@ import kri.meta
 
 public static class Meta:
 	private corDict = Dictionary[of string,Object]()
-	public final LightSet	= ('bump','diffuse','specular','glossiness','comp_diff','comp_spec')
+	public final LightSet	= ('bump','comp_diff','comp_spec',\
+		'mat_diffuse','mat_specular','mat_glossiness')
 	
 	# this method constructs a shader object code that links together:
 	#	 meta_data - texture - coordinate_source
