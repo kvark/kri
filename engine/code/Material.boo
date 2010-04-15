@@ -27,7 +27,7 @@ public class Material( ani.data.Player ):
 		units	= List[of meta.AdUnit]()
 		inputs	= List[of meta.Hermit]()
 		for me in mat.metaList:
-			mad = clone(me) as meta.Advanced
+			mad = clone(me) as meta.IAdvanced
 			metaList.Add(mad)
 			un = mad.Unit
 			continue	if not un

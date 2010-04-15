@@ -13,6 +13,7 @@ public interface IBase( par.INamed ):
 public interface IUnited:
 	Unit as AdUnit:
 		get
+		set
 
 public interface IShaded:
 	Shader as Object:
