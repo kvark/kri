@@ -133,8 +133,9 @@ def Main(argv as (string)):
 		
 		tag = kri.kit.bake.Tag(256,256, 16,8, true)
 		ent.tags.Add(tag)
-		tval = kri.shade.par.Value[of kri.Texture](null)
-		tval.Value = tag.tVert
+		#proxy = kri.shade.par.UnitProxy({ return tag.tVert })
+		#proxy = kri.shade.par.UnitProxy({ return view.con.Depth })
+		#proxy = kri.shade.par.UnitProxy({ return view.scene.lights[0].depth })
 		
 		ps = createParticle(ent)
 		view.scene.particles.Add(ps)
@@ -142,13 +143,14 @@ def Main(argv as (string)):
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
 		rlis.Add( kri.rend.Particles(true,false) )
-		rlis.Add( RenderPoints() )
+		#rlis.Add( RenderPoints() )
 		if 'Light':
-			licon = kri.rend.light.Context(2,6)
-			licon.setExpo(120f, 0.5f)
+			licon = kri.rend.light.Context(2,8)
+			#licon.setExpo(120f, 0.5f)
 			rlis.Add( kri.rend.light.Fill(licon) )
 			rlis.Add( kri.rend.light.Apply(licon) )
-			#rlis.Add( kri.rend.debug.Map(tval) )
+			#rlis.Add( kri.rend.debug.Map(true,proxy) )
+			#rlis.Add( kri.rend.FilterCopy() )
 		
 		ant.anim = al = kri.ani.Scheduler()
 		al.add( kri.ani.ControlMouse(ent.node,0.002f) )

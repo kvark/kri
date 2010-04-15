@@ -163,12 +163,12 @@ public def cube(scale as Vector3) as kri.Mesh:
 	vi = (0,4,5,1, 4,6,7,5, 6,2,3,7, 2,0,1,3, 2,6,4,0, 1,5,7,3)
 	ang = 0.5f * PI
 	quats = (of Quaternion:
-		Quaternion.FromAxisAngle( Vector3.UnitX, ang ),
-		Quaternion.Identity,
-		Quaternion.FromAxisAngle( Vector3.UnitX, -ang ),
-		Quaternion.FromAxisAngle( Vector3.UnitX, ang+ang ),
-		Quaternion.FromAxisAngle( Vector3.UnitY, -ang ),
-		Quaternion.FromAxisAngle( Vector3.UnitY, ang )
+		Quaternion.FromAxisAngle( Vector3.UnitX, ang ),		#-Y
+		Quaternion.Identity,								#+Z
+		Quaternion.FromAxisAngle( Vector3.UnitX, -ang ),	#+Y
+		Quaternion.FromAxisAngle( Vector3.UnitX, ang+ang ),	#-Z
+		Quaternion.FromAxisAngle( Vector3.UnitY, -ang ),	#-X
+		Quaternion.FromAxisAngle( Vector3.UnitY, ang )		#+X
 		)
 	md.v = array( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24))
 	offsets = (of ushort: 0,3,2,0,2,1)
@@ -187,7 +187,7 @@ private def octahedron(scale as Vector3) as MeshData:
 		-Vector3.UnitY, Vector3.UnitZ)
 	vert = array(Vector4( Vector3.Multiply(scale,x),1f ) for x in ar)
 	# no quaternions needed at this stage
-	md.v = array(Vertex(vert[i],Quaternion.Identity) for i in range(ar.Length))
+	md.v = array(Vertex(v,Quaternion.Identity) for v in vert)
 	md.i = (of ushort: 0,1,4, 0,2,1, 0,3,2, 0,4,3, 5,4,1, 5,1,2, 5,2,3, 5,3,4)
 	return md
 
@@ -206,14 +206,14 @@ public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
 	for i in range( md.v.Length ):
 		rv = md.v[i].pos.Xyz
 		xyz = rv.LengthFast
-		alpha = Asin(rv.Z / xyz)
+		alpha = 0.5f*PI - Asin(rv.Z / xyz)
 		xy = rv.Xy.LengthFast
-		if xy > 0.0:
+		if xy > 1e-10f:
 			beta = Asin(rv.Y / xy)
-			if rv.X < 0.0:	beta = PI+PI-beta
+			if rv.X < 0f: beta = PI-beta
 		else: beta = 0f
 		md.v[i].rot =\
-			Quaternion.FromAxisAngle( Vector3.UnitY, alpha )*\
-			Quaternion.FromAxisAngle( Vector3.UnitZ, beta )
+			Quaternion.FromAxisAngle( Vector3.UnitZ, beta )*\
+			Quaternion.FromAxisAngle( Vector3.UnitY, alpha )	
 	# finish
 	return md.generate()

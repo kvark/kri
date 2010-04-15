@@ -8,9 +8,9 @@ public class Map( kri.rend.Basic ):
 	private final sa	= Smart()
 	public final layer	= par.Value[of single]('layer')
 	
-	public def constructor(t as par.IBase[of kri.Texture]):
+	public def constructor(depth as bool, t as par.IBase[of kri.Texture]):
 		super(false)
-		sa.add( 'copy_v', 'copy_f' )
+		sa.add( 'copy_v', ('copy_f','/show_depth_f')[depth] )
 		dict = kri.shade.rep.Dict()
 		dict.unit( 'input', t )
 		dict.var(layer)

@@ -1,7 +1,5 @@
 ﻿namespace kri.shade.par
 
-import System
-
 #-----------------------#
 #	AUTO PARAMETERS 	#
 #-----------------------#
@@ -25,3 +23,11 @@ public class Value[of T](IBase[of T],INamed):
 	private final name	as string
 	public def constructor(s as string):
 		name = s
+
+
+public class UnitProxy(IBase[of kri.Texture]):
+	private final fun as callable() as kri.Texture
+	public def constructor(f as callable() as kri.Texture):
+		fun = f
+	public Value as kri.Texture:
+		get: return fun()

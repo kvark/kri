@@ -1,12 +1,9 @@
 ﻿namespace kri.shade
 
-import System
-import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
-
 #-----------------------#
-#	ADVANCED SHADER 	#
+#	SMART SHADER 		#
 #-----------------------#
 
 public class Smart(Program):
@@ -21,8 +18,8 @@ public class Smart(Program):
 	private def constructor(xid as int):
 		super(xid)
 	public def constructor(sa as Smart):
-		super( sa.id )
-		repList.AddRange( sa.repList )
+		super( sa.id )	# cloning
+		repList.Extend( sa.repList )
 		sourceList = array[of par.IBaseRoot]( sa.sourceList.Length )
 		sa.sourceList.CopyTo( sourceList, 0 )
 	
