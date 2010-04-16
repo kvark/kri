@@ -1,5 +1,7 @@
 #version 130
 
+uniform float mat_emissive;
+
 vec4 get_bump();
 vec4 get_diffuse();
 vec4 get_specular();
@@ -23,7 +25,7 @@ void main()	{
 	vec3 w_norm = qrot(normalize(quat), bump);
 	float glossy = 0.01 * get_glossiness();
 	
-	c_diffuse =	get_diffuse();
+	c_diffuse =	vec4( get_diffuse().xyz, mat_emissive );
 	c_specular =	get_specular();
 	c_normal =	vec4(vec3(0.5) + 0.5*w_norm, glossy);
 }

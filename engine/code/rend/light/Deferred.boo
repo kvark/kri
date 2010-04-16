@@ -56,13 +56,13 @@ public class Apply( Basic ):
 		context = lc
 		gbuf.Value = gt
 		# fill shader
+		d = kri.shade.rep.Dict()
+		d.unit(texDep, gbuf, texLit)
 		s0.add( 'copy_v', '/g/init_f' )
-		s0.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		s0.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 		# light shader
 		sa.add( '/g/apply_v', '/g/apply_f', 'quat','tool','defer' )
 		sa.add( '/mod/lambert_f', '/mod/phong_f' )
-		d = kri.shade.rep.Dict()
-		d.unit(texDep, gbuf, texLit)
 		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
 		# bake sphere attribs
 		va.bind()	# the buffer objects are bound in creation
