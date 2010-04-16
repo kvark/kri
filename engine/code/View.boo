@@ -51,6 +51,10 @@ public class Light(Projector,IColored):
 	# parallel projection
 	public def makeDirectional(radius as single) as void:
 		fov = -2f / radius
+	public def setLimit(radius as single) as void:
+		rangeIn = 0
+		rangeOut = radius
+		sphere = 1f / radius
 
 
 

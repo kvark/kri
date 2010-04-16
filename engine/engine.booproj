@@ -71,8 +71,9 @@
     <Compile Include="code\part\Behavior.boo" />
     <Compile Include="code\rend\Context.boo" />
     <Compile Include="code\rend\Debug.boo" />
+    <Compile Include="code\rend\defer\Apply.boo" />
+    <Compile Include="code\rend\defer\Main.boo" />
     <Compile Include="code\rend\light\Context.boo" />
-    <Compile Include="code\rend\light\Deferred.boo" />
     <Compile Include="code\rend\light\Omni.boo" />
     <Compile Include="code\rend\light\Simple.boo" />
     <Compile Include="code\rend\Main.boo" />
@@ -154,6 +155,7 @@
     <Folder Include="code\ani" />
     <Folder Include="code\lib" />
     <Folder Include="code\kit" />
+    <Folder Include="code\rend\defer" />
     <Folder Include="code\rend\part" />
     <Folder Include="code\sound" />
     <Folder Include="code\res" />

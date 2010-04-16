@@ -40,7 +40,7 @@ public class Basic( kri.meta.IBase ):
 #---------------------------------------------------#
 
 public class Pad(Basic):
-	public final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
+	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
 	public def constructor():
 		super('/part/beh/pad')
 		semantics.Add( kri.vb.attr.Info(
