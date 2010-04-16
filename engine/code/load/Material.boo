@@ -36,7 +36,7 @@ public partial class Native:
 			m.link()
 			# pass material texture to halo if needed
 			h  = m.Meta['halo']			as kri.meta.Halo
-			md = m.Meta['mat_diffuse']	as kri.meta.Data[of Color4]
+			md = m.Meta['diffuse']	as kri.meta.Data[of Color4]
 			continue if not h or not md
 			h.Color = md.Value
 			if h.Shader == con.slib.halo_t2 and md.Unit:
@@ -57,8 +57,8 @@ public partial class Native:
 		m = geData[of kri.Material]()
 		return false	if not m
 		tarDict = Dictionary[of string,MapTarget]()
-		tarDict['colordiff']		= MapTarget( 'diffuse',		con.slib.diffuse_t2 )
-		tarDict['coloremission']	= MapTarget( 'emissive',	con.slib.emissive_t2 )
+		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
+		tarDict['coloremission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		# map targets
 		u as AdUnit = null
 		while (name = getString()) != '':
@@ -138,7 +138,7 @@ public partial class Native:
 			'COOKTORR':	con.slib.cooktorr,
 			'PHONG':	con.slib.phong
 			}[ getString() ]
-		m.metaList.AddRange((of IAdvanced: mspec,mglos,mcomp))
+		m.metaList.AddRange((mspec,mglos,mcomp))
 		return true
 
 	

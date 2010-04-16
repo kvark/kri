@@ -13,14 +13,10 @@ public interface IBase( par.INamed ):
 public interface IUnited:
 	Unit as AdUnit:
 		get
-		set
 
 public interface IShaded:
 	Shader as Object:
 		get
-
-public interface IAdvanced(IBase,IShaded,IUnited):
-	pass
 
 
 #---	Named meta-data with shader		---#
@@ -53,7 +49,7 @@ public class InputObject(Hermit):
 
 
 #---	Advanced meta-data with unit link	---#
-public class Advanced(IAdvanced,Hermit):
+public class Advanced(IUnited,Hermit):
 	[Property(Unit)]
 	private unit	as AdUnit	= null
 	def IBase.clone() as IBase:
@@ -83,22 +79,19 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 
 
 #---	real value meta-data	---#
-public class Data[of T(struct)]( IAdvanced, par.Value[of T] ):
-	[Property(Unit)]
-	private unit	as AdUnit	= null
-	[Property(Shader)]
-	private shader	as Object	= null
-
-	public def constructor(name as string):
-		super( 'mat_'+name )
-	public def constructor(un as AdUnit, sh as Object, pv as par.Value[of T]):
-		super( pv.Name )
-		unit,shader = un,sh
-		Value = pv.Value
+public class Data[of T(struct)]( Advanced ):
+	private final data	as par.Value[of T]
+	portal Value	as T	= data.Value
+	
+	public def constructor(s as string):
+		data = par.Value[of T]( 'mat_'+s )
+		Name = s
 	def IBase.clone() as IBase:
-		return Data[of T](unit,shader,self)
+		d2 = Data[of T](Name)
+		d2.Value = Value
+		return copyTo(d2)
 	def IBase.link(d as rep.Dict) as void:
-		d.var(self)
+		d.var(data)
 
 
 

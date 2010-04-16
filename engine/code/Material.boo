@@ -7,8 +7,8 @@ public class Material( ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.rep.Dict()
 	public final tech	= array[of shade.Smart]( lib.Const.nTech )
-	public final metaList = List[of meta.IAdvanced]()
-	public Meta[str as string] as meta.IAdvanced:
+	public final metaList = List[of meta.Advanced]()
+	public Meta[str as string] as meta.Advanced:
 		get: return metaList.Find({m| return m.Name == str})
 	
 	public def constructor(str as string):
@@ -27,7 +27,7 @@ public class Material( ani.data.Player ):
 		units	= List[of meta.AdUnit]()
 		inputs	= List[of meta.Hermit]()
 		for me in mat.metaList:
-			mad = clone(me) as meta.IAdvanced
+			mad = clone(me) as meta.Advanced
 			metaList.Add(mad)
 			un = mad.Unit
 			continue	if not un

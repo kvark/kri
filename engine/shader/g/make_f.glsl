@@ -9,7 +9,8 @@ vec3 qrot(vec4 q, vec3 v)	{
 	return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
 }
 
-in vec4 v2cam, quat;
+float handness;
+in vec4 quat;
 in vec4 coord_text, coord_bump;
 
 out vec4 c_diffuse;
@@ -19,7 +20,7 @@ out vec4 c_normal;
 
 void main()	{
 	vec3 w_norm = qrot(normalize(quat), get_bump().xyz);
-	w_norm.x *= v2cam.w;	//applying handness
+	w_norm.x *= handness;	//applying handness
 	float glossy = 0.01 * get_glossiness();
 	
 	c_diffuse =	get_diffuse();

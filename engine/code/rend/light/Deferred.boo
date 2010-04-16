@@ -48,7 +48,8 @@ public class Apply( Basic ):
 	private final texLit	= kri.shade.par.Value[of kri.Texture]('light')
 	private final texDep	= kri.shade.par.Value[of kri.Texture]('depth')
 	private final context	as light.Context
-	private final pArea	= kri.shade.par.Value[of OpenTK.Vector4]('area')
+	private final pArea		= kri.shade.par.Value[of OpenTK.Vector4]('area')
+	private final sphere	= kri.kit.gen.sphere(2, OpenTK.Vector3.One)
 	# init
 	public def constructor(gt as kri.Texture, lc as light.Context):
 		super(false)
@@ -87,7 +88,7 @@ public class Apply( Basic ):
 	# work
 	public override def process(con as Context) as void:
 		con.activate()
-		assert 'not ready'
+		#con.activate(true,0f,false)
 		con.Depth.bind()
 		kri.Texture.Filter(false,false)
 		kri.Texture.Shadow(false)
@@ -95,6 +96,8 @@ public class Apply( Basic ):
 		s0.use()
 		kri.Ant.Inst.emitQuad()
 		# add lights
+		#GL.CullFace( CullFaceMode.Front )
+		#GL.DepthFunc( DepthFunction.Gequal )
 		using blend = kri.Blender():
 			blend.add()
 			for l in kri.Scene.current.lights:
@@ -102,4 +105,7 @@ public class Apply( Basic ):
 				bindShadow( l.depth )
 				kri.Ant.Inst.params.activate(l)
 				sa.use()
+				#sphere.draw()
 				kri.Ant.Inst.emitQuad()
+		#GL.CullFace( CullFaceMode.Back )
+		#GL.DepthFunc( DepthFunction.Lequal )

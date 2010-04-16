@@ -12,7 +12,7 @@ import kri.meta
 public static class Meta:
 	private corDict = Dictionary[of string,Object]()
 	public final LightSet	= ('bump','comp_diff','comp_spec',\
-		'mat_diffuse','mat_specular','mat_glossiness')
+		'diffuse','specular','glossiness')
 	
 	# this method constructs a shader object code that links together:
 	#	 meta_data - texture - coordinate_source
@@ -83,7 +83,7 @@ public class Context:
 		mGlos = Data[of single]('glossiness')
 		mGlos.Shader = slib.glossiness_u
 		mGlos.Value = 50f
-		mlis.AddRange((of IAdvanced: mEmis,mDiff,mSpec,mGlos))
+		mlis.AddRange((mEmis,mDiff,mSpec,mGlos))
 		mlis.Add(Advanced	( Name:'bump', 		Shader:slib.bump_c ))
 		mlis.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
 		mlis.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
