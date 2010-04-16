@@ -7,11 +7,11 @@ import OpenTK
 
 # Shader Parameter Library
 public final class Param:
-	public final modelView	= par.spa.Shared( Name:'s_model' )	# object->world
+	public final modelView	= par.spa.Shared('s_model')	# object->world
 	public final light		= par.Light()
-	public final litView	= par.spa.Shared( Name:'s_lit' )	# light->world
+	public final litView	= par.spa.Shared('s_lit')	# light->world
 	public final litProj	= par.Project('lit')	# light projection
-	public final camView	= par.spa.Shared( Name:'s_cam' )	# camera->world
+	public final camView	= par.spa.Shared('s_cam')	# camera->world
 	public final camProj	= par.Project('cam')	# camera projection
 	public final parSize	= kri.shade.par.Value[of Vector4]('screen_size')	# viewport size
 	public final parTime	= kri.shade.par.Value[of Vector4]('cur_time')		# task time & delta

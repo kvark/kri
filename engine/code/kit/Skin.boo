@@ -37,7 +37,7 @@ public def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
 public class Update( kri.rend.tech.Basic ):
 	private final tf	= kri.TransFeedback(1)
 	private final sa	= kri.shade.Smart()
-	private final par	= array( kri.lib.par.spa.Shared( Name:"bone[${i}]" ) for i in range(80) )
+	private final par	= array( kri.lib.par.spa.Shared("bone[${i}]") for i in range(80) )
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	as (int)
 

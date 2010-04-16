@@ -47,22 +47,21 @@ vec3 unproject(vec3 v, vec4 pr)	{
 }
 
 //---	VARYINGS	---//
-
-in vec2 tex_coord;
 out vec4 rez_color;
 
 
 //---	MAIN	---//
 
 void main()	{
-	float depth = texture(unit_depth, screen_size.xy*tex_coord).r;
-	vec3 p_camera = unproject( vec3(tex_coord,depth), proj_cam );
+	float depth = texture(unit_depth, gl_FragCoord.xy).r;
+	vec2 tc = gl_FragCoord.xy / screen_size.xy;
+	vec3 p_camera = unproject( vec3(tc,depth), proj_cam );
 	vec3 p_world	= trans_for(p_camera, s_cam);
 	vec3 p_light	= trans_inv(p_world, s_lit);
 	
-	vec4 g_diffuse	= texture(unit_gbuf, vec3(tex_coord,0.0));
-	vec4 g_specular	= texture(unit_gbuf, vec3(tex_coord,1.0));
-	vec4 g_normal	= texture(unit_gbuf, vec3(tex_coord,2.0));
+	vec4 g_diffuse	= texture(unit_gbuf, vec3(tc,0.0));
+	vec4 g_specular	= texture(unit_gbuf, vec3(tc,1.0));
+	vec4 g_normal	= texture(unit_gbuf, vec3(tc,2.0));
 	vec3 normal = 2.0*g_normal.xyz - vec3(1.0);	//world space
 	// no normalization needed for 1-to-1 G-buffer
 	
@@ -73,7 +72,7 @@ void main()	{
 	float spec = comp_specular( normal, v2lit, v2cam, 100.0*g_normal.w );
 
 	float intensity = get_attenuation( length(v_lit) );
-	if( intensity*(diff+spec) < 0.01 ) discard;
-	//todo: use alpha for discard
+	//no need for discard, because we are drawing a sphere with depth test
+	//if( intensity*(diff+spec) < 0.01 ) discard;
 	rez_color = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
 }

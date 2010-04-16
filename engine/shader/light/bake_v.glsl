@@ -12,7 +12,7 @@ out float depth;
 
 void main()	{
 	vec3 v = fixed_trans(s_lit);
-	depth = (v.z + range_lit.x) * range_lit.y;
+	depth = (v.z + range_lit.x) * range_lit.z;
 	vec4 pos = get_projection(v, proj_lit);
 	gl_Position = vec4(pos.xyz, mix(1.0, pos.w, lit_data.y));
 }

@@ -4,25 +4,6 @@ import OpenTK
 import kri.shade
 import kri.meta
 
-#---	Basic spatial param holder	---#
-
-public class Basic( IBase ):
-	[Property(Name)]
-	private name	as string	= null
-	public final position		as par.IBase[of Vector4]
-	public final orientation	as par.IBase[of Vector4]
-	
-	def IBase.clone() as IBase:
-		return self	# stub
-	def IBase.link(d as rep.Dict) as void:
-		d[name+'.pos']	= position
-		d[name+'.rot']	= orientation
-	public def constructor(*var as (par.IBase[of Vector4])):
-		position,orientation = var[0],var[1]
-	public abstract def activate(n as kri.Node) as void:
-		pass
-
-
 #---	Simple parameter getters	---#
 public def getPos(ref s as kri.Spatial) as Vector4:
 	return Vector4(s.pos, s.scale)
@@ -31,22 +12,37 @@ public def getRot(ref s as kri.Spatial) as Vector4:
 
 
 #---	Shared spatial, used for the camera,model,light & bones	---#
-public class Shared(Basic):
-	public def activate(ref s as kri.Spatial) as void:
-		(position		as par.Value[of Vector4]).Value	= getPos(s)
-		(orientation	as par.Value[of Vector4]).Value	= getRot(s)
-	public override def activate(n as kri.Node) as void:
+public class Shared(IBase):
+	[Getter(Name)]
+	private final name	as string
+	public final position	as par.Value[of Vector4]
+	public final rotation 	as par.Value[of Vector4]
+	
+	public def constructor(s as string):
+		name = s
+		position = par.Value[of Vector4](s+'.pos')
+		rotation = par.Value[of Vector4](s+'.rot')
+	public def activate(ref sp as kri.Spatial) as void:
+		position.Value = getPos(sp)
+		rotation.Value = getRot(sp)
+	public def activate(n as kri.Node) as void:
 		sp = (n.World if n else kri.Spatial.Identity)
 		activate(sp)
-	public def constructor():
-		super( par.Value[of Vector4](null), par.Value[of Vector4](null) )
+	
+	def IBase.clone() as IBase:
+		sh = Shared(name)
+		sh.position.Value = position.Value
+		sh.rotation.Value = rotation.Value
+		return sh
+	def IBase.link(d as rep.Dict) as void:
+		d.var(position,rotation)
 
 
 #---	Linked value	---#
 public class TransVal( par.IBase[of Vector4] ):
-	public node		as kri.Node = null
+	public node			as kri.Node = null
 	public final fun	as callable(ref kri.Spatial) as Vector4
-	public Value	as Vector4:
+	public Value		as Vector4:
 		get:
 			assert node and fun
 			s = node.World
@@ -54,12 +50,25 @@ public class TransVal( par.IBase[of Vector4] ):
 	public def constructor(f as callable(ref kri.Spatial) as Vector4):
 		fun = f
 
+
 #---	Linked spatial to a concrete node, doesn't online interaction	---#
-public class Linked(Basic):
-	public def constructor():
-		super( TransVal(getPos), TransVal(getRot) )
-	public override def activate(n as kri.Node) as void:
-		for sv in (position,orientation):
-			(sv as TransVal).node = n
+public class Linked(IBase):
+	[Getter(Name)]
+	private final name	as string
+	public final position	= TransVal(getPos)
+	public final rotation 	= TransVal(getRot)
+
+	public def constructor(s as string):
+		name = s
+	public def activate(n as kri.Node) as void:
+		position.node = rotation.node = n
 	public def extract() as kri.Node:
-		return (position as TransVal).node
+		return position.node
+
+	def IBase.clone() as IBase:
+		ln = Linked(name)
+		ln.activate( extract() )
+		return ln
+	def IBase.link(d as rep.Dict) as void:
+		d[Name+'.pos']	= position
+		d[Name+'.rot']	= rotation

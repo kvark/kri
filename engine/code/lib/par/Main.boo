@@ -41,7 +41,7 @@ public final class Project( IBase ):
 	public def activate(p as kri.Projector) as void:
 		div = 1f / (p.rangeIn - p.rangeOut)
 		dad = div *(p.rangeIn + p.rangeOut)
-		range.Value = Vector4(p.rangeIn, div, 0f,0f)
+		range.Value = Vector4(p.rangeIn, p.rangeOut, div, 0f)
 		if p.fov > 0f:
 			tn = 1f / System.Math.Tan(p.fov)
 			data.Value = Vector4(tn, tn * p.aspect, dad,

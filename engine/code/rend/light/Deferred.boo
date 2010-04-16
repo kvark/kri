@@ -44,14 +44,14 @@ public class Fill( tech.Meta ):
 public class Apply( Basic ):
 	protected final s0	= kri.shade.Smart()
 	protected final sa	= kri.shade.Smart()
+	protected final va	= kri.vb.Array()
+	private final texDep	= kri.shade.par.Value[of kri.Texture]('depth')
 	private final gbuf		= kri.shade.par.Value[of kri.Texture]('gbuf')
 	private final texLit	= kri.shade.par.Value[of kri.Texture]('light')
-	private final texDep	= kri.shade.par.Value[of kri.Texture]('depth')
 	private final context	as light.Context
-	private final pArea		= kri.shade.par.Value[of OpenTK.Vector4]('area')
-	private final sphere	= kri.kit.gen.sphere(2, OpenTK.Vector3.One)
+	private final sphere	as kri.Mesh
 	# init
-	public def constructor(gt as kri.Texture, lc as light.Context):
+	public def constructor(gt as kri.Texture, lc as light.Context, qord as byte):
 		super(false)
 		context = lc
 		gbuf.Value = gt
@@ -60,23 +60,14 @@ public class Apply( Basic ):
 		s0.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 		# light shader
 		d = kri.shade.rep.Dict()
-		d.var(pArea)
-		d.unit(gbuf,texLit,texDep)
-		pArea.Value = OpenTK.Vector4( 0f,0f,0f,1f )
-		sa.add( '/g/apply_v', '/g/apply_f' )
+		d.unit(texDep,gbuf,texLit)
+		sa.add( '/g/apply_v', '/g/apply_f', 'quat','tool' )
 		sa.add( '/mod/lambert_f', '/mod/phong_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
-	# calculate
-	private def setArea(l as kri.Light) as void:
-		c = kri.Camera.Current
-		scam = c.node.World
-		sp = slit = l.node.World
-		scam.inverse()
-		sp.combine( slit, scam )
-		p0 = c.project( sp.pos )
-		p2 = sp.pos + OpenTK.Vector3(1f,1f,0f) * (l.rangeOut * sp.scale)
-		p1 = c.project(p2) - p0
-		pArea.Value = OpenTK.Vector4( p0.X, p0.Y, p1.X, p1.Y )
+		# bake sphere attribs
+		va.bind()	# the buffer objects are bound in creation
+		sphere = kri.kit.gen.sphere( qord, OpenTK.Vector3.One )
+		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 	# shadow 
 	private def bindShadow(t as kri.Texture) as void:
 		if t:
@@ -84,28 +75,30 @@ public class Apply( Basic ):
 			t.bind()
 			kri.Texture.Filter(false,false)
 			kri.Texture.Shadow(false)
-		else: context.defShadow.bind()
+		else:
+			texLit.Value = context.defShadow
 	# work
 	public override def process(con as Context) as void:
 		con.activate()
-		#con.activate(true,0f,false)
-		con.Depth.bind()
+		texDep.Value = con.Depth
+		texDep.Value.bind()
 		kri.Texture.Filter(false,false)
 		kri.Texture.Shadow(false)
 		# initial fill
 		s0.use()
 		kri.Ant.Inst.emitQuad()
+		# enable depth check
+		con.activate(true,0f,false)
+		GL.CullFace( CullFaceMode.Front )
+		GL.DepthFunc( DepthFunction.Gequal )
+		va.bind()
 		# add lights
-		#GL.CullFace( CullFaceMode.Front )
-		#GL.DepthFunc( DepthFunction.Gequal )
 		using blend = kri.Blender():
 			blend.add()
 			for l in kri.Scene.current.lights:
-				setArea(l)
 				bindShadow( l.depth )
 				kri.Ant.Inst.params.activate(l)
 				sa.use()
-				#sphere.draw()
-				kri.Ant.Inst.emitQuad()
-		#GL.CullFace( CullFaceMode.Back )
-		#GL.DepthFunc( DepthFunction.Lequal )
+				sphere.draw()
+		GL.CullFace( CullFaceMode.Back )
+		GL.DepthFunc( DepthFunction.Lequal )

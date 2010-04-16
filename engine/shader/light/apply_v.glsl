@@ -45,6 +45,6 @@ void main()	{
 	
 	// vertex in light space
 	vec3 vl = trans_inv(v, s_lit);
-	lit_depth = (range_lit.x + vl.z) * range_lit.y;
+	lit_depth = (range_lit.x + vl.z) * range_lit.z;
 	v_shadow = get_projection(vl,proj_lit);
 }

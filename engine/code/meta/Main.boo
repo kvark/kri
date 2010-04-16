@@ -38,7 +38,7 @@ public class Hermit(IBase,IShaded):
 
 #---	Map Input : OBJECT		---#
 public class InputObject(Hermit):
-	public final pNode	= kri.lib.par.spa.Linked( Name:'s_target' )
+	public final pNode	= kri.lib.par.spa.Linked('s_target')
 	#don't inherit as the name is different
 	def IBase.clone() as IBase:
 		ib = InputObject()
