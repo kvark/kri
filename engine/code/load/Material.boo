@@ -102,10 +102,9 @@ public partial class Native:
 		return false	if not m
 		br.ReadByte()	# shadeless
 		getReal()		# parallax
-		m.metaList.Add(Advanced( Name:'bump', Shader:con.slib.bump_c ))
-		m.metaList.Add(memi = Data[of single]('emissive'))
-		memi.Shader = con.slib.emissive_u
-		memi.Value = getReal()
+		m.metaList.Add( Advanced( Name:'bump', Shader:con.slib.bump_c ))
+		m.metaList.Add( Data[of single]('emissive',\
+			con.slib.emissive_u, getReal() ))
 		getReal()	# ambient
 		getReal()	# translucency
 		return true
@@ -114,9 +113,8 @@ public partial class Native:
 	public def pm_diff() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		m.metaList.Add(mdif = Data[of Color4]('diffuse'))
-		mdif.Value = getColorFull()
-		mdif.Shader = con.slib.diffuse_u
+		m.metaList.Add( Data[of Color4]('diffuse',\
+			con.slib.diffuse_u,	getColorFull() ))
 		sh = { '': null,
 			'LAMBERT':	con.slib.lambert
 			}[ getString() ]
@@ -127,18 +125,15 @@ public partial class Native:
 	public def pm_spec() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		mspec = Data[of Color4]('specular')
-		mspec.Shader = con.slib.specular_u
-		mspec.Value = getColorFull()
-		mglos = Data[of single]('glossiness')
-		mglos.Shader = con.slib.glossiness_u
-		mglos.Value = getReal()
-		mcomp = Advanced( Name:'comp_spec' )
-		mcomp.Shader = {
+		m.metaList.Add( Data[of Color4]('specular',\
+			con.slib.specular_u,	getColorFull() ))
+		m.metaList.Add( Data[of single]('glossiness',\
+			con.slib.glossiness_u,	getReal() ))
+		sh = {
 			'COOKTORR':	con.slib.cooktorr,
 			'PHONG':	con.slib.phong
 			}[ getString() ]
-		m.metaList.AddRange((mspec,mglos,mcomp))
+		m.metaList.Add( Advanced( Name:'comp_spec', Shader:sh ))
 		return true
 
 	

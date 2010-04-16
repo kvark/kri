@@ -83,13 +83,15 @@ public class Data[of T(struct)]( Advanced ):
 	private final data	as par.Value[of T]
 	portal Value	as T	= data.Value
 	
-	public def constructor(s as string):
+	public def constructor(s as string, sh as Object, val as T):
 		data = par.Value[of T]( 'mat_'+s )
 		Name = s
+		Shader = sh
+		Value = val
 	def IBase.clone() as IBase:
-		d2 = Data[of T](Name)
-		d2.Value = Value
-		return copyTo(d2)
+		d2 = Data[of T](Name,Shader,Value)
+		d2.Unit = Unit
+		return d2
 	def IBase.link(d as rep.Dict) as void:
 		d.var(data)
 

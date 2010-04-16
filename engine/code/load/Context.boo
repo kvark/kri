@@ -71,19 +71,10 @@ public class Context:
 	
 	public def constructor():
 		mlis = mDef.metaList
-		mEmis = Data[of single]('emissive')
-		mEmis.Shader = slib.emissive_u
-		mEmis.Value = 0f
-		mDiff = Data[of Color4]('diffuse')
-		mDiff.Shader = slib.diffuse_u
-		mDiff.Value = Color4.Gray
-		mSpec = Data[of Color4]('specular')
-		mSpec.Shader = slib.specular_u
-		mSpec.Value = Color4.Gray
-		mGlos = Data[of single]('glossiness')
-		mGlos.Shader = slib.glossiness_u
-		mGlos.Value = 50f
-		mlis.AddRange((mEmis,mDiff,mSpec,mGlos))
+		mlis.Add( Data[of single]('emissive',	slib.emissive_u,	0f ))
+		mlis.Add( Data[of Color4]('diffuse',	slib.diffuse_u,		Color4.Gray ))
+		mlis.Add( Data[of Color4]('specular',	slib.specular_u,	Color4.Gray ))
+		mlis.Add( Data[of single]('glossiness',	slib.glossiness_u,	50f ))
 		mlis.Add(Advanced	( Name:'bump', 		Shader:slib.bump_c ))
 		mlis.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
 		mlis.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
