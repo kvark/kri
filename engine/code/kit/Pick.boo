@@ -62,7 +62,7 @@ public class Render( kri.rend.Basic ):
 			e.enable( true, (kri.Ant.Inst.attribs.vertex,) )
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			sa.use()
-			e.mesh.draw()
+			e.mesh.draw(1)
 		if not 'Debug':
 			con.activate(true,0f,false)
 			pTex.Value = buf.A[0].Tex

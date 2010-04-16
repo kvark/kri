@@ -62,7 +62,7 @@ public class Smart(Program):
 		GL.GetProgram(id, ProgramParameter.ActiveUniforms, num)
 		if reset:
 			GL.UseProgram(id)	# for texture units
-			sourceList = array[of par.IBaseRoot](num)
+			sourceList = array[of par.IBaseRoot](num+1)	#todo: fix number
 			repList.Clear()
 		nar = ( GL.GetActiveUniformName(id,i) for i in range(num) )
 		for name in nar:

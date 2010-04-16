@@ -15,7 +15,7 @@ public class Physics:
 		assert tid>=0
 		for e in scene.entities:
 			e.va[tid].bind()
-			e.mesh.draw()
+			e.mesh.draw(1)
 
 	public def tick(s as kri.Scene) as void:
 		//missed step: prepare the camera

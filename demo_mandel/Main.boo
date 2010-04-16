@@ -15,7 +15,7 @@ private def createParticle() as kri.part.Emitter:
 	
 	pm = kri.part.Manager( 100000 )
 	pm.sh_born = kri.shade.Object('./text/born_v')
-	beh = kri.part.Behavior('text/beh')
+	beh = kri.part.beh.Basic('text/beh')
 	sl = kri.Ant.Inst.slotParticles
 	beh.semantics.Add( kri.vb.attr.Info(
 		slot: sl.getForced('pos'), integer:false,
@@ -52,7 +52,7 @@ def Main(argv as (string)):
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.rend.Clear() )
-		rlis.Add( kri.rend.Particles(false,true) )
+		rlis.Add( kri.rend.part.Basic(false,true) )
 		ant.anim = al = kri.ani.Scheduler()
 		part = kri.ani.Particle(ps)
 		al.add(part)

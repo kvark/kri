@@ -4,7 +4,7 @@ import OpenTK
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
-	public final behavior	= kri.part.Standard()
+	public final behavior	= kri.part.beh.Standard()
 	public final halo_draw_v	= kri.shade.Object('/part/draw_load_v')
 	public final halo_draw_f	= kri.shade.Object('/part/draw_load_f')
 	public final partFactory	= kri.shade.Linker(\
@@ -31,7 +31,7 @@ public partial class Native:
 	public def p_part() as bool:
 		pm = kri.part.Manager( br.ReadUInt32() )
 		puData(pm)
-		beh = kri.part.Standard(behavior)
+		beh = kri.part.beh.Standard(behavior)
 		puData(beh)
 		pm.behos.Add( beh )
 		pm.sh_born = pcon.sh_born_time
@@ -100,7 +100,7 @@ public partial class Native:
 
 	#---	Parse life data		---#
 	public def pp_life() as bool:
-		ps = geData[of kri.part.Standard]()
+		ps = geData[of kri.part.beh.Standard]()
 		return false	if not ps
 		data = getVec4()	# start,end, life time, random
 		ps.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
@@ -108,7 +108,7 @@ public partial class Native:
 	
 	#---	Parse velocity setup		---#
 	public def pp_vel() as bool:
-		ps = geData[of kri.part.Standard]()
+		ps = geData[of kri.part.beh.Standard]()
 		return false	if not ps
 		objFactor	= getVector()	# object-aligned factor
 		ps.parVelObj.Value = Vector4( objFactor )
@@ -122,7 +122,7 @@ public partial class Native:
 		return true
 	
 	public def pp_force() as bool:
-		ps = geData[of kri.part.Standard]()
+		ps = geData[of kri.part.beh.Standard]()
 		return false	if not ps
 		ps.parForceWorld.Value = Vector4(0f,0f,-9.81f,0f)	# gravity only?
 		data = getVector()	# brownian, drag, damp

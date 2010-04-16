@@ -39,7 +39,7 @@ private class RenderPoints(kri.rend.Basic):
 			GL.DrawArrays( BeginMode.Points, 0, 4 )
 
 
-private class BehSimple( kri.part.Behavior ):
+private class BehSimple( kri.part.beh.Basic ):
 	public final tVert	= kri.shade.par.Value[of kri.Texture]('vertex')
 	public final tQuat	= kri.shade.par.Value[of kri.Texture]('quat')
 	public final parPlane	= kri.shade.par.Value[of Vector4]('coord_plane')
@@ -69,8 +69,8 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	beh.parSphere.Value	= Vector4( ent.node.local.pos, 3f )
 	beh.parCoef.Value = 0.9f
 	pm.behos.Add( beh )
-	pm.behos.Add( kri.part.Behavior('/part/beh/bounce_plane') )
-	pm.behos.Add( kri.part.Behavior('/part/beh/bounce_sphere') )
+	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_plane') )
+	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_sphere') )
 	
 	if 'face':
 		pm.onUpdate = def(e as kri.Entity):
@@ -142,7 +142,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		rlis.Add( kri.rend.Particles(true,false) )
+		rlis.Add( kri.rend.part.Basic(true,false) )
 		#rlis.Add( RenderPoints() )
 		if 'Light':
 			licon = kri.rend.light.Context(2,8)

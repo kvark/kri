@@ -57,5 +57,5 @@ public class Update( kri.rend.tech.Basic ):
 			sa.use()
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():
-				e.mesh.draw()
+				e.mesh.draw(1)
 			assert q.result()

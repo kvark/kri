@@ -1,4 +1,4 @@
-﻿namespace kri.part
+﻿namespace kri.part.beh
 
 import OpenTK.Graphics.OpenGL
 import kri.shade
@@ -7,7 +7,7 @@ import kri.shade
 #	PARTICLE GENERIC BEHAVIOR			#
 #---------------------------------------#
 
-public class Behavior( kri.meta.IBase ):
+public class Basic( kri.meta.IBase ):
 	public final code	as string
 	public final semantics = List[of kri.vb.attr.Info]()
 	public final sh		as Object
@@ -15,7 +15,7 @@ public class Behavior( kri.meta.IBase ):
 	public def constructor(path as string):
 		code = kri.shade.Object.readText(path)
 		sh = kri.shade.Object( ShaderType.VertexShader, 'beh', code )
-	public def constructor(b as Behavior):
+	public def constructor(b as Basic):
 		code = b.code
 		semantics.Extend( b.semantics )
 		sh = b.sh
@@ -30,16 +30,29 @@ public class Behavior( kri.meta.IBase ):
 	public virtual def link(d as rep.Dict) as void:
 		pass
 	def kri.meta.IBase.clone() as kri.meta.IBase:
-		return Behavior(self)
+		return Basic(self)
 	par.INamed.Name:
 		get: return 'behavior'
+
+
+#---------------------------------------------------#
+#	PADDING BEHAVIOR FOR rgba32f align				#
+#---------------------------------------------------#
+
+public class Pad(Basic):
+	public final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
+	public def constructor():
+		super('/part/beh/pad')
+		semantics.Add( kri.vb.attr.Info(
+			size:1, integer:false, slot:slot,
+			type:VertexAttribPointerType.Float ))
 
 
 #---------------------------------------------------#
 #	STANDARD BEHAVIOR FOR LOADED PARTICLES			#
 #---------------------------------------------------#
 
-public class Standard(Behavior):
+public class Standard(Basic):
 	public final parSize	= par.Value[of OpenTK.Vector4]('part_size')
 	public final parLife	= par.Value[of OpenTK.Vector4]('part_life')
 	public final parVelTan	= par.Value[of OpenTK.Vector4]('part_speed_tan')

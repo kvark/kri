@@ -50,20 +50,20 @@ public class Apply( Basic ):
 	private final texLit	= kri.shade.par.Value[of kri.Texture]('light')
 	private final context	as light.Context
 	private final sphere	as kri.Mesh
+	private final dict		= kri.shade.rep.Dict()
 	# init
 	public def constructor(gt as kri.Texture, lc as light.Context, qord as byte):
 		super(false)
 		context = lc
 		gbuf.Value = gt
 		# fill shader
-		d = kri.shade.rep.Dict()
-		d.unit(texDep, gbuf, texLit)
+		dict.unit(texDep, gbuf, texLit)
 		s0.add( 'copy_v', '/g/init_f' )
-		s0.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		s0.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 		# light shader
 		sa.add( '/g/apply_v', '/g/apply_f', 'quat','tool','defer' )
 		sa.add( '/mod/lambert_f', '/mod/phong_f' )
-		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
+		sa.link( kri.Ant.Inst.slotAttributes, dict, lc.dict, kri.Ant.Inst.dict )
 		# bake sphere attribs
 		va.bind()	# the buffer objects are bound in creation
 		sphere = kri.kit.gen.sphere( qord, OpenTK.Vector3.One )
@@ -99,6 +99,6 @@ public class Apply( Basic ):
 				bindShadow( l.depth )
 				kri.Ant.Inst.params.activate(l)
 				sa.use()
-				sphere.draw()
+				sphere.draw(1)
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )

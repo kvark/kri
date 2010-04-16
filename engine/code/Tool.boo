@@ -71,7 +71,6 @@ public def safeKill(fun as callable() as void) as void:
 	except e as GraphicsContextMissingException:
 		pass
 
-
 # Window FPS counter
 public class FpsCounter:
 	public final kPeriod	as double

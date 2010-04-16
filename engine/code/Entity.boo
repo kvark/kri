@@ -32,7 +32,6 @@ public class Mesh( vb.attr.Storage ):
 	
 	public def draw(off as uint, num as uint, nob as uint) as void:
 		assert off>=0 and num>=0 and num+off<=nPoly
-		#TODO: use core
 		if ind and nob != 1: # works for Uint16 indeces only
 			GL.DrawElementsInstanced( drawMode, polySize*num,
 				DrawElementsType.UnsignedShort, IntPtr(polySize*2*off), nob)
@@ -43,8 +42,8 @@ public class Mesh( vb.attr.Storage ):
 		else:	GL.DrawArrays(		drawMode, polySize*off, polySize*num )
 
 	# draw all polygons once
-	public def draw() as void:
-		draw(0,nPoly,1)
+	public def draw(nob as uint) as void:
+		draw(0,nPoly,nob)
 	# transform points with feedback
 	public def draw(tf as TransFeedback) as void:
 		using tf.catch():

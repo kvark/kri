@@ -14,7 +14,7 @@ public class Manager(DataHolder):
 	private final factory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
 	
 	public onUpdate	as callable(kri.Entity)	= null
-	public final behos	= List[of Behavior]()
+	public final behos	= List[of beh.Basic]()
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
 	public final shaders	= List[of kri.shade.Object]()
@@ -29,8 +29,12 @@ public class Manager(DataHolder):
 		dict.var(parTotal)
 
 	private def collect(type as string, method as string, inter as string, oper as string, end as string) as kri.shade.Object:
-		names = [b.getMethod(method+'_') for b in behos]
+		names = [ b.getMethod(method+'_') for b in behos ]
 		names.RemoveAll({n| return string.IsNullOrEmpty(n) })
+		# easy uniqueness check
+		d2 = Dictionary[of string,bool]()
+		for n in names:	d2.Add(n,true)
+		# todo: ensure unique names
 		decl = join("${type} ${n};\n"	for n in names)
 		body = join( oper+n				for n in names)
 		all = "#version 130\n${decl}\n${type} ${method}()\t{${inter}${body}${end};\n}"
@@ -42,8 +46,6 @@ public class Manager(DataHolder):
 			prog_init.clear()
 			prog_update.clear()	
 		sl = kri.Ant.Inst.slotParticles
-		def id2out(id as int) as string:
-			return 'to_' + sl.Name[id]
 		sem = List[of kri.vb.attr.Info]()
 		sem.Add( kri.vb.attr.Info(
 			slot:pc.at_sys, size:3,
@@ -52,12 +54,8 @@ public class Manager(DataHolder):
 		sh_init		= collect('void', 'init', '', ";\n\t", '')
 		sh_reset	= collect('float','reset',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
 		sh_update	= collect('float','update',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
-		out_names = List[of string]()
-		out_names.Add( id2out( pc.at_sys ) )
 		for b in behos:
-			for at in b.semantics:
-				out_names.Add( id2out(at.slot) )
-				sem.Add( at )
+			sem.AddRange( b.semantics )
 			b.link(dict)
 			prog_init.add( b.sh )
 			prog_update.add( b.sh )
@@ -65,16 +63,17 @@ public class Manager(DataHolder):
 		# has to be after behaviors
 		init(sem,total)
 		assert sh_born
+		out_names = array( 'to_'+sl.Name[at.slot] for at in sem )
 
 		prog_init.add('quat')
 		prog_init.add( sh_init, pc.v_init )
-		tf.Setup( prog_init, false, *out_names.ToArray() )
+		tf.Setup( prog_init, false, *out_names )
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 
 		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
 		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root )
-		tf.Setup( prog_update, false, *out_names.ToArray() )
+		tf.Setup( prog_update, false, *out_names )
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 	
 	private def process(pe as Emitter, prog as kri.shade.Program) as void:

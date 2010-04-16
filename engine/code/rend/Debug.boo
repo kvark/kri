@@ -82,4 +82,4 @@ public class Attrib( kri.rend.Basic ):
 			e.mesh.ind.bind()
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			sa.use()
-			e.mesh.draw()
+			e.mesh.draw(1)
