@@ -16,13 +16,28 @@ public interface INamed:
 		get
 
 
+public abstract class ValueBase[of T]( IBase[of T],INamed ):
+	[Getter(Name)]
+	private final name	as string
+	public def constructor(s as string):
+		name = s
+
+
 public class Value[of T](IBase[of T],INamed):
-	[property(Value)]
+	[Property(Value)]
 	private val	as T
 	[Getter(Name)]
 	private final name	as string
 	public def constructor(s as string):
 		name = s
+
+/*	gives Failed to create 'kri.shade.par.Value2[of T]' type.. (BCE0055)
+public class Value2[of T](ValueBase[of T]):
+	[property(Value)]
+	private val	as T
+	public def constructor(s as string):
+		super(s)
+*/
 
 
 public class UnitProxy(IBase[of kri.Texture]):
