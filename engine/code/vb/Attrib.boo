@@ -14,10 +14,11 @@ public struct Info:
 	public integer	as bool
 	public def fullSize() as int:
 		b = 0
-		b = 1	if type == VertexAttribPointerType.Byte
+		b = 1	if type == VertexAttribPointerType.UnsignedByte
 		b = 2	if type == VertexAttribPointerType.HalfFloat
 		b = 2	if type == VertexAttribPointerType.UnsignedShort
 		b = 4	if type == VertexAttribPointerType.Float
+		b = 4	if type == VertexAttribPointerType.UnsignedInt
 		assert b and 'not a valid type'
 		return size * b
 

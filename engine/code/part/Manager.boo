@@ -41,15 +41,14 @@ public class Manager(DataHolder):
 		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
 	
 
-	public def init(pc as Context) as void:
+	public def init(pc as Context, full as bool) as void:
 		if data:
 			prog_init.clear()
 			prog_update.clear()	
 		sl = kri.Ant.Inst.slotParticles
 		sem = List[of kri.vb.attr.Info]()
-		sem.Add( kri.vb.attr.Info(
-			slot:pc.at_sys, size:3,
-			type:VertexAttribPointerType.Float ))
+		tip = (VertexAttribPointerType.HalfFloat,VertexAttribPointerType.Float)[full]
+		sem.Add( kri.vb.attr.Info( slot:pc.at_sys, size:2, type:tip ))
 
 		sh_init		= collect('void', 'init', '', ";\n\t", '')
 		sh_reset	= collect('float','reset',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")

@@ -93,7 +93,7 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 			kri.Ant.Inst.params.modelView.activate( e.node )
 	
 	pcon = kri.part.Context()
-	pm.init(pcon)
+	pm.init(pcon,true)
 	pe = kri.part.Emitter(pm,'test')
 	pe.sa = kri.shade.Smart()
 	pe.sa.add( pcon.sh_draw )

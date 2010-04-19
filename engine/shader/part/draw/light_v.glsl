@@ -11,7 +11,7 @@ uniform vec4 proj_cam,halo_data;
 vec3 trans_inv(vec3,Spatial);
 vec4 get_projection(vec3,vec4);
 
-in vec3 at_part_sys;
+in vec2 at_part_sys;
 in vec4 at_vertex, at_part_pos;
 out Spatial s_light;
 

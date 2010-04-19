@@ -1,6 +1,6 @@
 #version 130
 
-in vec3 at_sys;
+in vec2 at_sys;
 
 uniform struct Spatial	{
 	vec4 pos,rot;

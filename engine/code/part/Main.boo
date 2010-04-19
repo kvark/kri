@@ -54,7 +54,6 @@ public class Context:
 	public final	at_sys	= kri.Ant.Inst.slotParticles.getForced('sys')
 	# root shaders
 	public final	v_init	= kri.shade.Object('/part/init_v')
-	public final	g_init	= kri.shade.Object('/part/init_g')
 	public final	sh_draw	= kri.shade.Object('/part/draw/main_v')
 	public final	sh_root	= kri.shade.Object('/part/root_v')
 	# born shaders

@@ -18,8 +18,8 @@ uniform vec4 part_size;		//x +- y
 uniform vec4 force_world;	//gravity + wind + ...
 
 
-vec3 part_time();
-vec2 part_uni();
+vec4 part_time();
+float part_uni();
 float random(float);
 Spatial get_surface(vec2);
 vec3 qrot(vec4,vec3);
@@ -30,8 +30,8 @@ void init_main()	{
 }
 
 float reset_main()	{
-	vec3 pt = part_time();
-	float uni = part_uni().x, rand = random(uni + pt.x),
+	vec4 pt = part_time();
+	float uni = part_uni(), rand = random(uni + pt.x),
 		rs1 = 2.0*(rand-0.5), r2 = random(rand + pt.x+pt.z);
 	float life = part_life.x*(1.0 + rs1 * part_life.y);
 	float size = part_size.x*(1.0 + rs1 * part_size.y);
@@ -46,7 +46,7 @@ float reset_main()	{
 }
 
 float update_main()	{
-	vec3 t = part_time();
+	vec4 t = part_time();
 	to_pos = at_pos + t.x * vec4( at_speed.xyz, 0.0 );
 	to_speed = at_speed + t.x * vec4( force_world.xyz, 0.0 );
 	return step( t.y, at_speed.w );
