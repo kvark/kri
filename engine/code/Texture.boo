@@ -104,7 +104,7 @@ public class Texture( shade.par.INamed ):
 		return PixelFormat.DepthStencil		if fi == Fm.stencil
 		return PixelFormat.DepthComponent	if fi in Fm.depth
 		#return PixelFormat.RedInteger		if fi in Fm.index
-		return PixelFormat.Red		if fi in Fm.index
+		return PixelFormat.Red				if fi in Fm.index
 		return PixelFormat.Rgba
 	private static def Fi2type(fi as PixelInternalFormat) as PixelType:
 		return PixelType.UnsignedInt248	if fi == Fm.stencil

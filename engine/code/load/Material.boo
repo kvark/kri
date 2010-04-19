@@ -140,7 +140,7 @@ public partial class Native:
 	protected def getTexture(str as string) as kri.Texture:
 		#TODO: support for other formats
 		return null	if not str.EndsWith('.tga')
-		return image.Targa(str).Result.generate()
+		return image.Targa.Get(str).generate()
 	
 	#---	Parse texture slot	---#
 	public def pm_tex() as bool:

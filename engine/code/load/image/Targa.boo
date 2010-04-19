@@ -1,12 +1,11 @@
 ﻿namespace kri.load.image
 
 import System.IO
+import OpenTK.Graphics.OpenGL
 
 
 public class Targa:
-	[getter(Result)]
-	private final img as Basic
-	struct Header:
+	private struct Header:
 		public magic	as (byte)
 		public xrig		as ushort
 		public yrig		as ushort
@@ -19,7 +18,7 @@ public class Targa:
 			return false	if xrig + yrig or bits != 24 + descr
 			return true
 
-	public def constructor(str as string):
+	public static def Get(str as string) as Basic:
 		kri.res.check(str)
 		br = BinaryReader( File.OpenRead(str) )	
 		hd = Header(
@@ -30,12 +29,8 @@ public class Targa:
 			het:	br.ReadUInt16(),
 			bits:	br.ReadByte(),
 			descr:	br.ReadByte() )
-		assert hd.check()	
-		img = Basic(str, hd.wid, hd.het)
-		order = (2,1,0)
-		for i in range(hd.wid*hd.het):
-			data = br.ReadBytes( hd.bits>>3 )
-			for j in range(3):
-				img.scan[(i<<2)+j] = data[order[j]]
-			if not hd.descr:	# set alpha
-				img.scan[(i<<2)+3] = 0xFF
+		assert hd.check()
+		return Basic( str, hd.wid, hd.het,						\
+			br.ReadBytes( hd.wid * hd.het * (hd.bits>>3) ),		\
+			(PixelFormat.Bgr, PixelFormat.Bgra)[ hd.descr>>3 ]	\
+			)
