@@ -28,7 +28,7 @@ void main()	{
 		live = update();
 	else if( born_ready() )	{
 		to_sys.x = cur_time.x;
-		to_sys.y += 1.0;
+		to_sys.y -= 1.0;
 		live = reset();
 	}
 	to_sys.x *= 2.0*live-1.0;

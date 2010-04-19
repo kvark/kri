@@ -34,20 +34,20 @@ public class Manager(DataHolder):
 		# easy uniqueness check
 		d2 = Dictionary[of string,bool]()
 		for n in names:	d2.Add(n,true)
-		# todo: ensure unique names
+		# gather to the new code
 		decl = join("${type} ${n};\n"	for n in names)
 		body = join( oper+n				for n in names)
 		all = "#version 130\n${decl}\n${type} ${method}()\t{${inter}${body}${end};\n}"
 		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
 	
 
-	public def init(pc as Context, full as bool) as void:
+	public def init(pc as Context) as void:
 		if data:
 			prog_init.clear()
 			prog_update.clear()	
 		sl = kri.Ant.Inst.slotParticles
 		sem = List[of kri.vb.attr.Info]()
-		tip = (VertexAttribPointerType.HalfFloat,VertexAttribPointerType.Float)[full]
+		tip = ( VertexAttribPointerType.HalfFloat, VertexAttribPointerType.Float )[true]
 		sem.Add( kri.vb.attr.Info( slot:pc.at_sys, size:2, type:tip ))
 
 		sh_init		= collect('void', 'init', '', ";\n\t", '')

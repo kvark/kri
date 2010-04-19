@@ -17,7 +17,7 @@ public partial class Native:
 
 	public def finishParticles() as void:
 		for pe in at.scene.particles:
-			pe.man.init(pcon,true)	if not pe.man.Ready
+			pe.man.init(pcon)	if not pe.man.Ready
 			mat = con.mDef
 			for m in at.mats.Values:
 				if pe.halo in m.metaList:

@@ -27,7 +27,7 @@ private def createParticle() as kri.part.Emitter:
 	pm.dict.var(pLimt)
 	
 	pcon = kri.part.Context()
-	pm.init(pcon,true)
+	pm.init(pcon)
 	pe = kri.part.Emitter(pm,'mand')
 	pe.sa = Smart()
 	pe.sa.add( pcon.sh_draw )
