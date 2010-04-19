@@ -60,5 +60,4 @@ void main()	{
 	//no need for discard, because we are drawing a sphere with depth test
 	//if( intensity*(diff+spec) < 0.01 ) discard;
 	rez_color = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
-	//rez_color += vec4(0.0,0.1,0.0,0.0);
 }

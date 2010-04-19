@@ -20,8 +20,7 @@ public struct Slot:
 		get: return lib.Length
 	public def create(name as string) as int:
 		assert find(name)<0
-		id = Array.FindIndex(lib) do(s as string):
-			return s is null
+		id = Array.FindIndex( lib, string.IsNullOrEmpty )
 		lib[id] = name	if id>=0
 		return id
 	# let it live until Ant dies
@@ -34,6 +33,13 @@ public struct Slot:
 	public def find(name as string) as int:
 		return Array.FindIndex(lib) do(s as string):
 			return s == name
+	public def find(num as uint) as (int):
+		sar = List[of int]()
+		for i in range(lib.Length):
+			if string.IsNullOrEmpty(lib[i]):
+				sar.Add(i)
+				break	if sar.Count == num
+		return sar.ToArray()
 	public def getForced(name as string) as int:
 		id = find(name)
 		return (id if id>=0 else create(name))

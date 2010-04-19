@@ -83,6 +83,15 @@ public class Attrib(Object):
 	public def constructor():
 		super(BufferTarget.ArrayBuffer)
 	
+	public def unitLoc(ref at as attr.Info, ref off as int, ref sum as int) as bool:
+		off,sum = -1,0
+		for ain in semantics:
+			if ain.slot == at.slot:
+				assert off<0
+				off = sum
+				at = ain
+			sum += ain.fullSize()
+		return off >= 0
 	public def unitSize() as int:
 		rez = 0
 		for a in semantics:
@@ -93,10 +102,10 @@ public class Attrib(Object):
 		off,total = 0,unitSize()
 		init(num * total)
 		semantics.ForEach() do(ref at as attr.Info):
-			push(at, off, total)
+			Push(at, off, total)
 			off += at.fullSize()
 
-	private def push(ref at as attr.Info, off as int, total as int) as void:
+	private static def Push(ref at as attr.Info, off as int, total as int) as void:
 		GL.EnableVertexAttribArray( at.slot )
 		if at.integer: #TODO: use proper enum
 			GL.VertexAttribIPointer(at.slot, at.size,
@@ -106,36 +115,41 @@ public class Attrib(Object):
 			GL.VertexAttribPointer(at.slot, at.size,
 				at.type, false, total, off)
 				
-	private def push(ref at as attr.Info, off as int) as void:
-		push(at, off, unitSize())
-		
-	private def push(ref ain as attr.Info) as void:
-		off = 0
-		for at in semantics:
-			break	if at == ain
-			off += at.fullSize()
-		push(ain, off)
+	private def push(ref at as attr.Info) as void:
+		off,sum = 0,0
+		unitLoc(at,off,sum)	# no modification here
+		Push(at,off,sum)
 
-	public def attrib(id as int) as bool:
-		off = 0
-		return semantics.Exists() do(ref at as attr.Info):
-			if at.slot != id:
-				off += at.fullSize()
-				return false	
-			bind()
-			push(at,off)
-			return true
+	public def attrib(id as uint) as bool:
+		at = attr.Info( slot:id )
+		off,sum = 0,0
+		if not unitLoc(at,off,sum):
+			return false
+		bind()
+		Push(at,off,sum)
+		return true
 			
 	public def attribFirst() as void:
 		bind()
 		ai = semantics[0]
-		push(ai,0)
+		push(ai)
 	
 	public def attribFake(slot as uint) as void:
 		bind()
 		ai = semantics[0]
 		ai.slot = slot
-		push(ai,0)
+		push(ai)
+
+	public def attribTrans(dict as IDictionary[of int,int]) as void:
+		bind()
+		off,total = 0,unitSize()
+		for at in semantics:
+			val = 0
+			if dict.TryGetValue(at.slot,val):
+				a2 = at
+				a2.slot = val
+				Push(a2,off,total)
+			off += at.fullSize()
 
 
 public class Index(Object):
