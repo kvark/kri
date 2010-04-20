@@ -8,12 +8,11 @@ import OpenTK.Graphics.OpenGL
 #---------------------------------------#
 
 public class Manager(DataHolder):
-	private final tf	= kri.TransFeedback(1)
-	private final prog_init		= kri.shade.Smart()
-	private final prog_update	= kri.shade.Smart()
+	protected final tf	= kri.TransFeedback(1)
+	protected final prog_init	= kri.shade.Smart()
+	protected final prog_update	= kri.shade.Smart()
 	private final factory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
 	
-	public onUpdate	as callable(kri.Entity)	= null
 	public final behos	= List[of beh.Basic]()
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
@@ -41,7 +40,7 @@ public class Manager(DataHolder):
 		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
 	
 
-	public def init(pc as Context) as void:
+	public def init(pc as Context) as (string):
 		if data:
 			prog_init.clear()
 			prog_update.clear()	
@@ -74,25 +73,29 @@ public class Manager(DataHolder):
 		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root )
 		tf.Setup( prog_update, false, *out_names )
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
+		return out_names
 	
-	private def process(pe as Emitter, prog as kri.shade.Program) as void:
-		onUpdate( pe.obj )	if onUpdate
-		pe.init( data.semantics, total )	if not pe.data
+	protected def process(pe as Emitter, prog as kri.shade.Program) as void:
 		va.bind()
+		return	if not pe.prepare()
+		pe.init( data.semantics, total )	if not pe.data
 		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		prog.use()
 		using kri.Discarder(true), tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, total )
 		if 'Debug':
-			ar = array[of single](40)
+			ar = array[of single](20)
 			pe.data.read(ar)
 			ar[0] = 0f
 
 	public def reset(pe as Emitter) as void:
 		process(pe, prog_init)
 
-	public def tick(pe as Emitter) as void:
+	protected def swapData(pe as Emitter) as void:
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
+	public def tick(pe as Emitter) as void:
+		swapData(pe)
 		process(pe, prog_update)
+	

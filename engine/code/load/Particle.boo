@@ -2,6 +2,20 @@
 
 import OpenTK
 
+public struct SetBake:
+	public width	as uint
+	public height	as uint
+	public b_pos	as byte
+	public b_rot	as byte
+	public filt		as bool
+	public def tag() as kri.ITag:
+		return kri.kit.bake.Tag(width,height,b_pos,b_rot,filt)
+
+public partial class Settings:
+	public bake		= SetBake( width:256, height:256, b_pos:16, b_rot:8, filt:false )
+
+
+
 public partial class Native:
 	public final pcon =	kri.part.Context()
 	public final behavior	= kri.part.beh.Standard()
@@ -56,16 +70,18 @@ public partial class Native:
 		def upNode(e as kri.Entity):
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )
+			return true
 		ent = geData[of kri.Entity]()
 		source = getString()
 		getString()		# type
 		br.ReadSingle()	# jitter factor
 		pm = geData[of kri.part.Manager]()
-		return false	if not pm
+		pe = geData[of kri.part.Emitter]()
+		return false	if not pm or not pe
 		sh as kri.shade.Object	= null
 		if source == '':
 			sh = pcon.sh_surf_node
-			pm.onUpdate = upNode
+			pe.onUpdate = upNode
 		elif source == 'VERT':
 			return false	if not ent
 			for i in range(2):
@@ -75,7 +91,7 @@ public partial class Native:
 				t.Value.bind()
 				ats = (kri.Ant.Inst.attribs.vertex, kri.Ant.inst.attribs.quat)
 				kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.findAny(ats[i]) )
-				pm.onUpdate = upNode
+				pe.onUpdate = upNode
 			parNumber = kri.shade.par.Value[of single]('num_vertices')
 			parNumber.Value = 1f * ent.mesh.nVert
 			pm.dict.var(parNumber)
@@ -85,13 +101,14 @@ public partial class Native:
 			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
 			pm.dict.unit(tVert,tQuat)
 			if not ent.seTag[of kri.kit.bake.Tag]():
-				ent.tags.Add( kri.kit.bake.Tag(256,256, 16,8, false) )
-			pm.onUpdate = def(e as kri.Entity):
+				ent.tags.Add( sets.bake.tag() )
+			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
 				tag = e.seTag[of kri.kit.bake.Tag]()
-				if tag:
-					tVert.Value = tag.tVert
-					tQuat.Value = tag.tQuat
+				return false	if not tag
+				tVert.Value = tag.tVert
+				tQuat.Value = tag.tQuat
+				return true
 			sh = pcon.sh_surf_face
 		else: assert not 'supported :('
 		pm.shaders.Add(sh)

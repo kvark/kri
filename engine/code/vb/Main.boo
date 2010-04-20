@@ -31,12 +31,12 @@ public class Proxy:
 	public def constructor(targ as BufferTarget):
 		target = targ
 	public def bind(v as Object) as void:
-		GL.BindBuffer(target, (v.Extract if v else 0))
+		GL.BindBuffer(target, ( v.Extract if v else cast(uint,0) ))
 
 
 public class Object(Proxy):
 	[getter(Extract)]
-	private final id		as int
+	private final id		as uint
 	[getter(Ready)]
 	private filled			as bool	= false
 	# creating
@@ -56,7 +56,7 @@ public class Object(Proxy):
 	# filling
 	private def getHint(dyn as bool) as BufferUsageHint:
 		return (BufferUsageHint.StreamDraw if dyn else BufferUsageHint.StaticDraw)
-	public def init(size as int) as void:
+	public def init(size as uint) as void:
 		bind()
 		GL.BufferData(target, IntPtr(size), IntPtr.Zero, getHint(true))
 		filled = true
@@ -81,7 +81,7 @@ public class Object(Proxy):
 public class Attrib(Object):
 	public final semantics	= List[of attr.Info]()
 	public def constructor():
-		super(BufferTarget.ArrayBuffer)
+		super( BufferTarget.ArrayBuffer )
 	
 	public def unitLoc(ref at as attr.Info, ref off as int, ref sum as int) as bool:
 		off,sum = -1,0
@@ -154,4 +154,8 @@ public class Attrib(Object):
 
 public class Index(Object):
 	public def constructor():
-		super(BufferTarget.ElementArrayBuffer)
+		super( BufferTarget.ElementArrayBuffer )
+
+public class Pack(Object):
+	public def constructor():
+		super( BufferTarget.PixelPackBuffer )

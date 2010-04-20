@@ -7,7 +7,7 @@ uniform vec4 cur_time;
 uniform float part_total;
 
 vec4 part_time()	{
-	// frame time, life time, global time, number of lifes
+	// frame time, life time, global time, -number of lifes
 	return vec4(cur_time.y, cur_time.x - to_sys.x, cur_time.x, to_sys.y);
 }
 float part_uni()	{

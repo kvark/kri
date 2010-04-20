@@ -3,6 +3,7 @@
 import kri.meta
 import OpenTK.Graphics
 
+
 public partial class Native:
 	public final limdic			= Dictionary[of string,callable() as Hermit]()
 	private final nodeResolve	= Dictionary[of string,callable(kri.Node)]()

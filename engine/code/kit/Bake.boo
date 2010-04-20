@@ -1,5 +1,6 @@
 ﻿namespace kri.kit.bake
 
+import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
 public class Tag( kri.ITag ):
@@ -10,6 +11,8 @@ public class Tag( kri.ITag ):
 	public final het	as uint = 0
 	public final tVert	as kri.Texture	= null
 	public final tQuat	as kri.Texture	= null
+	public Size as uint:
+		get: return wid*het* 4* sizeof(single)
 	
 	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
 		wid,het = w,h
@@ -53,7 +56,8 @@ public class Update( kri.rend.tech.Basic ):
 				continue	if not t
 				buf.mask |= 1<<i
 			buf.activate()
-			con.ClearColor()	if tag.clear
+			# todo: clear only on init
+			con.ClearColor( Color4(0f,0f,0f,0f) )	if tag.clear
 			sa.use()
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():

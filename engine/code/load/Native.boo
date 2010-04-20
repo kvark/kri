@@ -14,7 +14,9 @@ public class Atom:
 	public def constructor(name as string):
 		scene = kri.Scene(name)
 		nodes[''] = null
-	
+
+public partial class Settings:
+	public final skipChunks = List[of string]()
 
 #------		CHUNK LOADER		------#
 
@@ -22,11 +24,12 @@ public partial class Native:
 	public final con	= Context()
 	public final dict	= Dictionary[of string,callable() as bool]()
 	public final skipt	= Dictionary[of string,uint]()
+	public final sets	= Settings()
 	private final rep	= []
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
 	
-	public def constructor(*exclude as (string)):
+	public def constructor():
 		initAnimations()
 		initMaterials()
 		initParticles()
@@ -65,9 +68,6 @@ public partial class Native:
 		dict['p_force']	= pp_force
 		# physics
 		#dict['body']	= Read.body
-		for ex in exclude:
-			assert ex in dict
-			dict.Remove(ex)
 	
 	public def read(path as string) as Atom:
 		kri.res.check(path)
@@ -80,6 +80,9 @@ public partial class Native:
 			size = br.ReadUInt32()
 			size += bs.Position
 			assert size <= bs.Length
+			if name in sets.skipChunks:
+				bs.Seek(size, IO.SeekOrigin.Begin)
+				continue
 			p as callable() as bool = null
 			if dict.TryGetValue(name,p) and p():
 				assert bs.Position == size

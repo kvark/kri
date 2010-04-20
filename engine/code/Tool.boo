@@ -152,5 +152,5 @@ public class TransFeedback(Query):
 		GL.TransformFeedbackVaryings( prog.id, vars.Length, vars,
 			(TransformFeedbackMode.InterleavedAttribs,TransformFeedbackMode.SeparateAttribs)[separate] )
 	public static def Bind(*buffers as (vb.Object)) as void:
-		for i in range( buffers.Length ):
+		for i as uint in range( buffers.Length ):
 			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].Extract )

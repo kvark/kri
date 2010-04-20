@@ -63,6 +63,7 @@ private class BehSimple( kri.part.beh.Basic ):
 
 private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
+	pe = kri.part.Emitter(pm,'test')
 	pm.sh_born = kri.shade.Object('/part/born/instant_v')
 	beh = BehSimple()
 	beh.parPlane.Value	= Vector4(1f,0f,0f,1f)
@@ -73,7 +74,7 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_sphere') )
 	
 	if 'face':
-		pm.onUpdate = def(e as kri.Entity):
+		pe.onUpdate = def(e as kri.Entity):
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			tag = e.seTag[of kri.kit.bake.Tag]()
@@ -88,13 +89,13 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 		beh.tQuat.Value = kri.Texture( TextureTarget.TextureBuffer )
 		beh.tQuat.Value.bind()
 		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.quat) )
-		pm.onUpdate = def(e as kri.Entity):
+		pe.onUpdate = def(e as kri.Entity):
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )
+			return true
 	
 	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe = kri.part.Emitter(pm,'test')
 	pe.sa = kri.shade.Smart()
 	pe.sa.add( pcon.sh_draw )
 	pe.sa.add( './text/draw_simple_v', './text/draw_simple_f', 'quat', 'tool')

@@ -42,6 +42,7 @@ public class Smart(Program):
 		attribs(sl)
 		link()
 		fillPar(true,*dicts)
+		assert not array(findAlienAttribs(sl)).Length
 	
 	# clear objects
 	public override def clear() as int:
@@ -55,6 +56,17 @@ public class Smart(Program):
 			if not string.IsNullOrEmpty(sl.Name[i]) and
 			i == GL.GetAttribLocation(id, prefixAttrib + sl.Name[i])
 			)
+	# check used attributes
+	public def findAlienAttribs(sl as kri.lib.Slot) as string*:
+		num = getAttribNum()
+		name = System.Text.StringBuilder()
+		aux0,aux1,size = 100,0,0
+		type as ActiveAttribType
+		for i in range(num):
+			GL.GetActiveAttrib(id, i, aux0, aux1, size, type, name)
+			str = name.ToString()
+			off = (0,3)[ str.StartsWith(prefixAttrib) ]
+			yield str	if sl.find( str.Substring(off) ) < 0	
 	
 	# setup units & gather uniforms
 	public def fillPar( reset as bool, *dicts as (rep.Dict) ) as void:
