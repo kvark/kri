@@ -66,7 +66,8 @@ public class Context:
 		tex = kri.Texture( TextureTarget.Texture2D )
 		tex.bind()
 		kri.Texture.Filter(false,false)
-		kri.Texture.Init(1,1, PixelInternalFormat.Rgba8, data)
+		GL.TexImage2D( tex.type, 0, PixelInternalFormat.Rgba8, 1,1,0,\
+			PixelFormat.Rgba, PixelType.UnsignedByte, data )
 		return tex
 	
 	public def constructor():

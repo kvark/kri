@@ -93,9 +93,7 @@ public class Texture( shade.par.INamed ):
 		
 	# generate mipmaps
 	public static def GenLevels() as void:
-		#val = 1
-		#GL.TexParameterI(type, TextureParameterName.GenerateMipmap, val)
-		# warning: TextureRect not supported!
+		assert curType != TextureTarget.TextureRectangle
 		ti = cast(GenerateMipmapTarget, cast(int,curType))
 		GL.GenerateMipmap(ti)
 	
@@ -116,8 +114,6 @@ public class Texture( shade.par.INamed ):
 		return (Fm.color, Fm.depth, (Fm.stencil,), Fm.index, (Fm.bad,)) [cast(int,cl)] [bits>>3]
 
 	# init Texture2D format
-	public static def Init[of T(struct)](sx as int, sy as int, fi as PixelInternalFormat, ptr as (T)) as void:
-		GL.TexImage2D[of T](curType, 0, fi, sx, sy, 0, Fi2format(fi), Fi2type(fi), ptr)
 	public static def Init(sx as int, sy as int, fi as PixelInternalFormat) as void:
 		GL.TexImage2D(curType, 0, fi, sx, sy, 0, Fi2format(fi), Fi2type(fi), zeroPtr)
 	# init VBO link

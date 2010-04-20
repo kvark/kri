@@ -39,8 +39,7 @@ public class Value2[of T](ValueBase[of T]):
 		super(s)
 */
 
-
-public class UnitProxy(IBase[of kri.Texture]):
+public class UnitProxy( IBase[of kri.Texture] ):
 	private final fun as callable() as kri.Texture
 	public def constructor(f as callable() as kri.Texture):
 		fun = f

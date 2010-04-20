@@ -29,7 +29,8 @@ public class Context:
 		layers,size	= nlay,1<<qlog
 		defShadow.bind()
 		kri.Texture.Filter(false,false)
-		kri.Texture.Init(1,1, PixelInternalFormat.DepthComponent, (-1,))
+		GL.TexImage2D( defShadow.type, 0, PixelInternalFormat.DepthComponent,
+			1,1,0, PixelFormat.DepthComponent, PixelType.UnsignedInt, (-1,) )
 	# exponential
 	public def setExpo(darkness as single, kernel as single) as void:
 		type = LiType.EXPONENT
