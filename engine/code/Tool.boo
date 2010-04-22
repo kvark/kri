@@ -26,6 +26,16 @@ public class Section(IDisposable):
 		assert GL.IsEnabled(cap)
 		GL.Disable(cap)
 
+public class SectionOff(IDisposable):
+	private final cap as EnableCap
+	public def constructor(state as EnableCap):
+		cap = state
+		assert GL.IsEnabled(cap)
+		GL.Disable(cap)
+	public virtual def Dispose() as void:
+		assert not GL.IsEnabled(cap)
+		GL.Enable(cap)
+
 
 # Provide standard blending options
 public class Blender(Section):

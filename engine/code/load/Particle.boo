@@ -26,7 +26,7 @@ public partial class Native:
 	
 	public def initParticles() as void:
 		partFactory.onLink = do(sa as kri.shade.Smart):
-			sa.add( pcon.sh_draw, halo_draw_v, halo_draw_f )
+			sa.add( pcon.sh_draw, pcon.sh_tool, halo_draw_v, halo_draw_f )
 			sa.add( 'quat', 'tool')
 
 	public def finishParticles() as void:

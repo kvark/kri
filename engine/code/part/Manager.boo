@@ -64,38 +64,40 @@ public class Manager(DataHolder):
 		out_names = array( 'to_'+sl.Name[at.slot] for at in sem )
 
 		prog_init.add('quat')
-		prog_init.add( sh_init, pc.v_init )
+		prog_init.add( sh_init, pc.v_init, pc.sh_tool )
 		tf.Setup( prog_init, false, *out_names )
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 
 		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
-		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root )
+		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root, pc.sh_tool )
 		tf.Setup( prog_update, false, *out_names )
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 		return out_names
 	
-	protected def process(pe as Emitter, prog as kri.shade.Program) as void:
+	protected def process(pe as Emitter, prog as kri.shade.Program) as bool:
+		if not pe.data:
+			pe.init( data.semantics, total )
 		va.bind()
-		return	if not pe.prepare()
-		pe.init( data.semantics, total )	if not pe.data
+		return false	if not pe.prepare()
 		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		prog.use()
 		using kri.Discarder(true), tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, total )
-		if 'Debug':
-			ar = array[of single](20)
+		if not 'Debug':
+			pe.va.bind()
+			ar = array[of single](total*5)
 			pe.data.read(ar)
-			ar[0] = 0f
+		return true
 
-	public def reset(pe as Emitter) as void:
-		process(pe, prog_init)
+	public def reset(pe as Emitter) as bool:
+		return process(pe, prog_init)
 
 	protected def swapData(pe as Emitter) as void:
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
-	public def tick(pe as Emitter) as void:
+	public def tick(pe as Emitter) as bool:
 		swapData(pe)
-		process(pe, prog_update)
+		return process(pe, prog_update)
 	

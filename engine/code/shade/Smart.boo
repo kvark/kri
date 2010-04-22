@@ -41,8 +41,8 @@ public class Smart(Program):
 	public def link(sl as kri.lib.Slot, *dicts as (rep.Dict)) as void:
 		attribs(sl)
 		link()
+		checkAttribs(sl)
 		fillPar(true,*dicts)
-		assert not array(findAlienAttribs(sl)).Length
 	
 	# clear objects
 	public override def clear() as int:
@@ -57,16 +57,16 @@ public class Smart(Program):
 			i == GL.GetAttribLocation(id, prefixAttrib + sl.Name[i])
 			)
 	# check used attributes
-	public def findAlienAttribs(sl as kri.lib.Slot) as string*:
+	public def checkAttribs(sl as kri.lib.Slot) as void:
 		num = getAttribNum()
 		name = System.Text.StringBuilder()
 		aux0,aux1,size = 100,0,0
 		type as ActiveAttribType
 		for i in range(num):
-			GL.GetActiveAttrib(id, i, aux0, aux1, size, type, name)
+			GL.GetActiveAttrib(id,i, aux0,aux1,size,type, name)
 			str = name.ToString()
 			off = (0,3)[ str.StartsWith(prefixAttrib) ]
-			yield str	if sl.find( str.Substring(off) ) < 0	
+			assert sl.find( str.Substring(off) ) >= 0
 	
 	# setup units & gather uniforms
 	public def fillPar( reset as bool, *dicts as (rep.Dict) ) as void:
@@ -74,7 +74,7 @@ public class Smart(Program):
 		GL.GetProgram(id, ProgramParameter.ActiveUniforms, num)
 		if reset:
 			GL.UseProgram(id)	# for texture units
-			sourceList = array[of par.IBaseRoot](num+1)	#todo: fix number
+			sourceList = array[of par.IBaseRoot](num+5)	#todo: fix number
 			repList.Clear()
 		nar = ( GL.GetActiveUniformName(id,i) for i in range(num) )
 		for name in nar:
