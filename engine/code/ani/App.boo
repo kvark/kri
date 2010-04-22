@@ -18,15 +18,15 @@ public class Counter(IBase):
 
 ###		Update particles	###
 
-public class Particle(Loop):
+public class Particle( IBase ):
 	private final pe	as kri.part.Emitter
-	public def constructor(em as kri.part.Emitter):
-		pe = em
-		lTime = 100.0
-	protected override def onLoop() as void:
-		pe.man.reset(pe)
-	protected override def onRate(rate as double) as void:
-		pe.man.tick(pe)
+	private ready		as bool	= false
+	public def constructor(ps as kri.part.Emitter):
+		pe = ps
+	def kri.ani.IBase.onFrame(time as double) as uint:
+		if ready: pe.owner.tick(pe)
+		else: ready = pe.owner.reset(pe)
+		return 0
 
 
 #-------------------------------#

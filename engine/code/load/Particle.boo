@@ -19,6 +19,7 @@ public partial class Settings:
 public partial class Native:
 	public final pcon =	kri.part.Context()
 	public final behavior	= kri.part.beh.Standard()
+	/*
 	public final halo_draw_v	= kri.shade.Object('/part/draw/load_v')
 	public final halo_draw_f	= kri.shade.Object('/part/draw/load_f')
 	public final partFactory	= kri.shade.Linker(\
@@ -28,16 +29,11 @@ public partial class Native:
 		partFactory.onLink = do(sa as kri.shade.Smart):
 			sa.add( pcon.sh_draw, pcon.sh_tool, halo_draw_v, halo_draw_f )
 			sa.add( 'quat', 'tool')
-
+	*/
 	public def finishParticles() as void:
 		for pe in at.scene.particles:
-			pe.man.init(pcon)	if not pe.man.Ready
-			mat = con.mDef
-			for m in at.mats.Values:
-				if pe.halo in m.metaList:
-					mat = m
-					break
-			pe.sa = partFactory.link( (pe.halo.Shader,), mat.dict )
+			pe.owner.init(pcon)	if not pe.owner.Ready
+			#pe.sa = partFactory.link( (pe.halo.Shader,), mat.dict )
 		
 
 
@@ -50,18 +46,14 @@ public partial class Native:
 		pm.behos.Add( beh )
 		pm.sh_born = pcon.sh_born_time
 		beh.parSize.Value = Vector4( getVec2() )
-		name = getString()
-		# link to material
-		psMat = at.mats[ getString() ]
-		psMat = con.mDef	if not psMat.Meta['halo']
-		halo = psMat.Meta['halo'] as kri.meta.Halo
-		return false	if not halo
-		# create emitter
-		pe = kri.part.Emitter(pm,name)
+		# # create emitter
+		pe = kri.part.Emitter( pm, getString() )
 		puData(pe)
 		pe.obj = geData[of kri.Entity]()
 		at.scene.particles.Add(pe)
-		pe.halo = halo
+		# link to material
+		pe.mat = at.mats[ getString() ]
+		pe.mat = con.mDef	if not pe.mat
 		return true
 
 

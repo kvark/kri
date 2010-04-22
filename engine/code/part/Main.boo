@@ -1,7 +1,6 @@
 ﻿namespace kri.part
 
 import System
-import OpenTK.Graphics.OpenGL
 
 
 public class DataHolder:
@@ -24,31 +23,28 @@ public class Emitter(DataHolder):
 	public onUpdate	as callable(kri.Entity) as bool	= null
 	public onDraw	as callable() as bool	= null
 	public obj		as kri.Entity	= null
-	public sa		as kri.shade.Smart	= null
-	public halo		as kri.meta.Halo	= null
-	public final man	as Manager
+	public final owner	as Manager
 	public final name	as string
+	public mat		as kri.Material	= null
 
 	public def constructor(pm as Manager, str as string):
-		man,name = pm,str
+		owner,name = pm,str
 	public def constructor(pe as Emitter):
 		visible	= pe.visible
 		onDraw	= pe.onDraw
 		obj		= pe.obj
-		sa		= pe.sa
-		halo	= pe.halo
-		man		= pe.man
+		owner	= pe.owner
+		mat		= pe.mat
 		name	= pe.name
 	public def prepare() as bool:
 		return (not onUpdate) or onUpdate(obj)
 		
-	public def draw() as void:
-		assert sa
+	/*public def draw(tid as int) as void:
 		return	if onDraw and not onDraw()
 		va.bind()
 		sa.use()
 		GL.DrawArrays( BeginMode.Points, 0, man.total )
-
+	*/
 
 #---------------------------------------#
 #	PARTICLE CREATION CONTEXT			#

@@ -28,12 +28,17 @@ private def createParticle() as kri.part.Emitter:
 	
 	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe = kri.part.Emitter(pm,'mand')
-	pe.sa = Smart()
-	pe.sa.add( pcon.sh_draw )
-	pe.sa.add( './text/draw_v', './text/draw_f')
-	pe.sa.link( sl, d, kri.Ant.Inst.dict )	
-	return pe
+	return kri.part.Emitter(pm,'mand')
+
+
+private class Render( kri.rend.Basic ):
+	public def constructor():
+		super(false)
+	#pe.sa = Smart()
+	#pe.sa.add( pcon.sh_draw )
+	#pe.sa.add( './text/draw_v', './text/draw_f')
+	#pe.sa.link( sl, d, kri.Ant.Inst.dict )	
+
 
 
 [STAThread]
@@ -52,9 +57,7 @@ def Main(argv as (string)):
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.rend.Clear() )
-		rlis.Add( kri.rend.part.Basic(false,true) )
+		rlis.Add( kri.rend.part.Simple(false,true) )
 		ant.anim = al = kri.ani.Scheduler()
-		part = kri.ani.Particle(ps)
-		al.add(part)
-		ant.Keyboard.KeyDown += { ps.man.tick(ps) }
+		al.add( kri.ani.Particle(ps) )
 		ant.Run(30.0,30.0)

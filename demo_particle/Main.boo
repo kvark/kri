@@ -96,10 +96,6 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	
 	pcon = kri.part.Context()
 	pm.init(pcon)
-	pe.sa = kri.shade.Smart()
-	pe.sa.add( pcon.sh_draw )
-	pe.sa.add( './text/draw_simple_v', './text/draw_simple_f', 'quat', 'tool')
-	pe.sa.link( kri.Ant.Inst.slotParticles, kri.Ant.Inst.dict )	
 	pe.obj = ent
 	return pe
 
@@ -143,7 +139,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		rlis.Add( kri.rend.part.Basic(true,false) )
+		rlis.Add( kri.rend.part.Simple(true,false) )
 		#rlis.Add( RenderPoints() )
 		if 'Light':
 			licon = kri.rend.light.Context(2,8)
@@ -156,8 +152,6 @@ def Main(argv as (string)):
 		ant.anim = al = kri.ani.Scheduler()
 		al.add( kri.ani.ControlMouse(ent.node,0.002f) )
 		if 'Part Anims':
-			part = kri.ani.Particle(ps)
-			part.lTime = 10000.0
-			al.add(part)
-		ant.Keyboard.KeyDown += { ps.man.tick(ps) }
+			al.add( kri.ani.Particle(ps) )
+		ant.Keyboard.KeyDown += { ps.owner.tick(ps) }
 		ant.Run(30.0,30.0)

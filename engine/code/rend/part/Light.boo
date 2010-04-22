@@ -29,9 +29,13 @@ public class Light( kri.rend.defer.ApplyBase ):
 		d.Add( kri.Ant.Inst.slotParticles.find('pos'), attr[1] )
 		# draw particles
 		for pe in kri.Scene.Current.particles:
-			pHalo.Value = pe.halo.Data
+			#todo: add light particle meta
+			continue	if not pe.mat
+			halo = pe.mat.Meta['halo'] as kri.meta.Halo
+			continue	if not halo
+			pHalo.Value = halo.Data
 			light.setLimit( pHalo.Value.X )
 			pe.data.attribTrans(d)	
 			kri.Ant.Inst.params.activate(light)
 			sa.use()
-			sphere.draw( pe.man.total )
+			sphere.draw( pe.owner.total )

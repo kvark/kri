@@ -32,7 +32,6 @@ public partial class Native:
 	public def constructor():
 		initAnimations()
 		initMaterials()
-		initParticles()
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		# objects
