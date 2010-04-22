@@ -159,3 +159,8 @@ public class Index(Object):
 public class Pack(Object):
 	public def constructor():
 		super( BufferTarget.PixelPackBuffer )
+
+
+public interface ISource:
+	Data	as Attrib:
+		get

@@ -8,8 +8,9 @@ public class Basic( kri.rend.Basic ):
 	public ats	as (int)	= null
 	public def constructor():
 		super(false)
-	public override def setup() as bool:
+	public override def setup(far as kri.frame.Array) as bool:
 		ats = (0,1)	# get actual attribs from the program
+		return true
 	public override def process(con as kri.rend.Context) as void:
 		for pe in kri.Scene.Current.particles:
 			pass
@@ -38,10 +39,17 @@ public class Simple( kri.rend.Basic ):
 			else:		blend.alpha()
 			assert not 'ready'
 			sa.use()
+					
+	/*public def draw(tid as int) as void:
+		return	if onDraw and not onDraw()
+		va.bind()
+		sa.use()
+		GL.DrawArrays( BeginMode.Points, 0, man.total )
+	*/
 			/*
 			lis = List[of kri.part.Emitter]( kri.Scene.Current.particles )
 			while lis.Count:
-				man = lis[0].owner	
+				man = lis[0].owner
 				pred = {p as kri.part.Emitter| return p.man == man }
 				for pe in lis.FindAll(pred):
 					draw(pe)

@@ -76,8 +76,6 @@ public class Manager(DataHolder):
 		return out_names
 	
 	protected def process(pe as Emitter, prog as kri.shade.Program) as bool:
-		if not pe.data:
-			pe.init( data.semantics, total )
 		va.bind()
 		return false	if not pe.prepare()
 		tf.Bind( pe.data )
@@ -87,16 +85,15 @@ public class Manager(DataHolder):
 			GL.DrawArrays( BeginMode.Points, 0, total )
 		if not 'Debug':
 			pe.va.bind()
-			ar = array[of single](total*5)
+			ar = array[of single](total*8)
 			pe.data.read(ar)
 		return true
-
-	public def reset(pe as Emitter) as bool:
-		return process(pe, prog_init)
 
 	protected def swapData(pe as Emitter) as void:
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
+	public def reset(pe as Emitter) as bool:
+		return process(pe, prog_init)
 	public def tick(pe as Emitter) as bool:
 		swapData(pe)
 		return process(pe, prog_update)
