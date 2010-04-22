@@ -5,8 +5,8 @@ out	vec4 to_pos;
 
 uniform float limit;
 
-vec3 part_time();
-vec2 part_uni();
+vec4 part_time();
+float part_uni();
 float random(float);
 
 void init_mand()	{
@@ -14,8 +14,8 @@ void init_mand()	{
 }
 
 float reset_mand()	{
-	vec3 pt = part_time();
-	float uni = part_uni().x;
+	vec4 pt = part_time();
+	float uni = part_uni();
 	float x = random(uni+pt.y*pt.x), y = random(x+pt.z*pt.x);
 	to_pos = 2.0*vec4(x,y,x,y) - vec4(1.0);
 	return 1.0;

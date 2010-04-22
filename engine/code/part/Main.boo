@@ -42,15 +42,20 @@ public class Emitter(DataHolder):
 	public def constructor(pe as Emitter):
 		visible	= pe.visible
 		obj		= pe.obj
-		owner	= pe.owner
 		mat		= pe.mat
+		owner	= pe.owner
 		name	= pe.name
 
+	public def allocate() as void:
+		assert owner
+		init( owner.data.semantics, owner.total )
+		
 	public def prepare() as bool:
 		if onUpdate and not onUpdate(obj):
 			return false
 		loadFake()
 		return true
+
 	public def loadFake()	as void:
 		d = Dictionary[of int,int]()
 		for fa in extList:
@@ -61,9 +66,10 @@ public class Emitter(DataHolder):
 				d[fa.source] = fa.dest
 				vat.attribTrans(d)
 			else: vat.attrib( fa.dest )
+
 	public def listAttribs() as (int):
 		return	array(sem.slot	for sem in data.semantics) + \
-				array(fa.dest	for fa in extList)
+				array(ext.dest	for ext in extList)
 
 
 #---------------------------------------#

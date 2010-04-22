@@ -4,19 +4,43 @@ import System
 import OpenTK.Graphics.OpenGL
 
 
+#---------	RENDER PARTICLES		--------#
+
 public class Basic( kri.rend.Basic ):
-	public ats	as (int)	= null
-	public def constructor():
+	public final dTest	as bool
+	public final bAdd	as bool
+	protected final sa		= kri.shade.Smart()
+	private ats	as (int)	= null
+	
+	public def constructor(depth as bool, add as bool):
 		super(false)
+		dTest,bAdd = depth,add
 	public override def setup(far as kri.frame.Array) as bool:
-		ats = (0,1)	# get actual attribs from the program
+		ats = array( sa.gatherAttribs(kri.Ant.Inst.slotParticles) )
 		return true
 	public override def process(con as kri.rend.Context) as void:
-		for pe in kri.Scene.Current.particles:
-			pass
+		if dTest: con.activate(true, 0f, false)
+		else: con.activate()
+		sa.use()
+		using blend = kri.Blender(),\
+		kri.Section( EnableCap.ClipPlane0 ),\
+		kri.Section( EnableCap.VertexProgramPointSize ):
+			if bAdd:	blend.add()
+			else:		blend.alpha()
+			for pe in kri.Scene.Current.particles:
+				pat = pe.listAttribs()
+				continue if not Array.TrueForAll(ats, {a| return a in pat })
+				pe.va.bind()
+				return	if not pe.prepare()
+				GL.DrawArrays( BeginMode.Points, 0, pe.owner.total )
 
 
-#---------	RENDER PARTICLES		--------#
+#---------	TECHNIQUE	--------#
+
+#public class Tech(Basic):
+#	pass
+
+#---------	SIMPLE		--------#
 
 public class Simple( kri.rend.Basic ):
 	public final dTest	as bool
@@ -39,19 +63,3 @@ public class Simple( kri.rend.Basic ):
 			else:		blend.alpha()
 			assert not 'ready'
 			sa.use()
-					
-	/*public def draw(tid as int) as void:
-		return	if onDraw and not onDraw()
-		va.bind()
-		sa.use()
-		GL.DrawArrays( BeginMode.Points, 0, man.total )
-	*/
-			/*
-			lis = List[of kri.part.Emitter]( kri.Scene.Current.particles )
-			while lis.Count:
-				man = lis[0].owner
-				pred = {p as kri.part.Emitter| return p.man == man }
-				for pe in lis.FindAll(pred):
-					draw(pe)
-				lis.RemoveAll(pred)
-			*/

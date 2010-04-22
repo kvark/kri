@@ -6,13 +6,6 @@ import OpenTK.Graphics.OpenGL
 import kri.shade
 
 private def createParticle() as kri.part.Emitter:
-	pSize = par.Value[of single]('size')
-	pBrit = par.Value[of single]('bright')
-	pLimt = par.Value[of single]('limit')
-	pSize.Value = 5f
-	pBrit.Value = 0.025f
-	pLimt.Value = 2.5f
-	
 	pm = kri.part.Manager( 100000 )
 	pm.sh_born = kri.shade.Object('./text/born_v')
 	beh = kri.part.beh.Basic('text/beh')
@@ -22,22 +15,27 @@ private def createParticle() as kri.part.Emitter:
 		size:4, type:VertexAttribPointerType.Float ))
 	pm.behos.Add(beh)
 	
-	d = rep.Dict()
-	d.var(pSize,pBrit)
+	pLimt = par.Value[of single]('limit')
+	pLimt.Value = 2.5f
 	pm.dict.var(pLimt)
-	
-	pcon = kri.part.Context()
-	pm.init(pcon)
 	return kri.part.Emitter(pm,'mand')
 
 
-private class Render( kri.rend.Basic ):
-	public def constructor():
-		super(false)
-	#pe.sa = Smart()
-	#pe.sa.add( pcon.sh_draw )
-	#pe.sa.add( './text/draw_v', './text/draw_f')
-	#pe.sa.link( sl, d, kri.Ant.Inst.dict )	
+private class Render( kri.rend.part.Basic ):
+	pSize = par.Value[of single]('size')
+	pBrit = par.Value[of single]('bright')
+
+	public def constructor(pcon as kri.part.Context):
+		super(false,true)
+		# dict init
+		pSize.Value = 5f
+		pBrit.Value = 0.025f
+		d = kri.shade.rep.Dict()
+		d.var(pSize,pBrit)
+		# prog init
+		sa.add( pcon.sh_draw )
+		sa.add( './text/draw_v', './text/draw_f')
+		sa.link( kri.Ant.Inst.slotParticles, d, kri.Ant.Inst.dict )
 
 
 
@@ -54,10 +52,13 @@ def Main(argv as (string)):
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera()
 		ps = createParticle()
+		pcon = kri.part.Context()
+		ps.owner.init(pcon)
+		ps.allocate()
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.rend.Clear() )
-		rlis.Add( kri.rend.part.Simple(false,true) )
+		rlis.Add( Render(pcon) )
 		ant.anim = al = kri.ani.Scheduler()
 		al.add( kri.ani.Particle(ps) )
 		ant.Run(30.0,30.0)

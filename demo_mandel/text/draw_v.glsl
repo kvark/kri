@@ -1,13 +1,12 @@
 #version 130
 
-in vec3 at_sys;
+in vec2 at_sys;
 in vec4 at_pos;
 out float time;
 
 uniform float size;
 uniform vec4 cur_time;
 
-vec3 part_time();
 
 void main()	{
 	gl_ClipDistance[0] = at_sys.x;

@@ -76,6 +76,7 @@ public class Manager(DataHolder):
 		return out_names
 	
 	protected def process(pe as Emitter, prog as kri.shade.Program) as bool:
+		assert pe.data
 		va.bind()
 		return false	if not pe.prepare()
 		tf.Bind( pe.data )
