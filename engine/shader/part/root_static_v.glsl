@@ -2,7 +2,7 @@
 
 in	vec2 at_sys;
 out	vec2 to_sys;
-
+//todo: we don't even need vec2 here, just a boolean
 
 float update();
 

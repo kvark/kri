@@ -17,7 +17,7 @@ public class Manager(DataHolder):
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
 	public final shaders	= List[of kri.shade.Object]()
-	public sh_born		as kri.shade.Object	= null
+	public sh_root		as kri.shade.Object	= null
 
 	private parTotal	= kri.shade.par.Value[of single]('part_total')
 	public Ready as bool:
@@ -60,7 +60,7 @@ public class Manager(DataHolder):
 		
 		# has to be after behaviors
 		init(sem,total)
-		assert sh_born
+		assert sh_root
 		out_names = array( 'to_'+sl.Name[at.slot] for at in sem )
 
 		prog_init.add('quat')
@@ -70,7 +70,7 @@ public class Manager(DataHolder):
 
 		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
-		prog_update.add( sh_reset, sh_update, sh_born, pc.sh_root, pc.sh_tool )
+		prog_update.add( sh_reset, sh_update, sh_root, pc.sh_tool )
 		tf.Setup( prog_update, false, *out_names )
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 		return out_names

@@ -7,7 +7,7 @@ import kri.shade
 
 private def createParticle() as kri.part.Emitter:
 	pm = kri.part.Manager( 100000 )
-	pm.sh_born = kri.shade.Object('./text/born_v')
+	pm.shaders.Add( kri.shade.Object('./text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
 	sl = kri.Ant.Inst.slotParticles
 	beh.semantics.Add( kri.vb.attr.Info(
@@ -53,6 +53,7 @@ def Main(argv as (string)):
 		view.cam = kri.Camera()
 		ps = createParticle()
 		pcon = kri.part.Context()
+		ps.owner.sh_root = pcon.sh_root
 		ps.owner.init(pcon)
 		ps.allocate()
 		view.scene.particles.Add(ps)

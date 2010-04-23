@@ -2,6 +2,7 @@
 
 //pos.w == size; speed.w == life
 in	vec4 at_pos, at_speed;
+out	vec2 to_sys;
 out	vec4 to_pos, to_speed;
 
 
@@ -26,6 +27,7 @@ vec3 qrot(vec4,vec3);
 
 
 void init_main()	{
+	to_sys = vec2(-1.0,0.0);
 	to_speed = to_pos = vec4(0.0);
 }
 

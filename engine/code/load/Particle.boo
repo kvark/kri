@@ -44,7 +44,8 @@ public partial class Native:
 		beh = kri.part.beh.Standard(behavior)
 		puData(beh)
 		pm.behos.Add( beh )
-		pm.sh_born = pcon.sh_born_time
+		pm.shaders.Add( pcon.sh_born_time )
+		pm.sh_root = pcon.sh_root
 		beh.parSize.Value = Vector4( getVec2() )
 		# # create emitter
 		pe = kri.part.Emitter( pm, getString() )
