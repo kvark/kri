@@ -139,7 +139,8 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		rlis.Add( kri.rend.part.Simple(true,false) )
+		assert not 'ready'
+		#rlis.Add( kri.rend.part.Simple(true,false) )
 		#rlis.Add( RenderPoints() )
 		if 'Light':
 			licon = kri.rend.light.Context(2,8)

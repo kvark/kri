@@ -21,7 +21,7 @@ private def createParticle() as kri.part.Emitter:
 	return kri.part.Emitter(pm,'mand')
 
 
-private class Render( kri.rend.part.Basic ):
+private class Render( kri.rend.part.Simple ):
 	pSize = par.Value[of single]('size')
 	pBrit = par.Value[of single]('bright')
 

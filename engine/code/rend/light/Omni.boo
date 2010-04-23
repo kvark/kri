@@ -24,7 +24,7 @@ public class Fill( rend.tech.General ):
 		dict.var(pDist)
 		sa.link( Ant.Inst.slotAttributes, dict, lc.dict, Ant.Inst.dict )
 
-	private override def construct(mat as Material) as shade.Smart:
+	public override def construct(mat as Material) as shade.Smart:
 		return sa
 	private def setLight(l as Light) as void:
 		Ant.Inst.params.litView.activate( l.node )

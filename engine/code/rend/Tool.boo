@@ -23,7 +23,7 @@ public class EarlyZ( tech.General ):
 		# make shader
 		sa.add( '/zcull_v', 'empty', 'tool', 'quat', 'fixed' )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-	private override def construct(mat as kri.Material) as kri.shade.Smart:
+	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 	public override def process(con as Context) as void:
 		con.activate(false, 1f, true)
@@ -91,7 +91,7 @@ public class Gauss(Basic):
 public class All( tech.General ):
 	public def constructor():
 		super('all')
-	private override def construct(mat as kri.Material) as kri.shade.Smart:
+	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		sa = kri.shade.Smart()
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 		return sa

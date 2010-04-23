@@ -2,6 +2,10 @@
 
 import System.Collections.Generic
 
+public interface IConstructor:
+	def construct(mat as kri.Material) as kri.shade.Smart
+
+
 #--------- Batch ---------#
 
 public struct Batch:	# why struct?
@@ -30,12 +34,12 @@ public struct Batch:	# why struct?
 
 #---------	GENERAL TECHNIQUE	--------#
 
-public class General(Basic):
+public class General( IConstructor, Basic ):
 	public static comparer	as IComparer[of Batch]	= null
 	protected	final butch	= List[of Batch]()
 	protected def constructor(name as string):
 		super(name)
-	private abstract def construct(mat as kri.Material) as kri.shade.Smart:
+	public abstract def construct(mat as kri.Material) as kri.shade.Smart:
 		pass
 	protected virtual def getUpdate(mat as kri.Material) as callable() as int:
 		return def() as int: return 1

@@ -48,7 +48,7 @@ public class Meta(General):
 		sa.add( *kri.Ant.Inst.shaders.gentleSet )
 		sa.add( *array(shobs) )
 
-	private override def construct(mat as kri.Material) as kri.shade.Smart:
+	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		sl = mat.collect(lMets)
 		return kri.shade.Smart.Fixed	if not sl
 		return factory.link( sl, mat.dict )

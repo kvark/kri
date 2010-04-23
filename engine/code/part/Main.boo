@@ -27,6 +27,10 @@ public struct ExtAttrib:
 #	PARTICLE EMITTER 					#
 #---------------------------------------#
 
+public enum TechState:
+	Unknown
+	Ready
+	Invalid
 
 public class Emitter(DataHolder):
 	public visible	as bool		= true
@@ -36,6 +40,7 @@ public class Emitter(DataHolder):
 	public final owner	as Manager
 	public final name	as string
 	public final extList	= List[of ExtAttrib]()
+	public final techReady	= array[of TechState]( kri.lib.Const.nTech )
 
 	public def constructor(pm as Manager, str as string):
 		owner,name = pm,str
@@ -49,7 +54,7 @@ public class Emitter(DataHolder):
 	public def allocate() as void:
 		assert owner
 		init( owner.data.semantics, owner.total )
-		
+
 	public def prepare() as bool:
 		if onUpdate and not onUpdate(obj):
 			return false

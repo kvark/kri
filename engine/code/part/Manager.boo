@@ -75,6 +75,9 @@ public class Manager(DataHolder):
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 		return out_names
 	
+	public def draw() as void:
+		GL.DrawArrays( BeginMode.Points, 0, total )
+	
 	protected def process(pe as Emitter, prog as kri.shade.Program) as bool:
 		assert pe.data
 		va.bind()
@@ -83,7 +86,7 @@ public class Manager(DataHolder):
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		prog.use()
 		using kri.Discarder(true), tf.catch():
-			GL.DrawArrays( BeginMode.Points, 0, total )
+			draw()
 		if not 'Debug':
 			pe.va.bind()
 			ar = array[of single](total*8)

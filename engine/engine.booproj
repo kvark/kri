@@ -77,6 +77,7 @@
     <Compile Include="code\rend\light\Omni.boo" />
     <Compile Include="code\rend\light\Simple.boo" />
     <Compile Include="code\rend\Main.boo" />
+    <Compile Include="code\rend\part\Defer.boo" />
     <Compile Include="code\rend\part\Light.boo" />
     <Compile Include="code\rend\part\Main.boo" />
     <Compile Include="code\rend\Physics.boo" />

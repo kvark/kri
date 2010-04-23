@@ -28,7 +28,7 @@ public class Fill( kri.rend.tech.General ):
 		sa.add( '/light/bake_v', baker, 'tool', 'quat', 'fixed' )
 		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
 
-	private override def construct(mat as kri.Material) as kri.shade.Smart:
+	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 
 	public override def process(con as kri.rend.Context) as void:
