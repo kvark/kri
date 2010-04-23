@@ -19,6 +19,7 @@ public class Basic( kri.meta.IBase ):
 		code = b.code
 		semantics.Extend( b.semantics )
 		sh = b.sh
+	
 	public def getMethod(base as string) as string:
 		return null	if string.IsNullOrEmpty(code)
 		pos = code.IndexOf(base)
@@ -26,6 +27,11 @@ public class Basic( kri.meta.IBase ):
 		p2 = code.IndexOf('()',pos)
 		assert p2>=0
 		return code.Substring(pos,p2+2-pos)
+	
+	public def enrich(size as byte, slot as int) as void:
+		semantics.Add( kri.vb.attr.Info(
+			integer:false, slot:slot, size:size,
+			type:VertexAttribPointerType.Float ))
 	
 	public virtual def link(d as rep.Dict) as void:
 		pass
@@ -43,9 +49,7 @@ public class Pad(Basic):
 	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
 	public def constructor():
 		super('/part/beh/pad')
-		semantics.Add( kri.vb.attr.Info(
-			size:1, integer:false, slot:slot,
-			type:VertexAttribPointerType.Float ))
+		enrich(1, slot)
 
 
 #---------------------------------------------------#
@@ -60,19 +64,14 @@ public class Standard(Basic):
 	public final parVelKeep	= par.Value[of OpenTK.Vector4]('object_speed')
 	public final parForce	= par.Value[of OpenTK.Vector4]('part_force')
 	public final parForceWorld	= par.Value[of OpenTK.Vector4]('force_world')
+	public final at_sub		= kri.Ant.Inst.slotParticles.getForced('sub')
 
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
-		# setup attributes
-		ai = kri.vb.attr.Info( integer:false, size:4,
-			type: VertexAttribPointerType.Float )
-		ai.slot = pc.at_pos
-		semantics.Add(ai)
-		ai.slot = pc.at_speed
-		semantics.Add(ai)
-		ai.size = 2
-		ai.slot = pc.at_sys
-		semantics.Add(ai)
+		enrich(2, pc.at_sys)
+		enrich(2, at_sub)
+		enrich(3, pc.at_pos)
+		enrich(3, pc.at_speed)
 
 	public def constructor(std as Standard):
 		super(std)

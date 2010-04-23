@@ -48,12 +48,9 @@ private class BehSimple( kri.part.beh.Basic ):
 	
 	public def constructor(pc as kri.part.Context):
 		super('./text/beh_simple')
-		semantics.Add( kri.vb.attr.Info(
-			slot:pc.at_sys,		size:2, type:VertexAttribPointerType.Float ))
-		semantics.Add( kri.vb.attr.Info(
-			slot:pc.at_pos,		size:4, type:VertexAttribPointerType.Float ))
-		semantics.Add( kri.vb.attr.Info(
-			slot:pc.at_speed,	size:4, type:VertexAttribPointerType.Float ))
+		enrich(2, pc.at_sys)
+		enrich(4, pc.at_pos)
+		enrich(4, pc.at_speed)
 	
 	public override def link(d as kri.shade.rep.Dict) as void:
 		d.unit(tVert,tQuat)

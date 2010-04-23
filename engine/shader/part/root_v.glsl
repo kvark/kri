@@ -1,5 +1,6 @@
 #version 130
 
+//(born moment, -life ID)
 in	vec2 at_sys;
 out	vec2 to_sys;
 
@@ -11,7 +12,7 @@ bool born_ready();
 
 
 vec4 part_time()	{
-	// frame time, life time, global time, -number of lifes
+	// frame time, life time, global time, -life ID
 	return vec4(cur_time.y, cur_time.x - to_sys.x, cur_time.x, to_sys.y);
 }
 

@@ -2,19 +2,14 @@
 
 import System
 import OpenTK
-import OpenTK.Graphics.OpenGL
 import kri.shade
 
 private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm = kri.part.Manager( 100000 )
 	pm.shaders.Add( kri.shade.Object('./text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
-	beh.semantics.Add( kri.vb.attr.Info(
-		slot: pc.at_pos, integer:false,
-		size:4, type:VertexAttribPointerType.Float ))
-	beh.semantics.Add( kri.vb.attr.Info(
-		slot: pc.at_sys, integer:false,
-		size:2, type:VertexAttribPointerType.Float ))
+	beh.enrich(2, pc.at_sys)
+	beh.enrich(4, pc.at_pos)
 	pm.behos.Add(beh)
 	
 	pLimt = par.Value[of single]('limit')
