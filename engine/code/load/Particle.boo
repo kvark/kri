@@ -132,9 +132,11 @@ public partial class Native:
 		return true
 	
 	public def pp_force() as bool:
+		pm = geData[of kri.part.Manager]()
 		ps = geData[of kri.part.beh.Standard]()
-		return false	if not ps
-		ps.parForceWorld.Value = Vector4(0f,0f,-9.81f,0f)	# gravity only?
+		return false	if not ps or not pm
+		bgav = kri.part.beh.Gravity()
+		pm.behos.Add(bgav)
 		data = getVector()	# brownian, drag, damp
 		ps.parForce.Value = Vector4(data)
 		return true

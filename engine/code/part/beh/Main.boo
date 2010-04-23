@@ -1,5 +1,6 @@
 ﻿namespace kri.part.beh
 
+import OpenTK
 import OpenTK.Graphics.OpenGL
 import kri.shade
 
@@ -41,29 +42,18 @@ public class Basic( kri.meta.IBase ):
 		get: return 'behavior'
 
 
-#---------------------------------------------------#
-#	PADDING BEHAVIOR FOR rgba32f align				#
-#---------------------------------------------------#
 
-public class Pad(Basic):
-	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
-	public def constructor():
-		super('/part/beh/pad')
-		enrich(1, slot)
-
-
-#---------------------------------------------------#
-#	STANDARD BEHAVIOR FOR LOADED PARTICLES			#
-#---------------------------------------------------#
+#-------------------------------------------#
+#	STANDARD FOR LOADED PARTICLES			#
+#-------------------------------------------#
 
 public class Standard(Basic):
-	public final parSize	= par.Value[of OpenTK.Vector4]('part_size')
-	public final parLife	= par.Value[of OpenTK.Vector4]('part_life')
-	public final parVelTan	= par.Value[of OpenTK.Vector4]('part_speed_tan')
-	public final parVelObj	= par.Value[of OpenTK.Vector4]('part_speed_obj')
-	public final parVelKeep	= par.Value[of OpenTK.Vector4]('object_speed')
-	public final parForce	= par.Value[of OpenTK.Vector4]('part_force')
-	public final parForceWorld	= par.Value[of OpenTK.Vector4]('force_world')
+	public final parSize	= par.Value[of Vector4]('part_size')
+	public final parLife	= par.Value[of Vector4]('part_life')
+	public final parVelTan	= par.Value[of Vector4]('part_speed_tan')
+	public final parVelObj	= par.Value[of Vector4]('part_speed_obj')
+	public final parVelKeep	= par.Value[of Vector4]('object_speed')
+	public final parForce	= par.Value[of Vector4]('part_force')
 	public final at_sub		= kri.Ant.Inst.slotParticles.getForced('sub')
 
 	public def constructor(pc as kri.part.Context):
@@ -74,8 +64,7 @@ public class Standard(Basic):
 		enrich(3, pc.at_speed)
 
 	public def constructor(std as Standard):
-		super(std)
+		super(std)	#is that enough?
 
 	public override def link(d as rep.Dict) as void:
-		d.var(parSize,parLife,parVelTan,parVelObj,\
-			parVelKeep,parForce,parForceWorld)
+		d.var(parSize,parLife, parVelTan,parVelObj, parVelKeep,parForce)

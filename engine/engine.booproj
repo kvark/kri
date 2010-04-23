@@ -66,9 +66,10 @@
     <Compile Include="code\load\Particle.boo" />
     <Compile Include="code\Material.boo" />
     <Compile Include="code\meta\Main.boo" />
+    <Compile Include="code\part\beh\Main.boo" />
+    <Compile Include="code\part\beh\Small.boo" />
     <Compile Include="code\part\Main.boo" />
     <Compile Include="code\part\Manager.boo" />
-    <Compile Include="code\part\Behavior.boo" />
     <Compile Include="code\rend\Context.boo" />
     <Compile Include="code\rend\Debug.boo" />
     <Compile Include="code\rend\defer\Apply.boo" />
@@ -156,6 +157,7 @@
     <Folder Include="code\ani" />
     <Folder Include="code\lib" />
     <Folder Include="code\kit" />
+    <Folder Include="code\part\beh" />
     <Folder Include="code\rend\defer" />
     <Folder Include="code\rend\part" />
     <Folder Include="code\sound" />
