@@ -18,7 +18,7 @@ public partial class Settings:
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
-	public final behavior	= kri.part.beh.Standard()
+	public final behavior	= kri.part.beh.Standard(pcon)
 	/*
 	public final halo_draw_v	= kri.shade.Object('/part/draw/load_v')
 	public final halo_draw_f	= kri.shade.Object('/part/draw/load_f')

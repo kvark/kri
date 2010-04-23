@@ -1,6 +1,7 @@
 #version 130
 
 in	vec4 at_pos;
+out	vec2 to_sys;
 out	vec4 to_pos;
 
 uniform float limit;
@@ -10,6 +11,7 @@ float part_uni();
 float random(float);
 
 void init_mand()	{
+	to_sys = vec2(-1.0,0.0);
 	to_pos = vec4(0.0);
 }
 

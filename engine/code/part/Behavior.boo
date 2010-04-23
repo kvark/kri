@@ -61,16 +61,19 @@ public class Standard(Basic):
 	public final parForce	= par.Value[of OpenTK.Vector4]('part_force')
 	public final parForceWorld	= par.Value[of OpenTK.Vector4]('force_world')
 
-	public def constructor():
+	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
 		# setup attributes
 		ai = kri.vb.attr.Info( integer:false, size:4,
 			type: VertexAttribPointerType.Float )
-		ai.slot = kri.Ant.Inst.slotParticles.getForced('pos')
+		ai.slot = pc.at_pos
 		semantics.Add(ai)
-		ai.slot = kri.Ant.Inst.slotParticles.getForced('speed')
+		ai.slot = pc.at_speed
 		semantics.Add(ai)
-	
+		ai.size = 2
+		ai.slot = pc.at_sys
+		semantics.Add(ai)
+
 	public def constructor(std as Standard):
 		super(std)
 

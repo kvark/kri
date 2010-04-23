@@ -1,6 +1,7 @@
 #version 130
 
 in	vec4 at_pos,at_speed;
+out	vec2 to_sys;
 out	vec4 to_pos,to_speed;
 
 uniform sampler2D unit_vertex, unit_quat;
@@ -9,19 +10,20 @@ uniform struct Spatial	{
 	vec4 pos,rot;
 }s_model;
 
-vec3 part_time();
-vec2 part_uni();
+vec4 part_time();
+float part_uni();
 float random(float);
 vec3 qrot(vec4,vec3);
 
 void init_simple()	{
+	to_sys = vec2(-1.0,0.0);
 	to_speed = to_pos = vec4(0.0);
 }
 
 float reset_simple()	{
 	to_pos = s_model.pos;
-	vec3 pt = part_time();
-	float uni = part_uni().x,
+	vec4 pt = part_time();
+	float uni = part_uni(),
 		r1 = random(uni), r2 = random(uni+pt.z);
 	float a = r1 * 2.0*3.1416;
 	vec3 dir = vec3( sin(a), cos(a), 0.0 );

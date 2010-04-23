@@ -98,6 +98,7 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pcon = kri.part.Context()
 	pm.sh_root = pcon.sh_root
 	pm.init(pcon)
+	pe.allocate()
 	pe.obj = ent
 	return pe
 
@@ -141,9 +142,9 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		assert not 'ready'
+		#assert not 'ready'
 		#rlis.Add( kri.rend.part.Simple(true,false) )
-		#rlis.Add( RenderPoints() )
+		rlis.Add( RenderPoints() )
 		if 'Light':
 			licon = kri.rend.light.Context(2,8)
 			#licon.setExpo(120f, 0.5f)

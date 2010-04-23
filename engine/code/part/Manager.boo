@@ -3,6 +3,7 @@
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
+
 #---------------------------------------#
 #	ABSTRACT PARTICLE MANAGER			#
 #---------------------------------------#
@@ -46,8 +47,6 @@ public class Manager(DataHolder):
 			prog_update.clear()	
 		sl = kri.Ant.Inst.slotParticles
 		sem = List[of kri.vb.attr.Info]()
-		tip = ( VertexAttribPointerType.HalfFloat, VertexAttribPointerType.Float )[true]
-		sem.Add( kri.vb.attr.Info( slot:pc.at_sys, size:2, type:tip ))
 
 		sh_init		= collect('void', 'init', '', ";\n\t", '')
 		sh_reset	= collect('float','reset',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
@@ -64,13 +63,13 @@ public class Manager(DataHolder):
 		out_names = array( 'to_'+sl.Name[at.slot] for at in sem )
 
 		prog_init.add('quat')
-		prog_init.add( sh_init, pc.v_init, pc.sh_tool )
+		prog_init.add( pc.sh_tool, pc.sh_init, sh_init )
 		tf.Setup( prog_init, false, *out_names )
 		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
 
 		prog_update.add( *shaders.ToArray() )
 		prog_update.add('quat')
-		prog_update.add( sh_reset, sh_update, sh_root, pc.sh_tool )
+		prog_update.add( pc.sh_tool, sh_root, sh_reset, sh_update )
 		tf.Setup( prog_update, false, *out_names )
 		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
 		return out_names
