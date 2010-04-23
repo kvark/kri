@@ -2,12 +2,12 @@
 
 uniform vec4 halo_data;
 
+in vec2 at_sys;
 in vec4 at_pos;
 
-void part_draw(vec4);
+void part_draw(vec3,float);
 
 void main()	{
-	vec4 pos = at_pos;
-	pos.w = 2.0 * halo_data.x;
-	part_draw(pos);
+	gl_ClipDistance[0] = at_sys.x;
+	part_draw( at_pos.xyz, halo_data.x );
 }

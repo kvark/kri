@@ -4,7 +4,7 @@ import System
 import OpenTK
 import OpenTK.Graphics.OpenGL
 
-private class RenderPoints(kri.rend.Basic):
+private class RenderPoints( kri.rend.Basic ):
 	final sa	= kri.shade.Smart()
 	final vbo	= kri.vb.Attrib()
 	final va	= kri.vb.Array()
@@ -46,14 +46,14 @@ private class BehSimple( kri.part.beh.Basic ):
 	public final parSphere	= kri.shade.par.Value[of Vector4]('coord_sphere')
 	public final parCoef	= kri.shade.par.Value[of single]('reflect_koef')
 	
-	public def constructor():
+	public def constructor(pc as kri.part.Context):
 		super('./text/beh_simple')
-		at_pos		= kri.Ant.Inst.slotParticles.getForced('pos')
-		at_speed	= kri.Ant.Inst.slotParticles.getForced('speed')
 		semantics.Add( kri.vb.attr.Info(
-			slot:at_pos,	size:4, type:VertexAttribPointerType.Float ))
+			slot:pc.at_sys,		size:2, type:VertexAttribPointerType.Float ))
 		semantics.Add( kri.vb.attr.Info(
-			slot:at_speed,	size:4, type:VertexAttribPointerType.Float ))
+			slot:pc.at_pos,		size:4, type:VertexAttribPointerType.Float ))
+		semantics.Add( kri.vb.attr.Info(
+			slot:pc.at_speed,	size:4, type:VertexAttribPointerType.Float ))
 	
 	public override def link(d as kri.shade.rep.Dict) as void:
 		d.unit(tVert,tQuat)
@@ -64,9 +64,11 @@ private class BehSimple( kri.part.beh.Basic ):
 private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
 	pe = kri.part.Emitter(pm,'test')
+	pcon = kri.part.Context()
+	pm.sh_root = pcon.sh_root
 	#todo: just use a proper root shader
 	pm.shaders.Add( kri.shade.Object('/part/born/instant_v') )
-	beh = BehSimple()
+	beh = BehSimple(pcon)
 	beh.parPlane.Value	= Vector4(1f,0f,0f,1f)
 	beh.parSphere.Value	= Vector4( ent.node.local.pos, 3f )
 	beh.parCoef.Value = 0.9f
@@ -95,8 +97,6 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			return true
 	
-	pcon = kri.part.Context()
-	pm.sh_root = pcon.sh_root
 	pm.init(pcon)
 	pe.allocate()
 	pe.obj = ent
