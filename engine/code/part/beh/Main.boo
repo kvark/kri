@@ -58,7 +58,6 @@ public class Standard(Basic):
 
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
-		enrich(2, pc.at_sys)
 		enrich(2, at_sub)
 		enrich(3, pc.at_pos)
 		enrich(3, pc.at_speed)

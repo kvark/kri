@@ -28,29 +28,32 @@ public class Manager(DataHolder):
 		total = num
 		dict.var(parTotal)
 
-	private def collect(type as string, method as string, inter as string, oper as string, end as string) as kri.shade.Object:
+	private def collect(type as string, method as string, val as string, oper as string) as kri.shade.Object:
 		names = [ b.getMethod(method+'_') for b in behos ]
 		names.RemoveAll({n| return string.IsNullOrEmpty(n) })
 		# easy uniqueness check
 		d2 = Dictionary[of string,bool]()
 		for n in names:	d2.Add(n,true)
 		# gather to the new code
-		decl = join("${type} ${n};\n"	for n in names)
-		body = join( oper+n				for n in names)
-		all = "#version 130\n${decl}\n${type} ${method}()\t{${inter}${body}${end};\n}"
+		decl = join("\n${type} ${n};"	for n in names)
+		if string.IsNullOrEmpty(oper) or string.IsNullOrEmpty(val):
+			body = join("\n\t${n};"		for n in names)
+		else:
+			help = join("\n\tr${oper}= ${n};"	for n in names)
+			body = "\n\t${type} r= ${val};${help}\n\treturn r;"
+		all = "#version 130\n${decl}\n\n${type} ${method}()\t{${body}\n}"
 		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
-	
 
 	public def init(pc as Context) as (string):
 		if data:
 			prog_init.clear()
-			prog_update.clear()	
+			prog_update.clear()
 		sl = kri.Ant.Inst.slotParticles
 		sem = List[of kri.vb.attr.Info]()
 
-		sh_init		= collect('void', 'init', '', ";\n\t", '')
-		sh_reset	= collect('float','reset',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
-		sh_update	= collect('float','update',	'float r=1.0', ";\n\tr*= ", ";\n\treturn r")
+		sh_init		= collect('void','init',	null,null)
+		sh_reset	= collect('float','reset',	'1.0','*')
+		sh_update	= collect('float','update',	'1.0','*')
 		for b in behos:
 			sem.AddRange( b.semantics )
 			b.link(dict)
@@ -95,7 +98,7 @@ public class Manager(DataHolder):
 	protected def swapData(pe as Emitter) as void:
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
-	public def reset(pe as Emitter) as bool:
+	public def init(pe as Emitter) as bool:
 		return process(pe, prog_init)
 	public def tick(pe as Emitter) as bool:
 		swapData(pe)

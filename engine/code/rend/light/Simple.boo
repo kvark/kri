@@ -8,6 +8,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Fill( kri.rend.tech.General ):
 	public final buf		= kri.frame.Buffer()
+	public final sh_bake	as kri.shade.Object
 	protected final sa		= kri.shade.Smart()
 	protected final licon	as Context
 
@@ -25,7 +26,9 @@ public class Fill( kri.rend.tech.General ):
 		baker = 'empty'
 		baker = '/light/bake_exp_f'	if lc.type == LiType.EXPONENT
 		baker = '/light/bake_var_f'	if lc.type == LiType.VARIANCE
-		sa.add( '/light/bake_v', baker, 'tool', 'quat', 'fixed' )
+		sh_bake = kri.shade.Object(baker)
+		sa.add( '/light/bake_v', 'tool', 'quat', 'fixed' )
+		sa.add( sh_bake )
 		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
 
 	public override def construct(mat as kri.Material) as kri.shade.Smart:

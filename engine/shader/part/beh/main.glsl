@@ -1,8 +1,9 @@
 #version 130
 
-in	vec2 at_sub;	//(size,life)
+//(size,life)
+in	vec2 at_sub;
 in	vec3 at_pos, at_speed;
-out	vec2 to_sub, to_sys;
+out	vec2 to_sub;
 out	vec3 to_pos, to_speed;
 
 
@@ -26,7 +27,6 @@ vec3 qrot(vec4,vec3);
 
 
 void init_main()	{
-	to_sys = vec2(-1.0,0.0);
 	to_sub = vec2(0.0);
 	to_speed = to_pos = vec3(0.0);
 }

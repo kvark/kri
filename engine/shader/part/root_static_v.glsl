@@ -1,13 +1,12 @@
 #version 130
 
-in	vec2 at_sys;
-out	vec2 to_sys;
-//todo: we don't even need vec2 here, just a boolean
+in	vec3 at_base;
 
 float update();
+float reset();
 
 void main()	{
-	to_sys = at_sys;
-	if(at_sys.x > 0.0)
+	reset();
+	if( dot(at_base,at_base) > 0.01 )
 		update();
 }

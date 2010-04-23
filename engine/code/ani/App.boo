@@ -25,7 +25,7 @@ public class Particle( IBase ):
 		pe = ps
 	def kri.ani.IBase.onFrame(time as double) as uint:
 		if ready: pe.owner.tick(pe)
-		else: ready = pe.owner.reset(pe)
+		else: ready = pe.owner.init(pe)
 		return 0
 
 

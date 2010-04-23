@@ -1,9 +1,9 @@
 #version 130
-precision lowp float;
 
 uniform sampler2D unit_input;
 in vec2 tex_coord;
 out vec4 rez_color;
+
 
 void main()	{
 	rez_color =	0.4*texture(unit_input, tex_coord) + 

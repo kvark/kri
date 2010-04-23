@@ -4,11 +4,13 @@ import OpenTK
 import kri.shade
 
 
-#-------------------------------------------#
-#	PADDING FOR rgba32f align				#
-#-------------------------------------------#
+public class Sys(Basic):	# at_sys storage for standard root
+	public def constructor(pc as kri.part.Context):
+		super('/part/beh/sys')
+		enrich(2, pc.at_sys)
 
-public class Pad(Basic):
+
+public class Pad(Basic):	# padding for rgba32f align
 	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
 	public def constructor():
 		super('/part/beh/pad')

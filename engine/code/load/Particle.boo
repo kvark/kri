@@ -18,7 +18,6 @@ public partial class Settings:
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
-	public final behavior	= kri.part.beh.Standard(pcon)
 	/*
 	public final halo_draw_v	= kri.shade.Object('/part/draw/load_v')
 	public final halo_draw_f	= kri.shade.Object('/part/draw/load_f')
@@ -41,8 +40,9 @@ public partial class Native:
 	public def p_part() as bool:
 		pm = kri.part.Manager( br.ReadUInt32() )
 		puData(pm)
-		beh = kri.part.beh.Standard(behavior)
+		beh = kri.part.beh.Standard(pcon)
 		puData(beh)
+		pm.behos.Add( kri.part.beh.Sys(pcon) )
 		pm.behos.Add( beh )
 		pm.shaders.Add( pcon.sh_born_time )
 		pm.sh_root = pcon.sh_root
