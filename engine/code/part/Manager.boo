@@ -10,15 +10,18 @@ import OpenTK.Graphics.OpenGL
 
 public class Manager(DataHolder):
 	protected final tf	= kri.TransFeedback(1)
-	protected final prog_init	= kri.shade.Smart()
-	protected final prog_update	= kri.shade.Smart()
-	private final factory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
-	
 	public final behos	= List[of beh.Basic]()
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
+
+	#private final factory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
 	public final shaders	= List[of kri.shade.Object]()
 	public sh_root		as kri.shade.Object	= null
+	protected final prog_init	= kri.shade.Smart()
+	protected final prog_update	= kri.shade.Smart()
+	
+	protected final col_init	= kri.shade.Collector()
+	protected final col_update	= kri.shade.Collector()
 
 	private parTotal	= kri.shade.par.Value[of single]('part_total')
 	public Ready as bool:
@@ -27,22 +30,10 @@ public class Manager(DataHolder):
 	public def constructor(num as uint):
 		total = num
 		dict.var(parTotal)
-
-	private def collect(type as string, method as string, val as string, oper as string) as kri.shade.Object:
-		names = [ b.getMethod(method+'_') for b in behos ]
-		names.RemoveAll({n| return string.IsNullOrEmpty(n) })
-		# easy uniqueness check
-		d2 = Dictionary[of string,bool]()
-		for n in names:	d2.Add(n,true)
-		# gather to the new code
-		decl = join("\n${type} ${n};"	for n in names)
-		if string.IsNullOrEmpty(oper) or string.IsNullOrEmpty(val):
-			body = join("\n\t${n};"		for n in names)
-		else:
-			help = join("\n\tr${oper}= ${n};"	for n in names)
-			body = "\n\t${type} r= ${val};${help}\n\treturn r;"
-		all = "#version 130\n${decl}\n\n${type} ${method}()\t{${body}\n}"
-		return kri.shade.Object( ShaderType.VertexShader, 'met_'+method, all)
+		col_init.mets['init'] = kri.shade.DefMethod( type:'void' )
+		dm = kri.shade.DefMethod( type:'float', val:'1.0', oper:'*' )
+		col_update.mets['reset'] = dm
+		col_update.mets['update'] = dm
 
 	public def init(pc as Context) as (string):
 		if data:
@@ -50,15 +41,17 @@ public class Manager(DataHolder):
 			prog_update.clear()
 		sl = kri.Ant.Inst.slotParticles
 		sem = List[of kri.vb.attr.Info]()
-
-		sh_init		= collect('void','init',	null,null)
-		sh_reset	= collect('float','reset',	'1.0','*')
-		sh_update	= collect('float','update',	'1.0','*')
+		
+		#col_init.absorb[of beh.Basic](behos)
+		#col_update.absorb[of beh.Basic](behos)
+		sh_init		= col_init.gather('init',behos)
+		sh_reset	= col_update.gather('reset',behos)
+		sh_update	= col_update.gather('update',behos)
 		for b in behos:
 			sem.AddRange( b.semantics )
 			b.link(dict)
-			prog_init.add( b.sh )
-			prog_update.add( b.sh )
+			prog_init.add( b.Shader )
+			prog_update.add( b.Shader )
 		
 		# has to be after behaviors
 		init(sem,total)

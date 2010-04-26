@@ -8,26 +8,18 @@ import kri.shade
 #	PARTICLE GENERIC BEHAVIOR			#
 #---------------------------------------#
 
-public class Basic( kri.meta.IBase ):
-	public final code	as string
+public class Basic( kri.meta.IBase, kri.meta.IShaded, Code ):
 	public final semantics = List[of kri.vb.attr.Info]()
-	public final sh		as Object
+	[getter(Shader)]
+	private final sh		as Object
 
 	public def constructor(path as string):
-		code = kri.shade.Object.readText(path)
-		sh = kri.shade.Object( ShaderType.VertexShader, 'beh', code )
+		super(path)
+		sh = Object( ShaderType.VertexShader, path, Text )
 	public def constructor(b as Basic):
-		code = b.code
+		super(b)
 		semantics.Extend( b.semantics )
 		sh = b.sh
-	
-	public def getMethod(base as string) as string:
-		return null	if string.IsNullOrEmpty(code)
-		pos = code.IndexOf(base)
-		return null	if pos<0
-		p2 = code.IndexOf('()',pos)
-		assert p2>=0
-		return code.Substring(pos,p2+2-pos)
 	
 	public def enrich(size as byte, slot as int) as void:
 		semantics.Add( kri.vb.attr.Info(

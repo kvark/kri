@@ -38,6 +38,29 @@ public static class Meta:
 		str = "#version 130\n" + dec_unis + dec_vars + dec_funs + body
 		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
 		return rez
+
+	public def MakeTexCoords2(cl as (string)*) as Object:
+		key = join( (join(s,':') for s in cl), ';' )
+		rez as Object = null
+		if corDict.TryGetValue(key,rez):
+			return rez
+		def unilist(cl as string*) as string*:
+			dd = Dictionary[of string,object]()
+			for s in cl: dd[s] = null
+			return dd.Keys
+		layers = array[of string*](unilist(s[i] for s in cl) for i in range(3))
+		def genStr(id as int, sp as string):
+			return join( sp % (sv,) for sv in layers[id] )
+		patBody = "tc_%1 = offset_%2 + scale_%2 * mr_%3;\n"
+		sBody = join( patBody % sv	for sv in cl )
+		dec_vars = genStr(0, "out vec4 tc_%1;\n" )
+		dec_unis = genStr(1, "uniform vec4 offset_%1,scale_%1;\n" )
+		dec_funs = genStr(2, "vec3 mi_%1();\n" )
+		dec_mins = genStr(2, "vec4 mr_%1 = vec4( mi_%1(), 1.0);\n" )
+		body = "void make_tex_coords()	{\n${dec_mins}\n${sBody}}"
+		str = "#version 130\n" + dec_unis + dec_vars + dec_funs + body
+		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
+		return rez
 		
 
 public class Shade:

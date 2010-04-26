@@ -87,6 +87,7 @@
     <Compile Include="code\rend\Tool.boo" />
     <Compile Include="code\rend\Manager.boo" />
     <Compile Include="code\res\Main.boo" />
+    <Compile Include="code\shade\Code.boo" />
     <Compile Include="code\shade\Linker.boo" />
     <Compile Include="code\shade\Smart.boo" />
     <Compile Include="code\shade\Object.boo" />

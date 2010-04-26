@@ -1,6 +1,5 @@
 ﻿namespace kri.shade
 
-import System.IO
 import OpenTK.Graphics.OpenGL
 
 
@@ -12,15 +11,8 @@ public class Object:
 	internal final id as int
 	final tag as string
 
-	public static def readText(name as string) as string:
-		if name.StartsWith('/'):
-			name = '../engine/shader' + name
-		name += '.glsl'
-		kri.res.check(name)
-		return File.OpenText(name).ReadToEnd()
-
 	private def compose() as void:
-		text = readText(tag)
+		text = Code.Read(tag)
 		GL.ShaderSource(id,text)
 		GL.CompileShader(id)
 		check()
