@@ -1,13 +1,12 @@
 #version 130
 
 uniform float limit;
+uniform vec4 cur_time;
 
-vec4 part_time();
 float part_uni();
 
 
 bool born_ready()	{
-	vec4 t = part_time();
 	float u = part_uni();
-	return t.z > limit*u;
+	return cur_time.x > limit*u;
 }

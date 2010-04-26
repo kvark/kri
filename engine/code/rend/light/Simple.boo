@@ -23,7 +23,7 @@ public class Fill( kri.rend.tech.General ):
 			buf.A[1].new( PixelInternalFormat.Rg16, TextureTarget.Texture2D )
 		else: buf.mask = 0
 		# spot shader
-		baker = 'empty'
+		baker = '/empty_f'
 		baker = '/light/bake_exp_f'	if lc.type == LiType.EXPONENT
 		baker = '/light/bake_var_f'	if lc.type == LiType.VARIANCE
 		sh_bake = kri.shade.Object(baker)
