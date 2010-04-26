@@ -62,9 +62,9 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm = kri.part.Manager(100)
 	pe = kri.part.Emitter(pm,'test')
 	pcon = kri.part.Context()
-	pm.sh_root = pcon.sh_root
 	#todo: just use a proper root shader
-	pm.shaders.Add( kri.shade.Object('/part/born/instant_v') )
+	pm.makeStandard(pcon)
+	pm.col_update.extra.Add( kri.shade.Object('/part/born/instant_v') )
 	beh = BehSimple(pcon)
 	beh.parPlane.Value	= Vector4(1f,0f,0f,1f)
 	beh.parSphere.Value	= Vector4( ent.node.local.pos, 3f )

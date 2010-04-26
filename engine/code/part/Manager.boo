@@ -14,72 +14,56 @@ public class Manager(DataHolder):
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
 
-	#private final factory	= kri.shade.Linker( kri.Ant.Inst.slotParticles )
-	public final shaders	= List[of kri.shade.Object]()
-	public sh_root		as kri.shade.Object	= null
-	protected final prog_init	= kri.shade.Smart()
-	protected final prog_update	= kri.shade.Smart()
-	
-	protected final col_init	= kri.shade.Collector()
-	protected final col_update	= kri.shade.Collector()
+	public final col_init	= kri.shade.Collector()
+	public final col_update	= kri.shade.Collector()
 
 	private parTotal	= kri.shade.par.Value[of single]('part_total')
 	public Ready as bool:
-		get: return prog_init.Ready and prog_update.Ready
+		get: return col_init.prog.Ready and col_update.prog.Ready
 	
 	public def constructor(num as uint):
 		total = num
 		dict.var(parTotal)
+	
+	public def makeStandard(pc as Context) as void:
+		#init
+		col_init.root = pc.sh_root
 		col_init.mets['init'] = kri.shade.DefMethod( type:'void' )
+		#update
+		col_update.root = pc.sh_root
+		col_update.extra.Add( pc.sh_tool )
 		dm = kri.shade.DefMethod( type:'float', val:'1.0', oper:'*' )
 		col_update.mets['reset'] = dm
 		col_update.mets['update'] = dm
 
-	public def init(pc as Context) as (string):
+
+	public def init(pc as Context) as void:
 		if data:
-			prog_init.clear()
-			prog_update.clear()
-		sl = kri.Ant.Inst.slotParticles
+			col_init.prog.clear()
+			col_update.prog.clear()
+		# collect shaders
+		col_init.absorb[of beh.Basic](behos)
+		col_update.absorb[of beh.Basic](behos)
+		# collect attributes
 		sem = List[of kri.vb.attr.Info]()
-		
-		#col_init.absorb[of beh.Basic](behos)
-		#col_update.absorb[of beh.Basic](behos)
-		sh_init		= col_init.gather('init',behos)
-		sh_reset	= col_update.gather('reset',behos)
-		sh_update	= col_update.gather('update',behos)
 		for b in behos:
 			sem.AddRange( b.semantics )
 			b.link(dict)
-			prog_init.add( b.Shader )
-			prog_update.add( b.Shader )
-		
-		# has to be after behaviors
 		init(sem,total)
-		assert sh_root
-		out_names = array( 'to_'+sl.Name[at.slot] for at in sem )
-
-		prog_init.add('quat')
-		prog_init.add( pc.sh_tool, pc.sh_init, sh_init )
-		tf.Setup( prog_init, false, *out_names )
-		prog_init	.link( sl, dict, kri.Ant.Inst.dict )
-
-		prog_update.add( *shaders.ToArray() )
-		prog_update.add('quat')
-		prog_update.add( pc.sh_tool, sh_root, sh_reset, sh_update )
-		tf.Setup( prog_update, false, *out_names )
-		prog_update	.link( sl, dict, kri.Ant.Inst.dict )
-		return out_names
+		# link
+		for col in (col_init,col_update):
+			col.compose( sem, kri.Ant.Inst.slotParticles, dict, kri.Ant.Inst.dict )
 	
 	public def draw() as void:
 		GL.DrawArrays( BeginMode.Points, 0, total )
 	
-	protected def process(pe as Emitter, prog as kri.shade.Program) as bool:
+	protected def process(pe as Emitter, col as kri.shade.Collector) as bool:
 		assert pe.data
 		va.bind()
 		return false	if not pe.prepare()
 		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
-		prog.use()
+		col.prog.use()
 		using kri.Discarder(true), tf.catch():
 			draw()
 		if not 'Debug':
@@ -92,8 +76,8 @@ public class Manager(DataHolder):
 		kri.swap(data, pe.data)
 		kri.swap(va, pe.va)
 	public def init(pe as Emitter) as bool:
-		return process(pe, prog_init)
+		return process(pe, col_init)
 	public def tick(pe as Emitter) as bool:
 		swapData(pe)
-		return process(pe, prog_update)
+		return process(pe, col_update)
 	

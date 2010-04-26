@@ -44,8 +44,8 @@ public partial class Native:
 		puData(beh)
 		pm.behos.Add( kri.part.beh.Sys(pcon) )
 		pm.behos.Add( beh )
-		pm.shaders.Add( pcon.sh_born_time )
-		pm.sh_root = pcon.sh_root
+		pm.makeStandard(pcon)
+		pm.col_update.extra.Add( pcon.sh_born_time )
 		beh.parSize.Value = Vector4( getVec2() )
 		# # create emitter
 		pe = kri.part.Emitter( pm, getString() )
@@ -104,7 +104,7 @@ public partial class Native:
 				return true
 			sh = pcon.sh_surf_face
 		else: assert not 'supported :('
-		pm.shaders.Add(sh)
+		pm.col_update.extra.Add(sh)
 		return true
 
 

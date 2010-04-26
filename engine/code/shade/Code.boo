@@ -43,6 +43,7 @@ public class Code(ICode):
 //------------------------------//
 //		COLLECTOR CLASS			//
 //------------------------------//
+#todo: use factory for linking
 
 public struct DefMethod:
 	public type as string
@@ -55,7 +56,7 @@ public struct DefMethod:
 public class Collector:
 	public final prog	= Smart()
 	public final mets	= Dictionary[of string,DefMethod]()
-	public sh_root		as Object	= null
+	public root			as Object	= null
 	public extra		= List[of Object]()
 	
 	public def gather(method as string, codes as List[of ICode]) as Object:
@@ -85,3 +86,10 @@ public class Collector:
 		for key in mets.Keys:
 			sh = gather( key, cl )
 			prog.add(sh)
+	
+	public def compose( sem as kri.vb.attr.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
+		prog.add('quat')
+		if sem:
+			names = array( 'to_'+sl.Name[at.slot] for at in sem )
+			kri.TransFeedback.Setup(prog, false, *names)
+		prog.link(sl,*dicts)

@@ -6,7 +6,8 @@ import kri.shade
 
 private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm = kri.part.Manager( 100000 )
-	pm.shaders.Add( kri.shade.Object('./text/born_v') )
+	pm.makeStandard(pc)
+	pm.col_update.extra.Add( kri.shade.Object('./text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
 	beh.enrich(2, pc.at_sys)
 	beh.enrich(4, pc.at_pos)
@@ -15,7 +16,6 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pLimt = par.Value[of single]('limit')
 	pLimt.Value = 2.5f
 	pm.dict.var(pLimt)
-	pm.sh_root = pc.sh_root
 	pm.init(pc)
 	
 	ps = kri.part.Emitter(pm,'mand')
