@@ -7,6 +7,7 @@ import kri.shade
 private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm = kri.part.Manager( 100000 )
 	pm.makeStandard(pc)
+	pm.col_init.extra.Add( pc.sh_tool )
 	pm.col_update.root = kri.shade.Object('./text/root_v')
 	pm.col_update.extra.Add( kri.shade.Object('./text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')

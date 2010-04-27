@@ -15,55 +15,8 @@ public static class Meta:
 		'diffuse','specular','glossiness')
 	
 	# this method constructs a shader object code that links together:
-	#	 meta_data - texture - coordinate_source
-	public def MakeTexCoords(cl as (string)*) as Object:
-		key = join( (join(s,':') for s in cl), ';' )
-		rez as Object = null
-		if corDict.TryGetValue(key,rez):
-			return rez
-		def unilist(cl as string*) as string*:
-			dd = Dictionary[of string,object]()
-			for s in cl: dd[s] = null
-			return dd.Keys
-		layers = array[of string*](unilist(s[i] for s in cl) for i in range(3))
-		def genStr(id as int, fun as callable(string) as string):
-			return join(map( layers[id], fun ))
-		def funBody(s as (string)) as string:
-			return "tc_${s[0]} = offset_${s[1]} + scale_${s[1]} * mr_${s[2]};\n"
-		dec_vars = genStr(0, {s| return "out vec4 tc_${s};\n" })
-		dec_unis = genStr(1, {s| return "uniform vec4 offset_${s},scale_${s};\n" })
-		dec_funs = genStr(2, {s| return "vec3 mi_${s}();\n" })
-		dec_mins = genStr(2, {s| return "vec4 mr_${s} = vec4( mi_${s}(), 1.0);\n" })
-		body = "void make_tex_coords()	{\n${dec_mins}\n${join(map(cl,funBody))}}"
-		str = "#version 130\n" + dec_unis + dec_vars + dec_funs + body
-		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
-		return rez
-
-	public def MakeTexCoords2(cl as (string)*) as Object:
-		key = join( (join(s,':') for s in cl), ';' )
-		rez as Object = null
-		if corDict.TryGetValue(key,rez):
-			return rez
-		def unilist(cl as string*) as string*:
-			dd = Dictionary[of string,object]()
-			for s in cl: dd[s] = null
-			return dd.Keys
-		layers = array[of string*](unilist(s[i] for s in cl) for i in range(3))
-		def genStr(id as int, sp as string):
-			return join( sp % (sv,) for sv in layers[id] )
-		patBody = "tc_%1 = offset_%2 + scale_%2 * mr_%3;\n"
-		sBody = join( patBody % sv	for sv in cl )
-		dec_vars = genStr(0, "out vec4 tc_%1;\n" )
-		dec_unis = genStr(1, "uniform vec4 offset_%1,scale_%1;\n" )
-		dec_funs = genStr(2, "vec3 mi_%1();\n" )
-		dec_mins = genStr(2, "vec4 mr_%1 = vec4( mi_%1(), 1.0);\n" )
-		body = "void make_tex_coords()	{\n${dec_mins}\n${sBody}}"
-		str = "#version 130\n" + dec_unis + dec_vars + dec_funs + body
-		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
-		return rez
-
-
-	public def MakeTexCoords3( dict as IDictionary[of string,Hermit] ) as Object*:
+	#	 meta_data - texture_unit - coordinate_source
+	public def MakeTexCoords( dict as IDictionary[of string,Hermit] ) as Object*:
 		# vertex shader
 		vins = array(h.Name	for h in dict.Values	if h.Shader.type == ShaderType.VertexShader)
 		def genJoin(pattern as string):

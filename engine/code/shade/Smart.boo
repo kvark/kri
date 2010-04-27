@@ -45,10 +45,10 @@ public class Smart(Program):
 		fillPar(true,*dicts)
 	
 	# clear objects
-	public override def clear() as int:
+	public override def clear() as void:
 		repList.Clear()
 		sourceList = null
-		return super()
+		super()
 	
 	# collect used attributes
 	public def gatherAttribs(sl as kri.lib.Slot) as int*:

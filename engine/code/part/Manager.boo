@@ -27,7 +27,7 @@ public class Manager(DataHolder):
 	
 	public def makeStandard(pc as Context) as void:
 		#init
-		col_init.root = pc.sh_root
+		col_init.root = pc.sh_init
 		col_init.mets['init'] = kri.shade.DefMethod( type:'void' )
 		#update
 		col_update.root = pc.sh_root

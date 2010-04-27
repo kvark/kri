@@ -53,7 +53,7 @@ public class Material( ani.data.Player ):
 			return if h in lis
 			h.link(dict)
 			lis.Add(h)
-		ulis = List[of meta.AdUnit2]()
+		ulis = List[of meta.AdUnit]()
 		ulis.Add(null)
 		for m in metaList:
 			push(m)
@@ -77,6 +77,6 @@ public class Material( ani.data.Player ):
 			continue	if not u
 			push( u.input )
 			din.Add( m.Name, u.input )
-		for sh in load.Meta.MakeTexCoords3(din):
+		for sh in load.Meta.MakeTexCoords(din):
 			dd[sh] = null
 		return dd.Keys

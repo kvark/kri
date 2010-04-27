@@ -14,6 +14,7 @@ public class Program:
 	public final id as int
 	[getter(Ready)]
 	private linked as bool = false
+	private blocks	= List[of Object]()
 
 	public def constructor():
 		id = GL.CreateProgram()
@@ -33,6 +34,7 @@ public class Program:
 	# add specific objects
 	public def add(*shads as (Object)) as void:
 		assert not linked
+		blocks.Extend(shads)
 		for sh in shads:
 			GL.AttachShader(id, sh.id)	if sh
 	# add object from library
@@ -73,12 +75,8 @@ public class Program:
 		fun(loc,val)
 
 	# clear everything
-	public virtual def clear() as int:
+	public virtual def clear() as void:
 		linked = false
-		num = 0
-		GL.GetProgram(id, ProgramParameter.AttachedShaders, num)
-		sar = array[of int](num)
-		GL.GetAttachedShaders(id, num, num, sar[0])
-		for sh in sar:
-			GL.DetachShader(id,sh)
-		return num
+		for sh in blocks:
+			GL.DetachShader( id, sh.id )
+		blocks.Clear()

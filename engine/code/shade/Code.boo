@@ -89,7 +89,10 @@ public class Collector:
 			prog.add(sh)
 	
 	public def compose( sem as kri.vb.attr.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
+		assert root
 		prog.add('quat')
+		prog.add(root)
+		prog.add( *extra.ToArray() )
 		if sem:
 			names = array( 'to_'+sl.Name[at.slot] for at in sem )
 			kri.TransFeedback.Setup(prog, false, *names)
