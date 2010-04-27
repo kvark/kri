@@ -61,6 +61,35 @@ public static class Meta:
 		str = "#version 130\n" + dec_unis + dec_vars + dec_funs + body
 		corDict[key] = rez = Object( ShaderType.VertexShader, 'tc_init', str )
 		return rez
+
+
+	public def MakeTexCoords3( dict as IDictionary[of string,Hermit] ) as Object*:
+		# vertex shader
+		vins = array(h.Name	for h in dict.Values	if h.Shader.type == ShaderType.VertexShader)
+		def genJoin(pattern as string):
+			return join(pattern % (name,)	for name in vins)
+		v_fun		= genJoin("\nvec3 mi_{0}();")
+		v_output	= genJoin("\nout vec3 mr_{0};")
+		v_body		= genJoin("\n\tmr_{0} = mi_{0}();")
+		str = "#version 130\n${v_fun}\n${v_output}\nvoid make_tex_coords(){${v_body}\n}"
+		sh_vert = Object( ShaderType.VertexShader,		'tc_vert_init', str )
+		# geometry shader
+		# todo...
+		# fragment shader
+		f_input	= genJoin("\nin vec3 mr_{0};")
+		def genStr(h as Hermit):
+			if h.Shader.type == ShaderType.FragmentShader:
+				pat = "\nvec3 mi_{0}();\nvec3 tr_{0} = mi_{0}();"
+			else: pat = "\nvec3 tr_{0} = mr_{0};"
+			return pat % (h.Name,)
+		f_local = join(genStr(d.Value) for d in dict)
+		f_uni	= join("\nuniform vec4 offset_{0},scale_{0};" % (d.Key,)	for d in dict)
+		pattern = "\nvec4 tc_{0}() {2}\n\treturn offset_{0} + scale_{0} * vec4(tr_{1},1.0);\n{3}"
+		f_fun 	= join(pattern % (d.Key,d.Value.Name,'{','}')	for d in dict)
+		str = "#version 130\n" + f_input + f_local + f_uni + f_fun
+		sh_frag = Object( ShaderType.FragmentShader,	'tc_frag_init', str )
+		# done
+		return (sh_vert,sh_frag)
 		
 
 public class Shade:

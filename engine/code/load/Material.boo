@@ -61,18 +61,16 @@ public partial class Native:
 		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
 		tarDict['coloremission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		# map targets
-		u as AdUnit = null
+		u  = AdUnit2()
+		puData(u)
 		while (name = getString()) != '':
 			targ as MapTarget
 			continue if not tarDict.TryGetValue(name,targ)
-			u = AdUnit(targ.name)	if not u
 			me = m.Meta[targ.name] as Advanced
 			continue	if not me
 			me.Unit = u
 			me.Shader = targ.prog
 		# map inputs
-		u = AdUnit(null)	if not u
-		puData(u)
 		name = getString()
 		fun as callable() as Hermit = null
 		if limdic.TryGetValue(name,fun):
@@ -145,7 +143,7 @@ public partial class Native:
 	
 	#---	Parse texture slot	---#
 	public def pm_tex() as bool:
-		u = geData[of AdUnit]()
+		u = geData[of AdUnit2]()
 		return false	if not u
 		image.Basic.bRepeat	= br.ReadByte()>0	# extend by repeat
 		image.Basic.bMipMap	= br.ReadByte()>0	# generate mip-maps

@@ -16,6 +16,11 @@ public interface INamed:
 		get
 
 
+public class ValuePure[of T]( IBase[of T] ):
+	[Property(Value)]
+	private val	as T
+
+
 public abstract class ValueBase[of T]( IBase[of T],INamed ):
 	[Getter(Name)]
 	private final name	as string

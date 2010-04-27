@@ -10,8 +10,11 @@ public interface IBase( par.INamed ):
 	def clone() as IBase
 	def link(d as rep.Dict) as void
 
+public interface ISlave:
+	def link(name as string, d as rep.Dict) as void
+
 public interface IUnited:
-	Unit as AdUnit:
+	Unit as AdUnit2:
 		get
 
 public interface IShaded:
@@ -51,7 +54,7 @@ public class InputObject(Hermit):
 #---	Advanced meta-data with unit link	---#
 public class Advanced(IUnited,Hermit):
 	[Property(Unit)]
-	private unit	as AdUnit	= null
+	private unit	as AdUnit2	= null
 	def IBase.clone() as IBase:
 		return copyTo( Advanced( Unit:unit ) )
 	
@@ -76,6 +79,22 @@ public class AdUnit( IBase, par.Value[of kri.Texture] ):
 		return un
 	def IBase.link(d as rep.Dict) as void:
 		d.var(pOffset,pScale)
+
+
+#---	Unit Slave meta data	---#
+public class AdUnit2( ISlave, par.ValuePure[of kri.Texture] ):
+	public input	as Hermit	= null
+	public final pOffset	= par.ValuePure[of Vector4]()
+	public final pScale		= par.ValuePure[of Vector4]()
+	portal Offset	as Vector4	= pOffset.Value
+	portal Scale	as Vector4	= pScale.Value
+	
+	def ISlave.link(name as string, d as rep.Dict) as void:
+		d.unit(name,self)
+		d['offset_'	+name] = pOffset
+		d['scale_'	+name] = pScale
+
+
 
 
 #---	real value meta-data	---#

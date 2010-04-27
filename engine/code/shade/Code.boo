@@ -16,9 +16,10 @@ public interface ICode:
 
 
 public class Code(ICode):
+	public static Folder	= '../engine/shader'
 	public static def Read(name as string) as string:
 		if name.StartsWith('/'):
-			name = '../engine/shader' + name
+			name = Folder + name
 		name += '.glsl'
 		kri.res.check(name)
 		return File.OpenText(name).ReadToEnd()

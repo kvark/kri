@@ -8,52 +8,56 @@ import OpenTK.Graphics.OpenGL
 #---------------------------#
 
 public class Object:
-	internal final id as int
-	final tag as string
+	internal final id	as int
+	private final tag	as string
+	public final type	as ShaderType
 
-	private def compose() as void:
-		text = Code.Read(tag)
-		GL.ShaderSource(id,text)
-		GL.CompileShader(id)
-		check()
+	private def compose(text as string) as int:
+		sid = GL.CreateShader(type)
+		GL.ShaderSource(sid,text)
+		GL.CompileShader(sid)
+		Check(sid)
+		return sid
+	private def compose() as int:
+		return compose( Code.Read(tag) )
+		
 
 	# create by name & type
 	public def constructor(name as string, tip as ShaderType):
-		tag = name
-		id = GL.CreateShader(tip)
-		compose()
+		tag,type = name,tip
+		id = compose()
 
 	# create by name, infer the type from it
 	public def constructor(name as string):
-		tip = cast(ShaderType,0)
-		if		name.EndsWith('_v'):	tip = ShaderType.VertexShader
-		elif	name.EndsWith('_f'):	tip = ShaderType.FragmentShader
-		elif	name.EndsWith('_g'):	tip = ShaderType.GeometryShader
+		type = cast(ShaderType,0)
+		if		name.EndsWith('_v'):	type = ShaderType.VertexShader
+		elif	name.EndsWith('_f'):	type = ShaderType.FragmentShader
+		elif	name.EndsWith('_g'):	type = ShaderType.GeometryShader
 		tag = name
-		id = GL.CreateShader(tip)
-		compose()
+		id = compose()
 
 	# create from source
-	public def constructor(tip as ShaderType, label as string, *text as (string)):
+	public def constructor(tip as ShaderType, label as string, text as string):
 		assert text.Length
-		tag = label
-		id = GL.CreateShader(tip)
-		GL.ShaderSource(id, text.Length, text, null)
-		GL.CompileShader(id)
-		check()
+		tag,type = label,tip
+		id = compose(text)
 
 	# delete
 	def destructor():
 		kri.safeKill({ GL.DeleteShader(id) })
 
 	# check compilation result
-	public def check() as void:
+	private def Check(sid as int) as void:
 		info as string
-		GL.GetShaderInfoLog(id,info)
+		GL.GetShaderInfoLog(sid,info)
 		#Debug.WriteLine("Shader: "+tag+"\n"+info);
 		result as int
-		GL.GetShader(id, ShaderParameter.CompileStatus, result)
+		GL.GetShader(sid, ShaderParameter.CompileStatus, result)
 		raise info	if not result
+	
+	# check current shader
+	public def check() as void:
+		Check(id)
 
 	# disable shading
 	public static def off() as void:
