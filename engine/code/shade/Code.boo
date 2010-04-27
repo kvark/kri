@@ -50,9 +50,11 @@ public struct DefMethod:
 	public type as string
 	public val	as string
 	public oper	as string
-	public Void as bool:
+	public Null as bool:
 		get: return string.IsNullOrEmpty(val) or string.IsNullOrEmpty(oper)
-	
+	public static final Void	= DefMethod( type:'void' )
+	public static final Float	= DefMethod( type:'float', val:'1.0', oper:'*' )
+
 
 public class Collector:
 	public final prog	= Smart()
@@ -69,7 +71,7 @@ public class Collector:
 			names.Add(cur)	if cur != null
 		# gather to the new code
 		decl = join("\n${dm.type} ${n};"	for n in names)
-		if dm.Void:
+		if dm.Null:
 			body = join("\n\t${n};"			for n in names)
 		else:
 			help = join("\n\tr${dm.oper}= ${n};"	for n in names)
@@ -95,5 +97,5 @@ public class Collector:
 		prog.add( *extra.ToArray() )
 		if sem:
 			names = array( 'to_'+sl.Name[at.slot] for at in sem )
-			kri.TransFeedback.Setup(prog, false, *names)
+			prog.feedback(false,*names)
 		prog.link(sl,*dicts)

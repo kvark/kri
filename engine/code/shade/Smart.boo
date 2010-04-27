@@ -33,9 +33,7 @@ public class Smart(Program):
 	
 	public override def use() as void:
 		super()
-		for rp in repList:
-			iv = sourceList[ rp.loc ]
-			rp.upload(iv)
+		updatePar()
 	
 	# link with attributes
 	public def link(sl as kri.lib.Slot, *dicts as (rep.Dict)) as void:
@@ -67,6 +65,12 @@ public class Smart(Program):
 			str = name.ToString()
 			off = (0,3)[ str.StartsWith(prefixAttrib) ]
 			assert sl.find( str.Substring(off) ) >= 0
+	
+	# re-upload parameters
+	public def updatePar() as void:
+		for rp in repList:
+			iv = sourceList[ rp.loc ]
+			rp.upload(iv)
 	
 	# setup units & gather uniforms
 	public def fillPar( reset as bool, *dicts as (rep.Dict) ) as void:

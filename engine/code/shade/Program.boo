@@ -60,7 +60,11 @@ public class Program:
 	public def fragout(*names as (string)) as void:
 		for i in range(names.Length):
 			GL.BindFragDataLocation(id, i, names[i])
-	
+	# assign transform feedback
+	public def feedback(sep as bool, *names as (string)) as void:
+		GL.TransformFeedbackVaryings( id, names.Length, names,
+		(TransformFeedbackMode.InterleavedAttribs,TransformFeedbackMode.SeparateAttribs)[sep] )
+
 	# get uniform location by name
 	public def getVar(name as string) as int:
 		assert linked

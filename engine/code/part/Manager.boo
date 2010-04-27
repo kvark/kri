@@ -28,13 +28,12 @@ public class Manager(DataHolder):
 	public def makeStandard(pc as Context) as void:
 		#init
 		col_init.root = pc.sh_init
-		col_init.mets['init'] = kri.shade.DefMethod( type:'void' )
+		col_init.mets['init'] = kri.shade.DefMethod.Void
 		#update
 		col_update.root = pc.sh_root
 		col_update.extra.Add( pc.sh_tool )
-		dm = kri.shade.DefMethod( type:'float', val:'1.0', oper:'*' )
-		col_update.mets['reset'] = dm
-		col_update.mets['update'] = dm
+		col_update.mets['reset']	= kri.shade.DefMethod.Float
+		col_update.mets['update']	= kri.shade.DefMethod.Float
 
 
 	public def init(pc as Context) as void:
@@ -42,8 +41,8 @@ public class Manager(DataHolder):
 			col_init.prog.clear()
 			col_update.prog.clear()
 		# collect shaders
-		col_init.absorb[of beh.Basic](behos)
-		col_update.absorb[of beh.Basic](behos)
+		col_init	.absorb[of beh.Basic](behos)
+		col_update	.absorb[of beh.Basic](behos)
 		# collect attributes
 		sem = List[of kri.vb.attr.Info]()
 		for b in behos:
@@ -64,11 +63,16 @@ public class Manager(DataHolder):
 		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		col.prog.use()
+		if 'DebugSA':
+			sa = kri.shade.Smart()
+			sa.add('./text/test_v')
+			sa.feedback(false, 'to_pos','to_speed')
+			sa.link( kri.Ant.Inst.slotParticles )
 		using kri.Discarder(true), tf.catch():
 			draw()
-		if not 'Debug':
+		if 'Debug':
 			pe.va.bind()
-			ar = array[of single](total*8)
+			ar = array[of single](total*6)
 			pe.data.read(ar)
 		return true
 

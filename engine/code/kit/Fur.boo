@@ -63,7 +63,7 @@ public class Update( kri.rend.Basic ):
 	
 	public def constructor(fc as Context):
 		super(false)
-		tf.Setup(sa, false, 'to_pos','to_vel')
+		sa.feedback(false, 'to_pos','to_vel')
 		sa.add('quat', '/fur/update_v')
 		sa.link(kri.Ant.Inst.slotAttributes, fc.d)
 	

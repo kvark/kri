@@ -51,7 +51,7 @@ public class Update( kri.rend.tech.Basic ):
 		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
 		#old: sa.add( '/skin/zcull_v', 'tool', 'empty' )
 		sa.add( '/skin/empty_v' )
-		tf.Setup(sa, true, 'to_vertex', 'to_quat')
+		sa.feedback(true, 'to_vertex', 'to_quat')
 		sl = kri.Ant.Inst.slotAttributes
 		sa.link(sl, dict, kri.Ant.Inst.dict)
 		at_all = array( sa.gatherAttribs(sl) )
@@ -60,6 +60,7 @@ public class Update( kri.rend.tech.Basic ):
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.Context) as void:
+		sa.use()
 		using kri.Discarder(true):
 			for e in kri.Scene.Current.entities:
 				kri.Ant.Inst.params.modelView.activate( e.node )
@@ -81,6 +82,6 @@ public class Update( kri.rend.tech.Basic ):
 					s1.inverse()
 					spa.combine(s0,s1)	# ->model
 					par[i+1].activate(spa)
-				sa.use()
+				sa.updatePar()
 				e.mesh.draw(tf)
 				tag.Sync = true
