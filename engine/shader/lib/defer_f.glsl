@@ -17,6 +17,9 @@ vec3 trans_inv2(vec3 v, Spatial s)	{
 
 //---	PROJECTIONS	---//
 
+vec4 project2(vec3 v, vec4 pr)	{
+	return vec4( v.xy * pr.xy, v.z*pr.z + pr.w, -v.z);
+}
 vec3 unproject(vec3 v, vec4 pr)	{
 	vec3 ndc = 2.0*v - vec3(1.0);
 	float z = -pr.w / (ndc.z + pr.z);

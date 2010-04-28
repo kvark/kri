@@ -63,16 +63,13 @@ public class Manager(DataHolder):
 		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		col.prog.use()
-		if 'DebugSA':
-			sa = kri.shade.Smart()
-			sa.add('./text/test_v')
-			sa.feedback(false, 'to_pos','to_speed')
-			sa.link( kri.Ant.Inst.slotParticles )
 		using kri.Discarder(true), tf.catch():
 			draw()
-		if 'Debug':
-			pe.va.bind()
+		if not 'Debug':
+			GL.Finish()
+			#assert tf.result() == total
 			ar = array[of single](total*6)
+			pe.va.bind()
 			pe.data.read(ar)
 		return true
 
@@ -84,4 +81,3 @@ public class Manager(DataHolder):
 	public def tick(pe as Emitter) as bool:
 		swapData(pe)
 		return process(pe, col_update)
-	

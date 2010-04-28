@@ -9,5 +9,10 @@ void init_pad()	{
 
 float reset_pad()	{
 	to_pad = 1.0;
-	return to_pad;
+	return 1.0;
+}
+
+float update_pad()	{
+	to_pad = 2.0;
+	return 1.0;
 }

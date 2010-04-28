@@ -12,11 +12,13 @@ public partial class Native:
 		uvShaders = [	kri.shade.Object("/mi/uv${i}_v") for i in range(4) ]
 		orcoShader =	kri.shade.Object('/mi/orco_v')
 		objectShader = 	kri.shade.Object('/mi/object_v')
+		# todo?: normal & reflection in fragment
 		# trivial sources
 		def genFun(x as Hermit): return {return x}
 		for s in ('GLOBAL','WINDOW','NORMAL','REFLECTION','TANGENT'):
 			slow = s.ToLower()
-			sh = kri.shade.Object( "/mi/${slow}_v" )
+			suf = ('v','f')[s == 'WINDOW']
+			sh = kri.shade.Object( "/mi/${slow}_${suf}" )
 			mt = Hermit( Shader:sh, Name:slow )	# careful!
 			limdic[s] = genFun(mt)
 		# non-trivial sources

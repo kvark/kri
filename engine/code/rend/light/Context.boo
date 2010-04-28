@@ -13,6 +13,7 @@ public class Context:
 	public final size	as uint
 	public final layers	as uint
 	public bits	as uint	= 0
+	public final texLit	= kri.shade.par.Texture('light')
 	public final pDark	= kri.shade.par.Value[of single]('k_dark')
 	public final pX		= kri.shade.par.Value[of OpenTK.Vector4]('dark')
 	public final pOff	= kri.shade.par.Value[of single]('texel_offset')
@@ -26,6 +27,7 @@ public class Context:
 	public def constructor(nlay as uint, qlog as uint):
 		dict.var(pDark,pOff,pHemi)
 		dict.var(pX)
+		dict.unit(texLit)
 		layers,size	= nlay,1<<qlog
 		defShadow.bind()
 		kri.Texture.Filter(false,false)

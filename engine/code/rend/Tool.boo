@@ -73,10 +73,7 @@ public class Gauss(Basic):
 		return	if not buf
 		assert buf.A[0].Tex and buf.A[1].Tex
 		for i in range(2):
-			texIn.Value = t = buf.A[i].Tex
-			t.bind(0)
-			kri.Texture.Filter(false,false)
-			kri.Texture.Wrap( OpenGL.TextureWrapMode.Clamp, 2 )
+			texIn.Value = buf.A[i].Tex
 			buf.activate(3 ^ (1<<i))
 			(sa,sb)[i].use()
 			kri.Ant.inst.emitQuad()

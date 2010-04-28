@@ -16,14 +16,15 @@ public static class Meta:
 	
 	# this method constructs a shader object code that links together:
 	#	 meta_data - texture_unit - coordinate_source
-	public def MakeTexCoords( dict as IDictionary[of string,Hermit] ) as Object*:
+	public def MakeTexCoords( geom as bool, dict as IDictionary[of string,Hermit] ) as Object*:
 		# vertex shader
 		vins = array(h.Name	for h in dict.Values	if h.Shader.type == ShaderType.VertexShader)
 		def genJoin(pattern as string):
 			return join(pattern % (name,)	for name in vins)
 		v_fun		= genJoin("\nvec3 mi_{0}();")
-		v_output	= genJoin("\nout vec3 mr_{0};")
-		v_body		= genJoin("\n\tmr_{0} = mi_{0}();")
+		vout = ('mr','mv')[geom]
+		v_output	= genJoin("\nout vec3 ${vout}_{0};")
+		v_body		= genJoin("\n\t${vout}_{0} = mi_{0}();")
 		str = "#version 130\n${v_fun}\n${v_output}\nvoid make_tex_coords(){${v_body}\n}"
 		sh_vert = Object( ShaderType.VertexShader,		'tc_vert_init', str )
 		# geometry shader

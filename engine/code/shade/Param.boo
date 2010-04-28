@@ -36,6 +36,11 @@ public class Value[of T](IBase[of T],INamed):
 	public def constructor(s as string):
 		name = s
 
+
+public class Texture(Value[of kri.Texture]):
+	public def constructor(s as string):
+		super(s)
+
 /*	gives Failed to create 'kri.shade.par.Value2[of T]' type.. (BCE0055)
 public class Value2[of T](ValueBase[of T]):
 	[property(Value)]
