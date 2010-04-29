@@ -9,6 +9,7 @@ import OpenTK.Graphics.OpenGL
 #-----------------------------------#
 
 public class Tag( kri.ITag, kri.vb.ISource ):
+	public final va			= kri.vb.Array()
 	public final at_prev	= kri.Ant.Inst.slotParticles.getForced('prev')
 	public final at_base	= kri.Ant.Inst.slotParticles.getForced('base')
 	[Getter(Data)]
@@ -18,6 +19,7 @@ public class Tag( kri.ITag, kri.vb.ISource ):
 	public ready	as bool	= false
 
 	public def constructor(size as uint):
+		va.bind()
 		for i in range(2):
 			kri.vb.enrich( aBase, 3, (at_prev,at_base)[i] )
 		aBase.initAll(size)
@@ -35,7 +37,7 @@ public class Behavior( kri.part.beh.Basic ):
 	private final posId		as int
 	# fun
 	public def constructor(pc as kri.part.Context, segs as byte):
-		super('./text/fur/main')
+		super('/part/beh/fur_main')
 		kri.vb.enrich( self, 3, pc.at_pos, pc.at_speed )
 		layers = segs
 		posId = pc.at_pos
@@ -84,7 +86,6 @@ public class Behavior( kri.part.beh.Basic ):
 #-------------------------------------------#
 
 public class Bake( kri.rend.Basic ):
-	public final va		= kri.vb.Array()
 	public final vbo	= kri.vb.Attrib()
 	public final sa		= kri.shade.Smart()
 	public final tf		= kri.TransFeedback(1)
@@ -101,7 +102,7 @@ public class Bake( kri.rend.Basic ):
 		d.var(pInit)
 		d.unit(pVert,pQuat)
 		# init shader
-		sa.add('quat','./text/fur/base_v')
+		sa.add('quat','/part/fur/base_v')
 		sa.feedback(false, 'to_prev','to_base')
 		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 		# init fake vertex attrib for drawing
@@ -109,13 +110,13 @@ public class Bake( kri.rend.Basic ):
 			size:1, slot:0, type:VertexAttribPointerType.UnsignedByte ))
 
 	public override def process(con as kri.rend.Context) as void:
-		va.bind()
 		sa.use()
 		for e in kri.Scene.Current.entities:
 			tBake	= e.seTag[of kri.kit.bake.Tag]()
 			tCur	= e.seTag[of Tag]()
 			continue	if not tBake or not tCur
 			total = tBake.wid * tBake.het
+			tCur.va.bind()
 			vbo.initAll(total)
 			pWid.Value	= tBake.wid
 			pVert.Value	= tBake.tVert

@@ -35,6 +35,17 @@ public class Manager(DataHolder):
 		col_update.mets['reset']	= kri.shade.DefMethod.Float
 		col_update.mets['update']	= kri.shade.DefMethod.Float
 	
+	public def makeHair(pc as Context) as void:
+		# collectors
+		col_init.mets['init']		= kri.shade.DefMethod.Void
+		col_update.mets['update']	= kri.shade.DefMethod.Float
+		col_init.root	= pc.sh_fur_init
+		col_update.root	= pc.sh_fur_root
+		# bug! driver hangs without this line
+		b2 = beh.Basic('/part/fur/dummy')
+		kri.vb.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
+		behos.Add(b2)
+	
 	public def seBeh[of T(beh.Basic)]() as T:
 		for beh in behos:
 			bt = beh as T

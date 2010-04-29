@@ -22,14 +22,17 @@ public partial class Native:
 	public def finishParticles() as void:
 		for pe in at.scene.particles:
 			pm = pe.owner
-			continue	if pm.Ready
-			if 'Std':
-				pm.behos.Add( kri.part.beh.Sys(pcon) )
-				pm.makeStandard(pcon)
-				pm.col_update.extra.Add( pcon.sh_born_time )
-			else:
-				pass
-			pm.init(pcon)
+			if not pm.Ready:
+				ps = pm.seBeh[of kri.part.beh.Standard]()
+				ph = pm.seBeh[of kri.kit.hair.Behavior]()
+				if ps:
+					pm.behos.Add( kri.part.beh.Sys(pcon) )
+					pm.makeStandard(pcon)
+					pm.col_update.extra.Add( pcon.sh_born_time )
+				elif ph: pm.makeHair(pcon)
+				else: continue
+				pm.init(pcon)
+			pe.allocate()
 
 
 	#---	Parse emitter object	---#
@@ -61,7 +64,7 @@ public partial class Native:
 		pe = geData[of kri.part.Emitter]()
 		return false	if not pe
 		pm = pe.owner
-
+		
 		ph = pm.seBeh[of kri.kit.hair.Behavior]()
 		if source == 'FACE':
 			if not ent.seTag[of kri.kit.bake.Tag]():
@@ -118,11 +121,12 @@ public partial class Native:
 		pm = geData[of kri.part.Manager]()
 		return false	if not pm
 		segs = br.ReadByte()
-		beh = kri.kit.hair.Behavior(pcon,segs)
-		pm.behos.Add( beh )
+		pm.behos.Add( kri.kit.hair.Behavior(pcon,segs) )
 		dyn = getVector()	# stiffness, mass, bending
+		dyn.Z *= 10f
 		pm.behos.Add( kri.part.beh.Bend( dyn.Z ))
 		damp = getVec2()	# spring, air
+		damp.X *= 1.5f
 		pm.behos.Add( kri.part.beh.Damp( damp.X ))
 		pm.behos.Add( kri.part.beh.Norm() )
 		return true
@@ -143,7 +147,8 @@ public partial class Native:
 			ps.parVelTan.Value = Vector4( tan, tanFactor.Z )
 			ps.parVelKeep.Value = Vector4.Zero
 		elif ph:	# hair
-			lays = ph.genLayers( pe, Vector4(tan,add.Y) )
+			magic = 5f / ph.layers	# todo: find out Blender scale source
+			lays = ph.genLayers( pe, magic * Vector4(tan,add.Y) )
 			at.scene.particles.Remove(pe)
 			at.scene.particles.AddRange(lays)
 		else: return false

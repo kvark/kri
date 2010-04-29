@@ -90,6 +90,9 @@ public class Context:
 	public final	sh_draw	= kri.shade.Object('/part/draw/main_v')
 	public final	sh_root	= kri.shade.Object('/part/root_v')
 	public final	sh_tool	= kri.shade.Object('/part/tool_v')
+	# fur shaders
+	public final	sh_fur_init	= kri.shade.Object('/part/fur/init_v')
+	public final	sh_fur_root	= kri.shade.Object('/part/fur/root_v')
 	# born shaders
 	public final	sh_born_instant	= kri.shade.Object('/part/born/instant_v')
 	public final	sh_born_static	= kri.shade.Object('/part/born/static_v')
