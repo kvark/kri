@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 
 #--------- Mesh ---------#
 
-public class Mesh( vb.attr.Storage ):
+public class Mesh( vb.Storage ):
 	public nVert	as uint	= 0
 	public nPoly	as uint	= 0
 	public ind		as vb.Index	= null
@@ -63,7 +63,7 @@ public class TagMat(ITag):
 
 #--------- Entity ---------#
 
-public class Entity( vb.attr.Storage ):
+public class Entity( vb.Storage ):
 	public node	as Node		= null
 	public mesh	as Mesh		= null
 	public visible	as bool	= true

@@ -25,13 +25,13 @@ public class Context:
 		assert not e.seTag[of Tag]()
 		e.tags.Add( Tag() )
 		vat = kri.vb.Attrib()
-		ai = kri.vb.attr.Info(size:3, type:VertexAttribPointerType.Float, integer:false)
+		ai = kri.vb.Info(size:3, type:VertexAttribPointerType.Float, integer:false)
 		vm = (null if e.mesh.find(ats[0]) else kri.vb.Attrib())
 		for slot in ats:
 			assert not e.find(ats[0])
 			ai.slot = slot
-			vat.semantics.Add(ai)
-			vm.semantics.Add(ai) if vm
+			vat.Semant.Add(ai)
+			vm.Semant.Add(ai) if vm
 		vat.initAll( e.mesh.nVert )
 		e.vbo.Add(vat)
 		if vm:

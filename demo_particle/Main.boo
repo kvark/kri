@@ -23,9 +23,9 @@ private class RenderPoints( kri.rend.Basic ):
 			Vector2h(1f,1f),
 			Vector2h(-1f,1f)
 			), false)
-		ai = kri.vb.attr.Info( slot:kri.Ant.Inst.attribs.vertex,
+		ai = kri.vb.Info( slot:kri.Ant.Inst.attribs.vertex,
 			integer:false, size:2, type:VertexAttribPointerType.HalfFloat )
-		vbo.semantics.Add(ai)
+		vbo.Semant.Add(ai)
 		vbo.attribFirst()
 		
 	public override def process(con as kri.rend.Context) as void:
@@ -48,9 +48,8 @@ private class BehSimple( kri.part.beh.Basic ):
 	
 	public def constructor(pc as kri.part.Context):
 		super('./text/beh_simple')
-		enrich(2, pc.at_sys)
-		enrich(4, pc.at_pos)
-		enrich(4, pc.at_speed)
+		kri.vb.enrich( self, 2, pc.at_sys )
+		kri.vb.enrich( self, 4, pc.at_pos, pc.at_speed)
 	
 	public override def link(d as kri.shade.rep.Dict) as void:
 		d.unit(tVert,tQuat)

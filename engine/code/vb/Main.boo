@@ -1,11 +1,12 @@
 ﻿namespace kri.vb
 
 import System
-import System.Collections.Generic
-import System.Runtime.InteropServices
 import OpenTK.Graphics.OpenGL
 
-#---------
+
+#-----------------------
+#	VERTEX ARRAY
+#-----------------------
 
 public class Array:
 	public static final Default	= Array(0)
@@ -25,6 +26,10 @@ public class Array:
 		GL.BindVertexArray(0)
 
 
+#-----------------------
+#	BUFFER PROXY
+#-----------------------
+
 public class Proxy:
 	protected final target	as BufferTarget
 	# creating
@@ -33,6 +38,10 @@ public class Proxy:
 	public def bind(v as Object) as void:
 		GL.BindBuffer(target, ( v.Extract if v else cast(uint,0) ))
 
+
+#-----------------------
+#	BUFFER OBJECT
+#-----------------------
 
 public class Object(Proxy):
 	[getter(Extract)]
@@ -78,79 +87,9 @@ public class Object(Proxy):
 		unmap()
 
 
-public class Attrib(Object):
-	public final semantics	= List[of attr.Info]()
-	public def constructor():
-		super( BufferTarget.ArrayBuffer )
-	
-	public def unitLoc(ref at as attr.Info, ref off as int, ref sum as int) as bool:
-		off,sum = -1,0
-		for ain in semantics:
-			if ain.slot == at.slot:
-				assert off<0
-				off = sum
-				at = ain
-			sum += ain.fullSize()
-		return off >= 0
-	public def unitSize() as int:
-		rez = 0
-		for a in semantics:
-			rez += a.fullSize()
-		return rez
-	
-	public def initAll(num as int) as void:
-		off,total = 0,unitSize()
-		init(num * total)
-		semantics.ForEach() do(ref at as attr.Info):
-			Push(at, off, total)
-			off += at.fullSize()
-
-	private static def Push(ref at as attr.Info, off as int, total as int) as void:
-		GL.EnableVertexAttribArray( at.slot )
-		if at.integer: #TODO: use proper enum
-			GL.VertexAttribIPointer(at.slot, at.size,
-				cast(VertexAttribIPointerType,cast(int,at.type)),
-				total, IntPtr(off))
-		else:
-			GL.VertexAttribPointer(at.slot, at.size,
-				at.type, false, total, off)
-				
-	private def push(ref at as attr.Info) as void:
-		off,sum = 0,0
-		unitLoc(at,off,sum)	# no modification here
-		Push(at,off,sum)
-
-	public def attrib(id as uint) as bool:
-		at = attr.Info( slot:id )
-		off,sum = 0,0
-		if not unitLoc(at,off,sum):
-			return false
-		bind()
-		Push(at,off,sum)
-		return true
-			
-	public def attribFirst() as void:
-		bind()
-		ai = semantics[0]
-		push(ai)
-	
-	public def attribFake(slot as uint) as void:
-		bind()
-		ai = semantics[0]
-		ai.slot = slot
-		push(ai)
-
-	public def attribTrans(dict as IDictionary[of int,int]) as void:
-		bind()
-		off,total = 0,unitSize()
-		for at in semantics:
-			val = 0
-			if dict.TryGetValue(at.slot,val):
-				a2 = at
-				a2.slot = val
-				Push(a2,off,total)
-			off += at.fullSize()
-
+#-----------------------
+#	CUSTOM OBJECTS
+#-----------------------
 
 public class Index(Object):
 	public def constructor():
@@ -159,8 +98,3 @@ public class Index(Object):
 public class Pack(Object):
 	public def constructor():
 		super( BufferTarget.PixelPackBuffer )
-
-
-public interface ISource:
-	Data	as Attrib:
-		get

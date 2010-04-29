@@ -17,8 +17,8 @@ public class Quad:
 			Vector2h(-1f,1f),	Vector2h(1f,1f),
 			), false)
 		id = kri.Ant.Inst.attribs.vertex
-		ai = kri.vb.attr.Info(slot:id, size:2, type:VertexAttribPointerType.HalfFloat)
-		data.semantics.Add(ai)
+		ai = kri.vb.Info(slot:id, size:2, type:VertexAttribPointerType.HalfFloat)
+		data.Semant.Add(ai)
 		data.attribFirst()
 		kri.vb.Array.unbind()
 	public def draw() as void:
@@ -62,11 +62,7 @@ public struct MeshData( kri.IGenerator[of kri.Mesh] ):
 			m.nPoly = m.nVert / m.polySize
 			vbo = kri.vb.Attrib()
 			vbo.init( v, false )
-			ai = kri.vb.attr.Info( integer:false, size:4, type:VertexAttribPointerType.Float )
-			ai.slot = kri.Ant.Inst.attribs.vertex
-			vbo.semantics.Add(ai)
-			ai.slot = kri.Ant.Inst.attribs.quat
-			vbo.semantics.Add(ai)
+			kri.vb.enrich( vbo, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
 			m.vbo.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize
@@ -106,9 +102,7 @@ public def line() as kri.Mesh:
 	data = (of Vector4: Vector4(-1f,0f,0f,1f), Vector4(1f,0f,0f,1f))
 	vbo = kri.vb.Attrib()
 	vbo.init( data, false )
-	vbo.semantics.Add( kri.vb.attr.Info(
-		integer:false, slot: kri.Ant.Inst.attribs.vertex,
-		size:4, type:VertexAttribPointerType.Float ))
+	kri.vb.enrich( vbo, 4, kri.Ant.Inst.attribs.vertex )
 	return m
 
 
@@ -138,14 +132,8 @@ public def plane_tex(scale as Vector2) as kri.Mesh:
 	vbo = kri.vb.Attrib()
 	vbo.init( v, false )
 	# fill semantics
-	ai = kri.vb.attr.Info( integer:false, size:4, type:VertexAttribPointerType.Float )
-	ai.slot = kri.Ant.Inst.attribs.vertex
-	vbo.semantics.Add(ai)
-	ai.slot = kri.Ant.Inst.attribs.quat
-	vbo.semantics.Add(ai)
-	ai.size = 2
-	ai.slot = kri.Ant.Inst.attribs.tex[0]
-	vbo.semantics.Add(ai)
+	kri.vb.enrich( vbo, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
+	kri.vb.enrich( vbo, 2, kri.Ant.Inst.attribs.tex[0] )
 	# return
 	m.vbo.Add(vbo)
 	return m

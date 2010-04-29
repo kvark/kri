@@ -5,7 +5,7 @@ import OpenTK.Graphics.OpenGL
 
 public partial class Native:
 	protected def getArray[of T(struct)](multi as uint,
-			ref ai as kri.vb.attr.Info, fun as callable) as bool:
+			ref ai as kri.vb.Info, fun as callable) as bool:
 		m = geData[of kri.Mesh]()
 		return false	if not m
 		ar = array[of T]( multi * m.nVert )
@@ -13,7 +13,7 @@ public partial class Native:
 			ar[i] = fun()
 		v = kri.vb.Attrib()
 		v.init(ar,false)
-		v.semantics.Add(ai)
+		v.Semant.Add(ai)
 		m.vbo.Add(v)
 		return true
 
@@ -26,7 +26,7 @@ public partial class Native:
 	
 	#---	Parse mesh vertices (w = handness)	---#
 	public def pv_pos() as bool:
-		ai = kri.vb.attr.Info(
+		ai = kri.vb.Info(
 			slot: kri.Ant.Inst.attribs.vertex, size:4,
 			type: VertexAttribPointerType.Float,
 			integer:false )
@@ -34,7 +34,7 @@ public partial class Native:
 	
 	#---	Parse mesh quaternions 	---#
 	public def pv_quat() as bool:
-		ai = kri.vb.attr.Info(
+		ai = kri.vb.Info(
 			slot: kri.Ant.Inst.attribs.quat, size:4,
 			type: VertexAttribPointerType.Float,
 			integer:false )
@@ -47,7 +47,7 @@ public partial class Native:
 		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.tex ) do(i as int):
 			return m.find(i) == null
 		getString()	# layer name, not used
-		ai = kri.vb.attr.Info(
+		ai = kri.vb.Info(
 			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
 			type:VertexAttribPointerType.Float,
 			integer:false )
@@ -55,7 +55,7 @@ public partial class Native:
 	
 	#---	Parse mesh armature link with bone weights	---#
 	public def pv_skin() as bool:
-		ai = kri.vb.attr.Info(
+		ai = kri.vb.Info(
 			slot: kri.Ant.Inst.attribs.skin, size:4,
 			type: VertexAttribPointerType.UnsignedShort,
 			integer:true )

@@ -19,9 +19,9 @@ public def prepare(e as kri.Entity, s as kri.Skeleton) as bool:
 		continue	if e.find(at)
 		v = e.mesh.find(at)
 		return false	if not v
-		ai = v.semantics[0]
+		ai = v.Semant[0]
 		v2 = kri.vb.Attrib()
-		v2.semantics.Add(ai)
+		v2.Semant.Add(ai)
 		v2.init( e.mesh.nVert * ai.fullSize() )
 		e.vbo.Add(v2)
 	e.tags.Add( Tag(skel:s) )

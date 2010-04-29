@@ -47,6 +47,7 @@
     <Compile Include="code\kit\Bake.boo" />
     <Compile Include="code\kit\Fur.boo" />
     <Compile Include="code\kit\Gen.boo" />
+    <Compile Include="code\kit\Hair.boo" />
     <Compile Include="code\kit\HDR.boo" />
     <Compile Include="code\kit\Morph.boo" />
     <Compile Include="code\kit\Pick.boo" />
@@ -99,6 +100,7 @@
     <Compile Include="code\Texture.boo" />
     <Compile Include="code\Tool.boo" />
     <Compile Include="code\vb\Attrib.boo" />
+    <Compile Include="code\vb\Info.boo" />
     <Compile Include="code\vb\Main.boo" />
     <Compile Include="code\View.boo" />
     <None Include="shader\copy_ar_f.glsl" />

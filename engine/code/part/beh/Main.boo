@@ -1,5 +1,6 @@
 ﻿namespace kri.part.beh
 
+import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics.OpenGL
 import kri.shade
@@ -8,8 +9,9 @@ import kri.shade
 #	PARTICLE GENERIC BEHAVIOR			#
 #---------------------------------------#
 
-public class Basic( kri.meta.IBase, kri.meta.IShaded, Code ):
-	public final semantics = List[of kri.vb.attr.Info]()
+public class Basic( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
+	[Getter(Semant)]
+	private final semantics	as List[of kri.vb.Info]	= List[of kri.vb.Info]()
 	[getter(Shader)]
 	private final sh		as Object
 
@@ -18,13 +20,8 @@ public class Basic( kri.meta.IBase, kri.meta.IShaded, Code ):
 		sh = Object( ShaderType.VertexShader, path, Text )
 	public def constructor(b as Basic):
 		super(b)
-		semantics.Extend( b.semantics )
+		semantics.AddRange( b.Semant )
 		sh = b.sh
-	
-	public def enrich(size as byte, slot as int) as void:
-		semantics.Add( kri.vb.attr.Info(
-			integer:false, slot:slot, size:size,
-			type:VertexAttribPointerType.Float ))
 	
 	public virtual def link(d as rep.Dict) as void:
 		pass
@@ -50,9 +47,8 @@ public class Standard(Basic):
 
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
-		enrich(2, at_sub)
-		enrich(3, pc.at_pos)
-		enrich(3, pc.at_speed)
+		kri.vb.enrich( self, 2, at_sub )
+		kri.vb.enrich( self, 3, pc.at_pos, pc.at_speed )
 
 	public def constructor(std as Standard):
 		super(std)	#is that enough?

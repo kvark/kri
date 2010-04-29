@@ -44,9 +44,9 @@ public class Manager(DataHolder):
 		col_init	.absorb[of beh.Basic](behos)
 		col_update	.absorb[of beh.Basic](behos)
 		# collect attributes
-		sem = List[of kri.vb.attr.Info]()
+		sem = List[of kri.vb.Info]()
 		for b in behos:
-			sem.AddRange( b.semantics )
+			sem.AddRange( b.Semant )
 			b.link(dict)
 		init(sem,total)
 		# link

@@ -9,10 +9,10 @@ public class DataHolder( kri.vb.ISource ):
 	[Getter(Data)]
 	public data		as kri.vb.Attrib	= null
 	public va		= kri.vb.Array()
-	public def init(sem as kri.vb.attr.Info*, num as uint) as void:
-		if data:	data.semantics.Clear()
+	public def init(sem as kri.vb.Info*, num as uint) as void:
+		if data:	data.Semant.Clear()
 		else:		data = kri.vb.Attrib()
-		data.semantics.AddRange(sem)
+		data.Semant.AddRange( sem )
 		va.bind()
 		data.initAll( num )
 
@@ -53,7 +53,7 @@ public class Emitter(DataHolder):
 
 	public def allocate() as void:
 		assert owner
-		init( owner.data.semantics, owner.total )
+		init( owner.data.Semant, owner.total )
 
 	public def prepare() as bool:
 		if onUpdate and not onUpdate(obj):
@@ -73,7 +73,7 @@ public class Emitter(DataHolder):
 			else: vat.attrib( fa.dest )
 
 	public def listAttribs() as (int):
-		return	array(sem.slot	for sem in data.semantics) + \
+		return	array(sem.slot	for sem in data.Semant) + \
 				array(ext.dest	for ext in extList)
 
 

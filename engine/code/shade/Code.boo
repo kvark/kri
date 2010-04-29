@@ -90,7 +90,7 @@ public class Collector:
 			sh = gather( key, cl )
 			prog.add(sh)
 	
-	public def compose( sem as kri.vb.attr.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
+	public def compose( sem as kri.vb.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
 		assert root
 		prog.add('quat')
 		prog.add(root)
