@@ -62,6 +62,7 @@ public partial class Native:
 		dict['part']	= p_part
 		dict['p_dist']	= pp_dist
 		dict['p_life']	= pp_life
+		dict['p_hair']	= pp_hair
 		dict['p_vel']	= pp_vel
 		dict['p_rot']	= pp_rot
 		dict['p_force']	= pp_force

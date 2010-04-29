@@ -18,36 +18,26 @@ public partial class Settings:
 
 public partial class Native:
 	public final pcon =	kri.part.Context()
-	/*
-	public final halo_draw_v	= kri.shade.Object('/part/draw/load_v')
-	public final halo_draw_f	= kri.shade.Object('/part/draw/load_f')
-	public final partFactory	= kri.shade.Linker(\
-		kri.Ant.Inst.slotParticles, kri.Ant.Inst.dict )
-	
-	public def initParticles() as void:
-		partFactory.onLink = do(sa as kri.shade.Smart):
-			sa.add( pcon.sh_draw, pcon.sh_tool, halo_draw_v, halo_draw_f )
-			sa.add( 'quat', 'tool')
-	*/
+
 	public def finishParticles() as void:
 		for pe in at.scene.particles:
-			pe.owner.init(pcon)	if not pe.owner.Ready
-			#pe.sa = partFactory.link( (pe.halo.Shader,), mat.dict )
-		
+			pm = pe.owner
+			continue	if pm.Ready
+			if 'Std':
+				pm.behos.Add( kri.part.beh.Sys(pcon) )
+				pm.makeStandard(pcon)
+				pm.col_update.extra.Add( pcon.sh_born_time )
+			else:
+				pass
+			pm.init(pcon)
 
 
 	#---	Parse emitter object	---#
 	public def p_part() as bool:
 		pm = kri.part.Manager( br.ReadUInt32() )
 		puData(pm)
-		beh = kri.part.beh.Standard(pcon)
-		puData(beh)
-		pm.behos.Add( kri.part.beh.Sys(pcon) )
-		pm.behos.Add( beh )
-		pm.makeStandard(pcon)
-		pm.col_update.extra.Add( pcon.sh_born_time )
-		beh.parSize.Value = Vector4( getVec2() )
-		# # create emitter
+		getVec2()	# particle size
+		# create emitter
 		pe = kri.part.Emitter( pm, getString() )
 		puData(pe)
 		pe.obj = geData[of kri.Entity]()
@@ -64,19 +54,26 @@ public partial class Native:
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			return true
-		ent = geData[of kri.Entity]()
 		source = getString()
 		getString()		# type
 		br.ReadSingle()	# jitter factor
-		pm = geData[of kri.part.Manager]()
+		ent = geData[of kri.Entity]()
 		pe = geData[of kri.part.Emitter]()
-		return false	if not pm or not pe
+		return false	if not pe
+		pm = pe.owner
+
+		ph = pm.seBeh[of kri.kit.hair.Behavior]()
+		if source == 'FACE':
+			if not ent.seTag[of kri.kit.bake.Tag]():
+				ent.tags.Add( sets.bake.tag() )
+			return true	if ph
+		else: assert not ph
+		
 		sh as kri.shade.Object	= null
 		if source == '':
 			sh = pcon.sh_surf_node
 			pe.onUpdate = upNode
 		elif source == 'VERT':
-			return false	if not ent
 			for i in range(2):
 				t = kri.shade.par.Value[of kri.Texture]( ('vertex','quat')[i] )
 				pm.dict.unit(t.Name,t)
@@ -93,8 +90,6 @@ public partial class Native:
 			tVert = kri.shade.par.Value[of kri.Texture]('vertex')
 			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
 			pm.dict.unit(tVert,tQuat)
-			if not ent.seTag[of kri.kit.bake.Tag]():
-				ent.tags.Add( sets.bake.tag() )
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
 				tag = e.seTag[of kri.kit.bake.Tag]()
@@ -108,24 +103,50 @@ public partial class Native:
 		return true
 
 
-	#---	Parse life data		---#
+	#---	Parse life data	(emitter)	---#
 	public def pp_life() as bool:
-		ps = geData[of kri.part.beh.Standard]()
-		return false	if not ps
+		pm = geData[of kri.part.Manager]()
+		return false	if not pm
+		beh = kri.part.beh.Standard(pcon)
+		pm.behos.Add( beh )
 		data = getVec4()	# start,end, life time, random
-		ps.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
+		beh.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
+		return true
+	
+	#---	Parse hair dynamics data	---#
+	public def pp_hair() as bool:
+		pm = geData[of kri.part.Manager]()
+		return false	if not pm
+		segs = br.ReadByte()
+		beh = kri.kit.hair.Behavior(pcon,segs)
+		pm.behos.Add( beh )
+		dyn = getVector()	# stiffness, mass, bending
+		pm.behos.Add( kri.part.beh.Bend( dyn.Z ))
+		damp = getVec2()	# spring, air
+		pm.behos.Add( kri.part.beh.Damp( damp.X ))
+		pm.behos.Add( kri.part.beh.Norm() )
 		return true
 	
 	#---	Parse velocity setup		---#
 	public def pp_vel() as bool:
-		ps = geData[of kri.part.beh.Standard]()
-		return false	if not ps
+		pe = geData[of kri.part.Emitter]()
+		return false	if not pe or not pe.owner
 		objFactor	= getVector()	# object-aligned factor
-		ps.parVelObj.Value = Vector4( objFactor )
 		tanFactor	= getVector()	# normal, tangent, tan-phase
-		ps.parVelTan.Value = Vector4( tanFactor.Y, 0f, tanFactor.X, tanFactor.Z )
-		getVec2()		# object speed, random
-		ps.parVelKeep.Value = Vector4.Zero
+		add			= getVec2()		# object speed, random
+		tan	= Vector3( tanFactor.Y, 0f, tanFactor.X )
+		# get behavior
+		ps = pe.owner.seBeh[of kri.part.beh.Standard]()
+		ph = pe.owner.seBeh[of kri.kit.hair.Behavior]()
+		if ps:		# standard
+			ps.parVelObj.Value = Vector4( objFactor )
+			ps.parVelTan.Value = Vector4( tan, tanFactor.Z )
+			ps.parVelKeep.Value = Vector4.Zero
+		elif ph:	# hair
+			lays = ph.genLayers( pe, Vector4(tan,add.Y) )
+			at.scene.particles.Remove(pe)
+			at.scene.particles.AddRange(lays)
+		else: return false
 		return true
 	
 	public def pp_rot() as bool:
@@ -133,10 +154,8 @@ public partial class Native:
 	
 	public def pp_force() as bool:
 		pm = geData[of kri.part.Manager]()
-		ps = geData[of kri.part.beh.Standard]()
-		return false	if not ps or not pm
+		return false	if not pm
 		bgav = kri.part.beh.Gravity()
 		pm.behos.Add(bgav)
-		data = getVector()	# brownian, drag, damp
-		ps.parForce.Value = Vector4(data)
+		getVector()	# forces: brownian, drag, damp
 		return true

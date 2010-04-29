@@ -610,24 +610,36 @@ def save_skeleton(skel):
 
 def save_particle(obj,part):
 	st = part.settings
-	assert st.type == 'EMITTER'
 	life = (st.start, st.end, st.lifetime)
 	mat = obj.material_slots[ st.material-1 ].material
 	matname = (mat.name if mat else '')
 	info = (part.name, matname, st.amount)
-	print("\t+particle: %s [%s]" % (info[0],info[1]) )
-	print("\t\t(i) %d num, [%d-%d] life %d" % ((info[2],)+life))
+	print("\t+particle: %s [%s], %d num" % info )
 	out.begin('part')
 	out.pack('L2f', st.amount, st.particle_size, st.random_size )
 	out.text( part.name, matname )
 	out.end()
+
+	if st.type == 'HAIR':
+		if not part.hair_dynamics:
+			print("\t(w)",'Hair dynamics is forced on')
+		cset = part.cloth.settings
+		print("\t\thair: %d segments" % (st.hair_step,) )
+		out.begin('p_hair')
+		out.pack('B3f2f', st.hair_step,
+			cset.pin_stiffness, cset.mass, cset.bending_stiffness,
+			cset.spring_damping, cset.air_damping )
+		out.end()
+	else:
+		print("\t\temitter: [%d-%d] life %d" % life)
+		out.begin('p_life')
+		out.array('f', [x*kFrameSec for x in life] )
+		out.pack('f', st.random_lifetime )
+		out.end()
+
 	out.begin('p_dist')
 	out.text( st.emit_from, st.distribution )
 	out.pack('f', st.jitter_factor )
-	out.end()
-	out.begin('p_life')
-	out.array('f', [x*kFrameSec for x in life] )
-	out.pack('f', st.random_lifetime )
 	out.end()
 	out.begin('p_vel')
 	out.array('f', st.object_aligned_factor )

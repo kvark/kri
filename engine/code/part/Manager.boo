@@ -34,6 +34,12 @@ public class Manager(DataHolder):
 		col_update.extra.Add( pc.sh_tool )
 		col_update.mets['reset']	= kri.shade.DefMethod.Float
 		col_update.mets['update']	= kri.shade.DefMethod.Float
+	
+	public def seBeh[of T(beh.Basic)]() as T:
+		for beh in behos:
+			bt = beh as T
+			return bt	if bt
+		return null	as T
 
 
 	public def init(pc as Context) as void:

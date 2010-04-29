@@ -37,12 +37,10 @@ public class Basic( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
 #-------------------------------------------#
 
 public class Standard(Basic):
-	public final parSize	= par.Value[of Vector4]('part_size')
 	public final parLife	= par.Value[of Vector4]('part_life')
 	public final parVelTan	= par.Value[of Vector4]('part_speed_tan')
 	public final parVelObj	= par.Value[of Vector4]('part_speed_obj')
 	public final parVelKeep	= par.Value[of Vector4]('object_speed')
-	public final parForce	= par.Value[of Vector4]('part_force')
 	public final at_sub		= kri.Ant.Inst.slotParticles.getForced('sub')
 
 	public def constructor(pc as kri.part.Context):
@@ -54,4 +52,4 @@ public class Standard(Basic):
 		super(std)	#is that enough?
 
 	public override def link(d as rep.Dict) as void:
-		d.var(parSize,parLife, parVelTan,parVelObj, parVelKeep,parForce)
+		d.var(parLife, parVelTan, parVelObj, parVelKeep)
