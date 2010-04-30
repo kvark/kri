@@ -1,5 +1,5 @@
 #version 130
 
 vec3 mi_orco()	{
-	return gl_PointCoord;
+	return vec3( gl_PointCoord.xy, 0.0 );
 }

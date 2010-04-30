@@ -29,7 +29,7 @@ public class Meta(General):
 	private final lOuts	as (string)
 	protected shobs			= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.rep.Dict()
-	private final factory	= kri.shade.Linker(\
+	private final factory	= kri.shade.Linker(
 		kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	
 	protected def constructor(name as string, outs as (string), *mets as (string)):

@@ -1,7 +1,7 @@
 #version 130
 
-uniform vec4 halo_color;
+uniform vec4 halo_data;
 
-vec4 get_diffuse()	{
-	return halo_color;
+vec4 get_halo()	{
+	return halo_data;
 }

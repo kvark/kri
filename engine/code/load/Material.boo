@@ -10,7 +10,8 @@ public partial class Native:
 
 	public def initMaterials() as void:
 		uvShaders = [	kri.shade.Object("/mi/uv${i}_v") for i in range(4) ]
-		orcoShader =	kri.shade.Object('/mi/orco_v')
+		orcoVert =	kri.shade.Object('/mi/orco_v')
+		orcoHalo =	kri.shade.Object('/mi/orco_halo_f')
 		objectShader = 	kri.shade.Object('/mi/object_v')
 		# todo?: normal & reflection in fragment
 		# trivial sources
@@ -26,8 +27,11 @@ public partial class Native:
 			lid = br.ReadByte()
 			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
 		limdic['ORCO'] = do():
+			mat = geData[of kri.Material]()
+			assert mat
 			getString()	# mapping type, not supported
-			return Hermit( Shader:orcoShader,		Name:'orco' )
+			sh = (orcoVert,orcoHalo)[ mat.Meta['halo'] != null ]
+			return Hermit( Shader:sh, Name:'orco' )
 		limdic['OBJECT'] = do():
 			name = getString()
 			mio = InputObject( Shader:objectShader,	Name:'object' )
@@ -37,13 +41,6 @@ public partial class Native:
 	public def finishMaterials() as void:
 		for m in at.mats.Values:
 			m.link()
-			# pass material texture to halo if needed
-			h  = m.Meta['halo']			as kri.meta.Halo
-			md = m.Meta['diffuse']	as kri.meta.Data[of Color4]
-			continue if not h or not md
-			h.Color = md.Value
-			if h.Shader == con.slib.halo_t2 and md.Unit:
-				h.Tex = md.Unit.Value
 		# resolve node links
 		for nr in nodeResolve:
 			nr.Value( at.nodes[nr.Key] )
@@ -56,6 +53,7 @@ public partial class Native:
 		public final prog	as kri.shade.Object
 		public def constructor(s as string, p as kri.shade.Object):
 			name,prog = s,p
+	
 	public def pm_unit() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
@@ -93,7 +91,8 @@ public partial class Native:
 		m = geData[of kri.Material]()
 		return false	if not m
 		mh = Halo( Name:'halo', Data:Vector4(getVector()) )
-		mh.Shader = (con.slib.halo_u, con.slib.halo_t2)[ br.ReadByte() ]
+		br.ReadByte()	# use texture - ignored
+		mh.Shader = con.slib.halo_u
 		m.metaList.Add(mh)
 		return true
 	
@@ -104,7 +103,7 @@ public partial class Native:
 		br.ReadByte()	# shadeless
 		getReal()		# parallax
 		m.metaList.Add( Advanced( Name:'bump', Shader:con.slib.bump_c ))
-		m.metaList.Add( Data[of single]('emissive',\
+		m.metaList.Add( Data[of single]('emissive',
 			con.slib.emissive_u, getReal() ))
 		getReal()	# ambient
 		getReal()	# translucency
@@ -114,7 +113,7 @@ public partial class Native:
 	public def pm_diff() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		m.metaList.Add( Data[of Color4]('diffuse',\
+		m.metaList.Add( Data[of Color4]('diffuse',
 			con.slib.diffuse_u,	getColorFull() ))
 		sh = { '': null,
 			'LAMBERT':	con.slib.lambert
@@ -126,9 +125,9 @@ public partial class Native:
 	public def pm_spec() as bool:
 		m = geData[of kri.Material]()
 		return false	if not m
-		m.metaList.Add( Data[of Color4]('specular',\
+		m.metaList.Add( Data[of Color4]('specular',
 			con.slib.specular_u,	getColorFull() ))
-		m.metaList.Add( Data[of single]('glossiness',\
+		m.metaList.Add( Data[of single]('glossiness',
 			con.slib.glossiness_u,	getReal() ))
 		sh = {
 			'COOKTORR':	con.slib.cooktorr,

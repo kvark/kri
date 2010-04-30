@@ -1,7 +1,6 @@
 namespace kri.meta
 
 import OpenTK
-import OpenTK.Graphics
 import kri.shade
 
 
@@ -96,16 +95,10 @@ public class Data[of T(struct)]( Advanced ):
 
 #---	halo	---#
 public class Halo(Advanced):
-	private final pColor	= par.Value[of Color4]('halo_color')
 	private final pData		= par.Value[of Vector4]('halo_data')
-	private final pTex		= par.Value[of kri.Texture]('halo')
-	portal Color	as Color4	= pColor.Value
 	portal Data		as Vector4	= pData.Value
-	portal Tex		as kri.Texture	= pTex.Value
 	
 	def IBase.clone() as IBase:
-		return copyTo( Halo( Color:Color, Data:Data, Tex:Tex ))
+		return copyTo( Halo( Data:Data ))
 	def IBase.link(d as rep.Dict) as void:
-		d.var(pColor)
 		d.var(pData)
-		d.unit(pTex)

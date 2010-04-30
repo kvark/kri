@@ -4,6 +4,7 @@ import System
 import OpenTK
 import kri.shade
 
+
 private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm = kri.part.Manager( 100000 )
 	pm.makeStandard(pc)
@@ -29,7 +30,8 @@ private class Render( kri.rend.part.Simple ):
 	pBrit = par.Value[of single]('bright')
 
 	public def constructor(pcon as kri.part.Context):
-		super(false,true)
+		super()
+		dTest,bAdd = false,true
 		# dict init
 		pSize.Value = 5f
 		pBrit.Value = 0.025f

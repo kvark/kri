@@ -1,18 +1,22 @@
 ﻿namespace kri.load
 
+import System
 import OpenTK
 
 public struct SetBake:
-	public width	as uint
-	public height	as uint
+	public pixels	as uint
+	public ratio	as single
 	public b_pos	as byte
 	public b_rot	as byte
 	public filt		as bool
 	public def tag() as kri.ITag:
-		return kri.kit.bake.Tag(width,height,b_pos,b_rot,filt)
+		assert ratio > 0f
+		side = Math.Sqrt(pixels / ratio)
+		wid,het = cast(int,side*ratio),cast(int,side)
+		return kri.kit.bake.Tag(wid,het,b_pos,b_rot,filt)
 
 public partial class Settings:
-	public bake		= SetBake( width:256, height:256, b_pos:16, b_rot:8, filt:false )
+	public bake		= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:false )
 
 
 
@@ -68,7 +72,9 @@ public partial class Native:
 		ph = pm.seBeh[of kri.kit.hair.Behavior]()
 		if source == 'FACE':
 			if not ent.seTag[of kri.kit.bake.Tag]():
-				ent.tags.Add( sets.bake.tag() )
+				st = sets.bake
+				st.pixels = pm.total	if ph
+				ent.tags.Add( st.tag() )
 			return true	if ph
 		else: assert not ph
 		

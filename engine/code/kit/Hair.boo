@@ -17,8 +17,10 @@ public class Tag( kri.ITag, kri.vb.ISource ):
 	# XYZ: tangent space direction, W: randomness
 	public param	= Vector4.UnitZ
 	public ready	as bool	= false
+	public final pixels	as uint
 
 	public def constructor(size as uint):
+		pixels = size
 		va.bind()
 		for i in range(2):
 			kri.vb.enrich( aBase, 3, (at_prev,at_base)[i] )
@@ -115,9 +117,8 @@ public class Bake( kri.rend.Basic ):
 			tBake	= e.seTag[of kri.kit.bake.Tag]()
 			tCur	= e.seTag[of Tag]()
 			continue	if not tBake or not tCur
-			total = tBake.wid * tBake.het
 			tCur.va.bind()
-			vbo.initAll(total)
+			vbo.initAll( tCur.pixels )
 			pWid.Value	= tBake.wid
 			pVert.Value	= tBake.tVert
 			pQuat.Value	= tBake.tQuat
@@ -125,5 +126,5 @@ public class Bake( kri.rend.Basic ):
 			tf.Bind( tCur.Data )
 			sa.updatePar()
 			using kri.Discarder(true), tf.catch():
-				GL.DrawArrays( BeginMode.Points, 0, total )
+				GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )
 			tCur.ready = true

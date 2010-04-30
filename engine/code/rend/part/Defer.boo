@@ -8,8 +8,9 @@ public class Defer( kri.rend.defer.ApplyBase ):
 	private final pHalo		= kri.shade.par.Value[of OpenTK.Vector4]('halo_data')
 	private final light		= kri.Light( energy:1f, quad1:0f, quad2:0f )
 	private final attr		= kri.Ant.Inst.slotAttributes.find(2)	# particles attrutes
+	private final trans		= Dictionary[of int,int]()
 	# init
-	public def constructor(con as kri.rend.defer.Context, qord as byte):
+	public def constructor(pc as kri.part.Context, con as kri.rend.defer.Context, qord as byte):
 		super(qord)
 		# attributes
 		assert attr.Length == 2
@@ -21,12 +22,11 @@ public class Defer( kri.rend.defer.ApplyBase ):
 		dict.var(pHalo)
 		sa.add('/part/draw/light_v')
 		relink(con)
+		# trans dictionary
+		trans[pc.at_sys] = attr[0]
+		trans[pc.at_pos] = attr[1]
 	# work
 	private override def onDraw() as void:
-		# prepare attributes
-		d = Dictionary[of int,int]()
-		d.Add( kri.Ant.Inst.slotParticles.find('sys'), attr[0] )
-		d.Add( kri.Ant.Inst.slotParticles.find('pos'), attr[1] )
 		# draw particles
 		for pe in kri.Scene.Current.particles:
 			#todo: add light particle meta
@@ -35,7 +35,7 @@ public class Defer( kri.rend.defer.ApplyBase ):
 			continue	if not halo
 			pHalo.Value = halo.Data
 			light.setLimit( pHalo.Value.X )
-			pe.data.attribTrans(d)	
+			pe.data.attribTrans(trans)	
 			kri.Ant.Inst.params.activate(light)
 			sa.use()
 			sphere.draw( pe.owner.total )
