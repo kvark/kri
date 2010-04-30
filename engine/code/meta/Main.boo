@@ -94,6 +94,7 @@ public class Data[of T(struct)]( Advanced ):
 
 #---	strand		---#
 public class Strand(Advanced):
+	# X = base thickness: [0,], Y = tip thickness: [0,], Z = shape: (-1,1)
 	private final pData	= par.Value[of Vector4]('strand_data')
 	portal Data		as Vector4	= pData.Value
 	

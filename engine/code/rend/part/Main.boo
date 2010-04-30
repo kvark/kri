@@ -7,16 +7,12 @@ import OpenTK.Graphics.OpenGL
 #---------	RENDER PARTICLES BASE		--------#
 
 public class Basic( kri.rend.Basic ):
-	public dTest	as bool	= true
 	public bAdd		as bool = false
-	
 	protected def constructor():
 		super(false)
 	protected abstract def prepare(pe as kri.part.Emitter) as kri.shade.Program:
 		pass
-	public override def process(con as kri.rend.Context) as void:
-		if dTest: con.activate(true, 0f, false)
-		else: con.activate()
+	public def drawScene() as void:
 		using blend = kri.Blender(),\
 		kri.Section( EnableCap.ClipPlane0 ),\
 		kri.Section( EnableCap.VertexProgramPointSize ):
@@ -35,5 +31,10 @@ public class Basic( kri.rend.Basic ):
 
 public class Simple( Basic ):
 	protected final sa		= kri.shade.Smart()
+	public dTest	as bool	= true
 	protected override def prepare(pe as kri.part.Emitter) as kri.shade.Program:
 		return sa
+	public override def process(con as kri.rend.Context) as void:
+		if dTest: con.activate(true, 0f, false)
+		else: con.activate()
+		drawScene()

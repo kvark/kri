@@ -11,7 +11,6 @@ public class Tech( Basic, kri.rend.tech.IConstructor ):
 	
 	protected def constructor(name as string):
 		super()
-		dTest = true
 		tid = kri.Ant.Inst.slotTechniques.getForced(name)
 	
 	public abstract def construct(m as kri.Material) as Smart:
@@ -60,3 +59,6 @@ public class Meta( Tech ):
 		sl = mat.collect(lMets)
 		return Smart.Fixed	if not sl
 		return factory.link( sl, mat.dict )
+	
+	public virtual def onManager(man as kri.part.Manager) as void:
+		pass
