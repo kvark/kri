@@ -92,13 +92,25 @@ public class Data[of T(struct)]( Advanced ):
 		d.var(data)
 
 
+#---	strand		---#
+public class Strand(Advanced):
+	private final pData	= par.Value[of Vector4]('strand_data')
+	portal Data		as Vector4	= pData.Value
+	
+	def IBase.clone() as IBase:
+		return copyTo( Strand( Data:Data ))
+	def IBase.link(d as rep.Dict) as void:
+		d.var(pData)
 
-#---	halo	---#
+
+#---	halo		---#
 public class Halo(Advanced):
-	private final pData		= par.Value[of Vector4]('halo_data')
+	private final pData	= par.Value[of Vector4]('halo_data')
 	portal Data		as Vector4	= pData.Value
 	
 	def IBase.clone() as IBase:
 		return copyTo( Halo( Data:Data ))
 	def IBase.link(d as rep.Dict) as void:
 		d.var(pData)
+
+

@@ -244,7 +244,15 @@ def save_mat(mat):
 		out.pack('2f', mat.alpha, mat.diffuse_intensity )
 		out.text(model)
 		out.end()
-	# halo material (used for particles)
+	if mat.strand:	# hair strand
+		st = mat.strand
+		if not st.blender_units:
+			print("\t(w) size in units required")
+		out.begin('m_hair')
+		out.pack('4fB', st.root_size, st.tip_size, st.shape,
+			st.width_fade, st.tangent_shading )
+		out.end()
+	# particle halo material
 	if	mat.type == 'HALO':
 		out.begin('m_halo')
 		halo = mat.halo
@@ -620,9 +628,9 @@ def save_particle(obj,part):
 	out.text( part.name, matname )
 	out.end()
 
-	if st.type == 'HAIR':
-		if not part.hair_dynamics:
-			print("\t(w)",'Hair dynamics is forced on')
+	if st.type == 'HAIR' and not part.cloth:
+		print("\t(w)",'hair dynamics has to be enabled')
+	elif st.type == 'HAIR' and part.cloth:
 		cset = part.cloth.settings
 		print("\t\thair: %d segments" % (st.hair_step,) )
 		out.begin('p_hair')
@@ -630,7 +638,7 @@ def save_particle(obj,part):
 			cset.pin_stiffness, cset.mass, cset.bending_stiffness,
 			cset.spring_damping, cset.air_damping )
 		out.end()
-	else:
+	elif st.type == 'EMITTER':
 		print("\t\temitter: [%d-%d] life %d" % life)
 		out.begin('p_life')
 		out.array('f', [x*kFrameSec for x in life] )

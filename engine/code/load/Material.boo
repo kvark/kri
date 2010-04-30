@@ -86,6 +86,16 @@ public partial class Native:
 		puData(m)
 		return true
 	
+	#---	Strand properties	---#
+	public def pm_hair() as bool:
+		m = geData[of kri.Material]()
+		return false	if not m
+		ms = Strand( Name:'strand', Data:getVec4() )
+		br.ReadByte()	# tangent shading
+		ms.Shader = con.slib.strand_u
+		m.metaList.Add(ms)
+		return true
+	
 	#---	Halo properties		---#
 	public def pm_halo() as bool:
 		m = geData[of kri.Material]()

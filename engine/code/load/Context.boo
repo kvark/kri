@@ -82,8 +82,9 @@ public class Shade:
 	public final specular_u		= Object('/mod/specular_u_f')
 	public final glossiness_u	= Object('/mod/glossiness_u_f')
 	public final bump_c			= Object('/mod/bump_c_f')
-	# halo
+	# particles
 	public final halo_u			= Object('/mod/halo_u_f')
+	public final strand_u		= Object('/mod/strand_u_f')
 
 
 public class Context:

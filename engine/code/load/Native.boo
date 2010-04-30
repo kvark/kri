@@ -42,6 +42,7 @@ public partial class Native:
 		dict['lamp']	= p_lamp
 		# material
 		dict['mat']		= p_mat
+		dict['m_hair']	= pm_hair
 		dict['m_halo']	= pm_halo
 		dict['m_surf']	= pm_surf
 		dict['m_diff']	= pm_diff
