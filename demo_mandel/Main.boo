@@ -1,28 +1,29 @@
 ﻿namespace demo
 
-import System
 import OpenTK
 import kri.shade
 
 
 private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
-	pm = kri.part.Manager( 100000 )
+	pm = kri.part.Manager( 2 )
 	pm.makeStandard(pc)
 	pm.col_init.extra.Add( pc.sh_tool )
-	pm.col_update.root = kri.shade.Object('./text/root_v')
-	pm.col_update.extra.Add( kri.shade.Object('./text/born_v') )
+	pm.col_update.root = Object('./text/root_v')
+	pm.col_update.extra.Add( Object('./text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
 	kri.vb.enrich( beh, 4, pc.at_pos )
 	pm.behos.Add(beh)
+	
+	b2 = kri.part.beh.Basic('/part/fur/dummy')
+	kri.vb.enrich( b2, 2, pc.at_sys )
+	pm.behos.Add( b2 )
 	
 	pLimt = par.Value[of single]('limit')
 	pLimt.Value = 2.5f
 	pm.dict.var(pLimt)
 	pm.init(pc)
 	
-	ps = kri.part.Emitter(pm,'mand')
-	ps.allocate()
-	return ps
+	return kri.part.Emitter(pm,'mand')
 
 
 private class Render( kri.rend.part.Simple ):
@@ -35,16 +36,15 @@ private class Render( kri.rend.part.Simple ):
 		# dict init
 		pSize.Value = 5f
 		pBrit.Value = 0.025f
-		d = kri.shade.rep.Dict()
+		d = rep.Dict()
 		d.var(pSize,pBrit)
 		# prog init
-		sa.add( pcon.sh_draw )
 		sa.add( './text/draw_v', './text/draw_f')
 		sa.link( kri.Ant.Inst.slotParticles, d, kri.Ant.Inst.dict )
 
 
 
-[STAThread]
+[System.STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant(1,400,300,0):
 		view = kri.ViewScreen(16,0)
@@ -58,6 +58,7 @@ def Main(argv as (string)):
 		view.cam = kri.Camera()
 		pcon = kri.part.Context()
 		ps = createParticle(pcon)
+		ps.allocate()
 		view.scene.particles.Add(ps)
 		
 		rlis.Add( kri.rend.Clear() )

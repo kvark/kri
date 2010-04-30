@@ -37,10 +37,12 @@ public static class Meta:
 			else: pat = "\nvec3 tr_{0} = mr_{0};"
 			return pat % (h.Name,)
 		f_local = join(genStr(d.Value) for d in dict)
+		f_par_body = join( "\n\ttr_${vu} += off;"	for vu in vins	if vu.StartsWith('uv') )
+		f_parallax = "\nvoid apply_tex_offset(vec3 off)	{${f_par_body}\n}"
 		f_uni	= join("\nuniform vec4 offset_{0},scale_{0};" % (d.Key,)	for d in dict)
 		pattern = "\nvec4 tc_{0}() {2}\n\treturn offset_{0} + scale_{0} * vec4(tr_{1},1.0);\n{3}"
 		f_fun 	= join(pattern % (d.Key,d.Value.Name,'{','}')	for d in dict)
-		str = "#version 130\n" + f_input + f_local + f_uni + f_fun
+		str = "#version 130\n" + f_input + f_local + f_parallax + f_uni + f_fun
 		sh_frag = Object( ShaderType.FragmentShader,	'tc_frag_init', str )
 		# done
 		return (sh_vert,sh_frag)

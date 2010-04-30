@@ -27,17 +27,16 @@ public class Basic( kri.rend.Basic ):
 				continue	if not sa
 				pe.va.bind()
 				return	if not pe.prepare()
+				q = kri.Query( QueryTarget.SamplesPassed )
 				sa.use()
-				pe.owner.draw()
+				using q.catch():
+					pe.owner.draw()
+				q.result()
 
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#
 
 public class Simple( Basic ):
 	protected final sa		= kri.shade.Smart()
-	private ats	as (int)	= null
-	public override def setup(far as kri.frame.Array) as bool:
-		ats = array( sa.gatherAttribs(kri.Ant.Inst.slotParticles) )
-		return true
 	protected override def prepare(pe as kri.part.Emitter) as kri.shade.Program:
 		return sa

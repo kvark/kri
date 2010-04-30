@@ -14,6 +14,7 @@ void init_mand()	{
 }
 
 float reset_mand()	{
+	to_pos = vec4(0.0); return 1.0;
 	float uni = part_uni();
 	vec2 dt = cur_time.xy;
 	float x = random(uni+dt.x*dt.y), y = random(x+dt.x+dt.y);
@@ -22,6 +23,7 @@ float reset_mand()	{
 }
 
 float update_mand()	{
+	to_pos = at_pos; return 1.0;
 	vec2 p = at_pos.xy;
 	vec2 p2 = vec2(p.x*p.x-p.y*p.y, 2.0*p.x*p.y) + at_pos.zw;
 	to_pos = vec4(p2, at_pos.zw);

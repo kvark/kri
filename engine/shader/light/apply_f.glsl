@@ -3,7 +3,7 @@
 uniform vec4 lit_color, lit_data, proj_lit;
 
 float get_shadow(vec4);
-vec4 get_lighting(vec3,vec3);
+vec4 get_lighting(float,vec3,vec3);
 
 in vec3 v2lit, v2cam;
 in vec4 v_shadow;
@@ -23,5 +23,5 @@ void main()	{
 	if(intensity < 0.01) discard;
 
 	rez_color = intensity*lit_color *
-		get_lighting(v_lit,v_cam);
+		get_lighting(0.5,v_lit,v_cam);
 }

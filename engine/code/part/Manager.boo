@@ -85,7 +85,7 @@ public class Manager(DataHolder):
 		if not 'Debug':
 			GL.Finish()
 			#assert tf.result() == total
-			ar = array[of single](total*6)
+			ar = array[of single](total*8)
 			pe.va.bind()
 			pe.data.read(ar)
 		return true

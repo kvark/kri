@@ -93,9 +93,9 @@ public class Context:
 	
 	public static def SetDepth(offset as single, write as bool) as void:
 		DepTest = on = (not Single.IsNaN(offset))
-		GL.DepthMask(write)
 		# set polygon offset
 		return	if not on
+		GL.DepthMask(write)
 		cap = EnableCap.PolygonOffsetFill
 		if offset:
 			GL.PolygonOffset(offset,offset)

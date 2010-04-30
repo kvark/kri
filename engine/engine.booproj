@@ -148,7 +148,11 @@
     <None Include="shader\part\init_g.glsl" />
     <None Include="shader\part\init_v.glsl" />
     <None Include="shader\part\root.glsl" />
-    <None Include="shader\skin_v.glsl" />
+    <None Include="shader\skin\dual_v.glsl" />
+    <None Include="shader\skin\empty_v.glsl" />
+    <None Include="shader\skin\main_v.glsl" />
+    <None Include="shader\skin\simple_v.glsl" />
+    <None Include="shader\skin\zcull_v.glsl" />
     <None Include="shader\zcull_v.glsl" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +185,7 @@
     <Folder Include="shader\light\shadow" />
     <Folder Include="shader\mod" />
     <Folder Include="shader\part" />
+    <Folder Include="shader\skin" />
     <ProjectReference Include="..\ext\ext.booproj">
       <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
       <Name>ext</Name>
