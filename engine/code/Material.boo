@@ -77,6 +77,8 @@ public class Material( ani.data.Player ):
 			continue	if not u
 			push( u.input )
 			din.Add( m.Name, u.input )
-		for sh in load.Meta.MakeTexCoords(false,din):
+		mapins = load.Meta.MakeTexCoords(false,din)
+		return null	if not mapins
+		for sh in mapins:
 			dd[sh] = null
 		return dd.Keys
