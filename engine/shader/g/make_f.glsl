@@ -2,6 +2,7 @@
 
 uniform float mat_emissive;
 
+void gather_tex_coords();
 vec4 get_bump();
 vec4 get_diffuse();
 vec4 get_specular();
@@ -21,6 +22,9 @@ out vec4 c_normal;
 
 
 void main()	{
+	gather_tex_coords();
+	//todo: parallax here
+
 	vec3 bump = get_bump().xyz * vec3(handness,1.0,1.0);
 	vec3 w_norm = qrot(normalize(quat), bump);
 	float glossy = 0.01 * get_glossiness();

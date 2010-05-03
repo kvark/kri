@@ -90,7 +90,8 @@ public class Behavior( kri.part.beh.Basic ):
 
 public class Bake( kri.rend.Basic ):
 	public final vbo	= kri.vb.Attrib()
-	public final sa		= kri.shade.Smart()
+	public final s_face	= kri.shade.Smart()
+	public final s_vert	= kri.shade.Smart()
 	public final tf		= kri.TransFeedback(1)
 	private final pWid	= kri.shade.par.Value[of int]('width')
 	private final pVert	= kri.shade.par.Texture('vert')
@@ -105,27 +106,38 @@ public class Bake( kri.rend.Basic ):
 		d.var(pInit)
 		d.unit(pVert,pQuat)
 		# init shader
-		sa.add('quat','/part/fur/base_v')
-		sa.feedback(false, 'to_prev','to_base')
-		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		com = kri.shade.Object('/part/fur/base/main_v')
+		s_face.add('quat','/part/fur/base/face_v')
+		s_vert.add('quat','/part/fur/base/vert_v')
+		for sa in s_face,s_vert:
+			sa.add(com)
+			sa.feedback(false, 'to_prev','to_base')
+			sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 		# init fake vertex attrib for drawing
 		vbo.Semant.Add( kri.vb.Info(
 			size:1, slot:0, type:VertexAttribPointerType.UnsignedByte ))
 
 	public override def process(con as kri.rend.Context) as void:
-		sa.use()
 		for e in kri.Scene.Current.entities:
-			tBake	= e.seTag[of kri.kit.bake.Tag]()
 			tCur	= e.seTag[of Tag]()
-			continue	if not tBake or not tCur
-			tCur.va.bind()
-			vbo.initAll( tCur.pixels )
-			pWid.Value	= tBake.wid
-			pVert.Value	= tBake.tVert
-			pQuat.Value	= tBake.tQuat
+			continue	if not tCur
 			pInit.Value = tCur.param
 			tf.Bind( tCur.Data )
-			sa.updatePar()
-			using kri.Discarder(true), tf.catch():
-				GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )
+			tCur.va.bind()
+			tBake	= e.seTag[of kri.kit.bake.Tag]()
+			if tBake:	# emit from face
+				vbo.initAll( tCur.pixels )
+				pWid.Value	= tBake.wid
+				pVert.Value	= tBake.tVert
+				pQuat.Value	= tBake.tQuat
+				s_face.use()
+				using kri.Discarder(true), tf.catch():
+					GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )
+			else:		# from vertices
+				at = kri.Ant.Inst.attribs
+				e.enable(true, (at.vertex, at.quat) )
+				s_vert.use()
+				assert tCur.pixels >= e.mesh.nVert
+				#todo: what's left in the array?
+				e.mesh.draw(tf)
 			tCur.ready = true

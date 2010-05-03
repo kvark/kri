@@ -19,7 +19,7 @@ void make_tex_coords();
 
 in vec4 at_vertex, at_quat;
 out vec4 quat;
-out float handness;
+flat out float handness;
 
 
 void main()	{

@@ -70,14 +70,14 @@ public partial class Native:
 		pm = pe.owner
 		
 		ph = pm.seBeh[of kri.kit.hair.Behavior]()
-		if source == 'FACE':
-			if not ent.seTag[of kri.kit.bake.Tag]():
-				st = sets.bake
-				st.pixels = pm.total	if ph
-				ent.tags.Add( st.tag() )
-			return true	if ph
-		else: assert not ph
-		
+		if not ent.seTag[of kri.kit.bake.Tag]():
+			st = sets.bake
+			st.pixels = pm.total	if ph
+			ent.tags.Add( st.tag() )
+		if ph:
+			assert source in ('VERT','FACE')
+			return true
+
 		sh as kri.shade.Object	= null
 		if source == '':
 			sh = pcon.sh_surf_node

@@ -9,7 +9,7 @@ vec3 trans_inv(vec3,Spatial);
 vec4 get_projection(vec3,vec4);
 
 in vec4 at_vertex;
-out Spatial s_light;
+flat out Spatial s_light;
 
 
 void main()	{
