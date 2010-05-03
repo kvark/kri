@@ -1,4 +1,4 @@
-#version 130
+#version 150
 
 uniform vec4 strand_data;
 
@@ -22,3 +22,4 @@ vec2 get_fur_thick(vec2 tc)	{
 vec2 get_fur_alpha(vec2 tc)	{
 	return get_fur_strand( tc, vec3(1.0,0.0,strand_data.w) );
 }
+

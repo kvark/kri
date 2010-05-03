@@ -2,7 +2,6 @@
 
 uniform vec4 lit_color, lit_data, proj_lit;
 
-void gather_tex_coords();
 float get_shadow(vec4);
 vec4 get_lighting(float,vec3,vec3);
 
@@ -13,7 +12,6 @@ out vec4 rez_color;
 
 
 void main()	{
-	gather_tex_coords();
 	vec3 v_lit = normalize(v2lit);
 	vec3 v_cam = normalize(v2cam);
 	

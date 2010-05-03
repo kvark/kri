@@ -7,19 +7,11 @@ t,T: target meta -> map-in
 */
 
 
-in vec3 mr_%v;		
-in vec3 mr_%g;
-vec3 mi_%f();
+in vec3 mr_%v;	vec3 tr_%v = mr_%v;
+in vec3 mr_%g;	vec3 tr_%g = mr_%g;
 
-vec3 tr_%v;
-vec3 tr_%g;
-vec3 tr_%f;
+vec3 mi_%f();	vec3 tr_%f = mi_%f();
 
-void gather_tex_coords()	{
-	tr_%v = mr_%v;
-	tr_%g = mr_%g;
-	tr_%f = mi_%f();
-}
 
 void apply_tex_offset(vec3 off)	{
 	tr_%p += off;

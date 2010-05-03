@@ -3,13 +3,11 @@
 uniform vec4 lit_color, lit_data, proj_lit;
 uniform samplerCubeShadow unit_light;
 
-void gather_tex_coords();
-vec4 get_lighting(vec3,vec3);
-
 float get_shadow()	{
 	//return texture(unit_light, v_shadow);
 	return 1.0;
 }
+vec4 get_lighting(vec3,vec3);
 
 
 in vec3 v2lit, v2cam;
@@ -18,7 +16,6 @@ in float lit_int, lit_side;
 out vec4 rez_color;
 
 void main()	{
-	gather_tex_coords();
 	vec3 v_lit = normalize(v2lit);
 	vec3 v_cam = normalize(v2cam);
 	
