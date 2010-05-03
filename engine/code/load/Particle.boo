@@ -129,11 +129,12 @@ public partial class Native:
 		segs = br.ReadByte()
 		pm.behos.Add( kri.kit.hair.Behavior(pcon,segs) )
 		dyn = getVector()	# stiffness, mass, bending
-		dyn.Z *= 10f
-		pm.behos.Add( kri.part.beh.Bend( dyn.Z ))
+		dyn.Z *= 20f
 		damp = getVec2()	# spring, air
 		damp.X *= 1.5f
-		pm.behos.Add( kri.part.beh.Damp( damp.X ))
+		pm.behos.Insert(0, kri.part.beh.Damp( damp.X ))
+		// standard behavior appears here
+		pm.behos.Add( kri.part.beh.Bend( dyn.Z ))
 		pm.behos.Add( kri.part.beh.Norm() )
 		return true
 	
@@ -167,6 +168,6 @@ public partial class Native:
 		pm = geData[of kri.part.Manager]()
 		return false	if not pm
 		bgav = kri.part.beh.Gravity()
-		pm.behos.Add(bgav)
+		pm.behos.Insert(0,bgav)
 		getVector()	# forces: brownian, drag, damp
 		return true
