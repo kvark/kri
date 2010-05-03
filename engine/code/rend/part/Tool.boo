@@ -2,7 +2,7 @@
 
 public class Standard( Meta ):
 	public def constructor(pc as kri.part.Context):
-		super('part.std', 'halo','diffuse')
+		super('part.std', false, 'halo','diffuse')
 		shobs.Add( pc.sh_draw )
 		shade('/part/draw/load')
 		bAdd = false

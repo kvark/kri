@@ -99,3 +99,47 @@ public class Collector:
 			names = array( 'to_'+sl.Name[at.slot] for at in sem )
 			prog.feedback(false,*names)
 		prog.link(sl,*dicts)
+
+
+//------------------------------//
+//		TEMPLATE CLASS			//
+//------------------------------//
+
+public class Template(ICode):
+	private final dict	= Dictionary[of string,Object]()
+	[Getter(Text)]
+	private final text		as string
+	private final keys		as (string)
+	public final tip		as ShaderType
+	
+	public def constructor(path as string):
+		text = Code.Read(path)
+		tip = Object.Type(path)
+		dk = Dictionary[of string,object]()
+		pos = 0
+		while (p2 = text.IndexOf('%',pos)) >=0:
+			pos = p2+1
+			dk[ text.Substring(pos,1).ToLower() ] = null
+		keys = array( dk.Keys )
+
+	def ICode.getMethod(base as string) as string:
+		return null
+	
+	public def instance(d as Dictionary[of string,IDictionary[of string,string]]) as Object:
+		key = join( join("${v.Key}-${v.Value}" for v in d[k],',') for k in keys, ':')
+		sh as Object = null
+		if dict.TryGetValue(key,sh):
+			return sh
+		rez = ''
+		def append(line as string):
+			pos = line.IndexOf('%')
+			if pos>=0:
+				k = line.Substring(pos+1,1).ToLower()
+				assert d.ContainsKey(k)
+				for sub in d[k]:
+					append( line.Replace('%'+k,sub.Key).Replace('%'+k.ToUpper(),sub.Value) )
+			else: rez += line + "\n"
+		for line in text.Split( "\n".ToCharArray()[0] ):
+			append(line)
+		dict[key] = sh = Object(tip,'template',rez)
+		return sh

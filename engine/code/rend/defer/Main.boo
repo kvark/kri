@@ -23,7 +23,7 @@ public class Fill( kri.rend.tech.Meta ):
 		get: return buf.A[0].Tex
 	# init
 	public def constructor(con as Context):
-		super('g.make', ('c_diffuse','c_specular','c_normal'), *kri.load.Meta.LightSet)
+		super('g.make', false, ('c_diffuse','c_specular','c_normal'), *kri.load.Meta.LightSet)
 		shade(('/g/make_v','/g/make_f','/light/common_f'))
 		buf.A[0].layer(con.tex,0) # diffuse
 		buf.A[1].layer(con.tex,1) # specular

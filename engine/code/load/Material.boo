@@ -16,9 +16,11 @@ public partial class Native:
 		# todo?: normal & reflection in fragment
 		# trivial sources
 		def genFun(x as Hermit): return {return x}
-		for s in ('GLOBAL','WINDOW','NORMAL','REFLECTION','TANGENT'):
+		for s in ('GLOBAL','WINDOW','NORMAL','REFLECTION','TANGENT','STRAND'):
 			slow = s.ToLower()
-			suf = ('v','f')[s == 'WINDOW']
+			suf = 'v'
+			suf = 'f'	if s == 'WINDOW'
+			suf = 'g'	if s == 'STRAND'
 			sh = kri.shade.Object( "/mi/${slow}_${suf}" )
 			mt = Hermit( Shader:sh, Name:slow )	# careful!
 			limdic[s] = genFun(mt)

@@ -12,13 +12,13 @@ float get_fur_shape()	{
 
 // should be gentype here!
 
-float get_fur_strand(vec2 tc, vec3 par)	{
+vec2 get_fur_strand(vec2 tc, vec3 par)	{
 	float shape = get_shape( par.z );
 	return mix( par.xx, par.yy, pow(tc,vec2(shape)) );
 }
-float get_fur_thick(vec2 tc)	{
-	return get_fur_strand( strand_data.xyz );
+vec2 get_fur_thick(vec2 tc)	{
+	return get_fur_strand( tc, strand_data.xyz );
 }
-float get_fur_alpha(vec2 tc)	{
-	return get_fur_strand( vec3(1.0,0.0,strand_data.w) );
+vec2 get_fur_alpha(vec2 tc)	{
+	return get_fur_strand( tc, vec3(1.0,0.0,strand_data.w) );
 }

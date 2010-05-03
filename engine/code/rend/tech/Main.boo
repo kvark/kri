@@ -27,14 +27,15 @@ public class Basic( kri.rend.Basic ):
 public class Meta(General):
 	private final lMets	as (string)
 	private final lOuts	as (string)
+	private final geom	as bool
 	protected shobs			= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.rep.Dict()
 	private final factory	= kri.shade.Linker(
 		kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	
-	protected def constructor(name as string, outs as (string), *mets as (string)):
+	protected def constructor(name as string, gs as bool, outs as (string), *mets as (string)):
 		super(name)
-		lMets,lOuts = mets,outs
+		lMets,lOuts,geom = mets,outs,gs
 		factory.onLink = setup
 	
 	protected def shade(prefix as string) as void:
@@ -49,6 +50,6 @@ public class Meta(General):
 		sa.add( *array(shobs) )
 
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
-		sl = mat.collect(lMets)
+		sl = mat.collect(geom,lMets)
 		return kri.shade.Smart.Fixed	if not sl
 		return factory.link( sl, mat.dict )

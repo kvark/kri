@@ -67,7 +67,7 @@ public class Apply( kri.rend.tech.Meta ):
 		shadow = 'simple'
 		shadow = 'exponent2'	if lc.type == LiType.EXPONENT
 		shadow = 'variance'		if lc.type == LiType.VARIANCE
-		super('lit.apply', null, *kri.load.Meta.LightSet)
+		super('lit.apply', false, null, *kri.load.Meta.LightSet)
 		
 		sh_shadow = kri.shade.Object( "/light/shadow/${shadow}_f" )
 		shobs.Add(sh_shadow)

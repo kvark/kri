@@ -66,6 +66,7 @@ public class Behavior( kri.part.beh.Basic ):
 		for i in range(lar.Length):
 			pe = lar[i]
 			pe.obj = em.obj
+			pe.mat = em.mat
 			pe.onUpdate = genFunc(i)
 			if i == 0:
 				ex0.source = ex1.source = -1

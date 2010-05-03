@@ -35,14 +35,15 @@ public class Tech( Basic, kri.rend.tech.IConstructor ):
 
 public class Meta( Tech ):
 	private final lMets		as (string)
+	private final geom		as bool
 	protected shobs			= List[of Object]()
 	protected final dict	= rep.Dict()
 	private final factory	= Linker(
 		kri.Ant.Inst.slotParticles, dict, kri.Ant.Inst.dict )
 	
-	public def constructor(name as string, *mets as (string)):
+	public def constructor(name as string, gs as bool, *mets as (string)):
 		super(name)
-		lMets = mets
+		lMets,geom = mets,gs
 		factory.onLink = setup
 	
 	protected def shade(prefix as string) as void:
@@ -56,7 +57,7 @@ public class Meta( Tech ):
 		sa.add( *array(shobs) )
 
 	public override def construct(mat as kri.Material) as Smart:
-		sl = mat.collect(lMets)
+		sl = mat.collect(geom,lMets)
 		return Smart.Fixed	if not sl
 		return factory.link( sl, mat.dict )
 	

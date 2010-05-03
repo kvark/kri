@@ -20,7 +20,13 @@ public class Object:
 		return sid
 	private def compose() as int:
 		return compose( Code.Read(tag) )
-		
+	
+	public static def Type(name as string) as ShaderType:
+		rez = cast(ShaderType,0)
+		if		name.EndsWith('_v'):	rez = ShaderType.VertexShader
+		elif	name.EndsWith('_f'):	rez = ShaderType.FragmentShader
+		elif	name.EndsWith('_g'):	rez = ShaderType.GeometryShader
+		return rez
 
 	# create by name & type
 	public def constructor(name as string, tip as ShaderType):
@@ -29,10 +35,7 @@ public class Object:
 
 	# create by name, infer the type from it
 	public def constructor(name as string):
-		type = cast(ShaderType,0)
-		if		name.EndsWith('_v'):	type = ShaderType.VertexShader
-		elif	name.EndsWith('_f'):	type = ShaderType.FragmentShader
-		elif	name.EndsWith('_g'):	type = ShaderType.GeometryShader
+		type = Type(name)
 		tag = name
 		id = compose()
 

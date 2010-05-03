@@ -39,7 +39,7 @@ public class Emission( tech.Meta ):
 	public backColor	= Color4.Black
 	
 	public def constructor():
-		super('mat.emission', null, 'emissive')
+		super('mat.emission', false, null, 'emissive')
 		shade('/mat_base')
 		dict.var(pBase)
 		pBase.Value = Color4.Black

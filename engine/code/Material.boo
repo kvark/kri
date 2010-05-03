@@ -1,7 +1,7 @@
 ﻿namespace kri
 
 import System.Collections.Generic
-
+import OpenTK.Graphics.OpenGL
 
 public class Material( ani.data.Player ):
 	public final name	as string
@@ -18,32 +18,12 @@ public class Material( ani.data.Player ):
 	public def touch() as void:	#imp: IPlayer
 		pass
 
-	# clone with all metas
+	# clone with all 1-st level metas
 	public def constructor(mat as Material):
 		name = mat.name
 		for me in mat.metaList:
 			mad = clone(me) as meta.Advanced
 			metaList.Add(mad)
-		/*
-		def genPred(str as string):
-			return do(n as shade.par.INamed):
-				return n.Name == str
-		units	= List[of meta.AdUnit]()
-		inputs	= List[of meta.Hermit]()
-		for me in mat.metaList:
-			mad = clone(me) as meta.Advanced
-			metaList.Add(mad)
-			un = mad.Unit
-			continue	if not un
-			mad.Unit = units.Find( genPred(un.Name) )
-			continue	if mad.Unit
-			un = mad.Unit = clone(un)
-			units.Add(un)
-			inp = un.input
-			un.input = inputs.Find( genPred(inp.Name) )
-			continue	if un.input
-			inp = un.input = clone(inp)
-			inputs.Add(inp)*/
 
 	# update dictionary
 	public def link() as void:
@@ -64,10 +44,11 @@ public class Material( ani.data.Player ):
 			push(u.input)
 	
 	# collect shaders for meta data
-	public def collect(melist as (string)) as shade.Object*:
+	public def collect(geom as bool, melist as (string)) as shade.Object*:
 		dd = Dictionary[of shade.Object,meta.IShaded]()
 		def push(m as meta.IShaded):
 			dd[m.Shader] = m	if m.Shader
+		# collect mets shaders & map inputs
 		din = Dictionary[of string,meta.Hermit]()
 		for str in melist:
 			m = Meta[str]
@@ -77,7 +58,13 @@ public class Material( ani.data.Player ):
 			continue	if not u
 			push( u.input )
 			din.Add( m.Name, u.input )
-		mapins = load.Meta.MakeTexCoords(false,din)
+		# check geometry shaders
+		if not geom:
+			for dk in dd.Keys:
+				if dk.type == ShaderType.GeometryShader:
+					return null
+		# generate coords
+		mapins = load.Meta.MakeTexCoords(geom,din)
 		return null	if not mapins
 		for sh in mapins:
 			dd[sh] = null
