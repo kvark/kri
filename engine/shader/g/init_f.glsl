@@ -2,7 +2,7 @@
 
 uniform sampler2DArray	unit_gbuf;
 
-in vec2 tex_coord;
+noperspective in vec2 tex_coord;
 out vec4 rez_color;
 
 void main()	{

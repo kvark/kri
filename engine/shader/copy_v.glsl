@@ -1,7 +1,7 @@
 #version 130
 
 in vec4 at_vertex;
-out vec2 tex_coord;
+noperspective out vec2 tex_coord;
 
 void main()	{
 	gl_Position = at_vertex;
