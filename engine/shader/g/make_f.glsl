@@ -11,7 +11,7 @@ vec3 qrot(vec4 q, vec3 v)	{
 	return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
 }
 
-in float handness;
+flat in float handness;
 in vec4 quat;
 in vec4 coord_text, coord_bump;
 

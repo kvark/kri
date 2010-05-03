@@ -14,7 +14,7 @@ vec4 get_projection(vec3,vec4);
 in vec2 at_part_sys;
 in vec3 at_part_pos;
 in vec4 at_vertex;
-out Spatial s_light;
+flat out Spatial s_light;
 
 void main()	{
 	if( at_part_sys.x>=0.0 )	{

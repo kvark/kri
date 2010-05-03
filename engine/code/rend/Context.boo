@@ -23,7 +23,7 @@ public class Context:
 	private final buf	= kri.frame.Buffer()		# intermediate FBO
 	private final last	as kri.frame.Screen			# final result
 	private target		as kri.frame.Screen = null	# current result
-	private dirty		as DirtyLevel			# dirty level
+	private dirty		as DirtyLevel				# dirty level
 
 	[getter(Input)]
 	private tInput	as kri.Texture	= null

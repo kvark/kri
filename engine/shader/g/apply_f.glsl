@@ -27,7 +27,7 @@ vec3 unproject(vec3,vec4);
 float get_attenuation2(float);
 
 //---	VARYINGS	---//
-in Spatial s_light;
+flat in Spatial s_light;
 out vec4 rez_color;
 
 
