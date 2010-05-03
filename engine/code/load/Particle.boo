@@ -167,7 +167,9 @@ public partial class Native:
 	public def pp_force() as bool:
 		pm = geData[of kri.part.Manager]()
 		return false	if not pm
-		bgav = kri.part.beh.Gravity()
-		pm.behos.Insert(0,bgav)
+		pg = at.scene.pGravity
+		if pg:
+			bgav = kri.part.beh.Gravity(pg)
+			pm.behos.Insert(0,bgav)
 		getVector()	# forces: brownian, drag, damp
 		return true

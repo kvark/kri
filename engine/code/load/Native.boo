@@ -34,6 +34,7 @@ public partial class Native:
 		initMaterials()
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
+		dict['grav']	= p_grav
 		# objects
 		dict['node']	= p_node
 		dict['entity']	= p_entity
@@ -147,4 +148,8 @@ public partial class Native:
 	public def p_sign() as bool:
 		ver = br.ReadByte()
 		assert ver == 3 and not rep.Count
+		return true
+	public def p_grav() as bool:
+		at.scene.pGravity = pg = kri.shade.par.Value[of Vector4]('gravity')
+		pg.Value = Vector4( getVector() )
 		return true

@@ -22,6 +22,17 @@ public class Norm(Basic):	# fur normalizing
 		super('/part/beh/fur_norm')
 
 
+#---	 GRAVITY	---#
+
+public class Gravity(Basic):
+	public final par	as par.Value[of Vector4]
+	public def constructor(pg as par.Value[of Vector4]):
+		super('/part/beh/grav')
+		par = pg
+	public override def link(d as rep.Dict) as void:
+		d.var(par)
+
+
 #-------------------------------------------#
 #	SIMPLE BEHAVIOR BASE					#
 #-------------------------------------------#
@@ -39,10 +50,6 @@ public class Simple[of T(struct)](Basic):
 #-------------------------------------------#
 #	SMALL  BEHAVIORS						#
 #-------------------------------------------#
-
-public class Gravity(Simple[of Vector4]):	# gravity & plain forces
-	public def constructor():
-		super('/part/beh/grav','force_world', Vector4(0f,0f,-9.81f,0f) )
 
 public class Damp(Simple[of single]):		# speed damping
 	public def constructor(val as single):

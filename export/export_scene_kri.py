@@ -722,6 +722,13 @@ def save_scene(filename, context, doQuatInt=True):
 	out.pack('B',3)
 	out.end()
 	
+	sc = context.scene
+	if sc.use_gravity:
+		print("\tgravity:", sc.gravity)
+		out.begin('grav')
+		out.array('f', sc.gravity)
+		out.end()
+	
 	for mat in context.main.materials:
 		save_mat(mat)
 		tar = mat.texture_slots
@@ -729,7 +736,7 @@ def save_scene(filename, context, doQuatInt=True):
 			save_meta_action(act,'m')
 			save_meta_action(act,'t', tar,'texture_slots')
 
-	for ob in context.scene.objects:
+	for ob in sc.objects:
 		save_node( ob )
 		anims = gather_anim_global(ob)
 		for act in anims:
@@ -750,7 +757,7 @@ def save_scene(filename, context, doQuatInt=True):
 			save_lamp(ob.data)
 			save_actions(ob.data, 'l')
 		elif ob.type == 'CAMERA':
-			save_camera(ob.data, ob == context.scene.camera)
+			save_camera(ob.data, ob == sc.camera)
 			save_actions(ob.data, 'c')
 		for p in ob.particle_systems:
 			save_particle(ob,p)

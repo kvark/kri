@@ -87,11 +87,14 @@ public class Scene:
 	[getter(Current)]
 	internal static current as Scene = null
 	public final name		as string
+	public pGravity			as kri.shade.par.Value[of Vector4]	= null
+	# content
 	public final entities	= List[of Entity]()
 	public final bodies		= List[of Body]()
 	public final lights		= List[of Light]()
 	public final cameras	= List[of Camera]()
 	public final particles	= List[of part.Emitter]()
+	# funcs
 	public def constructor(str as string):
 		name = str
 
