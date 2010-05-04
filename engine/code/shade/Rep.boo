@@ -34,7 +34,7 @@ public class Base:
 
 
 # Uniform param representor
-[ext.spec.Class(int,single,Color4,Vector4,Quaternion)]
+[ext.spec.Class(( int,single,Color4,Vector4,Quaternion ))]
 public class Uniform[of T(struct)](Base):
 	public data	as T
 	public def constructor(lid as int):

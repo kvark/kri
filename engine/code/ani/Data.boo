@@ -30,7 +30,7 @@ public interface IChannel:
 #	CHANNEL[T]: generic channel data
 
 # bypassing BOO-854
-[ext.spec.Class( Vector2, Vector3, Vector4, Quaternion, Graphics.Color4, single )]
+[ext.spec.Class(( Vector2, Vector3, Vector4, Quaternion, Graphics.Color4, single ))]
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	# proper callable definitions in generics depend on BOO-854

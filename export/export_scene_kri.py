@@ -19,6 +19,7 @@ file_ext = '.scene'
 out = None
 kFrameSec = 1.0 / 25.0
 kMaxBones = 100
+bDegrees = True
 
 class Writer:
 	__slots__= 'fx','pos'
@@ -712,7 +713,7 @@ def gather_anim_global(ob):
 
 def save_scene(filename, context, doQuatInt=True):
 	import time
-	global out,file_ext
+	global out,file_ext,bDegrees
 	timeStart = time.clock()
 	print("\nExporting...")
 	if not filename.lower().endswith(file_ext):
@@ -723,6 +724,10 @@ def save_scene(filename, context, doQuatInt=True):
 	out.end()
 	
 	sc = context.scene
+	bDegrees = (sc.unit_settings.rotation_units == 'DEGREES')
+	if not bDegrees:
+		#it's easier to convert on loading than here
+		print("\t(w)",'Radians are not supported')
 	if sc.use_gravity:
 		print("\tgravity:", sc.gravity)
 		out.begin('grav')

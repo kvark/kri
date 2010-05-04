@@ -5,17 +5,22 @@ import System.Collections.Generic
 import Boo.Lang.Compiler
 
 
-#---	Make class specializations with name change	---#
-
-[AttributeUsage(AttributeTargets.Class)]
-public class Class(AbstractAstAttribute):
-	private final tips	= List[of Ast.SimpleTypeReference]()
+public abstract class Simple(AbstractAstAttribute):
+	protected final tips	= List[of Ast.SimpleTypeReference]()
 	
-	public def constructor(*types as (Ast.ReferenceExpression)):
-		for t in types:
+	public def constructor(typar as Ast.ArrayLiteralExpression):
+		for t in typar.Items:
 			st = Ast.TypeReference.Lift(t) as Ast.SimpleTypeReference
 			if not st:	raise 'not a type'
 			tips.Add(st)
+
+
+#---	Make class specializations with name change	---#
+
+[AttributeUsage(AttributeTargets.Class)]
+public class Class(Simple):
+	public def constructor(typar as Ast.ArrayLiteralExpression):
+		super(typar)
 	
 	public override def Apply(node as Ast.Node) as void:
 		c = node as Ast.ClassDefinition
@@ -55,14 +60,9 @@ public class Class(AbstractAstAttribute):
 #---	Make method specializations with manual modifications & name change	---#
 
 [AttributeUsage(AttributeTargets.Method)]
-public class Method(AbstractAstAttribute):
-	private final tips	= List[of Ast.SimpleTypeReference]()
-	
-	public def constructor(*types as (Ast.ReferenceExpression)):
-		for t in types:
-			st = Ast.TypeReference.Lift(t) as Ast.SimpleTypeReference
-			if not st:	raise 'not a type'
-			tips.Add(st)
+public class Method(Simple):
+	public def constructor(typar as Ast.ArrayLiteralExpression):
+		super(typar)
 			
 	protected virtual def Mod(m as Ast.Method, t as Ast.SimpleTypeReference) as void:
 		pass
@@ -99,8 +99,8 @@ public class ForkMethod(Method):
 	protected final fnew as Ast.ReferenceExpression
 
 	public def constructor(old as Ast.ReferenceExpression,
-	new as Ast.ReferenceExpression, *types as (Ast.ReferenceExpression)):
-		super(*types)
+	new as Ast.ReferenceExpression, typar as Ast.ArrayLiteralExpression):
+		super(typar)
 		fold,fnew = old,new
 		pred = def(n as Ast.Node):
 			exp = n as Ast.ReferenceExpression
@@ -123,8 +123,8 @@ public class ForkMethodEx(Method):
 	protected final fold as Ast.ReferenceExpression
 	protected final fnew = Ast.ReferenceExpression()
 
-	public def constructor(old as Ast.ReferenceExpression, *types as (Ast.ReferenceExpression)):
-		super(*types)
+	public def constructor(old as Ast.ReferenceExpression, typar as Ast.ArrayLiteralExpression):
+		super(typar)
 		fold = old
 		pred = def(n as Ast.Node):
 			exp = n as Ast.GenericReferenceExpression

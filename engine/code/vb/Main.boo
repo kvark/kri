@@ -79,7 +79,7 @@ public class Object(Proxy):
 		return GL.MapBuffer(target,ba)
 	public def unmap() as bool:
 		return GL.UnmapBuffer(target)
-	[ext.spec.Method(byte,short,single)]
+	[ext.spec.Method(( byte,short,single ))]
 	[ext.RemoveSource]
 	public def read[of T(struct)](ar as (T)) as void:
 		buf = map(BufferAccess.ReadOnly)

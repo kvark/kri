@@ -10,7 +10,7 @@ public partial class Native:
 
 	# should be callable(ref kri.Spatial,ref T) as void (waiting for BOO-854)
 	# generates invalid binary format if using generics, bypassing with extenions
-	[ext.spec.Method(Vector3,Quaternion,single)]
+	[ext.spec.Method(( Vector3,Quaternion,single ))]
 	[ext.RemoveSource()]
 	private def genBone		[of T(struct)](fun as callable(kri.NodeBone, ref T)):
 		return do(pl as IPlayer, v as T, i as byte):
@@ -19,7 +19,7 @@ public partial class Native:
 			fun( bar[i-1], v )
 			bar[i-1].touch()
 	
-	[ext.spec.Method(Vector3,Quaternion,single)]
+	[ext.spec.Method(( Vector3,Quaternion,single ))]
 	[ext.RemoveSource()]
 	private def genSpatial	[of T(struct)](fun as callable(ref kri.Spatial, ref T)):
 		return do(pl as IPlayer, v as T, i as byte):
@@ -109,12 +109,7 @@ public partial class Native:
 	#---	Read Abstract Channel (rac) constructor	---#
 	
 	# bypassing BOO-854
-	[ext.spec.ForkMethodEx(Channel, single)]
-	[ext.spec.ForkMethodEx(Channel, Vector2)]
-	[ext.spec.ForkMethodEx(Channel, Vector3)]
-	[ext.spec.ForkMethodEx(Channel, Vector4)]
-	[ext.spec.ForkMethodEx(Channel, Quaternion)]
-	[ext.spec.ForkMethodEx(Channel, Color4)]
+	[ext.spec.ForkMethodEx(Channel, (single,Vector2,Vector3,Vector4,Quaternion,Color4))]
 	[ext.RemoveSource()]
 	public def rac[of T(struct)](fread as callable() as T, fup as callable(IPlayer,T,byte)) as callable() as IChannel:
 		return do():
