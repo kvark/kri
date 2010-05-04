@@ -17,9 +17,9 @@ public struct Batch:	# why struct?
 	public num	as int
 
 	public def draw() as void:
+		va.bind()
 		nob = up()
 		kri.Ant.Inst.params.modelView.activate( e.node )
-		va.bind()
 		sa.use()
 		e.mesh.draw(off,num,nob)
 		
@@ -36,7 +36,9 @@ public struct Batch:	# why struct?
 
 public class General( IConstructor, Basic ):
 	public static comparer	as IComparer[of Batch]	= null
-	protected	final butch	= List[of Batch]()
+	protected final butch	= List[of Batch]()
+	protected final extList	= List[of int]()
+
 	protected def constructor(name as string):
 		super(name)
 	public abstract def construct(mat as kri.Material) as kri.shade.Smart:
@@ -65,7 +67,7 @@ public class General( IConstructor, Basic ):
 			continue	if prog == kri.shade.Smart.Fixed
 			if alist:
 				ids = prog.gatherAttribs( kri.Ant.Inst.slotAttributes )
-				alist.AddRange(a	for a in ids	if not a in alist)
+				alist.AddRange(a	for a in ids	if not (a in alist or a in extList) )
 			b.sa = prog
 			b.up = getUpdate(m)
 			tempList.Add(b)

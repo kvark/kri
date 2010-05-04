@@ -21,13 +21,21 @@ public partial class Settings:
 #------		CHUNK LOADER		------#
 
 public partial class Native:
+	public struct ResNode:
+		public name as string
+		public fun	as callable(kri.Node)
+
 	public final con	= Context()
 	public final dict	= Dictionary[of string,callable() as bool]()
 	public final skipt	= Dictionary[of string,uint]()
 	public final sets	= Settings()
 	private final rep	= []
+	private final nResList	= List[of ResNode]()
 	private br	as IO.BinaryReader	= null
 	private at	as Atom	= null
+	
+	public def addResolve(fun as callable(kri.Node)) as void:
+		nResList.Add( ResNode( name:getString(), fun:fun ))
 	
 	public def constructor():
 		initAnimations()
@@ -67,7 +75,9 @@ public partial class Native:
 		dict['p_hair']	= pp_hair
 		dict['p_vel']	= pp_vel
 		dict['p_rot']	= pp_rot
-		dict['p_force']	= pp_force
+		dict['p_phys']	= pp_phys
+		# particle render
+		dict['pr_inst']	= ppr_inst
 		# physics
 		#dict['body']	= Read.body
 	
@@ -92,6 +102,11 @@ public partial class Native:
 				skipt[name] = size
 				bs.Seek(size, IO.SeekOrigin.Begin)
 		br.Close()
+		# resolve node links
+		for nr in nResList:
+			nr.fun( at.nodes[nr.name] )
+		nResList.Clear()
+		# finish subsystems
 		finishMaterials()
 		finishParticles()
 		return at

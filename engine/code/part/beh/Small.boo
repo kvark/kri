@@ -24,6 +24,13 @@ public class Norm(Basic):	# fur normalizing
 
 #---	 GRAVITY	---#
 
+public class Physics(Basic):
+	public final pSize	= par.Value[of Vector4]('part_size')
+	public final pForce	= par.Value[of Vector4]('port_force')
+	public override def link(d as rep.Dict) as void:
+		d.var(pSize,pForce)
+	
+
 public class Gravity(Basic):
 	public final par	as par.Value[of Vector4]
 	public def constructor(pg as par.Value[of Vector4]):

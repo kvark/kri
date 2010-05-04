@@ -14,6 +14,12 @@ public interface ICode:
 		get
 	def getMethod(base as string) as string
 
+public class CodeNull(ICode):
+	ICode.Text as string:
+		get: return null
+	def ICode.getMethod(base as string) as string:
+		return null
+
 
 public class Code(ICode):
 	public static Folder	= '../engine/shader'

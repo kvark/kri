@@ -52,7 +52,6 @@ public class Manager(DataHolder):
 			return bt	if bt
 		return null	as T
 
-
 	public def init(pc as Context) as void:
 		if data:
 			col_init.prog.clear()

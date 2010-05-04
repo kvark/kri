@@ -43,7 +43,6 @@ public partial class Native:
 	public def p_part() as bool:
 		pm = kri.part.Manager( br.ReadUInt32() )
 		puData(pm)
-		getVec2()	# particle size
 		# create emitter
 		pe = kri.part.Emitter( pm, getString() )
 		puData(pe)
@@ -164,12 +163,27 @@ public partial class Native:
 	public def pp_rot() as bool:
 		return true
 	
-	public def pp_force() as bool:
+	public def pp_phys() as bool:
 		pm = geData[of kri.part.Manager]()
 		return false	if not pm
 		pg = at.scene.pGravity
 		if pg:
 			bgav = kri.part.beh.Gravity(pg)
-			pm.behos.Insert(0,bgav)
-		getVector()	# forces: brownian, drag, damp
+			if pm.seBeh[of kri.kit.hair.Behavior]():
+				pm.behos.Insert(0,bgav)
+			else: pm.behos.Add(bgav)
+		biz = kri.part.beh.Physics()
+		biz.pSize.Value = Vector4( getVec2() )
+		# forces: brownian, drag, damp
+		biz.pForce.Value = Vector4( getVector() )
+		pm.behos.Add(biz)
+		return true
+	
+	public def ppr_inst() as bool:
+		pe = geData[of kri.part.Emitter]()
+		return false	if not pe or not pe.mat or pe.mat == con.mDef
+		inst = kri.meta.Inst( Name:'inst' )
+		pe.mat.metaList.Add(inst)
+		addResolve() do(n as kri.Node):
+			inst.ent = at.scene.entities.Find({e| return e.node==n })
 		return true

@@ -306,7 +306,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 				bit = vb*ta.x - va*tb.x
 				n0 = tan.cross(bit)
 				hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
-			else:	hand = 0.0		
+			else:	hand = 0.0
 		return (tan, bit, n0, hand, n1)
 
 	class Vertex:
@@ -625,7 +625,7 @@ def save_particle(obj,part):
 	info = (part.name, matname, st.amount)
 	print("\t+particle: %s [%s], %d num" % info )
 	out.begin('part')
-	out.pack('L2f', st.amount, st.particle_size, st.random_size )
+	out.pack('L', st.amount)
 	out.text( part.name, matname )
 	out.end()
 
@@ -645,20 +645,37 @@ def save_particle(obj,part):
 		out.array('f', [x*kFrameSec for x in life] )
 		out.pack('f', st.random_lifetime )
 		out.end()
-
+	
+	if st.ren_as == 'OBJECT':
+		print("\t\t(i)", 'instanced', st.dupli_object )
+		out.begin('pr_inst')
+		out.text( st.dupli_object.name )
+		out.end()
+	elif st.ren_as == 'LINE':
+		out.begin('pr_line')
+		out.pack('B2f', st.velocity_length,
+			st.line_length_tail, st.line_length_head )
+		out.end()
+	elif st.ren_as != 'HALO':
+		print("\t\t(w)", 'render as unsupported:', st.ren_as )
+	
 	out.begin('p_vel')
 	out.array('f', st.object_aligned_factor )
 	out.pack('3f', st.normal_factor, st.tangent_factor, st.tangent_phase )
 	out.pack('2f', st.object_factor, st.random_factor )
 	out.end()
+
+	if st.emit_from == 'FACE' and not obj.data.active_uv_texture:
+		print("\t\t(w)",'emitter surface does not have UV')
 	out.begin('p_dist')
 	out.text( st.emit_from, st.distribution )
 	out.pack('f', st.jitter_factor )
 	out.end()
 	out.begin('p_rot')
 	out.end()
-	out.begin('p_force')
-	out.pack('3f', st.brownian_factor, st.drag_factor, st.damp_factor )
+	out.begin('p_phys')
+	out.pack('2f3f', st.particle_size, st.random_size,
+		st.brownian_factor, st.drag_factor, st.damp_factor )
 	out.end()
 
 

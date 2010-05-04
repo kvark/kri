@@ -14,8 +14,8 @@ uniform struct Spatial	{
 uniform vec4 part_speed_tan;	//w == tangental rotation
 uniform vec4 part_speed_obj;	//w == ?
 uniform vec4 object_speed;	//pre-multiplied already
-uniform vec4 part_life;		//x +- y
-const vec4 part_size	= vec4(0.0);	// x +- y
+uniform vec4 part_size,part_life;	//x +- y
+
 
 vec4 part_time();
 float part_uni();

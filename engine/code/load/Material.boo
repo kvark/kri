@@ -5,8 +5,7 @@ import OpenTK.Graphics
 
 
 public partial class Native:
-	public final limdic			= Dictionary[of string,callable() as Hermit]()
-	private final nodeResolve	= Dictionary[of string,callable(kri.Node)]()
+	public final limDict	= Dictionary[of string,callable() as Hermit]()
 
 	public def initMaterials() as void:
 		uvShaders = [	kri.shade.Object("/mi/uv${i}_v") for i in range(4) ]
@@ -23,30 +22,25 @@ public partial class Native:
 			suf = 'g'	if s == 'STRAND'
 			sh = kri.shade.Object( "/mi/${slow}_${suf}" )
 			mt = Hermit( Shader:sh, Name:slow )	# careful!
-			limdic[s] = genFun(mt)
+			limDict[s] = genFun(mt)
 		# non-trivial sources
-		limdic['UV'] = do():
+		limDict['UV'] = do():
 			lid = br.ReadByte()
 			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
-		limdic['ORCO'] = do():
+		limDict['ORCO'] = do():
 			mat = geData[of kri.Material]()
 			assert mat
 			getString()	# mapping type, not supported
 			sh = (orcoVert,orcoHalo)[ mat.Meta['halo'] != null ]
 			return Hermit( Shader:sh, Name:'orco' )
-		limdic['OBJECT'] = do():
-			name = getString()
+		limDict['OBJECT'] = do():
 			mio = InputObject( Shader:objectShader,	Name:'object' )
-			nodeResolve[name] = mio.pNode.activate
+			addResolve( mio.pNode.activate )
 			return mio
 	
 	public def finishMaterials() as void:
 		for m in at.mats.Values:
 			m.link()
-		# resolve node links
-		for nr in nodeResolve:
-			nr.Value( at.nodes[nr.Key] )
-		nodeResolve.Clear()
 
 
 	#---	Parse texture unit	---#
@@ -75,7 +69,7 @@ public partial class Native:
 		# map inputs
 		name = getString()
 		fun as callable() as Hermit = null
-		if limdic.TryGetValue(name,fun):
+		if limDict.TryGetValue(name,fun):
 			u.input = fun()
 			return true
 		return false

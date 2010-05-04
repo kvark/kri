@@ -15,6 +15,9 @@ public class Basic( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
 	[getter(Shader)]
 	private final sh		as Object
 
+	public def constructor():
+		super( CodeNull() )
+		sh = null
 	public def constructor(path as string):
 		super(path)
 		sh = Object( ShaderType.VertexShader, path, Text )
@@ -41,11 +44,10 @@ public class Standard(Basic):
 	public final parVelTan	= par.Value[of Vector4]('part_speed_tan')
 	public final parVelObj	= par.Value[of Vector4]('part_speed_obj')
 	public final parVelKeep	= par.Value[of Vector4]('object_speed')
-	public final at_sub		= kri.Ant.Inst.slotParticles.getForced('sub')
 
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
-		kri.vb.enrich( self, 2, at_sub )
+		kri.vb.enrich( self, 2, pc.at_sub )
 		kri.vb.enrich( self, 3, pc.at_pos, pc.at_speed )
 
 	public def constructor(std as Standard):
