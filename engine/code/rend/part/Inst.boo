@@ -13,19 +13,20 @@ public class Inst( kri.rend.tech.Meta ):
 	
 	public def constructor(pc as kri.part.Context):
 		super('part.object', false, null, 'emissive')
+		# attributes
+		trans[ pc.at_sys ] = pc.ghost_sys
+		trans[ pc.at_pos ] = pc.ghost_pos
+		trans[ pc.at_rot ] = pc.ghost_rot
+		trans[ pc.at_sub ] = pc.ghost_sub
+		# shade
 		pBase.Value = Vector4.UnitX
 		dict.var(pBase)
 		shade(( '/part/draw/obj_v', '/mat_base_f' ))
-		# attributes
-		trans[ pc.at_sys ] = pc.trans_sys
-		trans[ pc.at_pos ] = pc.trans_pos
-		trans[ pc.at_sub ] = pc.trans_sub
-		extList.AddRange( trans.Values )
 
 	protected override def getUpdate(mat as kri.Material) as callable() as int:
 		pe = cur
 		return def() as int:
-			for at in extList:
+			for at in trans.Values:
 				GL.Arb.VertexAttribDivisor(at,1)
 			pe.data.attribTrans(trans)
 			return pe.owner.total

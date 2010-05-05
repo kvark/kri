@@ -37,7 +37,6 @@ public struct Batch:	# why struct?
 public class General( IConstructor, Basic ):
 	public static comparer	as IComparer[of Batch]	= null
 	protected final butch	= List[of Batch]()
-	protected final extList	= List[of int]()
 
 	protected def constructor(name as string):
 		super(name)
@@ -66,8 +65,8 @@ public class General( IConstructor, Basic ):
 				m.tech[tid] = prog = construct(m)
 			continue	if prog == kri.shade.Smart.Fixed
 			if alist:
-				ids = prog.gatherAttribs( kri.Ant.Inst.slotAttributes )
-				alist.AddRange(a	for a in ids	if not (a in alist or a in extList) )
+				ids = prog.gatherAttribs( kri.Ant.Inst.slotAttributes, false )
+				alist.AddRange(a	for a in ids	if not a in alist)
 			b.sa = prog
 			b.up = getUpdate(m)
 			tempList.Add(b)

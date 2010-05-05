@@ -12,8 +12,8 @@ public class Defer( kri.rend.defer.ApplyBase ):
 	public def constructor(pc as kri.part.Context, con as kri.rend.defer.Context, qord as byte):
 		super(qord)
 		# attributes
-		trans[ pc.at_sys ] = pc.trans_sys
-		trans[ pc.at_pos ] = pc.trans_pos
+		trans[ pc.at_sys ] = pc.ghost_sys
+		trans[ pc.at_pos ] = pc.ghost_pos
 		# program link
 		dict.var(pHalo)
 		sa.add('/part/draw/light_v')

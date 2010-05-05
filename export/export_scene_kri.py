@@ -672,6 +672,8 @@ def save_particle(obj,part):
 	out.pack('f', st.jitter_factor )
 	out.end()
 	out.begin('p_rot')
+	out.text( st.angular_velocity_mode )
+	out.pack('f', st.angular_velocity_factor )
 	out.end()
 	out.begin('p_phys')
 	out.pack('2f3f', st.particle_size, st.random_size,

@@ -54,7 +54,7 @@ public class Update( kri.rend.tech.Basic ):
 		sa.feedback(true, 'to_vertex', 'to_quat')
 		sl = kri.Ant.Inst.slotAttributes
 		sa.link(sl, dict, kri.Ant.Inst.dict)
-		at_all = array( sa.gatherAttribs(sl) )
+		at_all = array( sa.gatherAttribs(sl,false) )
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)

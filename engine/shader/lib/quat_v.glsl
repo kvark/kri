@@ -22,6 +22,11 @@ vec4 qinv(vec4 q)	{
 	return vec4(-q.xyz,q.w);
 }
 
+//from axis, angle
+vec4 qvec(vec3 axis, float angle)	{
+	return vec4( axis*sin(0.5*angle), cos(0.5*angle) );
+}
+
 //transform by Spatial forward
 vec3 trans_for(vec3 v, Spatial s)	{
 	return qrot(s.rot, v*s.pos.w) + s.pos.xyz;

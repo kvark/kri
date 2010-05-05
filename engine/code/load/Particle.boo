@@ -161,6 +161,12 @@ public partial class Native:
 		return true
 	
 	public def pp_rot() as bool:
+		mode = getString()
+		factor = getReal()
+		if mode == 'SPIN':
+			pm = geData[of kri.part.Manager]()
+			return false	if not pm
+			pm.behos.Add( kri.part.beh.Rotate(factor,pcon) )
 		return true
 	
 	public def pp_phys() as bool:

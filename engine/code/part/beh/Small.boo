@@ -22,14 +22,16 @@ public class Norm(Basic):	# fur normalizing
 		super('/part/beh/fur_norm')
 
 
-#---	 GRAVITY	---#
+#---	 SIMULATION		---#
 
 public class Physics(Basic):
 	public final pSize	= par.Value[of Vector4]('part_size')
 	public final pForce	= par.Value[of Vector4]('port_force')
 	public override def link(d as rep.Dict) as void:
 		d.var(pSize,pForce)
-	
+
+
+#---	 GRAVITY	---#
 
 public class Gravity(Basic):
 	public final par	as par.Value[of Vector4]
@@ -65,3 +67,8 @@ public class Damp(Simple[of single]):		# speed damping
 public class Bend(Simple[of single]):		# fur bending
 	public def constructor(val as single):
 		super( '/part/beh/fur_bend','fur_bend',val)
+
+public class Rotate(Simple[of single]):		# particle rotation
+	public def constructor(val as single, pc as kri.part.Context):
+		super('/part/beh/rotate','part_spin', val)
+		kri.vb.enrich( self, 4, pc.at_rot )

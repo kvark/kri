@@ -23,7 +23,7 @@ public class Tech( Basic, kri.rend.tech.IConstructor ):
 			m.tech[tid] = sa = construct(m)
 		return null	if sa == Smart.Fixed
 		if pe.techReady[tid] == kri.part.TechState.Unknown:
-			ats = array( sa.gatherAttribs( kri.Ant.Inst.slotParticles ))
+			ats = array( sa.gatherAttribs( kri.Ant.Inst.slotParticles, false ))
 			pat = pe.listAttribs()
 			ok = Array.TrueForAll(ats, {a| return a in pat })
 			pe.techReady[tid] = (kri.part.TechState.Invalid, kri.part.TechState.Ready)[ok]

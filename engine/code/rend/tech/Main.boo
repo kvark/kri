@@ -36,7 +36,7 @@ public class Meta(General):
 	protected def constructor(name as string, gs as bool, outs as (string), *mets as (string)):
 		super(name)
 		lMets,lOuts,geom = mets,outs,gs
-		factory.onLink = setup
+		factory.onLink = onLink
 	
 	protected def shade(prefix as string) as void:
 		for s in ('_v','_f'):
@@ -44,7 +44,7 @@ public class Meta(General):
 	protected def shade(slis as string*) as void:
 		shobs.Extend( kri.shade.Object(s) for s in slis )
 	
-	private def setup(sa as kri.shade.Smart) as void:
+	private virtual def onLink(sa as kri.shade.Smart) as void:
 		sa.fragout( *lOuts )	if lOuts
 		sa.add( *kri.Ant.Inst.shaders.gentleSet )
 		sa.add( *array(shobs) )

@@ -10,6 +10,8 @@ public class Smart(Program):
 	private final repList	= List[of rep.Base]()
 	private sourceList		as (par.IBaseRoot)
 	public static final prefixAttrib	as string	= 'at_'
+	public static final prefixGhost		as string	= 'ghost_'
+	public static final ghostSym		as string	= '@'
 	public static final prefixUnit		as string	= 'unit_'
 	public static final Fixed	= Smart(0)
 	
@@ -27,7 +29,9 @@ public class Smart(Program):
 		for a in ats:
 			name = sl.Name[a]
 			continue if string.IsNullOrEmpty(name)
-			attrib(a, prefixAttrib + name)
+			if name.StartsWith(ghostSym):
+				attrib( a, prefixGhost + name.Substring(ghostSym.Length) )
+			else: attrib( a, prefixAttrib+name )
 	public def attribs(sl as kri.lib.Slot) as void:
 		attribs(sl, *array(range(sl.Size)) )
 	
@@ -49,11 +53,16 @@ public class Smart(Program):
 		super()
 	
 	# collect used attributes
-	public def gatherAttribs(sl as kri.lib.Slot) as int*:
-		return (i for i in range(sl.Size)
-			if not string.IsNullOrEmpty(sl.Name[i]) and
-			i == GL.GetAttribLocation(id, prefixAttrib + sl.Name[i])
-			)
+	public def gatherAttribs(sl as kri.lib.Slot, ghost as bool) as int*:
+		for i in range(sl.Size):
+			name = sl.Name[i]
+			continue	if string.IsNullOrEmpty(name)
+			if name.StartsWith(ghostSym):
+				if not ghost: continue
+				name = prefixGhost + name.Substring( ghostSym.Length )
+			else: name = prefixAttrib+name
+			yield i	if i == GL.GetAttribLocation(id,name)
+
 	# check used attributes
 	public def checkAttribs(sl as kri.lib.Slot) as void:
 		num = getAttribNum()
@@ -63,8 +72,11 @@ public class Smart(Program):
 		for i in range(num):
 			GL.GetActiveAttrib(id,i, aux0,aux1,size,type, name)
 			str = name.ToString()
-			off = (0,3)[ str.StartsWith(prefixAttrib) ]
-			assert sl.find( str.Substring(off) ) >= 0
+			pre,ps = '',''
+			for ps in (prefixAttrib,prefixGhost,''):
+				break	if str.StartsWith(ps)
+			pre = ghostSym	if ps == prefixGhost
+			assert sl.find( pre + str.Substring(ps.Length) ) >= 0
 	
 	# re-upload parameters
 	public def updatePar() as void:
@@ -116,4 +128,3 @@ public class Smart(Program):
 			GL.GetActiveAttrib(id, i, size, tip)
 			total += size
 		return total
-	
