@@ -13,7 +13,6 @@ public class Render( kri.rend.Basic ):
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint
 	private final pInd	= kri.shade.par.Value[of single]('index')
-	private final ptype	as PixelType
 	private final mouse	= kri.Ant.Inst.Mouse
 	private coord	=	(of uint: 0,0)
 	#debug data
@@ -37,8 +36,6 @@ public class Render( kri.rend.Basic ):
 		d.unit(pTex)
 		sb.add('/copy_v', '/copy_f')
 		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict, d )
-		# set pix type
-		ptype = PixelType.Float
 	
 	def destructor():
 		mouse.ButtonDown -= ev
@@ -57,7 +54,7 @@ public class Render( kri.rend.Basic ):
 		pInd.Value = 0f
 		ents = array(e for e in kri.Scene.Current.entities if e.seTag[of Tag]())
 		for i in range(ents.Length):
-			pInd.Value = (i+0.5f) / ents.Length
+			pInd.Value = (i+1f) / (1<<16)
 			e = ents[i]
 			e.enable( true, (kri.Ant.Inst.attribs.vertex,) )
 			kri.Ant.Inst.params.modelView.activate( e.node )
@@ -71,19 +68,18 @@ public class Render( kri.rend.Basic ):
 			return
 		# react, todo: use PBO and actually read on demand
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
-		val = (of single: single.NaN)
+		index = (of ushort: ushort.MaxValue )
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
-		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.Red, ptype, val)
+		GL.ReadPixels( coord[0],coord[1], 1,1, PixelFormat.Red, PixelType.UnsignedShort, index )
 		active = false
-		return if val[0] == 0f
-		index = cast(int, val[0]*ents.Length)
-		val[0] = single.NaN	# depth read dosn't seem to work
+		return if not index[0]
 		GL.ReadBuffer( cast(ReadBufferMode,0) )
+		val = (of single: single.NaN )
 		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.DepthComponent, PixelType.Float, val)
 		vin = OpenTK.Vector3(coord[0]*1f / buf.Width, coord[1]*1f / buf.Height, val[0])
 		point = kri.Camera.Current.toWorld(vin)
 		# call the react method
-		e = ents[ index ]
+		e = ents[ index[0]-1 ]
 		sp = (e.node.World if e.node else kri.Spatial.Identity)
 		sp.inverse()
 		fun = e.seTag[of Tag]().pick

@@ -30,6 +30,8 @@ public class Projector( ani.data.Player ):
 		v = Vector3.Add( Vector3.Multiply(vin,2f), Vector3.One )
 		z = 2f*rangeIn*rangeOut / (v.Z*(rangeOut-rangeIn) - rangeOut - rangeIn)
 		return Vector3(-z*v.X, -z*v.Y / aspect, z)
+	public def makeOrtho(radius as single) as void:
+		fov = -2f / radius
 		
 
 public class Camera(Projector):
@@ -49,8 +51,6 @@ public class Light(Projector,IColored):
 	public sphere	= 0f	# spherical bound
 	public depth	as Texture	= null
 	# parallel projection
-	public def makeDirectional(radius as single) as void:
-		fov = -2f / radius
 	public def setLimit(radius as single) as void:
 		rangeIn = 0
 		rangeOut = radius

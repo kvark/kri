@@ -17,7 +17,7 @@ public class Clear( Basic ):
 #---------	EARLY Z FILL	--------#
 
 public class EarlyZ( tech.General ):
-	private sa	= kri.shade.Smart()
+	public final sa	= kri.shade.Smart()
 	public def constructor():
 		super('zcull')
 		# make shader

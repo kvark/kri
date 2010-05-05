@@ -61,7 +61,7 @@ public partial class Native:
 		type = getString()
 		getProjector(l)
 		if type == 'SUN':
-			l.makeDirectional( l.fov )
+			l.makeOrtho( l.fov )
 		elif type == 'POINT':
 			l.fov = 0f
 		l.softness	= getReal()

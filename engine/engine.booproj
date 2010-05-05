@@ -34,7 +34,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="code\ani\Data.boo" />
-    <Compile Include="code\ani\Physics.boo" />
+    <Compile Include="code\ani\Sim.boo" />
     <Compile Include="code\ani\App.boo" />
     <Compile Include="code\ani\Graph.boo" />
     <Compile Include="code\ani\List.boo" />
@@ -50,6 +50,7 @@
     <Compile Include="code\kit\Hair.boo" />
     <Compile Include="code\kit\HDR.boo" />
     <Compile Include="code\kit\Morph.boo" />
+    <Compile Include="code\kit\Phys.boo" />
     <Compile Include="code\kit\Pick.boo" />
     <Compile Include="code\kit\Skin.boo" />
     <Compile Include="code\lib\Main.boo" />
@@ -84,7 +85,6 @@
     <Compile Include="code\rend\part\Main.boo" />
     <Compile Include="code\rend\part\Tech.boo" />
     <Compile Include="code\rend\part\Tool.boo" />
-    <Compile Include="code\rend\Physics.boo" />
     <Compile Include="code\rend\tech\General.boo" />
     <Compile Include="code\rend\tech\Main.boo" />
     <Compile Include="code\rend\Tool.boo" />

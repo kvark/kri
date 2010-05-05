@@ -41,20 +41,23 @@ public class Native(Basic):
 	ref vlin as Vector3, ref vang as Vector3) as void:
 		b.vLinear	+= d*vlin
 		b.vAngular	+= d*vang
-		b.node.local.pos += d * b.vLinear
-		b.node.local.rot += Quaternion(Xyz: 0.5f*d*b.vAngular, W:0f) * b.node.local.rot
-		b.node.local.rot.Normalize()
-		b.node.touch()
+		q = Quaternion( Xyz:0.5f*d*b.vAngular, W:0f )
+		n = b.node
+		assert n
+		n.local.pos += d * b.vLinear
+		n.local.rot += q * n.local.rot
+		n.local.rot.Normalize()
+		n.touch()
 
 
 public class Render(Native):
-	public final pr	as	kri.rend.Physics
-	public def constructor(s as kri.Scene, ord as int):
+	public final pr	as	kri.kit.phys.Core
+	public def constructor( s as kri.Scene, ord as int, rz as kri.rend.EarlyZ ):
 		super(s)
-		pr = kri.rend.Physics(ord)
+		pr = kri.kit.phys.Core( ord, rz.tid )
 	protected override def onDelta(delta as double) as uint:
 		super(delta)
-		#pr.tick(scene)
+		pr.tick(scene)
 		return 0
 
 /*

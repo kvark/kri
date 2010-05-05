@@ -2,7 +2,7 @@
 
 
 public class Basic( kri.rend.Basic ):
-	protected	final tid	as int		# technique ID
+	public	final tid	as int		# technique ID
 	protected def constructor(name as string):
 		super(false)
 		tid = kri.Ant.Inst.slotTechniques.create(name)
