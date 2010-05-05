@@ -79,7 +79,9 @@ public partial class Native:
 		# particle render
 		dict['pr_inst']	= ppr_inst
 		# physics
-		#dict['body']	= Read.body
+		dict['collide']	= p_collide
+		dict['b_stat']	= pb_stat
+		dict['b_rigid'] = pb_rigid
 	
 	public def read(path as string) as Atom:
 		kri.res.check(path)

@@ -19,7 +19,6 @@ file_ext = '.scene'
 out = None
 kFrameSec = 1.0 / 25.0
 kMaxBones = 100
-bDegrees = True
 
 class Writer:
 	__slots__= 'fx','pos'
@@ -74,7 +73,7 @@ def gather_anim(ob):
 	if not ad: return []
 	all = [ns.action for nt in ad.nla_tracks for ns in nt.strips]
 	if ad.action and not ad.action in all:
-		print("\t(w) current action is not finalized")
+		print("\t(w)",'current action is not finalized')
 		all.append( ad.action )
 	return all
 
@@ -96,7 +95,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 			mg = mat.groups()
 			if not indexator: continue
 			if mg[0] != sar:
-				print("\t\t(w) unknown array:", mg[0])
+				print("\t\t(w)", 'unknown array:', mg[0])
 				continue
 			bid = 1 + indexator.index( mg[1] )
 			attrib = mg[2]
@@ -132,7 +131,7 @@ def save_meta_action(act,sym, indexator=None, sar=''):
 
 def save_curve_pack(curves,offset):
 	if not len(curves):
-		print("\t\t(w) invalid curve pack")
+		print("\t\t(w)",'invalid curve pack')
 		out.pack('H',0)
 		return
 	num = len( curves[0].keyframe_points )
@@ -248,7 +247,7 @@ def save_mat(mat):
 	if mat.strand:	# hair strand
 		st = mat.strand
 		if not st.blender_units:
-			print("\t(w) size in units required")
+			print("\t(w)",'strand size in units required')
 		out.begin('m_hair')
 		out.pack('4fB', st.root_size, st.tip_size, st.shape,
 			st.width_fade, st.tangent_shading )
@@ -554,7 +553,7 @@ def save_lamp(lamp):
 	out.begin('lamp')
 	save_color( lamp.color )
 	if not lamp.specular or not lamp.diffuse:
-		print("\t(w) specular or diffuse can't be disabled")
+		print("\t(w)",'specular/diffuse cant be disabled')
 	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0
 	# attenuation
 	kd = 1.0 / lamp.distance
@@ -604,7 +603,7 @@ def save_skeleton(skel):
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
 		if not (bone.inherit_scale and bone.deform):
-			print("\t\t(w) bone '%s' has weird settings" %(bone.name) )
+			print("\t\t(w)", 'weird bone', bone.name)
 		if par: # old variant (same result)
 			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
 			parid = skel.bones.keys().index( par.name )
@@ -685,18 +684,22 @@ def save_particle(obj,part):
 
 def save_game(gob):
 	flag = (gob.actor, not gob.ghost)
-	enum = (gob.physics_type, gob.collision_bounds)
-	enu0 = ('NO_COLLISION','STATIC','DYNAMIC','RIGID_BODY','SOFT_BODY','OCCLUDE','SENSOR').index(enum[0])
-	enu1 = ('BOX','SPHERE','CYLINDER','CONE','CONVEX_HULL','TRIANGLE_MESH').index(enum[1])
-	phys = (gob.mass, gob.radius)
-	damp = (gob.damping, gob.rotation_damping, gob.form_factor)
-	frict = tuple(gob.friction_coefficients)
-	out.begin('body')
-	out.array('B', flag + (enu0,enu1) )
-	out.array('f', phys + damp + frict)
-	out.end()
-	print("\t(i) %s physics, %s bounds, %.1f mass, %.1f radius" % (enum+phys))
-
+	if	gob.physics_type == 'STATIC':
+		out.begin('b_stat')
+		out.array('B',flag)
+		out.end()
+	elif	gob.physics_type == 'RIGID_BODY':
+		out.begin('b_rigid')
+		out.array('B',flag)
+		out.pack('3f2f', gob.mass, gob.radius, gob.form_factor,
+			gob.damping, gob.rotation_damping )
+		out.end()
+	if gob.use_collision_bounds:
+		print("\t(i)", 'collision', gob.collision_bounds)
+		out.begin('collide')
+		out.pack('f', gob.collision_margin )
+		out.text( gob.collision_bounds )
+		out.end()
 
 ###  	NODE:CORE	###
 

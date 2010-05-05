@@ -85,3 +85,26 @@ public partial class Native:
 			s.bones[i].Parent = (s.bones[par[i]-1] if par[i] else node)
 		s.bakePoseData(node)
 		return true
+	
+	#------	PHYSICS	------#
+	
+	#---	Parse collision bounds	---#
+	public def p_collide() as bool:
+		getReal()	# margin
+		getString()	# type
+		return true
+	
+	#---	Parse static body	---#
+	public def pb_stat() as bool:
+		br.ReadBytes(2)	# actor,reacts
+		return true
+	
+	#---	Parse rigid body	---#
+	public def pb_rigid() as bool:
+		br.ReadBytes(2)	# actor,reacts
+		getReal()	# mass
+		getReal()	# radius
+		getReal()	# form factor
+		getReal()	# moving damping
+		getReal()	# rotation damping
+		return true
