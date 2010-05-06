@@ -6,6 +6,15 @@ import System
 
 public class Scheduler(IBase):
 	protected final anims	= List[of XAniData]()
+	public Empty as bool:
+		get: return not anims.Count
+		set:
+			anims.Clear()	if value
+	public def isPlaying(an as IBase) as bool:
+		for xa in anims:
+			return true	if xa.an == an
+		return false
+
 	# data
 	public struct XAniData:
 		public an	as IBase

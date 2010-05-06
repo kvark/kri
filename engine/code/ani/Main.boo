@@ -33,8 +33,10 @@ public class Loop(IBase):
 	protected virtual def onRate(rate as double) as void:
 		pass
 	def IBase.onFrame(time as double) as uint:
-		if time > start+lTime:
-			return 1	if not loops
+		if time >= start+lTime:
+			if not loops:
+				onRate(1.0)
+				return 1
 			--loops
 			start = time
 			onLoop()

@@ -12,9 +12,36 @@ public class AniTrans( kri.ani.Loop ):
 		n = node
 		s0 = n.local
 		s1 = targ
+		lTime = 0.5
 	protected override def onRate(rate as double) as void:
 		n.local.lerpDq(s0,s1,rate)
 		n.touch()
+
+
+public class AniRot( kri.ani.Loop ):
+	private static final time = 0.5
+	private final n as kri.Node
+	private final s0 as kri.Spatial
+	private final pos	as Vector3
+	private final axis	as Vector3
+
+	public def constructor(node as kri.Node, ref targ as kri.Spatial):
+		n = node
+		s0 = n.local
+		pos = 0.5 * ( targ.pos + s0.pos )
+		diff = targ.pos - s0.pos
+		diff.Normalize()
+		axis = Vector3.Cross(diff, Vector3.UnitZ )
+		lTime = time
+	protected override def onRate(rate as double) as void:
+		s3 = s0
+		s3.pos -= pos
+		s2 = kri.Spatial.Identity
+		s2.rot = Quaternion.FromAxisAngle( axis, rate*Math.PI )
+		n.local.combine(s3,s2)
+		n.local.pos += pos
+		n.touch()
+
 
 
 private class Task:
@@ -27,7 +54,11 @@ private class Task:
 			kri.swap[of kri.Spatial]( e.node.local, ec.node.local )
 			e.node.touch()
 			ec = e
-		al.add( AniTrans(e.node, ec.node.local) )
+		diff = Vector3.Subtract( ec.node.local.pos, e.node.local.pos )
+		ax,ay = Math.Abs(diff.X), Math.Abs(diff.Y)
+		return	if not al.Empty or ax+ay>7f
+		al.add( AniRot(e.node,ec.node.local) )
+		#al.add( AniTrans(e.node,ec.node.local) )
 		ec.node.local = e.node.local
 		ec.node.touch()
 		#al.add( e.node.play('rotate') )
@@ -41,9 +72,9 @@ private class Task:
 	private def makeEnt() as kri.Entity:
 		mat = makeMat()
 		# create mesh
-		m = kri.kit.gen.cube( Vector3(2f,1f,1f) )
+		m = kri.kit.gen.cube( Vector3(2f,1f,0.5f) )
 		e = kri.Entity( mesh:m )
-		e.tags.Add( kri.TagMat( mat:mat, num:m.nPoly) )
+		e.tags.Add( kri.TagMat( mat:mat, num:m.nPoly ) )
 		e.tags.Add( kri.kit.pick.Tag( pick:fun ) )
 		return e
 	
