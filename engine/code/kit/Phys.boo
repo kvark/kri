@@ -14,6 +14,11 @@ public class Core:
 	private final pbo	= kri.vb.Object( BufferTarget.PixelPackBuffer )
 	private final pId	= kri.shade.par.Value[of single]('object_id')
 	
+	public Color	as kri.Texture:
+		get: return fbo.A[-0].Tex
+	public Stencil	as kri.Texture:
+		get: return fbo.A[-2].Tex
+	
 	public def constructor( ord as int, techId as int ):
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
@@ -34,17 +39,19 @@ public class Core:
 			va = e.va[tid]
 			continue	if not va or va == kri.vb.Array.Default
 			e.va[tid].bind()
-			pId.Value = (i+1f) / (1<<16)
+			pId.Value = (i+40000f) / (1<<16)
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			sa.updatePar()
 			e.mesh.draw(1)
 
 	public def tick(s as kri.Scene) as void:
 		# prepare the camera
-		kri.Ant.Inst.params.activate(cam)
+		kri.Ant.Inst.params.activate( cam )
+		kri.Ant.Inst.params.activate( s.cameras[0] )
 		sa.use()
 		# prepare buffer
 		fbo.activate(1)
+		GL.DepthMask(true)
 		GL.ClearColor(0f,0f,0f,1f)
 		GL.ClearDepth(1f)
 		GL.ClearStencil(0)
@@ -54,12 +61,11 @@ public class Core:
 			ClearBufferMask.StencilBufferBit )
 		using kri.Section( EnableCap.DepthTest ):
 			GL.ColorMask(true,false,false,false)
-			GL.DepthMask(true)
 			GL.DepthFunc( DepthFunction.Always )
 			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
 			drawAll(s)
-			GL.ColorMask(false,true,false,false)
 			GL.DepthMask(false)
+			GL.ColorMask(false,true,false,false)
 			GL.DepthFunc( DepthFunction.Less )
 			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )
 			using kri.Section( EnableCap.StencilTest ):
