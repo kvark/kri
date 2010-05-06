@@ -59,9 +59,9 @@ public class Object(Proxy):
 		kri.safeKill({ GL.DeleteBuffers(1,tmp) })
 	# binding
 	public def bind() as void:
-		GL.BindBuffer(target,id)
+		bind(self)
 	public def unbind() as void:
-		GL.BindBuffer(target,0)
+		bind(null)
 	# filling
 	private def getHint(dyn as bool) as BufferUsageHint:
 		return (BufferUsageHint.StreamDraw if dyn else BufferUsageHint.StaticDraw)

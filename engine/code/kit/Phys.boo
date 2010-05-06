@@ -13,19 +13,22 @@ public class Core:
 	private final tid	as int
 	private final pbo	= kri.vb.Object( BufferTarget.PixelPackBuffer )
 	private final pId	= kri.shade.par.Value[of single]('object_id')
+	private final big	as bool
 	
 	public Color	as kri.Texture:
 		get: return fbo.A[-0].Tex
 	public Stencil	as kri.Texture:
 		get: return fbo.A[-2].Tex
 	
-	public def constructor( ord as int, techId as int ):
+	public def constructor( ord as byte, large as bool, techId as int ):
+		big = large
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
 		tt = TextureTarget.Texture2D
 		fbo.A[-2].new( 0, tt )
-		fbo.A[0].new( PixelInternalFormat.Rg16 ,tt )
-		pbo.init( 5<<(2*ord) )
+		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
+		fbo.A[0].new( pif,tt )
+		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader
 		tid = techId
 		d = kri.shade.rep.Dict()
@@ -34,12 +37,14 @@ public class Core:
 		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 
 	private def drawAll(scene as kri.Scene) as void:
+		kid = 1f / ((1 << (8,16)[big]) - 1f)
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
 			va = e.va[tid]
+			continue	if e.node.name == 'Mesh'
 			continue	if not va or va == kri.vb.Array.Default
 			e.va[tid].bind()
-			pId.Value = (i+40000f) / (1<<16)
+			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			sa.updatePar()
 			e.mesh.draw(1)
@@ -52,6 +57,7 @@ public class Core:
 		# prepare buffer
 		fbo.activate(1)
 		GL.DepthMask(true)
+		GL.StencilMask(-1)
 		GL.ClearColor(0f,0f,0f,1f)
 		GL.ClearDepth(1f)
 		GL.ClearStencil(0)
@@ -83,12 +89,15 @@ public class Core:
 		GL.ReadBuffer( cast(ReadBufferMode,0) )
 		GL.ReadPixels(0,0, fbo.Width, fbo.Height, PixelFormat.StencilIndex, PixelType.Byte, IntPtr.Zero )
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
-		GL.ReadPixels(0,0, fbo.Width, fbo.Height, PixelFormat.Rg, PixelType.UnsignedShort, IntPtr(size) )
-		dar = array[of byte]( 5*size )
+		pt = (PixelType.UnsignedByte, PixelType.UnsignedShort)[big]
+		GL.ReadPixels(0,0, fbo.Width, fbo.Height, PixelFormat.Rg, pt, IntPtr(size) )
+		# debug: extract result
+		es = (1,2)[big]
+		dar = array[of byte]( size*(1+2*es) )
 		pbo.read(dar)
 		for i in range(size):
-			continue	if not dar[i]
 			cs = dar[i]
-			ca = dar[size +i*4 +0]
-			cb = dar[size +i*4 +2]
+			ca = dar[size + (i*2+0)*es]
+			cb = dar[size + (i*2+1)*es]
+			continue	if not cs or ca==cb
 			cs = ca = cb

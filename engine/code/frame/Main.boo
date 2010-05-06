@@ -27,7 +27,9 @@ public class Array:
 public class Screen(Array):
 	private ofx as int = 0
 	private ofy as int = 0
-	protected final id as int
+	[Getter(Extract)]
+	private final id as int
+	
 	public def constructor():
 		id = 0
 	protected def constructor(newid as int):

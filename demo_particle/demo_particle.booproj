@@ -6,7 +6,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>demo_particle</RootNamespace>
     <AssemblyName>demo_particle</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\dmitrym\Application Data\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <StartWorkingDirectory>.\</StartWorkingDirectory>
     <NoStdLib>False</NoStdLib>

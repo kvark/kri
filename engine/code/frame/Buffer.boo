@@ -25,7 +25,7 @@ public class Buffer(Screen):
 		super(tmp)
 		dropMask()
 	def destructor():
-		tmp = id
+		tmp = Extract
 		kri.safeKill({ GL.DeleteFramebuffers(1,tmp) })
 	
 	public static def Check() as bool:
