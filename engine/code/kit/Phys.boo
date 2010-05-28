@@ -10,6 +10,7 @@ public class Core:
 	private final fbo	= kri.frame.Buffer()
 	private final cam	= kri.Camera()
 	private final sa	= kri.shade.Smart()
+	private final sb	= kri.shade.Smart()
 	private final tid	as int
 	private final pbo	= kri.vb.Object( BufferTarget.PixelPackBuffer )
 	private final pId	= kri.shade.par.Value[of single]('object_id')
@@ -82,8 +83,13 @@ public class Core:
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
 				drawAll(s)
 				GL.CullFace( CullFaceMode.Back )
-		# read back result
+
+		# resize the map
 		GL.ColorMask(true,true,true,true)
+		#fbo.A[1].layer( fbo.A[-2].Tex, 1 )
+		#fbo.A[2].layer( fbo.A[-0].Tex, 1 )
+
+		# read back result
 		pbo.bind()
 		size = fbo.Width * fbo.Height
 		GL.ReadBuffer( cast(ReadBufferMode,0) )

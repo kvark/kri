@@ -12,9 +12,11 @@ import OpenTK.Graphics.OpenGL
 
 public class Program:
 	public final id as int
-	[getter(Ready)]
+	[Getter(Ready)]
 	private linked as bool = false
 	private blocks	= List[of Object]()
+	[Getter(Log)]
+	private log	as string = ''
 
 	public def constructor():
 		id = GL.CreateProgram()
@@ -24,12 +26,16 @@ public class Program:
 	def destructor():
 		kri.safeKill({ GL.DeleteProgram(id) })
 	public def check() as void:
-		info as string
-		GL.GetProgramInfoLog(id,info)
-		#Debug.WriteLine("Program:\n" + info)
+		GL.GetProgramInfoLog(id,log)
 		result as int
 		GL.GetProgram(id, ProgramParameter.LinkStatus, result)
-		raise info	if not result
+		raise log	if not result
+	public def validate() as void:
+		GL.ValidateProgram(id)
+		GL.GetProgramInfoLog(id,log)
+		result as int
+		GL.GetProgram(id, ProgramParameter.ValidateStatus, result)
+		raise log	if not result
 	
 	# add specific objects
 	public def add(*shads as (Object)) as void:
@@ -48,11 +54,12 @@ public class Program:
 		linked = true
 		GL.LinkProgram(id)
 		check()
-
 	# activate program
 	public virtual def use() as void:
 		assert linked
+		validate()	if kri.Ant.Inst.debug
 		GL.UseProgram(id)
+
 	# assign vertex attribute slot
 	public def attrib(index as int, name as string) as void:
 		GL.BindAttribLocation(id, index, name)

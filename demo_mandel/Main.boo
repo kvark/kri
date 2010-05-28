@@ -14,9 +14,10 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	kri.vb.enrich( beh, 4, pc.at_pos )
 	pm.behos.Add(beh)
 	
-	b2 = kri.part.beh.Basic('/part/fur/dummy')
-	kri.vb.enrich( b2, 2, pc.at_sys )
-	pm.behos.Add( b2 )
+	if not 'Dummy':
+		b2 = kri.part.beh.Basic('/part/fur/dummy')
+		kri.vb.enrich( b2, 2, pc.at_sys )
+		pm.behos.Add( b2 )
 	
 	pLimt = par.Value[of single]('limit')
 	pLimt.Value = 2.5f
@@ -46,7 +47,7 @@ private class Render( kri.rend.part.Simple ):
 
 [System.STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant(1,400,300,0):
+	using ant = kri.Ant(1,true,400,300,0):
 		view = kri.ViewScreen(16,0)
 		rchain = kri.rend.Chain()
 		view.ren = rchain

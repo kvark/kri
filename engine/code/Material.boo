@@ -60,8 +60,10 @@ public class Material( ani.data.Player ):
 			din.Add( m.Name, u.input )
 		# check geometry shaders
 		if not geom:
-			for dk in dd.Keys:
+			kar = array( dd.Keys )
+			for dk in kar:
 				if dk.type == ShaderType.GeometryShader:
+					#dd.Remove(dk)
 					return null
 		# generate coords
 		mapins = load.Meta.MakeTexCoords(geom,din)

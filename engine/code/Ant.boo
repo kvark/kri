@@ -11,6 +11,7 @@ import OpenTK.Graphics.OpenGL
 public class Ant( OpenTK.GameWindow ):
 	[getter(Inst)]
 	public static inst as Ant = null		# Singleton
+	public final debug	as bool				# is debug context
 	public final views	= List[of View]()	# *View
 	private quad	as kri.kit.gen.Quad	= null	# Standard quad
 	# time
@@ -32,12 +33,15 @@ public class Ant( OpenTK.GameWindow ):
 	public final attribs	= lib.Attrib(slotAttributes)
 
 
-	public def constructor(ver as int, wid as uint, het as uint, depth as int):
+	public def constructor(ver as int, bug as bool, wid as uint, het as uint, depth as int):
 		print "Ant window ${wid}x${het}, ${depth} depth"
 		gm = GraphicsMode( ColorFormat(8), depth, 0 )
+		flags  = GraphicsContextFlags.ForwardCompatible
+		flags |= GraphicsContextFlags.Debug	if bug
+		#create GameWindow
 		super(wid, het,	gm, 'kri', GameWindowFlags.Default,
-			DisplayDevice.Default, 3,ver,
-			GraphicsContextFlags.ForwardCompatible | GraphicsContextFlags.Debug )
+			DisplayDevice.Default, 3,ver, flags)
+		debug = bug
 		sw.Start()
 		inst = self
 

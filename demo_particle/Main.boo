@@ -101,7 +101,7 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant(1,400,300,24):
+	using ant = kri.Ant(1,true,400,300,24):
 		view = kri.ViewScreen(16,0)
 		rchain = kri.rend.Chain()
 		view.ren = rchain

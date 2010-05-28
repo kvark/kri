@@ -655,7 +655,7 @@ def save_particle(obj,part):
 		out.pack('B2f', st.velocity_length,
 			st.line_length_tail, st.line_length_head )
 		out.end()
-	elif st.ren_as != 'HALO':
+	elif not st.ren_as in ('HALO','PATH'):
 		print("\t\t(w)", 'render as unsupported:', st.ren_as )
 	
 	out.begin('p_vel')

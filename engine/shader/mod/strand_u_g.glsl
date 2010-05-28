@@ -6,8 +6,7 @@ float get_shape(float k)	{
 	return mix( 1.0+k, 1.0/(1.0-k), step(0.0,k) );
 }
 float get_fur_shape()	{
-	float k = strand_data.z;
-	return mix( 1.0+k, 1.0/(1.0-k), step(0.0,k) );
+	return get_shape( strand_data.z );
 }
 
 // should be gentype here!
