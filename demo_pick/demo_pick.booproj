@@ -3,7 +3,7 @@
     <ProjectGuid>{7AE5957C-B9FE-46C8-8B34-95A52EF214ED}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>demo_pick</RootNamespace>
     <AssemblyName>demo_pick</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>

@@ -118,7 +118,7 @@ private class Task:
 
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant(1,true,320,200,24):
+	using ant = kri.Ant('kri.conf',24):
 		view = kri.ViewScreen(16,0)
 		ant.views.Add( view )
 		ant.VSync = VSyncMode.On

@@ -5,6 +5,18 @@ import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
+private class Config:
+	private final dict	= Collections.Generic.Dictionary[of string,string]()
+	public def constructor(path as string):
+		for line in IO.File.ReadAllLines(path):
+			continue	if line =~ /^\s*#/
+			name,val = /\s*=\s*/.Split(line)
+			dict[name] = val
+	public def ask(name as string, default as string) as string:
+		rez as string = null
+		return rez	if dict.TryGetValue(name,rez)
+		return default
+
 
 # Main engine class Ant
 # Controls all events
@@ -33,27 +45,34 @@ public class Ant( OpenTK.GameWindow ):
 	public final attribs	= lib.Attrib(slotAttributes)
 
 
-	public def constructor(ver as int, bug as bool, wid as uint, het as uint, depth as int):
-		print "Ant window ${wid}x${het}, ${depth} depth"
-		gm = GraphicsMode( ColorFormat(8), depth, 0 )
-		flags  = GraphicsContextFlags.ForwardCompatible
-		flags |= GraphicsContextFlags.Debug	if bug
-		#create GameWindow
-		super(wid, het,	gm, 'kri', GameWindowFlags.Default,
-			DisplayDevice.Default, 3,ver, flags)
-		debug = bug
-		sw.Start()
-		inst = self
+	public def constructor(confile as string, depth as int):
+		# read config
+		conf = Config(confile)
+		title	= conf.ask('Title','kri')
+		shade.Code.Folder	= conf.ask('ShaderPath','../engine/shader')
+		ver	= uint.Parse( conf.ask('ContextVersion','0'))
+		bug	= uint.Parse( conf.ask('Debug','1'))
+		fs	= uint.Parse( conf.ask('FullScreen','0'))
+		wid	= uint.Parse( conf.ask('Width','0'))
+		het	= uint.Parse( conf.ask('Height','0'))
 
-	public def constructor(ver as int, depth as int):
-		print "Ant full-screen, ${depth} depth"
+		# prepare attributes
 		gm = GraphicsMode( ColorFormat(8), depth, 0 )
 		dd = DisplayDevice.Default
-		super(dd.Width, dd.Height, gm, 'kri', GameWindowFlags.Fullscreen,
-			dd,	3,ver, GraphicsContextFlags.ForwardCompatible)
+		conFlags  = GraphicsContextFlags.ForwardCompatible
+		conFlags |= GraphicsContextFlags.Debug	if bug
+		gameFlags  = GameWindowFlags.Default
+		gameFlags |= GameWindowFlags.Fullscreen	if fs
+		wid = dd.Width	if not wid
+		het = dd.Height	if not het
+
+		# start
+		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
 		sw.Start()
+		debug = bug>0
 		inst = self
 		
+
 	def destructor():
 		inst = null
 		sw.Stop()

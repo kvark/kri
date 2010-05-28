@@ -47,7 +47,7 @@ private class Render( kri.rend.part.Simple ):
 
 [System.STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant(1,true,400,300,0):
+	using ant = kri.Ant('kri.conf',0):
 		view = kri.ViewScreen(16,0)
 		rchain = kri.rend.Chain()
 		view.ren = rchain

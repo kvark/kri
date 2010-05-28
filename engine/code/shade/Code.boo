@@ -22,7 +22,7 @@ public class CodeNull(ICode):
 
 
 public class Code(ICode):
-	public static Folder	= '../engine/shader'
+	public static Folder	= '.'
 	public static def Read(name as string) as string:
 		if name.StartsWith('/'):
 			name = Folder + name
