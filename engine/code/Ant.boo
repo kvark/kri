@@ -50,15 +50,16 @@ public class Ant( OpenTK.GameWindow ):
 		conf = Config(confile)
 		title	= conf.ask('Title','kri')
 		shade.Code.Folder	= conf.ask('ShaderPath','../engine/shader')
+		sizes	= conf.ask('Size','0x0').Split(char('x'))
 		ver	= uint.Parse( conf.ask('ContextVersion','0'))
 		bug	= uint.Parse( conf.ask('Debug','1'))
 		fs	= uint.Parse( conf.ask('FullScreen','0'))
-		wid	= uint.Parse( conf.ask('Width','0'))
-		het	= uint.Parse( conf.ask('Height','0'))
+		wid	= uint.Parse( sizes[0] )
+		het	= uint.Parse( sizes[1] )
 
 		# prepare attributes
-		gm = GraphicsMode( ColorFormat(8), depth, 0 )
 		dd = DisplayDevice.Default
+		gm = GraphicsMode( ColorFormat(8), depth, 0 )
 		conFlags  = GraphicsContextFlags.ForwardCompatible
 		conFlags |= GraphicsContextFlags.Debug	if bug
 		gameFlags  = GameWindowFlags.Default
