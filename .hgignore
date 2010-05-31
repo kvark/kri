@@ -10,4 +10,8 @@ test_*
 game_*
 bin
 obj
+*.xml
+*.pdb
+*.dll*
+*.exe
 *.cache

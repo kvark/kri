@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+# SharpDevelop 3.2.0.5848
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "test", "test.booproj", "{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}"
+EndProject
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "ext", "..\..\ext\ext.booproj", "{ACE1CC26-970D-4F3B-9129-70911A339AC7}"
+EndProject
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "engine", "..\..\engine\engine.booproj", "{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK", "..\..\..\opentk\Source\OpenTK\OpenTK.csproj", "{A37A7E14-0000-0000-0000-000000000000}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}.Debug|Any CPU.Build.0 = Debug|x86
+		{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}.Release|Any CPU.Build.0 = Release|x86
+		{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}.Release|Any CPU.ActiveCfg = Release|x86
+		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A37A7E14-0000-0000-0000-000000000000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A37A7E14-0000-0000-0000-000000000000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A37A7E14-0000-0000-0000-000000000000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A37A7E14-0000-0000-0000-000000000000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal
