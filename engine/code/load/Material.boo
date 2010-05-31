@@ -121,9 +121,11 @@ public partial class Native:
 		return false	if not m
 		m.metaList.Add( Data[of Color4]('diffuse',
 			con.slib.diffuse_u,	getColorFull() ))
+		model = getString()
 		sh = { '': null,
 			'LAMBERT':	con.slib.lambert
-			}[ getString() ]
+			}[model]
+		assert sh and 'unknown diffuse model!'
 		m.metaList.Add(Advanced( Name:'comp_diff', Shader:sh ))	if sh
 		return true
 
@@ -135,10 +137,13 @@ public partial class Native:
 			con.slib.specular_u,	getColorFull() ))
 		m.metaList.Add( Data[of single]('glossiness',
 			con.slib.glossiness_u,	getReal() ))
+		model = getString()
 		sh = {
 			'COOKTORR':	con.slib.cooktorr,
-			'PHONG':	con.slib.phong
-			}[ getString() ]
+			'PHONG':	con.slib.phong,
+			'BLINN':	con.slib.phong	#fake
+			}[model]
+		assert sh and 'unknown specular model!'
 		m.metaList.Add( Advanced( Name:'comp_spec', Shader:sh ))
 		return true
 

@@ -15,13 +15,15 @@ in vec4 v_shadow;
 in float lit_int, lit_side;
 out vec4 rez_color;
 
+
 void main()	{
 	vec3 v_lit = normalize(v2lit);
 	vec3 v_cam = normalize(v2cam);
+	rez_color = vec4(1.0);
 	
 	float intensity = lit_int * get_shadow();
 	if(intensity < 0.01) discard;
 	
 	rez_color = intensity*lit_color *
-		get_lighting(v_lit,v_cam);	
+		get_lighting(v_lit,v_cam);
 }

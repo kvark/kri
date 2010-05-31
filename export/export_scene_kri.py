@@ -300,12 +300,12 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		if len(uvs) and n1.dot(n1) > 0.0:
 			ta = uvs[0][1] - uvs[0][0]
 			tb = uvs[0][2] - uvs[0][0]
-			if ta.dot(ta)+tb.dot(tb) > 0.0:
-				tan = va*tb.y - vb*ta.y
+			tan = va*tb.y - vb*ta.y
+			if tan.dot(tan)>0.0:
 				bit = vb*ta.x - va*tb.x
 				n0 = tan.cross(bit)
 				hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
-			else:	hand = 0.0
+			else:	tan,hand = va,0.0
 		return (tan, bit, n0, hand, n1)
 
 	class Vertex:

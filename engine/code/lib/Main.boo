@@ -39,9 +39,10 @@ public class Shader( Dictionary[of string, kri.shade.Object] ):
 		super()
 		for str in ('quat','tool','fixed','orient'):
 			Add(str, kri.shade.Object("/lib/${str}_v") )
-		for str in ('math','defer'):
-			Add(str, kri.shade.Object("/lib/${str}_f"))
+		# garbage! will be removed with new Resource Manager
+		Add('math', kri.shade.Object("/lib/math_f"))
 		gentleSet = array(Values)
+		Add('defer', kri.shade.Object("/lib/defer_f"))
 		for str in ('copy_v','copy_f','copy_ar_f'):
 			Add(str, kri.shade.Object('/'+str))
 		Add('empty', kri.shade.Object('/empty_f'))
