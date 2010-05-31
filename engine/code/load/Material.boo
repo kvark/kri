@@ -122,7 +122,7 @@ public partial class Native:
 		m.metaList.Add( Data[of Color4]('diffuse',
 			con.slib.diffuse_u,	getColorFull() ))
 		model = getString()
-		sh = { '': null,
+		sh = { '':		con.slib.lambert,
 			'LAMBERT':	con.slib.lambert
 			}[model]
 		assert sh and 'unknown diffuse model!'

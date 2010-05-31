@@ -15,13 +15,12 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <StartWorkingDirectory>.\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>.\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
@@ -40,11 +39,10 @@
     <Compile Include="Main.boo" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="OpenTK">
-      <HintPath>..\..\..\svn\opentk\Binaries\OpenTK\Debug\OpenTK.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">
+      <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
+      <Name>OpenTK</Name>
+    </ProjectReference>
     <ProjectReference Include="..\engine\engine.booproj">
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
