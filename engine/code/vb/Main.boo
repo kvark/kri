@@ -31,7 +31,7 @@ public class Array:
 #-----------------------
 
 public class Proxy:
-	protected final target	as BufferTarget
+	public final target	as BufferTarget
 	# creating
 	public def constructor(targ as BufferTarget):
 		target = targ
@@ -74,7 +74,7 @@ public class Object(Proxy):
 		GL.BufferData(target, IntPtr(ptr.Length * kri.Sizer[of T].Value), ptr, getHint(dyn))
 		filled = true
 	# mapping
-	public def map(ba as BufferAccess) as IntPtr:
+	public def tomap(ba as BufferAccess) as IntPtr:
 		bind()
 		return GL.MapBuffer(target,ba)
 	public def unmap() as bool:
@@ -82,7 +82,8 @@ public class Object(Proxy):
 	[ext.spec.Method(( byte,short,single ))]
 	[ext.RemoveSource]
 	public def read[of T(struct)](ar as (T)) as void:
-		buf = map(BufferAccess.ReadOnly)
+		ar[0] = Single.Epsilon	# compiler hint
+		buf = tomap(BufferAccess.ReadOnly)
 		Marshal.Copy(buf, ar, 0, ar.Length)
 		unmap()
 

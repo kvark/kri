@@ -60,6 +60,7 @@ public class Buffer(Screen):
 				GL.ReadBuffer( cast(ReadBufferMode,0) )
 			oldMask = mask
 		for a in at:
+			#todo: add RenderBuffer support
 			t = a.Tex
 			if t and a.dFormat.Dirty:	#change attachment texture format
 				a.dFormat.clean()
@@ -70,9 +71,8 @@ public class Buffer(Screen):
 				GL.FramebufferTextureLayer(FramebufferTarget.Framebuffer,
 					a.Slot, t.id, 0, a.Layer)
 			elif a.dirty:		#update texture attachment
-				#TODO: use core
 				if t and t.type in (TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray):
-					GL.Arb.FramebufferTexture( FramebufferTarget.Framebuffer, a.Slot, t.id, 0)
+					GL.FramebufferTexture( FramebufferTarget.Framebuffer, a.Slot, t.id, 0)
 				elif t:
 					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.Slot, t.type, t.id, 0)
 				else:

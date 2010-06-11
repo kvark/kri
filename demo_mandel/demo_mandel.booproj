@@ -37,6 +37,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="Main.boo" />
+    <Compile Include="Test.boo">
+      <DependentUpon>Main.boo</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">

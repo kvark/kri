@@ -81,10 +81,10 @@ public class Manager(DataHolder):
 		col.prog.use()
 		using kri.Discarder(true), tf.catch():
 			draw()
-		if not 'Debug':
+		if 'Debug':
 			GL.Finish()
-			#assert tf.result() == total
-			ar = array[of single](total*8)
+			assert tf.result() == total
+			ar = array[of single]( total * data.unitSize() >>2 )
 			pe.va.bind()
 			pe.data.read(ar)
 		return true

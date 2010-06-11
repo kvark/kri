@@ -29,7 +29,7 @@ void main()	{
 	uint depth = k0*(t0>>8) + k1*(t1>>8) + k2*(t2>>8);
 	to_sten = st + (depth<<8);
 
-	vec2 c1 = textureOffset( unit_sten, tex_coord, off.xy ).xy;
-	vec2 c2 = textureOffset( unit_sten, tex_coord, off.yx ).xy;
+	vec2 c1 = textureOffset( unit_color, tex_coord, off.xy ).xy;
+	vec2 c2 = textureOffset( unit_color, tex_coord, off.yx ).xy;
 	to_color = k0*c0 + k1*c1 + k2*c2;
 }

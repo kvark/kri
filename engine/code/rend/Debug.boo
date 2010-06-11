@@ -8,14 +8,19 @@ public class Map( kri.rend.Basic ):
 	private final sa	= Smart()
 	public final layer	= par.Value[of single]('layer')
 	
-	public def constructor(depth as bool, t as par.IBase[of kri.Texture]):
+	public def constructor(depth as bool, id as int, t as par.IBase[of kri.Texture]):
 		super(false)
-		sa.add( 'copy_v', ('copy_f','/show_depth_f')[depth] )
+		sa.add( 'copy_v' )
+		if depth:
+			sa.add('/show_depth_f')
+		else:
+			sa.add( ('/copy_f','copy_ar_f')[id>=0] )
+		layer.Value = 1f * id
 		dict = kri.shade.rep.Dict()
 		dict.unit( 'input', t )
 		dict.var(layer)
 		sa.link( kri.Ant.Inst.slotAttributes, dict )
-
+	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate()
 		sa.use()

@@ -30,9 +30,9 @@ public partial class Native:
 	public final skipt	= Dictionary[of string,uint]()
 	public final sets	= Settings()
 	private final rep	= []
-	private final nResList	= List[of ResNode]()
-	private br	as IO.BinaryReader	= null
-	private at	as Atom	= null
+	protected final nResList	= List[of ResNode]()
+	protected br	as IO.BinaryReader	= null
+	protected at	as Atom	= null
 	
 	public def addResolve(fun as callable(kri.Node)) as void:
 		nResList.Add( ResNode( name:getString(), fun:fun ))

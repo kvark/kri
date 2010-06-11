@@ -94,6 +94,8 @@ public class Smart(Program):
 			repList.Clear()
 		nar = ( GL.GetActiveUniformName(id,i) for i in range(num) )
 		for name in nar:
+			# todo: add support for arrays
+			# need to unwrap the array into separate cells
 			iv	as par.IBaseRoot = null
 			for d in dicts:
 				d.TryGetValue(name,iv)

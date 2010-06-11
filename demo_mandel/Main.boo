@@ -44,7 +44,6 @@ private class Render( kri.rend.part.Simple ):
 		sa.link( kri.Ant.Inst.slotParticles, d, kri.Ant.Inst.dict )
 
 
-
 [System.STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant('kri.conf',0):
@@ -58,12 +57,15 @@ def Main(argv as (string)):
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera()
 		pcon = kri.part.Context()
-		ps = createParticle(pcon)
-		ps.allocate()
-		view.scene.particles.Add(ps)
+		pe = createParticle(pcon)
+		pe.allocate()
+		view.scene.particles.Add(pe)
 		
 		rlis.Add( kri.rend.Clear() )
 		rlis.Add( Render(pcon) )
+		rlis.Add( demo.test.Feedback(null) )
 		ant.anim = al = kri.ani.Scheduler()
-		al.add( kri.ani.Particle(ps) )
+		#al.add( kri.ani.Particle(pe) )
 		ant.Run(30.0,30.0)
+		
+		
