@@ -23,7 +23,7 @@ public static class Meta:
 			return (h.Name	for h in dict.Values	if h.Shader.type == tmp.tip)
 		def ar2dict(val as string*):
 			d2 = Dictionary[of string,string]()
-			for v in val: d2.Add( v, string.Empty )
+			for v in val: d2[v] = string.Empty
 			return d2
 		# create dict
 		d = Dictionary[of string,IDictionary[of string,string]]()

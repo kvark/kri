@@ -26,9 +26,8 @@ public class Bake( kri.rend.Basic ):
 	private final buf		as kri.frame.Buffer
 	private final texDep	= par.Value[of kri.Texture]('depth')
 	private final va		= kri.vb.Array()
-	private final static	resApprox	= 1
 	private final static 	geoQuality	= 1
-	private final static	pif = PixelInternalFormat.Rgb10A2
+	private final static	pif = PixelInternalFormat.Rgba16f
 
 	public def constructor(dc as Context, lc as kri.rend.light.Context):
 		super(false)
@@ -48,25 +47,31 @@ public class Bake( kri.rend.Basic ):
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 
 	public override def setup(far as kri.frame.Array) as bool:
-		wid = far.Width	>>resApprox
-		het = far.Height>>resApprox
+		wid = far.Width
+		het = far.Height
 		buf.init(wid,het)
 		buf.A[0].Tex.bind()
 		kri.Texture.InitArray( pif, wid, het, 3 )
 		return true
 		
 	public override def process(con as kri.rend.Context) as void:
-		con.needDepth(true)
+		con.activate()
 		texDep.Value = buf.A[-1].Tex = con.Depth
 		buf.activate()
-		con.DepTest = true
-		con.ClearColor( Graphics.Color4.Black )
+		con.SetDepth(0f,false)
+		con.ClearColor( Graphics.Color4(0f,0f,0f,0f) )
+		GL.CullFace( CullFaceMode.Front )
+		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()
-		for l in kri.Scene.current.lights:
-			continue	if l.fov != 0f
-			kri.Ant.Inst.params.activate(l)
-			sa.use()
-			sphere.draw(1)
+		using blender = kri.Blender():
+			blender.add()
+			for l in kri.Scene.current.lights:
+				continue	if l.fov != 0f
+				kri.Ant.Inst.params.activate(l)
+				sa.use()
+				sphere.draw(1)
+		GL.CullFace( CullFaceMode.Back )
+		GL.DepthFunc( DepthFunction.Lequal )
 
 
 #---------	LIGHT APPLICATION	--------#
@@ -76,7 +81,8 @@ public class Apply( kri.rend.tech.Meta ):
 	private final pTex	= kri.shade.par.Texture('light')
 	# init
 	public def constructor(dc as Context):
-		super('lit.defer', false, null, *kri.load.Meta.LightSet)
+		super('lit.defer', false, null,
+			'bump','emissive','diffuse','specular')
 		buf = dc.buf
 		pTex.Value = buf.A[0].Tex
 		dict.unit( pTex )

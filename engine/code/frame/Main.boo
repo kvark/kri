@@ -38,7 +38,6 @@ public class Screen(Array):
 		dirtyPort = true
 		ofx,ofy = x,y
 	public virtual def activate() as void:
-		assert Width*Height
 		GL.BindFramebuffer(FramebufferTarget.Framebuffer, id)
 		#return if not dirtyPort
 		GL.Viewport(ofx,ofy, ofx+Width,ofy+Height)
