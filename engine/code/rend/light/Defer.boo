@@ -82,7 +82,7 @@ public class Apply( kri.rend.tech.Meta ):
 	# init
 	public def constructor(dc as Context):
 		super('lit.defer', false, null,
-			'bump','emissive','diffuse','specular')
+			'bump','emissive','diffuse','specular','glossiness')
 		buf = dc.buf
 		pTex.Value = buf.A[0].Tex
 		dict.unit( pTex )

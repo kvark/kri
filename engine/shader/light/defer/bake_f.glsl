@@ -11,6 +11,8 @@ in vec4 lit_pos;	//cam space!
 out vec4 ca,cb,cc;
 
 
+uniform vec4 lit_attenu;
+
 void main()	{
 	// extract world & light space
 	float depth = texture( unit_depth, gl_FragCoord.xy ).r;
