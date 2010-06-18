@@ -6,7 +6,8 @@ export\scenes
 ext\Newton
 demo
 demo_dude
-test_*
+test_cl
+test_bugs
 game_*
 bin
 obj
