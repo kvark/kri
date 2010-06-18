@@ -145,7 +145,9 @@ public def plane_tex(scale as Vector2) as kri.Mesh:
 public def cube(scale as Vector3) as kri.Mesh:
 	md = MeshData( bm:BeginMode.Triangles )
 	sar = (-1f,1f)
-	verts = array( Vector4(scale.X * sar[i&1], scale.Y * sar[(i>>1)&1], scale.Z * sar[i>>2], 1f)\
+	verts = array( Vector4( scale.X * sar[i&1],\
+		scale.Y * sar[(i>>1)&1],\
+		scale.Z * sar[i>>2], 1f)\
 		for i in range(8))
 	#vi = (0,1,4,5,7,1,3,0,2,4,6,7,2,3)	# tri-strip version
 	vi = (0,4,5,1, 4,6,7,5, 6,2,3,7, 2,0,1,3, 2,6,4,0, 1,5,7,3)
@@ -204,4 +206,34 @@ public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
 			Quaternion.FromAxisAngle( Vector3.UnitZ, beta )*\
 			Quaternion.FromAxisAngle( Vector3.UnitY, alpha )	
 	# finish
+	return md.generate()
+
+
+#----	LANDSCAPE	----#
+# param: height map
+
+public def landscape(hm as (single,2), scale as Vector3) as kri.Mesh:
+	md = MeshData( bm:BeginMode.TriangleStrip )
+	md.v = array[of Vertex]( len(hm) )
+	def hv(x,y):
+		z = (0f,hm[x,y])[ cast(uint,x)<len(hm,0) and cast(uint,y)<len(hm,1) ]
+		return Vector3(x,y,z)
+	
+	for x in range(len(hm,0)):
+		for y in range(len(hm,1)):
+			id = x*len(hm,1) + y
+			md.v[id].pos = Vector4(
+				Vector3.Multiply( scale, hv(x,y) ),	1f)
+			
+			normal = Vector3.Divide( Vector3.Cross(
+				hv(x+1,y) - hv(x-1,y),
+				hv(x,y+1) - hv(x,y-1)),
+				scale)
+			normal.Normalize()
+			
+			nz = Vector3.Cross( normal, Vector3.Zero )
+			md.v[id].rot = Quaternion.Normalize( Quaternion(
+				nz* (1f - Vector3.Dot(normal,Vector3.Zero)),
+				nz.LengthFast ))
+	
 	return md.generate()

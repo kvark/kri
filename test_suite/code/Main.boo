@@ -9,7 +9,7 @@ def Main(argv as (string)):
 		rlis = rchain.renders
 		
 		rlis.Add( Link() )
-		rlis.Add( Offset() )
+		#rlis.Add( Offset() )
 		rlis.Add( Read() )
 		rlis.Add( Feedback(null) )
 		
