@@ -42,7 +42,6 @@ public class Core:
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
 			va = e.va[tid]
-			continue	if e.node.name == 'Mesh'
 			continue	if not va or va == kri.vb.Array.Default
 			e.va[tid].bind()
 			pId.Value = (i+1.5f)*kid + 0.5f
@@ -66,19 +65,24 @@ public class Core:
 			ClearBufferMask.ColorBufferBit |
 			ClearBufferMask.DepthBufferBit |
 			ClearBufferMask.StencilBufferBit )
+
 		using kri.Section( EnableCap.DepthTest ):
+			GL.Disable( EnableCap.PolygonOffsetLine )
 			GL.ColorMask(true,false,false,false)
 			GL.DepthFunc( DepthFunction.Always )
 			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
 			drawAll(s)
 			GL.DepthMask(false)
 			GL.ColorMask(false,true,false,false)
-			GL.DepthFunc( DepthFunction.Less )
+			GL.DepthFunc( DepthFunction.Lequal )
 			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )
+			GL.Enable( EnableCap.PolygonOffsetFill )
 			using kri.Section( EnableCap.StencilTest ):
+				GL.PolygonOffset(1f,1f)
 				GL.CullFace( CullFaceMode.Back )
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Incr )
 				drawAll(s)
+				GL.PolygonOffset(-1f,-1f)
 				GL.CullFace( CullFaceMode.Front )
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
 				drawAll(s)

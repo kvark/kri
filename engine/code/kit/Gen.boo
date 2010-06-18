@@ -215,8 +215,10 @@ public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
 public def landscape(hm as (single,2), scale as Vector3) as kri.Mesh:
 	md = MeshData( bm:BeginMode.TriangleStrip )
 	md.v = array[of Vertex]( len(hm) )
-	def hv(x,y):
-		z = (0f,hm[x,y])[ cast(uint,x)<len(hm,0) and cast(uint,y)<len(hm,1) ]
+	def hv(x as int,y as int):
+		z = 0f
+		if x>=0 and x<len(hm,0) and y>=0 and y<len(hm,1):
+			z = hm[x,y]
 		return Vector3(x,y,z)
 	
 	for x in range(len(hm,0)):

@@ -64,7 +64,7 @@ def Main(argv as (string)):
 		rlis.Add( kri.rend.Clear() )
 		rlis.Add( Render(pcon) )
 		#rlis.Add( demo.test.Feedback(null) )
-		ant.anim = al = kri.ani.Scheduler()
+		#ant.anim = al = kri.ani.Scheduler()
 		#al.add( kri.ani.Particle(pe) )
 		ant.Run(30.0,30.0)
 		
