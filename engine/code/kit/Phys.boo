@@ -29,6 +29,7 @@ public class Core:
 		fbo.A[-2].new( 0, tt )
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
 		fbo.A[0].new( pif,tt )
+		# 8 bit stencil + 2*[8,16] bit color
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader
 		tid = techId
@@ -42,7 +43,7 @@ public class Core:
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
 			va = e.va[tid]
-			continue	if not va or va == kri.vb.Array.Default
+			continue	if va in (null,kri.vb.Array.Default)
 			e.va[tid].bind()
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.modelView.activate( e.node )
@@ -66,29 +67,30 @@ public class Core:
 			ClearBufferMask.DepthBufferBit |
 			ClearBufferMask.StencilBufferBit )
 
-		using kri.Section( EnableCap.DepthTest ):
-			GL.Disable( EnableCap.PolygonOffsetLine )
-			GL.ColorMask(true,false,false,false)
-			GL.DepthFunc( DepthFunction.Always )
-			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
+		GL.Enable( EnableCap.DepthTest )
+		GL.Disable( EnableCap.PolygonOffsetLine )
+		GL.ColorMask(true,false,false,false)
+		GL.DepthFunc( DepthFunction.Always )
+		GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
+		drawAll(s)
+		GL.DepthMask(false)
+		GL.ColorMask(false,true,false,false)
+		GL.DepthFunc( DepthFunction.Lequal )
+		GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )
+		GL.Enable( EnableCap.PolygonOffsetFill )
+		using kri.Section( EnableCap.StencilTest ):
+			GL.PolygonOffset(1f,1f)
+			GL.CullFace( CullFaceMode.Back )
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Incr )
 			drawAll(s)
-			GL.DepthMask(false)
-			GL.ColorMask(false,true,false,false)
-			GL.DepthFunc( DepthFunction.Lequal )
-			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )
-			GL.Enable( EnableCap.PolygonOffsetFill )
-			using kri.Section( EnableCap.StencilTest ):
-				GL.PolygonOffset(1f,1f)
-				GL.CullFace( CullFaceMode.Back )
-				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Incr )
-				drawAll(s)
-				GL.PolygonOffset(-1f,-1f)
-				GL.CullFace( CullFaceMode.Front )
-				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
-				drawAll(s)
-				GL.CullFace( CullFaceMode.Back )
+			GL.PolygonOffset(-1f,-1f)
+			GL.CullFace( CullFaceMode.Front )
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
+			drawAll(s)
+			GL.CullFace( CullFaceMode.Back )
 
 		# resize the map
+		GL.Disable( EnableCap.PolygonOffsetFill )
 		GL.ColorMask(true,true,true,true)
 		#fbo.A[1].layer( fbo.A[-2].Tex, 1 )
 		#fbo.A[2].layer( fbo.A[-0].Tex, 1 )
@@ -104,7 +106,10 @@ public class Core:
 		# debug: extract result
 		es = (1,2)[big]
 		dar = array[of byte]( size*(1+2*es) )
+		for i in range(dar.Length):
+			dar[i] = 123
 		pbo.read(dar)
+		# readpixels don't work on 10.6
 		for i in range(size):
 			cs = dar[i]
 			ca = dar[size + (i*2+0)*es]

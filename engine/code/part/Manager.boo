@@ -81,7 +81,7 @@ public class Manager(DataHolder):
 		col.prog.use()
 		using kri.Discarder(true), tf.catch():
 			draw()
-		if 'Debug':
+		if not 'Debug':
 			GL.Finish()
 			assert tf.result() == total
 			ar = array[of single]( total * data.unitSize() >>2 )

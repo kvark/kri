@@ -215,15 +215,17 @@ public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
 public def landscape(hm as (single,2), scale as Vector3) as kri.Mesh:
 	md = MeshData( bm:BeginMode.TriangleStrip )
 	md.v = array[of Vertex]( len(hm) )
+	assert len(hm,0) and len(hm,1)
+	
 	def hv(x as int,y as int):
 		z = 0f
 		if x>=0 and x<len(hm,0) and y>=0 and y<len(hm,1):
 			z = hm[x,y]
 		return Vector3(x,y,z)
 	
-	for x in range(len(hm,0)):
-		for y in range(len(hm,1)):
-			id = x*len(hm,1) + y
+	for y in range(len(hm,1)):
+		for x in range(len(hm,0)):
+			id = y*len(hm,0) + x
 			md.v[id].pos = Vector4(
 				Vector3.Multiply( scale, hv(x,y) ),	1f)
 			
@@ -233,9 +235,20 @@ public def landscape(hm as (single,2), scale as Vector3) as kri.Mesh:
 				scale)
 			normal.Normalize()
 			
-			nz = Vector3.Cross( normal, Vector3.Zero )
+			nz = Vector3.Cross( Vector3.UnitZ, normal )
 			md.v[id].rot = Quaternion.Normalize( Quaternion(
-				nz* (1f - Vector3.Dot(normal,Vector3.Zero)),
+				nz* (1f - Vector3.Dot(normal,Vector3.UnitZ)),
 				nz.LengthFast ))
+	
+	md.i = array[of ushort]( (len(hm,1)-1) * (2*len(hm,0)+1) )
+	
+	for y in range( len(hm,1)-1 ):
+		id = y*( 2*len(hm,0)+1 )
+		for x in range(len(hm,0)):
+			x2 = ( x, len(hm,0)-1-x )[y&1]
+			for d in range(2):
+				md.i[id + x+x+d] = (y+1-d)*len(hm,0) + x2
+		id += 2*len(hm,0)
+		md.i[id] = md.i[id-1]
 	
 	return md.generate()

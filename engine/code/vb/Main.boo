@@ -83,8 +83,8 @@ public class Object(Proxy):
 	[ext.RemoveSource]
 	public def read[of T(struct)](ar as (T)) as void:
 		ar[0] = Single.Epsilon	# compiler hint
-		buf = tomap(BufferAccess.ReadOnly)
-		Marshal.Copy(buf, ar, 0, ar.Length)
+		buf = tomap( BufferAccess.ReadOnly )
+		Marshal.Copy( buf, ar, 0, ar.Length )
 		unmap()
 
 
