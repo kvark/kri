@@ -20,6 +20,12 @@ out = None
 kFrameSec = 1.0 / 25.0
 kMaxBones = 100
 
+
+class Settings:
+	doQuatInt	= True
+	putUv		= True
+	putColor	= False
+
 class Writer:
 	__slots__= 'fx','pos'
 	def __init__(self,path):
@@ -290,7 +296,7 @@ def save_mat(mat):
 
 ###  MESH   ###
 
-def save_mesh(mesh,armature,groups,doQuatInt):
+def save_mesh(mesh,armature,groups,st):
 	import Mathutils as Math
 	def calc_TBN(verts, uvs):
 		va = verts[1].co - verts[0].co
@@ -309,19 +315,20 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		return (tan, bit, n0, hand, n1)
 
 	class Vertex:
-		__slots__= 'face', 'vert', 'coord', 'tex', 'normal', 'quat', 'dual'
+		__slots__= 'face', 'vert', 'coord', 'tex', 'color', 'normal', 'quat', 'dual'
 		def __init__(self, v):
 			self.face = None
 			self.vert = v
 			self.coord = v.co
 			self.tex = None
+			self.color = None
 			self.normal = v.normal
 			self.quat = None
 			self.dual = -1
 
 	class Face:
-		__slots__ = 'v', 'vi', 'no', 'uv', 'mat', 'ta', 'hand', 'normal', 'wes'
-		def __init__(self, face, m, ind = None, uves = None):
+		__slots__ = 'v', 'vi', 'no', 'uv', 'color', 'mat', 'ta', 'hand', 'normal', 'wes'
+		def __init__(self, face, m, ind = None, uves = None, colors = None):
 			if not ind: # clone KRI face
 				self.vi		= list(face.vi)
 				self.hand	= face.hand
@@ -334,26 +341,28 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 			self.v  = tuple( m.verts[x]	for x in self.vi )
 			self.no = tuple( x.normal	for x in self.v  )
 			self.normal = ( face.normal, Math.Vector(0,0,0) )[face.smooth]
-			self.uv = tuple(tuple( layer[i]	for i in ind ) for layer in uves)
+			self.uv		= tuple(tuple( layer[i]	for i in ind ) for layer in uves)
+			self.color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
 			self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
 			assert t.dot(t) > 0.0
 			self.ta = t.normalize()
 			self.hand = hand
 	
-	#todo: support any UV layers
-	print("\t", 'UV layers:', len(mesh.uv_textures) )
-
 	#   1: convert Mesh to Triangle Mesh
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
-		uves,nvert = [],len(face.verts)
-		for layer in mesh.uv_textures:
+		uves,colors,nvert = [],[],len(face.verts)
+		for layer in ( mesh.uv_textures		if st.putUv	else [] ):
 			d = layer.data[i]
 			cur = tuple(Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
 			uves.append(cur)
-		if nvert>=3:	ar_face.append( Face(face, mesh, (0,1,2), uves) )
-		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves) )
+		for layer in ( mesh.vertex_colors	if st.putColor	else [] ):
+			d = layer.data[i]
+			cur = tuple(Math.Vector(x) for x in (d.color1,d.color2,d.color3,d.color4))
+			colors.append(cur)
+		if nvert>=3:	ar_face.append( Face(face, mesh, (0,1,2), uves,colors) )
+		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves,colors) )
 	n_bad_uv = len(list( f for f in ar_face if f.hand==0.0 ))
 	if n_bad_uv:
 		print("\t(w) %d pure vertices detected" % (n_bad_uv))
@@ -367,9 +376,10 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		for i in range(3):
 			v = Vertex( face.v[i] ) 
 			v.normal = (nor if nor.dot(nor)>0.1 else face.no[i])
-			v.tex = [layer[i] for layer in face.uv]
+			v.tex	= [layer[i] for layer in face.uv]
+			v.color	= [layer[i] for layer in face.color]
 			v.face = face
-			vs = str((v.coord,v.tex,v.normal,face.hand))
+			vs = str((v.coord,v.tex,v.color,v.normal,face.hand))
 			if not vs in set_vert:
 				set_vert[vs] = []
 			set_vert[vs].append(v)
@@ -408,7 +418,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		v = ar_vert[ind]
 		if v.dual < 0: v.dual = ind
 	n_dup,ex_face = 0,[]
-	for f in (ar_face if doQuatInt else []):
+	for f in (ar_face if st.doQuatInt else []):
 		vx,cs,pos,n_neg = (1,2,0),[0,0,0],0,0
 		def isGood(j):
 			ind = f.vi[j]
@@ -468,7 +478,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 		# mark as used
 		for ind in f.vi: mark_used(ind)
 
-	if doQuatInt:
+	if st.doQuatInt:
 		print("\textra: %d vertices, %d faces" % (n_dup,len(ex_face)))
 		ar_face += ex_face
 		# run a check
@@ -485,6 +495,7 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	out.begin('mesh')
 	out.pack('H', len(ar_vert) )
 	out.end()
+	
 	out.begin('v_pos')
 	for v in ar_vert:
 		out.pack('4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
@@ -493,13 +504,27 @@ def save_mesh(mesh,armature,groups,doQuatInt):
 	for v in ar_vert:
 		out.pack('4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
 	out.end()
-	for i,layer in enumerate(mesh.uv_textures):
-		out.begin('v_uv')
-		out.text( layer.name )
-		for v in ar_vert:
-			assert i<len(v.tex)
-			out.pack('2f', v.tex[i].x, v.tex[i].y)
-		out.end()
+	
+	if st.putUv:
+		all = mesh.uv_textures
+		print("\t", 'UV layers:', len(all) )
+		for i,layer in enumerate(all):
+			out.begin('v_uv')
+			out.text( layer.name )
+			for v in ar_vert:
+				assert i<len(v.tex)
+				out.pack('2f', v.tex[i].x, v.tex[i].y)
+			out.end()
+	if st.putColor:
+		all = mesh.vertex_colors
+		print("\t", 'Color layers:', len(all) )
+		for i,layer in enumerate(all):
+			out.begin('v_color')
+			out.text( layer.name )
+			for v in ar_vert:
+				assert i<len(v.color)
+				save_color(v.color[i])
+			out.end()
 
 	out.begin('v_ind')
 	out.pack('H', len(ar_face))
@@ -733,7 +758,7 @@ def gather_anim_global(ob):
 
 ### 	 SCENE		###
 
-def save_scene(filename, context, doQuatInt=True):
+def save_scene(filename, context, st):
 	import time
 	global out,file_ext,bDegrees
 	timeStart = time.clock()
@@ -774,7 +799,7 @@ def save_scene(filename, context, doQuatInt=True):
 			arm = None
 			if ob.parent and ob.parent.type == 'ARMATURE':
 				arm = ob.parent.data
-			save_mesh(ob.data, arm, ob.vertex_groups, doQuatInt)
+			save_mesh(ob.data, arm, ob.vertex_groups, st)
 		elif ob.type == 'ARMATURE':
 			save_skeleton(ob.data)
 			bar = ob.data.bones.keys()
@@ -800,13 +825,26 @@ class ExportKRI( bpy.types.Operator ):
 	from bpy.props	import StringProperty
 	bl_idname = 'export.scene_kri'
 	bl_label = 'Export KRI'
+	st = Settings()
 	
-	path = bpy.props.StringProperty(name='File Path', description='Export destination for KRI scene', maxlen=1024, default='')
-	quat_int = bpy.props.BoolProperty(name="Process quaternions", description="Prepare mesh quaternions for interpolation", default=True)
+	path		= bpy.props.StringProperty( name='File Path',
+		description='Export destination for KRI scene',
+		maxlen=1024,	default='')
+	quat_int	= bpy.props.BoolProperty( name='Process quaternions',
+		description='Prepare mesh quaternions for interpolation',
+		default = st.doQuatInt )
+	put_uv		= bpy.props.BoolProperty( name='Put UV layers',
+		description='Export vertex UVs',	default=st.putUv )
+	put_color	= bpy.props.BoolProperty( name='Put color layers',
+		description='Export vertex colors',	default=st.putColor )
 	
 	def execute(self, context):
-		save_scene(self.properties.path, context,
-			doQuatInt = self.properties.quat_int)
+		st = Settings()
+		st.doQuatInt	= self.properties.quat_int
+		st.putUv	= self.properties.put_uv
+		st.putColor	= self.properties.put_color
+
+		save_scene(self.properties.path, context, st)
 		return {'FINISHED'}
 	
 	def invoke(self, context, event):

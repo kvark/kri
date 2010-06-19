@@ -50,9 +50,12 @@ public final class Attrib:
 	public final quat		as int
 	public final skin		as int
 	public final tex		= (of int: 0,0,0,0)
+	public final color		= (of int: 0)
 	internal def constructor(s as Slot):
 		vertex	= s.getForced('vertex')
 		quat	= s.getForced('quat')
 		skin	= s.getForced('skin')
 		for i in range(tex.Length):
-			tex[i]	= s.getForced('tex'+i)
+			tex[i]		= s.getForced('tex'+i)
+		for i in range(color.Length):
+			color[i]	= s.getForced('color'+i)

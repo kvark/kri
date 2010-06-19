@@ -18,6 +18,13 @@ public class Atom:
 public partial class Settings:
 	public final skipChunks = List[of string]()
 
+[StructLayout(LayoutKind.Sequential)]
+public struct ColorRaw:
+	public red		as byte
+	public green	as byte
+	public blue		as byte
+
+
 #------		CHUNK LOADER		------#
 
 public partial class Native:
@@ -66,6 +73,7 @@ public partial class Native:
 		dict['v_pos']	= pv_pos
 		dict['v_quat']	= pv_quat
 		dict['v_uv']	= pv_uv
+		dict['v_color']	= pv_color
 		dict['v_skin']	= pv_skin
 		dict['v_ind']	= pv_ind
 		# particles
@@ -134,6 +142,11 @@ public partial class Native:
 		c = br.ReadBytes(3)	#rbg
 		a as byte = 0xFF
 		return Color4(c[0],c[1],c[2],a)
+	protected def getColorRaw() as ColorRaw:
+		return ColorRaw(
+			red		:br.ReadByte(),
+			green	:br.ReadByte(),
+			blue	:br.ReadByte())
 	protected def getColorFull() as Color4:
 		c = getColorByte()
 		c.A = getReal()	# alpha

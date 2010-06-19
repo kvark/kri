@@ -138,6 +138,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.kit.bake.Update() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
+		
 		#assert not 'ready'
 		#rlis.Add( kri.rend.part.Simple(true,false) )
 		rlis.Add( RenderPoints() )

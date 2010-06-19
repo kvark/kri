@@ -26,6 +26,7 @@ public class Quad:
 		GL.DrawArrays( BeginMode.TriangleStrip, 0, 4 )
 
 
+
 #----	COMMON DATA STORING & CREATION	----#
 
 [StructLayout(LayoutKind.Sequential)]
@@ -46,6 +47,7 @@ public def entity( m as kri.Mesh, lc as kri.load.Context ) as kri.Entity:
 	tm = kri.TagMat( num:m.nPoly, mat:lc.mDef )
 	e.tags.Add(tm)
 	return e
+
 
 
 #----	RAW MESH DATA	----#
@@ -106,6 +108,7 @@ public def line() as kri.Mesh:
 	return m
 
 
+
 #----	PLANE OBJECT	----#
 # param: half-size of sides
 
@@ -139,6 +142,7 @@ public def plane_tex(scale as Vector2) as kri.Mesh:
 	return m
 
 
+
 #----	CUBE OBJECT	----#
 # param: half-size of sides
 
@@ -164,6 +168,7 @@ public def cube(scale as Vector3) as kri.Mesh:
 	offsets = (of ushort: 0,3,2,0,2,1)
 	md.i = array( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36))
 	return md.generate()
+
 
 
 #----	SPHERE OBJECT	----#
@@ -207,6 +212,7 @@ public def sphere(stage as uint, scale as Vector3) as kri.Mesh:
 			Quaternion.FromAxisAngle( Vector3.UnitY, alpha )	
 	# finish
 	return md.generate()
+
 
 
 #----	LANDSCAPE	----#

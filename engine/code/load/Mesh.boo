@@ -46,12 +46,27 @@ public partial class Native:
 		return false	if not m
 		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.tex ) do(i as int):
 			return m.find(i) == null
+		assert slot>=0
 		getString()	# layer name, not used
 		ai = kri.vb.Info(
 			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
 			type:VertexAttribPointerType.Float,
 			integer:false )
 		return getArray[of Vector2](1,ai,getVec2)
+	
+	#---	Parse mesh vertex colors	---#
+	public def pv_color() as bool:
+		m = geData[of kri.Mesh]()
+		return false	if not m
+		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.color ) do(i as int):
+			return m.find(i) == null
+		assert slot>=0
+		getString()	# layer name, not used
+		ai = kri.vb.Info(
+			slot:kri.Ant.Inst.attribs.color[slot], size:3,
+			type:VertexAttribPointerType.UnsignedByte,
+			integer:false )
+		return getArray[of ColorRaw](1,ai,getColorRaw)
 	
 	#---	Parse mesh armature link with bone weights	---#
 	public def pv_skin() as bool:

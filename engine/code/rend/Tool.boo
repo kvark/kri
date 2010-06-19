@@ -52,6 +52,30 @@ public class Emission( tech.Meta ):
 		drawScene()
 
 
+#---------	ADD COLOR	--------#
+
+public class Color( tech.General ):
+	private final sa	= kri.shade.Smart()
+	private final add	as bool
+	public def constructor(doAdd as bool):
+		super('color')
+		add = doAdd
+		sa.add( '/color_v','/color_f', 'quat','tool','fixed' )
+		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+	public override def construct(mat as kri.Material) as kri.shade.Smart:
+		return sa
+	public override def process(con as Context) as void:
+		con.activate(true, 0f, false)
+		if add:
+			using blend = kri.Blender():
+				blend.add()
+				drawScene()
+		else:
+			OpenGL.GL.Disable( OpenGL.EnableCap.Blend )
+			OpenGL.GL.ColorMask(true,true,true,true)
+			drawScene()
+
+
 #---------	GAUSS FILTER	--------#
 
 public class Gauss(Basic):
