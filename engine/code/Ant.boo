@@ -1,9 +1,11 @@
 namespace kri
 
 import System
+import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
+
 
 private class Config:
 	private final dict	= Collections.Generic.Dictionary[of string,string]()

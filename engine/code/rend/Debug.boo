@@ -19,12 +19,24 @@ public class Map( kri.rend.Basic ):
 		dict = kri.shade.rep.Dict()
 		dict.unit( 'input', t )
 		dict.var(layer)
-		sa.link( kri.Ant.Inst.slotAttributes, dict )
+		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate()
 		sa.use()
 		kri.Ant.inst.emitQuad()
+
+
+public class MapDepth( Map ):
+	public final pt	as par.Texture
+	public def constructor():
+		p2 = par.Texture(null)
+		super(true,-1,p2)
+		pt = p2
+	public override def process(con as kri.rend.Context) as void:
+		con.needDepth(false)
+		pt.Value = con.Depth
+		super(con)
 
 
 public class MapCube( kri.rend.Basic ):
@@ -51,19 +63,6 @@ public class MapCube( kri.rend.Basic ):
 		sa.use()
 		kri.Ant.inst.emitQuad()
 
-
-/*	#todo: rewrite
-public class MapLight( Map ):
-	private final lit	as kri.Light
-	public def constructor(lay as int, l as kri.Light):
-		super( kri.Ant.Inst.units.light, lay )
-		lit = l
-	public override def prepare() as void:
-		u = kri.Ant.Inst.units
-		u.Tex[u.light] = lit.depth
-		lit.depth.bind(u.light)
-		kri.Texture.Shadow(false)
-*/		
 
 #---------	RENDER DEBUG ATTRIBUTE		--------#
 

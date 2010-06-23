@@ -4,40 +4,6 @@ import System
 import OpenTK
 import OpenTK.Graphics.OpenGL
 
-private class RenderPoints( kri.rend.Basic ):
-	final sa	= kri.shade.Smart()
-	final vbo	= kri.vb.Attrib()
-	final va	= kri.vb.Array()
-	final node	= kri.Node('x')
-	final tf	= kri.TransFeedback(1)
-	public def constructor():
-		super(false)
-		node.local.pos.Z = -10f
-		
-		sa.add('./text/point_v', './text/point_f', 'tool', 'quat', 'fixed')
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-		va.bind()
-		vbo.init[of Vector2h]((
-			Vector2h(-1f,-1f),
-			Vector2h(1f,-1f),
-			Vector2h(1f,1f),
-			Vector2h(-1f,1f)
-			), false)
-		ai = kri.vb.Info( slot:kri.Ant.Inst.attribs.vertex,
-			integer:false, size:2, type:VertexAttribPointerType.HalfFloat )
-		vbo.Semant.Add(ai)
-		vbo.attribFirst()
-		
-	public override def process(con as kri.rend.Context) as void:
-		con.activate(true, 0f, false)
-		kri.Ant.Inst.params.modelView.activate(node)
-		GL.PointSize(50.0)
-		va.bind()
-		using blend = kri.Blender():
-			blend.add()
-			sa.use()
-			GL.DrawArrays( BeginMode.Points, 0, 4 )
-
 
 private class BehSimple( kri.part.beh.Basic ):
 	public final tVert	= kri.shade.par.Value[of kri.Texture]('vertex')
@@ -71,7 +37,6 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	pm.behos.Add( beh )
 	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_plane') )
 	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_sphere') )
-	
 	if 'face':
 		pe.onUpdate = def(e as kri.Entity):
 			assert e
@@ -92,16 +57,35 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			return true
-	
 	pm.init(pcon)
 	pe.allocate()
 	pe.obj = ent
 	return pe
 
 
+def genMap() as (single,2):
+	radius = 20
+	size = radius+radius+1
+	hm = matrix(single,size,size)
+	vc = Vector2(radius,radius)
+	het = 0.01f
+	hsin = 1f
+	
+	for i in range(size):
+		for j in range(size):
+			vij = Vector2(i,j) - vc
+			dist = vij.LengthFast
+			angle = Math.PI * Math.Min(1.5f, 2.2f*dist / radius - 0.5f)
+			kbase = het*(radius-dist)
+			kadd = hsin*( 1.0 + Math.Sin(angle) )
+			hm[i,j] = cast(single, kbase + kadd)
+	return hm
+
+
+
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',24):
+	using ant = kri.Ant('kri.conf',0):
 		view = kri.ViewScreen(16,0)
 		rchain = kri.rend.Chain()
 		view.ren = rchain
@@ -114,45 +98,41 @@ def Main(argv as (string)):
 		view.scene.lights.Add( kri.Light() )
 		
 		#mesh = kri.kit.gen.cube( Vector3.One )
-		mesh = kri.kit.gen.plane_tex( Vector2.One )
+		mesh = kri.kit.gen.landscape( genMap(), Vector3(0.1,0.1,1.0) )
 		con = kri.load.Context()
 		ent = kri.kit.gen.entity( mesh, con )
 		ent.node = kri.Node('main')
 		ent.node.local.pos.Z = -30f
-		ent.node.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
+		ent.node.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,-1f)
 		view.scene.entities.Add(ent)
 		
-		m2 = kri.kit.gen.sphere(2, 2f*Vector3.One)
-		e2 = kri.kit.gen.entity( m2, con )
-		e2.node = ent.node
-		view.scene.entities.Add(e2)
-		
-		tag = kri.kit.bake.Tag(256,256, 16,8, true)
-		ent.tags.Add(tag)
+		#tag = kri.kit.bake.Tag(256,256, 16,8, true)
+		#ent.tags.Add(tag)
 		#proxy = kri.shade.par.UnitProxy({ return tag.tVert })
 		#proxy = kri.shade.par.UnitProxy({ return view.con.Depth })
 		#proxy = kri.shade.par.UnitProxy({ return view.scene.lights[0].depth })
 		
-		ps = createParticle(ent)
-		view.scene.particles.Add(ps)
+		#ps = createParticle(ent)
+		#view.scene.particles.Add(ps)
 		
-		rlis.Add( kri.kit.bake.Update() )
-		rlis.Add( kri.rend.Emission( fillDepth:true ) )
+		#rlis.Add( kri.kit.bake.Update() )
+		rlis.Add( kri.rend.EarlyZ() )
+		rlis.Add( kri.rend.debug.MapDepth() )
+		#rlis.Add( rem = kri.rend.Emission() )
+		#rem.pBase.Value = Graphics.Color4.Gray
 		
 		#assert not 'ready'
 		#rlis.Add( kri.rend.part.Simple(true,false) )
-		rlis.Add( RenderPoints() )
 		if 'Light':
 			licon = kri.rend.light.Context(2,8)
 			#licon.setExpo(120f, 0.5f)
-			rlis.Add( kri.rend.light.Fill(licon) )
-			rlis.Add( kri.rend.light.Apply(licon) )
-			#rlis.Add( kri.rend.debug.Map(true,proxy) )
-			#rlis.Add( kri.rend.FilterCopy() )
+			#rlis.Add( kri.rend.light.Fill(licon) )
+			#rlis.Add( kri.rend.light.Apply(licon) )
+			rlis.Add( kri.rend.FilterCopy() )
 		
 		ant.anim = al = kri.ani.Scheduler()
 		al.add( kri.ani.ControlMouse(ent.node,0.002f) )
-		if 'Part Anims':
-			al.add( kri.ani.Particle(ps) )
-		ant.Keyboard.KeyDown += { ps.owner.tick(ps) }
+		#if 'Part Anims':
+			#al.add( kri.ani.Particle(ps) )
+		#ant.Keyboard.KeyDown += { ps.owner.tick(ps) }
 		ant.Run(30.0,30.0)

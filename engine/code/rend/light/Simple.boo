@@ -85,7 +85,6 @@ public class Apply( kri.rend.tech.Meta ):
 			return metaFun()
 	# work
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true, 0f, false)
 		butch.Clear()
 		for l in kri.Scene.current.lights:
 			continue if l.fov == 0f
@@ -94,8 +93,10 @@ public class Apply( kri.rend.tech.Meta ):
 			# determine subset of affected objects
 			for e in kri.Scene.Current.entities:
 				addObject(e)
+		butch.Sort( kri.rend.tech.Batch.cMat )
+		# draw
+		con.activate(true, 0f, false)
 		using blend = kri.Blender():
 			blend.add()
-			butch.Sort( kri.rend.tech.Batch.cMat )
 			for b in butch:
 				b.draw()
