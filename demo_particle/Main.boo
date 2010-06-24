@@ -63,7 +63,7 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 	return pe
 
 
-def genMap() as (single,2):
+private def genMap() as (single,2):
 	radius = 20
 	size = radius+radius+1
 	hm = matrix(single,size,size)

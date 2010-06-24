@@ -9,27 +9,26 @@ public class Tag( kri.ITag ):
 	public Sync as bool:
 		get: return state == skel.State
 		set: state = skel.State - (0 if value else 1)
+	
+	public static def prepare(e as kri.Entity, s as kri.Skeleton) as bool:
+		a = kri.Ant.Inst.attribs
+		cond = e and s and not e.seTag[of Tag]() and e.mesh.find(a.skin)
+		return false	if not cond
+		for at in (a.vertex, a.quat):
+			continue	if e.find(at)
+			v = e.mesh.find(at)
+			return false	if not v
+			ai = v.Semant[0]
+			v2 = kri.vb.Attrib()
+			v2.Semant.Add(ai)
+			v2.init( e.mesh.nVert * ai.fullSize() )
+			e.vbo.Add(v2)
+		e.tags.Add( Tag(skel:s) )
+		return true
+	
+	public static def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
+		return e.seTag[of Tag]().skel.play(str)
 
-
-public def prepare(e as kri.Entity, s as kri.Skeleton) as bool:
-	a = kri.Ant.Inst.attribs
-	cond = e and s and not e.seTag[of Tag]() and e.mesh.find(a.skin)
-	return false	if not cond
-	for at in (a.vertex, a.quat):
-		continue	if e.find(at)
-		v = e.mesh.find(at)
-		return false	if not v
-		ai = v.Semant[0]
-		v2 = kri.vb.Attrib()
-		v2.Semant.Add(ai)
-		v2.init( e.mesh.nVert * ai.fullSize() )
-		e.vbo.Add(v2)
-	e.tags.Add( Tag(skel:s) )
-	return true
-
-
-public def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
-	return e.seTag[of Tag]().skel.play(str)
 
 
 #---------	RENDER SKELETON SYNC		--------#

@@ -77,7 +77,7 @@ public partial class Native:
 		rez = getArray[of ushort](4,ai, {return br.ReadUInt16()})
 		return false	if not rez
 		# link to the Armature
-		kri.kit.skin.prepare(
+		kri.kit.skin.Tag.prepare(
 			geData[of kri.Entity](),
 			geData[of kri.Skeleton]() )
 		return true

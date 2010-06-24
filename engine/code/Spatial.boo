@@ -24,8 +24,9 @@ public struct DualQuat:
 		kn = 1f / re.Length
 		s.pos = (2f * kn * kn) * (im * Quaternion.Conjugate(re)).Xyz
 		s.rot = kn * re
-		
-	
+
+
+
 #------------------------------------------
 #	SPATIAL
 #	represents nodes position,rotation & scale in 3D space
@@ -36,6 +37,13 @@ public struct Spatial:
 	public scale	as single
 	public static final Identity = Spatial( rot:Quaternion.Identity, pos:Vector3.Zero, scale:1.0f )
 	
+	#---	Simple parameter getters	---#
+	public static def GetPos(ref s as kri.Spatial) as Vector4:
+		return Vector4(s.pos, s.scale)
+	public static def GetRot(ref s as kri.Spatial) as Vector4:
+		return Vector4(s.rot.Xyz, s.rot.W)
+
+	#---	Helper static methods		---#
 	public static def Qrot(ref v as Vector3, ref q as Quaternion) as Vector3:
 		return (q * Quaternion(Xyz:v,W:0f) * Quaternion.Invert(q)).Xyz
 	public static def Lerp(ref a as Spatial, ref b as Spatial, t as single) as Spatial:
@@ -48,6 +56,7 @@ public struct Spatial:
 			Quaternion.FromAxisAngle( Vector3.UnitY, v.Y )*\
 			Quaternion.FromAxisAngle( Vector3.UnitZ, v.Z )
 
+	#---	Operations		---#
 	public def combine(ref a as Spatial, ref b as Spatial) as void:
 		rot		= b.rot * a.rot
 		scale	= b.scale * a.scale
@@ -67,6 +76,7 @@ public struct Spatial:
 		dq.toUnitSpatial(self)
 	public def byPoint(ref v as Vector3) as Vector3:
 		return pos + scale * Vector3.Transform(v,rot)
+
 
 
 #------------------------------------------
