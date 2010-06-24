@@ -21,7 +21,7 @@ public class ApplyBase( kri.rend.Basic ):
 		super(false)
 		# bake sphere attribs
 		va.bind()	# the buffer objects are bound in creation
-		sphere = kri.kit.gen.sphere( qord, OpenTK.Vector3.One )
+		sphere = kri.kit.gen.Sphere( qord, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 	# link
 	protected def relink(con as Context) as void:

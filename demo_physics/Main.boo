@@ -40,13 +40,14 @@ def Main(argv as (string)):
 		#rem.pBase.Value = Graphics.Color4(1,0,0,1)
 		rlis.Add( rz )
 		rlis.Add( rem )
+		mesh as kri.Mesh = null
 		
 		if 'TestLandscape':
 			hm = matrix(single,3,3)	# matrix[of single](2,2)
 			for i in range(3):
 				for j in range(3):
 					hm[i,j] = 2f - Math.Abs(i-1) - Math.Abs(j-1)
-			mesh = kri.kit.gen.landscape(hm, Vector3.One)
+			mesh = kri.kit.gen.Landscape(hm, Vector3.One)
 			e = kri.Entity( mesh:mesh )
 			e.tags.Add( kri.TagMat( mat:con.mDef, num:mesh.nPoly ) )
 			n = e.node = kri.Node('landscape')
@@ -63,16 +64,16 @@ def Main(argv as (string)):
 		
 		size = Vector3(1f,1f,1f)
 		
-		mesh = kri.kit.gen.cube( size )
-		ent = kri.kit.gen.entity( mesh, con )
+		mesh = kri.kit.gen.Cube( size )
+		ent = kri.kit.gen.Entity( mesh, con )
 		n = ent.node = kri.Node('cube')
 		n.local.pos.Z = -10f
 		n.local.pos.Y = 1f
 		n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
 		#view.scene.entities.Add(ent)
 		
-		mesh = kri.kit.gen.sphere( 1, size )
-		e2 = kri.kit.gen.entity( mesh, con )
+		mesh = kri.kit.gen.Sphere( 1, size )
+		e2 = kri.kit.gen.Entity( mesh, con )
 		n = e2.node = kri.Node('sphere')
 		n.local = ent.node.local
 		n.local.pos.Y = -1f

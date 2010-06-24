@@ -17,9 +17,9 @@ def Main(argv as (string)):
 			view.scene = kri.Scene('main')
 			view.cam = kri.Camera()
 			
-			mesh = kri.kit.gen.cube( OpenTK.Vector3.One )
+			mesh = kri.kit.gen.Cube( OpenTK.Vector3.One )
 			con = kri.load.Context()
-			ent = kri.kit.gen.entity( mesh, con )
+			ent = kri.kit.gen.Entity( mesh, con )
 			ent.node = kri.Node('main')
 			ent.node.local.pos.Z = -30f
 			ent.node.local.rot = OpenTK.Quaternion.FromAxisAngle( OpenTK.Vector3.UnitX, -1f )

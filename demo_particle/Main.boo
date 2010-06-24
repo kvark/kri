@@ -98,9 +98,9 @@ def Main(argv as (string)):
 		view.scene.lights.Add( kri.Light() )
 		
 		#mesh = kri.kit.gen.cube( Vector3.One )
-		mesh = kri.kit.gen.landscape( genMap(), Vector3(0.1,0.1,1.0) )
+		mesh = kri.kit.gen.Landscape( genMap(), Vector3(0.1,0.1,1.0) )
 		con = kri.load.Context()
-		ent = kri.kit.gen.entity( mesh, con )
+		ent = kri.kit.gen.Entity( mesh, con )
 		ent.node = kri.Node('main')
 		ent.node.local.pos.Z = -30f
 		ent.node.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,-1f)
