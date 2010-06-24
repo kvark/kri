@@ -23,7 +23,7 @@ public class Tag( kri.ITag, kri.vb.ISource ):
 		pixels = size
 		va.bind()
 		for i in range(2):
-			kri.vb.enrich( aBase, 3, (at_prev,at_base)[i] )
+			kri.Help.enrich( aBase, 3, (at_prev,at_base)[i] )
 		aBase.initAll(size)
 
 
@@ -40,7 +40,7 @@ public class Behavior( kri.part.beh.Basic ):
 	# fun
 	public def constructor(pc as kri.part.Context, segs as byte):
 		super('/part/beh/fur_main')
-		kri.vb.enrich( self, 3, pc.at_pos, pc.at_speed )
+		kri.Help.enrich( self, 3, pc.at_pos, pc.at_speed )
 		layers = segs
 		posId = pc.at_pos
 		kd = 1f / segs

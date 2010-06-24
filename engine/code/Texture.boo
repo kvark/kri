@@ -57,7 +57,7 @@ public class Texture( shade.par.INamed ):
 		id = GL.GenTexture()
 		type = tip
 	def destructor():
-		safeKill({ GL.DeleteTexture(id) })
+		Help.safeKill({ GL.DeleteTexture(id) })
 
 	public static def Slot(tun as int) as void:
 		GL.ActiveTexture(TextureUnit.Texture0 + tun)

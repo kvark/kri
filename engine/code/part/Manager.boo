@@ -43,7 +43,7 @@ public class Manager(DataHolder):
 		col_update.root	= pc.sh_fur_root
 		# bug! driver hangs without this line
 		b2 = beh.Basic('/part/fur/dummy')
-		kri.vb.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
+		kri.Help.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
 		behos.Add(b2)
 	
 	public def seBeh[of T(beh.Basic)]() as T:
@@ -90,8 +90,8 @@ public class Manager(DataHolder):
 		return true
 
 	protected def swapData(pe as Emitter) as void:
-		kri.swap(data, pe.data)
-		kri.swap(va, pe.va)
+		kri.Help.swap(data, pe.data)
+		kri.Help.swap(va, pe.va)
 	public def init(pe as Emitter) as bool:
 		return process(pe, col_init)
 	public def tick(pe as Emitter) as bool:

@@ -4,7 +4,7 @@ import OpenTK.Graphics.OpenGL
 
 #------		BASIC RGBA IMAGE		------#
 
-public class Basic( kri.IGenerator[of kri.Texture] ):
+public class Basic:
 	public final name	as string
 	public final width	as int
 	public final height	as int
@@ -18,7 +18,7 @@ public class Basic( kri.IGenerator[of kri.Texture] ):
 		name,width,height,scan = s,w,h, array[of byte](w*h*d)
 	public def constructor(s as string, w as uint, h as uint, ar as (byte), fm as PixelFormat):
 		name,width,height,scan,format = s,w,h,ar,fm
-	public def generate() as kri.Texture:	# IGenerator
+	public def generate() as kri.Texture:
 		tex = kri.Texture( TextureTarget.Texture2D )
 		tex.Name = name
 		tex.bind()

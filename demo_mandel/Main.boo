@@ -11,12 +11,12 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm.col_update.root = Object('./text/root_v')
 	pm.col_update.extra.Add( Object('./text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
-	kri.vb.enrich( beh, 4, pc.at_pos )
+	kri.Help.enrich( beh, 4, pc.at_pos )
 	pm.behos.Add(beh)
 	
 	if not 'Dummy':
 		b2 = kri.part.beh.Basic('/part/fur/dummy')
-		kri.vb.enrich( b2, 2, pc.at_sys )
+		kri.Help.enrich( b2, 2, pc.at_sys )
 		pm.behos.Add( b2 )
 	
 	pLimt = par.Value[of single]('limit')

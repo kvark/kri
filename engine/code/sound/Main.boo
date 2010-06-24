@@ -8,7 +8,7 @@ public class Buffer:
 		id = AL.GenBuffer()
 		#AL.BufferData( id, Sound(path).ReadToEnd() )
 	def destructor():
-		kri.safeKill({ AL.DeleteBuffer(id) })
+		kri.Help.safeKill({ AL.DeleteBuffer(id) })
 
 public class Source:
 	public final id	as uint
@@ -16,7 +16,7 @@ public class Source:
 		id = AL.GenSource()
 		AL.Source( id, ALSourcei.Buffer, buf.id )
 	def destructor():
-		kri.safeKill({ AL.DeleteSource(id) })
+		kri.Help.safeKill({ AL.DeleteSource(id) })
 	public def play() as void:
 		AL.SourcePlay(id)
 	public def stop() as void:

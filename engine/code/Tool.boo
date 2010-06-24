@@ -9,11 +9,23 @@ import OpenTK.Graphics.OpenGL
 public static class Sizer[of T(struct)]:
 	public final Value = Runtime.InteropServices.Marshal.SizeOf(T)
 
-public interface IGenerator[of T]:
-	def generate() as T
 
-public def swap[of T](ref a as T, ref b as T) as void:
-	a,b = b,a
+public static class Help:
+	# swap two abstract elements
+	public def swap[of T](ref a as T, ref b as T) as void:
+		a,b = b,a
+	# Provides skipping of resource unloading errors on exit
+	public def safeKill(fun as callable() as void) as void:
+		try: fun()
+		except e as GraphicsContextMissingException:
+			pass
+	# semantics fill helper
+	public def enrich(ob as vb.ISemanted, size as byte, *slots as (int)) as void:
+		for at in slots:
+			ob.Semant.Add( vb.Info(
+				integer:false, size:size, slot:at,
+				type: VertexAttribPointerType.Float ))
+
 
 # Provides GL state on/off mechanics
 public class Section(IDisposable):
@@ -75,12 +87,6 @@ public class Discarder(Section):
 		super()
 
 
-# Provides skipping of resource unloading errors on exit
-public def safeKill(fun as callable() as void) as void:
-	try: fun()
-	except e as GraphicsContextMissingException:
-		pass
-
 # Window FPS counter
 public class FpsCounter:
 	public final kPeriod	as double
@@ -129,7 +135,7 @@ public class Query:
 		qid,target = tmp,targ
 	def destructor():
 		tmp = qid
-		safeKill({ GL.DeleteQueries(1,tmp) })
+		Help.safeKill({ GL.DeleteQueries(1,tmp) })
 	public virtual def catch() as Catcher:
 		return Catcher(self)
 	public def result() as int:

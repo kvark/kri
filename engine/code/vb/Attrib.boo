@@ -8,12 +8,6 @@ public interface ISemanted:
 	Semant	as List[of Info]:
 		get
 
-public def enrich(ob as ISemanted, size as byte, *slots as (int)) as void:
-	for at in slots:
-		ob.Semant.Add( Info(
-			integer:false, size:size, slot:at,
-			type: VertexAttribPointerType.Float ))
-
 
 public class Attrib( ISemanted, Object ):
 	[Getter(Semant)]

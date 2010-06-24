@@ -66,7 +66,7 @@ public struct Constructor:
 			m.nPoly = m.nVert / m.polySize
 			vbo = kri.vb.Attrib()
 			vbo.init( v, false )
-			kri.vb.enrich( vbo, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
+			kri.Help.enrich( vbo, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
 			m.vbo.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize
@@ -108,7 +108,7 @@ public class Line( kri.Mesh ):
 		data = (of Vector4: Vector4(-1f,0f,0f,1f), Vector4(1f,0f,0f,1f))
 		vat = kri.vb.Attrib()
 		vat.init( data, false )
-		kri.vb.enrich( vat, 4, kri.Ant.Inst.attribs.vertex )
+		kri.Help.enrich( vat, 4, kri.Ant.Inst.attribs.vertex )
 		vbo.Add(vat)
 
 
@@ -142,8 +142,8 @@ public class PlaneTex( kri.Mesh ):
 		vat = kri.vb.Attrib()
 		vat.init( v, false )
 		# fill semantics
-		kri.vb.enrich( vat, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
-		kri.vb.enrich( vat, 2, kri.Ant.Inst.attribs.tex[0] )
+		kri.Help.enrich( vat, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
+		kri.Help.enrich( vat, 2, kri.Ant.Inst.attribs.tex[0] )
 		# return
 		vbo.Add(vat)
 

@@ -51,7 +51,7 @@ private class Task:
 
 	public def fun(e as kri.Entity, point as Vector3) as void:
 		if not 'Swap':
-			kri.swap[of kri.Spatial]( e.node.local, ec.node.local )
+			kri.Help.swap[of kri.Spatial]( e.node.local, ec.node.local )
 			e.node.touch()
 			ec = e
 		diff = Vector3.Subtract( ec.node.local.pos, e.node.local.pos )

@@ -7,14 +7,14 @@ import kri.shade
 public class Sys(Basic):	# at_sys storage for standard root
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/sys')
-		kri.vb.enrich( self, 2, pc.at_sys )
+		kri.Help.enrich( self, 2, pc.at_sys )
 
 
 public class Pad(Basic):	# padding for rgba32f align
 	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
 	public def constructor():
 		super('/part/beh/pad')
-		kri.vb.enrich( self, 1, slot )
+		kri.Help.enrich( self, 1, slot )
 
 
 public class Norm(Basic):	# fur normalizing
@@ -71,4 +71,4 @@ public class Bend(Simple[of single]):		# fur bending
 public class Rotate(Simple[of single]):		# particle rotation
 	public def constructor(val as single, pc as kri.part.Context):
 		super('/part/beh/rotate','part_spin', val)
-		kri.vb.enrich( self, 4, pc.at_rot )
+		kri.Help.enrich( self, 4, pc.at_rot )

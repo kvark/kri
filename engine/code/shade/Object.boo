@@ -47,7 +47,7 @@ public class Object:
 
 	# delete
 	def destructor():
-		kri.safeKill({ GL.DeleteShader(id) })
+		kri.Help.safeKill({ GL.DeleteShader(id) })
 
 	# check compilation result
 	private def Check(sid as int) as void:

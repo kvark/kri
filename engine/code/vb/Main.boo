@@ -19,7 +19,7 @@ public class Array:
 		id = xid
 	def destructor():
 		tmp = id
-		kri.safeKill({ GL.DeleteVertexArrays(1,tmp) })
+		kri.Help.safeKill({ GL.DeleteVertexArrays(1,tmp) })
 	public def bind() as void:
 		GL.BindVertexArray(id)
 	public static def unbind() as void:
@@ -56,7 +56,7 @@ public class Object(Proxy):
 		id = tmp
 	def destructor():
 		tmp = id
-		kri.safeKill({ GL.DeleteBuffers(1,tmp) })
+		kri.Help.safeKill({ GL.DeleteBuffers(1,tmp) })
 	# binding
 	public def bind() as void:
 		bind(self)

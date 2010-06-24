@@ -14,8 +14,8 @@ private class BehSimple( kri.part.beh.Basic ):
 	
 	public def constructor(pc as kri.part.Context):
 		super('./text/beh_simple')
-		kri.vb.enrich( self, 2, pc.at_sys )
-		kri.vb.enrich( self, 4, pc.at_pos, pc.at_speed)
+		kri.Help.enrich( self, 2, pc.at_sys )
+		kri.Help.enrich( self, 4, pc.at_pos, pc.at_speed)
 	
 	public override def link(d as kri.shade.rep.Dict) as void:
 		d.unit(tVert,tQuat)

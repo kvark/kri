@@ -47,8 +47,8 @@ public class Standard(Basic):
 
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
-		kri.vb.enrich( self, 2, pc.at_sub )
-		kri.vb.enrich( self, 3, pc.at_pos, pc.at_speed )
+		kri.Help.enrich( self, 2, pc.at_sub )
+		kri.Help.enrich( self, 3, pc.at_pos, pc.at_speed )
 
 	public def constructor(std as Standard):
 		super(std)	#is that enough?
