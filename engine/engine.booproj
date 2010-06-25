@@ -66,6 +66,8 @@
     <Compile Include="code\load\Mesh.boo" />
     <Compile Include="code\load\Object.boo" />
     <Compile Include="code\load\Particle.boo" />
+    <Compile Include="code\load\sound\Main.boo" />
+    <Compile Include="code\load\sound\Wave.boo" />
     <Compile Include="code\Material.boo" />
     <Compile Include="code\meta\Main.boo" />
     <Compile Include="code\part\beh\Main.boo" />
@@ -162,6 +164,7 @@
     <Folder Include="code\frame" />
     <Folder Include="code\lib\par" />
     <Folder Include="code\load\image" />
+    <Folder Include="code\load\sound" />
     <Folder Include="code\meta" />
     <Folder Include="code\load" />
     <Folder Include="code\ani" />
