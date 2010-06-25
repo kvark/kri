@@ -13,7 +13,7 @@ public interface IColored:
 # Perspective projector for light & camera
 public class Projector( ani.data.Player ):
 	public node		as Node
-	public rangeIn	= 0f
+	public rangeIn	= 1f
 	public rangeOut	= 100f
 	public fov		= 0.4f	# ~23 degrees (half)
 	public aspect	= 1f
@@ -32,6 +32,9 @@ public class Projector( ani.data.Player ):
 		return Vector3(-z*v.X, -z*v.Y / aspect, z)
 	public def makeOrtho(radius as single) as void:
 		fov = -2f / radius
+	public def setRanges(a as single, b as single) as void:
+		assert b>a
+		rangeIn,rangeOut = a,b
 		
 
 public class Camera(Projector):

@@ -47,7 +47,7 @@ public class Emission( tech.Meta ):
 		if fillDepth:
 			con.activate(true, 1f, true)
 			con.ClearDepth(1f)
-		else: con.activate()
+		else: con.activate(true, 0f, false)
 		con.ClearColor( backColor )
 		drawScene()
 

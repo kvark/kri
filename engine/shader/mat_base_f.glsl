@@ -4,7 +4,6 @@ uniform vec4 base_color;
 
 vec4 get_emissive();
 
-in vec4 tc_emissive;
 out vec4 rez_color;
 
 void main()	{

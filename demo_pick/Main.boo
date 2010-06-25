@@ -124,7 +124,7 @@ def Main(argv as (string)):
 		ant.VSync = VSyncMode.On
 		
 		view.scene = kri.Scene('main')
-		view.cam = kri.Camera()
+		view.cam = kri.Camera( rangeIn:30f, rangeOut:50f )
 		view.scene.lights.Add( kri.Light() )
 	
 		rem = kri.rend.Emission( fillDepth:true )

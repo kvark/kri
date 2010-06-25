@@ -29,7 +29,7 @@ public class Buffer(Screen):
 		kri.Help.safeKill({ GL.DeleteFramebuffers(1,tmp) })
 	
 	public static def Check() as bool:
-		status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
+		status = GL.CheckFramebufferStatus( FramebufferTarget.Framebuffer )
 		return status == FramebufferErrorCode.FramebufferComplete
 		
 	public def dropMask() as void:
@@ -39,7 +39,7 @@ public class Buffer(Screen):
 		for a in at:
 			continue	if not a.Tex
 			a.Tex.bind()
-			kri.Texture.Init(Width, Height, a.Format)
+			kri.Texture.Init( Width, Height, a.Format )
 			a.dFormat.clean()
 	
 	public def activate(m as uint) as void:
@@ -50,11 +50,11 @@ public class Buffer(Screen):
 		if mask != oldMask:
 			# select buffer to draw & read
 			arr = List[of DrawBuffersEnum]()
-			for k in range(at.Length-FBASE):
+			for k in range( at.Length-FBASE ):
 				if mask & (1<<k) and A[k].Tex:
 					arr.Add( DrawBuffersEnum.ColorAttachment0 + k )
 			if arr.Count:
-				GL.DrawBuffers(arr.Count, arr.ToArray())
+				GL.DrawBuffers( arr.Count, arr.ToArray() )
 			else:
 				GL.DrawBuffer( DrawBufferMode.None )
 				GL.ReadBuffer( cast(ReadBufferMode,0) )
@@ -68,13 +68,13 @@ public class Buffer(Screen):
 				kri.Texture.Init(Width, Height, a.Format)
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				a.dLayer.clean()
-				GL.FramebufferTextureLayer(FramebufferTarget.Framebuffer,
-					a.Slot, t.id, 0, a.Layer)
+				GL.FramebufferTextureLayer( FramebufferTarget.Framebuffer,
+					a.slot, t.id, 0, a.Layer )
 			elif a.dirty:		#update texture attachment
-				if t and t.type in (TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray):
-					GL.FramebufferTexture( FramebufferTarget.Framebuffer, a.Slot, t.id, 0)
+				if t and t.type in ( TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray ):
+					GL.FramebufferTexture( FramebufferTarget.Framebuffer, a.slot, t.id, 0)
 				elif t:
-					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.Slot, t.type, t.id, 0)
+					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.slot, t.type, t.id, 0)
 				else:
-					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.Slot,
+					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.slot,
 						TextureTarget.Texture2D, 0, 0)

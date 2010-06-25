@@ -17,12 +17,12 @@ internal struct DirtyHolder[of T]:
 #---------	Single frame representor inside the FBO	---------#
 
 public class Unit:
+	public static final	DefaultTarget	= TextureTarget.TextureRectangle
 	internal tex		as kri.Texture = null					# texture
 	internal dLayer		as DirtyHolder[of int]					# layer id
 	internal dFormat	as DirtyHolder[of PixelInternalFormat]	# pixel format
 	internal dirty		as bool = false							# tex changed
-	[getter(Slot)]
-	private final slot	as FramebufferAttachment				# fbo slot
+	public final slot	as FramebufferAttachment				# fbo slot
 	
 	internal def constructor(s as FramebufferAttachment):
 		slot = s
@@ -54,7 +54,7 @@ public class Unit:
 		return new( cl, bits, targ )
 	# target is rectangle
 	public def new(bits as uint) as kri.Texture:
-		return new(bits, TextureTarget.TextureRectangle)
+		return new(bits, DefaultTarget)
 	# set texture layer
 	public def layer(t as kri.Texture, z as int) as void:
 		tex = t	if t

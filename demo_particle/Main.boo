@@ -116,22 +116,22 @@ def Main(argv as (string)):
 		#view.scene.particles.Add(ps)
 		
 		#rlis.Add( kri.kit.bake.Update() )
-		rlis.Add( kri.rend.EarlyZ() )
-		rlis.Add( kri.rend.debug.MapDepth() )
-		#rlis.Add( rem = kri.rend.Emission() )
-		#rem.pBase.Value = Graphics.Color4.Gray
+		#rlis.Add( kri.rend.debug.MapDepth() )
+		rem = kri.rend.Emission( fillDepth:true )
+		rlis.Add( rem )
+		rem.pBase.Value = Graphics.Color4.Black
 		
 		#assert not 'ready'
 		#rlis.Add( kri.rend.part.Simple(true,false) )
 		if 'Light':
 			licon = kri.rend.light.Context(2,8)
 			#licon.setExpo(120f, 0.5f)
-			#rlis.Add( kri.rend.light.Fill(licon) )
-			#rlis.Add( kri.rend.light.Apply(licon) )
+			rlis.Add( kri.rend.light.Fill(licon) )
+			rlis.Add( kri.rend.light.Apply(licon) )
 			rlis.Add( kri.rend.FilterCopy() )
 		
 		ant.anim = al = kri.ani.Scheduler()
-		al.add( kri.ani.ControlMouse(ent.node,0.002f) )
+		al.add( kri.ani.ControlMouse(ent.node,0.003f) )
 		#if 'Part Anims':
 			#al.add( kri.ani.Particle(ps) )
 		#ant.Keyboard.KeyDown += { ps.owner.tick(ps) }
