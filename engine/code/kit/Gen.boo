@@ -231,19 +231,22 @@ public class Landscape( kri.Mesh ):
 	public def constructor(hm as (single,2), scale as Vector3):
 		con = Constructor()
 		con.v = array[of Vertex]( len(hm) )
-		assert len(hm,0) and len(hm,1)
+		dx = len(hm,0)
+		dy = len(hm,1)
+		assert dx and dy
 		
 		def hv(x as int,y as int):
 			z = 0f
-			if x>=0 and x<len(hm,0) and y>=0 and y<len(hm,1):
+			if x>=0 and x<dx and y>=0 and y<dy:
 				z = hm[x,y]
 			return Vector3(x,y,z)
 		
-		for y in range(len(hm,1)):
-			for x in range(len(hm,0)):
-				id = y*len(hm,0) + x
-				con.v[id].pos = Vector4(
-					Vector3.Multiply( scale, hv(x,y) ),	1f)
+		center = Vector3( (dx-1)*0.5f, (dy-1)*0.5f, 0f )
+		for y in range(dy):
+			for x in range(dx):
+				pos = hv(x,y) - center
+				id = y*dx + x
+				con.v[id].pos = Vector4( Vector3.Multiply(scale,pos), 1f)
 				normal = Vector3.Divide( Vector3.Cross(
 					hv(x+1,y) - hv(x-1,y),
 					hv(x,y+1) - hv(x,y-1)),
@@ -254,14 +257,14 @@ public class Landscape( kri.Mesh ):
 					nz* (1f - Vector3.Dot(normal,Vector3.UnitZ)),
 					nz.LengthFast ))
 		
-		con.i = array[of ushort]( (len(hm,1)-1) * (2*len(hm,0)+1) )
-		for y in range( len(hm,1)-1 ):
-			id = y*( 2*len(hm,0)+1 )
-			for x in range(len(hm,0)):
-				x2 = ( x, len(hm,0)-1-x )[y&1]
+		con.i = array[of ushort]( (dy-1) * (2*dx+1) )
+		for y in range( dy-1 ):
+			id = y*( 2*dx+1 )
+			for x in range(dx):
+				x2 = ( x, dx-1-x )[y&1]
 				for d in range(2):
-					con.i[id + x+x+d] = (y+1-d)*len(hm,0) + x2
-			id += 2*len(hm,0)
+					con.i[id + x+x+d] = (y+1-d)*dx + x2
+			id += 2*dx
 			con.i[id] = con.i[id-1]
 		
 		super( BeginMode.TriangleStrip )
