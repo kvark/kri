@@ -19,9 +19,9 @@ public class Clear( Basic ):
 public class EarlyZ( tech.General ):
 	public final sa	= kri.shade.Smart()
 	public def constructor():
-		super('zcull')
+		super('/zcull_v')
 		# make shader
-		sa.add( '/zcull_v', 'empty', 'tool', 'quat', 'fixed' )
+		sa.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
@@ -60,7 +60,7 @@ public class Color( tech.General ):
 	public def constructor(doAdd as bool):
 		super('color')
 		add = doAdd
-		sa.add( '/color_v','/color_f', 'quat','tool','fixed' )
+		sa.add( '/color_v','/color_f', '/lib/quat_v','/lib/tool_v','/lib/fixed_v' )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
@@ -88,9 +88,9 @@ public class Gauss(Basic):
 		super(false)
 		dict = kri.shade.rep.Dict()
 		dict.unit(texIn)
-		sa.add('copy_v','/filter/gauss_hor_f')
+		sa.add('/copy_v','/filter/gauss_hor_f')
 		sa.link( kri.Ant.Inst.slotAttributes, dict )
-		sb.add('copy_v','/filter/gauss_ver_f')
+		sb.add('/copy_v','/filter/gauss_ver_f')
 		sb.link( kri.Ant.Inst.slotAttributes, dict )
 
 	public override def process(con as Context) as void:

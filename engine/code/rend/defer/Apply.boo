@@ -26,7 +26,7 @@ public class ApplyBase( kri.rend.Basic ):
 	# link
 	protected def relink(con as Context) as void:
 		dict.unit( texDep, con.gbuf )
-		sa.add( 'quat','tool','defer' )
+		sa.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f' )
 		sa.add( con.sh_apply, con.sh_diff, con.sh_spec )
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	# work
@@ -60,7 +60,7 @@ public class Apply( ApplyBase ):
 		sa.add('/g/apply_v')
 		relink(con)
 		# fill shader
-		s0.add( 'copy_v', '/g/init_f' )
+		s0.add( '/copy_v', '/g/init_f' )
 		s0.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	# shadow
 	private def bindShadow(t as kri.Texture) as void:

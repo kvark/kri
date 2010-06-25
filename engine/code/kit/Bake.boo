@@ -34,7 +34,7 @@ public class Update( kri.rend.tech.Basic ):
 	
 	public def constructor():
 		super('bake.mesh')
-		sa.add( '/uv/bake_v' ,'/uv/bake_f', 'quat' )
+		sa.add( '/uv/bake_v' ,'/uv/bake_f', '/lib/quat_v' )
 		sa.fragout('re_vertex','re_quat')
 		#sa.add( '/copy_v' ,'/uv/test_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )

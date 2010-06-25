@@ -64,7 +64,7 @@ public class Update( kri.rend.Basic ):
 	public def constructor(fc as Context):
 		super(false)
 		sa.feedback(false, 'to_pos','to_vel')
-		sa.add('quat', '/fur/update_v')
+		sa.add('/lib/quat_v', '/fur/update_v')
 		sa.link(kri.Ant.Inst.slotAttributes, fc.d)
 	
 	public override def process(con as kri.rend.Context) as void:

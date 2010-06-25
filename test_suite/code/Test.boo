@@ -24,7 +24,7 @@ private class Link( kri.rend.Basic ):
 		vec4 fun(Spatial sp)	{
 			return sp.pos;
 		}"""
-		sa.add('quat')
+		sa.add('/lib/quat_v')
 		for t in (text1,text2):
 			pob = kri.shade.Object(ShaderType.VertexShader,'my',t)
 			sa.add( pob )
@@ -46,7 +46,7 @@ private class Offset( kri.rend.Basic ):
 		}"""
 		pob = kri.shade.Object(ShaderType.VertexShader,'my',text)
 		sa.add( pob )
-		sa.add( 'empty' )
+		sa.add( '/empty_f' )
 		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
 		fbo.init(3,3)

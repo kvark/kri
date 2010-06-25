@@ -18,8 +18,8 @@ public class Fill( rend.tech.General ):
 		buf.mask = 0
 		context = lc
 		# omni shader
-		sa.add( '/light/omni/bake_v', '/light/omni/bake_g', 'empty' )
-		sa.add( *Ant.Inst.shaders.gentleSet )
+		sa.add( '/light/omni/bake_v', '/light/omni/bake_g', '/empty_f' )
+		sa.add( *Ant.Inst.libShaders )
 		dict = shade.rep.Dict()
 		dict.var(pDist)
 		sa.link( Ant.Inst.slotAttributes, dict, lc.dict, Ant.Inst.dict )

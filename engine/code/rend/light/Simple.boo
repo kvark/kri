@@ -27,7 +27,7 @@ public class Fill( kri.rend.tech.General ):
 		baker = '/light/bake_exp_f'	if lc.type == LiType.EXPONENT
 		baker = '/light/bake_var_f'	if lc.type == LiType.VARIANCE
 		sh_bake = kri.shade.Object(baker)
-		sa.add( '/light/bake_v', 'tool', 'quat', 'fixed' )
+		sa.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
 		sa.add( sh_bake )
 		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
 

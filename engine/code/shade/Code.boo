@@ -98,7 +98,7 @@ public class Collector:
 	
 	public def compose( sem as kri.vb.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
 		assert root
-		prog.add('quat')
+		prog.add('/lib/quat_v')
 		prog.add(root)
 		prog.add( *extra.ToArray() )
 		if sem:

@@ -10,11 +10,11 @@ public class Map( kri.rend.Basic ):
 	
 	public def constructor(depth as bool, id as int, t as par.IBase[of kri.Texture]):
 		super(false)
-		sa.add( 'copy_v' )
+		sa.add( '/copy_v' )
 		if depth:
 			sa.add('/show_depth_f')
 		else:
-			sa.add( ('/copy_f','copy_ar_f')[id>=0] )
+			sa.add( ('/copy_f','/copy_ar_f')[id>=0] )
 		layer.Value = 1f * id
 		dict = kri.shade.rep.Dict()
 		dict.unit( 'input', t )
@@ -44,7 +44,7 @@ public class MapCube( kri.rend.Basic ):
 	private final sa = kri.shade.Smart()
 	public def constructor( l as kri.Light ):
 		super(false)
-		sa.add( 'copy_v', '/copy_cube_f' )
+		sa.add( '/copy_v', '/copy_cube_f' )
 		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
 		lit = l
 	public virtual def prepare() as void:
@@ -72,7 +72,7 @@ public class Attrib( kri.rend.Basic ):
 	public def constructor():
 		super(false)
 		sa.add( '/attrib_v', '/attrib_f' )
-		sa.add( *kri.Ant.Inst.shaders.gentleSet )
+		sa.add( *kri.Ant.Inst.libShaders )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true, 0f, true)

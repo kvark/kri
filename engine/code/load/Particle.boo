@@ -83,7 +83,7 @@ public partial class Native:
 			pe.onUpdate = upNode
 		elif source == 'VERT':
 			for i in range(2):
-				t = kri.shade.par.Value[of kri.Texture]( ('vertex','quat')[i] )
+				t = kri.shade.par.Value[of kri.Texture]( ('vertex','/lib/quat_v')[i] )
 				pm.dict.unit(t.Name,t)
 				t.Value = kri.Texture( TextureTarget.TextureBuffer )
 				t.Value.bind()
@@ -96,7 +96,7 @@ public partial class Native:
 			sh = pcon.sh_surf_vertex
 		elif source == 'FACE':
 			tVert = kri.shade.par.Value[of kri.Texture]('vertex')
-			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
+			tQuat = kri.shade.par.Value[of kri.Texture]('/lib/quat_v')
 			pm.dict.unit(tVert,tQuat)
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)

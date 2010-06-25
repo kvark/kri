@@ -7,13 +7,13 @@ import OpenTK.Graphics.OpenGL
 
 private class BehSimple( kri.part.beh.Basic ):
 	public final tVert	= kri.shade.par.Value[of kri.Texture]('vertex')
-	public final tQuat	= kri.shade.par.Value[of kri.Texture]('quat')
+	public final tQuat	= kri.shade.par.Value[of kri.Texture]('/lib/quat_v')
 	public final parPlane	= kri.shade.par.Value[of Vector4]('coord_plane')
 	public final parSphere	= kri.shade.par.Value[of Vector4]('coord_sphere')
 	public final parCoef	= kri.shade.par.Value[of single]('reflect_koef')
 	
 	public def constructor(pc as kri.part.Context):
-		super('./text/beh_simple')
+		super('text/beh_simple')
 		kri.Help.enrich( self, 2, pc.at_sys )
 		kri.Help.enrich( self, 4, pc.at_pos, pc.at_speed)
 	

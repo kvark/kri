@@ -36,7 +36,7 @@ public class Bake( kri.rend.Basic ):
 		# baking shader
 		sa.add( '/light/defer/bake_v', '/light/defer/bake_f', '/lib/defer_f' )
 		sa.add( dc.tool )
-		sa.add( *kri.Ant.Inst.shaders.gentleSet )
+		sa.add( *kri.Ant.Inst.libShaders )
 		sa.fragout('ca','cb','cc')
 		d = rep.Dict()
 		d.unit(texDep)

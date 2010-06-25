@@ -43,8 +43,8 @@ public class Ant( OpenTK.GameWindow ):
 	public final dict	= shade.rep.Dict()
 	# libraries
 	public final params		= lib.Param(dict)
-	public final shaders 	= lib.Shader()
 	public final attribs	= lib.Attrib(slotAttributes)
+	public final libShaders	as (kri.shade.Object)
 
 
 	public def constructor(confile as string, depth as int):
@@ -75,6 +75,10 @@ public class Ant( OpenTK.GameWindow ):
 		debug = bug>0
 		inst = self
 		
+		# shader library init
+		libShaders = array( kri.shade.Object('/lib/'+str)
+			for str in ('quat_v','tool_v','fixed_v','math_f'))
+		
 
 	def destructor():
 		inst = null
@@ -95,6 +99,8 @@ public class Ant( OpenTK.GameWindow ):
 		GL.GetInteger( GetPName.MaxDrawBuffers, mb )
 		assert mb>=4
 		
+		
+		
 		# GL context init
 		GL.ClearColor( Color4.Black )
 		GL.Enable( EnableCap.CullFace )
@@ -105,7 +111,6 @@ public class Ant( OpenTK.GameWindow ):
 	
 	public override def OnUnload(e as EventArgs) as void:
 		views.Clear()
-		shaders.Clear()
 		GC.Collect()
 		GC.WaitForPendingFinalizers()
 

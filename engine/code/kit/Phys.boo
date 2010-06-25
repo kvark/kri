@@ -35,7 +35,7 @@ public class Core:
 		tid = techId
 		d = kri.shade.rep.Dict()
 		d.var(pId)
-		sa.add('/zcull_v','/physics_f','tool','quat','fixed')
+		sa.add('/zcull_v','/physics_f','/lib/tool_v','/lib/quat_v','/lib/fixed_v')
 		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 
 	private def drawAll(scene as kri.Scene) as void:

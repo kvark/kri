@@ -53,7 +53,7 @@ public class Meta( Tech ):
 		shobs.Extend( Object(s) for s in slis )
 	
 	private def setup(sa as Smart) as void:
-		sa.add( *kri.Ant.Inst.shaders.gentleSet )
+		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( *array(shobs) )
 
 	public override def construct(mat as kri.Material) as Smart:

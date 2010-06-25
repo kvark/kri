@@ -46,8 +46,7 @@ public class Program:
 	# add object from library
 	public def add(*names as (string)) as void:
 		for s in names:
-			add(( Object(s) if s.Substring(0,1) in ('/','.')
-				else kri.Ant.Inst.shaders[s] ))
+			add( Object(s) )
 	# link program
 	public def link() as void:
 		#assert not linked

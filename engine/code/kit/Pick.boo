@@ -29,7 +29,7 @@ public class Render( kri.rend.Basic ):
 		assert numorder<=16
 		buf.A[0].new( kri.Texture.Class.Index, 16, TextureTarget.TextureRectangle )
 		# make shader
-		sa.add('/zcull_v', '/pick_f', 'tool', 'quat', 'fixed')
+		sa.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
 		d = kri.shade.rep.Dict()
 		d.var(pInd)
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict, d )

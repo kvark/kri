@@ -1,7 +1,5 @@
 ﻿namespace kri.lib
 
-import System
-import System.Collections.Generic
 import OpenTK
 
 
@@ -30,19 +28,3 @@ public final class Param:
 		for me in (of kri.meta.IBase: modelView, light,litView,litProj, camView,camProj):
 			me.link(d)
 		d.var(parSize,parTime)
-
-
-# Shader Objects & Programs Library
-public class Shader( Dictionary[of string, kri.shade.Object] ):
-	public final gentleSet as (kri.shade.Object)
-	public def constructor():
-		super()
-		for str in ('quat','tool','fixed','orient'):
-			Add(str, kri.shade.Object("/lib/${str}_v") )
-		# garbage! will be removed with new Resource Manager
-		Add('math', kri.shade.Object("/lib/math_f"))
-		gentleSet = array(Values)
-		Add('defer', kri.shade.Object("/lib/defer_f"))
-		for str in ('copy_v','copy_f','copy_ar_f'):
-			Add(str, kri.shade.Object('/'+str))
-		Add('empty', kri.shade.Object('/empty_f'))

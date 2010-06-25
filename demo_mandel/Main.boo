@@ -8,8 +8,8 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm = kri.part.Manager( 2 )
 	pm.makeStandard(pc)
 	pm.col_init.extra.Add( pc.sh_tool )
-	pm.col_update.root = Object('./text/root_v')
-	pm.col_update.extra.Add( Object('./text/born_v') )
+	pm.col_update.root = Object('text/root_v')
+	pm.col_update.extra.Add( Object('text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
 	kri.Help.enrich( beh, 4, pc.at_pos )
 	pm.behos.Add(beh)
@@ -40,7 +40,7 @@ private class Render( kri.rend.part.Simple ):
 		d = rep.Dict()
 		d.var(pSize,pBrit)
 		# prog init
-		sa.add( './text/draw_v', './text/draw_f')
+		sa.add( 'text/draw_v', 'text/draw_f')
 		sa.link( kri.Ant.Inst.slotParticles, d, kri.Ant.Inst.dict )
 
 
