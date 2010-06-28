@@ -22,15 +22,15 @@ public class Targa:
 		kri.res.check(str)
 		br = BinaryReader( File.OpenRead(str) )	
 		hd = Header(
-			magic:	br.ReadBytes(8),
-			xrig:	br.ReadUInt16(),
-			yrig:	br.ReadUInt16(),
-			wid:	br.ReadUInt16(),
-			het:	br.ReadUInt16(),
-			bits:	br.ReadByte(),
-			descr:	br.ReadByte() )
+			magic	: br.ReadBytes(8),
+			xrig	: br.ReadUInt16(),
+			yrig	: br.ReadUInt16(),
+			wid		: br.ReadUInt16(),
+			het		: br.ReadUInt16(),
+			bits	: br.ReadByte(),
+			descr	: br.ReadByte() )
 		assert hd.check()
-		return Basic( str, hd.wid, hd.het,						\
-			br.ReadBytes( hd.wid * hd.het * (hd.bits>>3) ),		\
-			(PixelFormat.Bgr, PixelFormat.Bgra)[ hd.descr>>3 ]	\
-			)
+		
+		data = br.ReadBytes( hd.wid * hd.het * (hd.bits>>3) )
+		fmt = (PixelFormat.Bgr, PixelFormat.Bgra)[ hd.descr>>3 ]
+		return Basic( str, hd.wid, hd.het, data, fmt )
