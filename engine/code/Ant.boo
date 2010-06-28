@@ -39,6 +39,8 @@ public class Ant( OpenTK.GameWindow ):
 	public final slotAttributes	= lib.Slot( lib.Const.nAttrib)
 	public final slotParticles	= lib.Slot( lib.Const.nPart	)
 	
+	# resource manager
+	public final resMan	= res.Manager()
 	# main uniform dictionary
 	public final dict	= shade.rep.Dict()
 	# libraries
@@ -76,7 +78,8 @@ public class Ant( OpenTK.GameWindow ):
 		inst = self
 		
 		# shader library init
-		libShaders = array( kri.shade.Object('/lib/'+str)
+		resMan.register( shade.Loader() )
+		libShaders = array( resMan.load[of kri.shade.Object]('/lib/'+str)
 			for str in ('quat_v','tool_v','fixed_v','math_f'))
 		
 

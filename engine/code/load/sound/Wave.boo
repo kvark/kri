@@ -2,7 +2,7 @@
 
 import System.IO
 
-public class Wave:
+public class Wave( kri.res.ILoaderGen[of Basic] ):
 	private struct Header:
 		public audioFormat	as ushort
 		public numChannels	as ushort
@@ -13,8 +13,9 @@ public class Wave:
 		public def check() as bool:
 			return numChannels * sampleBits * sampleRate == 8 * byteRate
 		
-	public static def Get(str as string) as Basic:
-		using br = BinaryReader( File.OpenRead(str) ):
+	public def read(path as string) as Basic:
+		kri.res.Manager.Check(path)
+		using br = BinaryReader( File.OpenRead(path) ):
 			signature = string(br.ReadChars(4))
 			assert signature == 'RIFF'
 			chunkSize = br.ReadInt32()

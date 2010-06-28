@@ -7,7 +7,7 @@ import kri.shade
 
 public class Context:
 	public final buf		= kri.frame.Buffer()
-	public final tool		= kri.shade.Object('/light/defer/sh_f')
+	public final tool		= kri.shade.Object.Load('/light/defer/sh_f')
 
 	public def constructor():
 		buf.mask = 0

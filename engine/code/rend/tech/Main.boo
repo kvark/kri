@@ -39,10 +39,9 @@ public class Meta(General):
 		factory.onLink = onLink
 	
 	protected def shade(prefix as string) as void:
-		for s in ('_v','_f'):
-			shobs.Add( kri.shade.Object(prefix+s) )
+		shade( prefix+s for s in ('_v','_f') )
 	protected def shade(slis as string*) as void:
-		shobs.Extend( kri.shade.Object(s) for s in slis )
+		shobs.Extend( kri.shade.Object.Load(s) for s in slis )
 	
 	private virtual def onLink(sa as kri.shade.Smart) as void:
 		sa.fragout( *lOuts )	if lOuts

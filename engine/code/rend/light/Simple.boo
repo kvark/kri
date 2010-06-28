@@ -26,7 +26,7 @@ public class Fill( kri.rend.tech.General ):
 		baker = '/empty_f'
 		baker = '/light/bake_exp_f'	if lc.type == LiType.EXPONENT
 		baker = '/light/bake_var_f'	if lc.type == LiType.VARIANCE
-		sh_bake = kri.shade.Object(baker)
+		sh_bake = kri.shade.Object.Load(baker)
 		sa.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
 		sa.add( sh_bake )
 		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
@@ -69,7 +69,7 @@ public class Apply( kri.rend.tech.Meta ):
 		shadow = 'variance'		if lc.type == LiType.VARIANCE
 		super('lit.apply', false, null, *kri.load.Meta.LightSet)
 		
-		sh_shadow = kri.shade.Object( "/light/shadow/${shadow}_f" )
+		sh_shadow = kri.Ant.Inst.resMan.load[of kri.shade.Object]( "/light/shadow/${shadow}_f" )
 		shobs.Add(sh_shadow)
 		shade(('/light/apply_v','/light/apply_f','/light/common_f'))
 

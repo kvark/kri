@@ -46,7 +46,7 @@ public class Program:
 	# add object from library
 	public def add(*names as (string)) as void:
 		for s in names:
-			add( Object(s) )
+			add( Object.Load(s) )
 	# link program
 	public def link() as void:
 		#assert not linked

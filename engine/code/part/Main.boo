@@ -2,6 +2,7 @@
 
 import System
 import System.Collections.Generic
+import kri.shade
 
 
 # interleaved attribute array holder
@@ -94,18 +95,18 @@ public class Context:
 	public final	ghost_rot	= kri.Ant.Inst.slotAttributes.getForced('@rot')
 	public final	ghost_sub	= kri.Ant.Inst.slotAttributes.getForced('@sub')
 	# root shaders
-	public final	sh_init	= kri.shade.Object('/part/init_v')
-	public final	sh_draw	= kri.shade.Object('/part/draw/main_v')
-	public final	sh_root	= kri.shade.Object('/part/root_v')
-	public final	sh_tool	= kri.shade.Object('/part/tool_v')
+	public final	sh_init	= Object.Load('/part/init_v')
+	public final	sh_draw	= Object.Load('/part/draw/main_v')
+	public final	sh_root	= Object.Load('/part/root_v')
+	public final	sh_tool	= Object.Load('/part/tool_v')
 	# fur shaders
-	public final	sh_fur_init	= kri.shade.Object('/part/fur/init_v')
-	public final	sh_fur_root	= kri.shade.Object('/part/fur/root_v')
+	public final	sh_fur_init	= Object.Load('/part/fur/init_v')
+	public final	sh_fur_root	= Object.Load('/part/fur/root_v')
 	# born shaders
-	public final	sh_born_instant	= kri.shade.Object('/part/born/instant_v')
-	public final	sh_born_static	= kri.shade.Object('/part/born/static_v')
-	public final	sh_born_time	= kri.shade.Object('/part/born/time_v')
+	public final	sh_born_instant	= Object.Load('/part/born/instant_v')
+	public final	sh_born_static	= Object.Load('/part/born/static_v')
+	public final	sh_born_time	= Object.Load('/part/born/time_v')
 	# emit surface shaders
-	public final	sh_surf_node	= kri.shade.Object('/part/surf/node_v')
-	public final	sh_surf_vertex	= kri.shade.Object('/part/surf/vertex_v')
-	public final	sh_surf_face	= kri.shade.Object('/part/surf/face_v')
+	public final	sh_surf_node	= Object.Load('/part/surf/node_v')
+	public final	sh_surf_vertex	= Object.Load('/part/surf/vertex_v')
+	public final	sh_surf_face	= Object.Load('/part/surf/face_v')

@@ -106,13 +106,14 @@ public class Bake( kri.rend.Basic ):
 		d.var(pInit)
 		d.unit(pVert,pQuat)
 		# init shader
-		com = kri.shade.Object('/part/fur/base/main_v')
+		ant = kri.Ant.Inst
+		com = ant.resMan.load[of kri.shade.Object]('/part/fur/base/main_v')
 		s_face.add('/lib/quat_v','/part/fur/base/face_v')
 		s_vert.add('/lib/quat_v','/part/fur/base/vert_v')
 		for sa in s_face,s_vert:
 			sa.add(com)
 			sa.feedback(false, 'to_prev','to_base')
-			sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+			sa.link( ant.slotAttributes, d, ant.dict )
 		# init fake vertex attrib for drawing
 		vbo.Semant.Add( kri.vb.Info(
 			size:1, slot:0, type:VertexAttribPointerType.UnsignedByte ))

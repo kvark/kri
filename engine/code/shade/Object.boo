@@ -27,17 +27,9 @@ public class Object:
 		elif	name.EndsWith('_f'):	rez = ShaderType.FragmentShader
 		elif	name.EndsWith('_g'):	rez = ShaderType.GeometryShader
 		return rez
-
-	# create by name & type
-	public def constructor(name as string, tip as ShaderType):
-		tag,type = name,tip
-		id = compose()
-
-	# create by name, infer the type from it
-	public def constructor(name as string):
-		type = Type(name)
-		tag = name
-		id = compose()
+	
+	public static def Load(path as string) as Object:
+		return kri.Ant.Inst.resMan.load[of Object](path)
 
 	# create from source
 	public def constructor(tip as ShaderType, label as string, text as string):

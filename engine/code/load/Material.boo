@@ -8,10 +8,10 @@ public partial class Native:
 	public final limDict	= Dictionary[of string,callable() as Hermit]()
 
 	public def initMaterials() as void:
-		uvShaders = [	kri.shade.Object("/mi/uv${i}_v") for i in range(4) ]
-		orcoVert =	kri.shade.Object('/mi/orco_v')
-		orcoHalo =	kri.shade.Object('/mi/orco_halo_f')
-		objectShader = 	kri.shade.Object('/mi/object_v')
+		uvShaders = [	kri.shade.Object.Load("/mi/uv${i}_v") for i in range(4) ]
+		orcoVert =	kri.shade.Object.Load('/mi/orco_v')
+		orcoHalo =	kri.shade.Object.Load('/mi/orco_halo_f')
+		objectShader = 	kri.shade.Object.Load('/mi/object_v')
 		# todo?: normal & reflection in fragment
 		# trivial sources
 		def genFun(x as Hermit): return {return x}
@@ -20,7 +20,7 @@ public partial class Native:
 			suf = 'v'
 			suf = 'f'	if s == 'WINDOW'
 			suf = 'g'	if s == 'STRAND'
-			sh = kri.shade.Object( "/mi/${slow}_${suf}" )
+			sh = kri.shade.Object.Load( "/mi/${slow}_${suf}" )
 			mt = Hermit( Shader:sh, Name:slow )	# careful!
 			limDict[s] = genFun(mt)
 		# non-trivial sources
@@ -151,7 +151,7 @@ public partial class Native:
 	protected def getTexture(str as string) as kri.Texture:
 		#TODO: support for other formats
 		return null	if not str.EndsWith('.tga')
-		return image.Targa.Get(str).generate()
+		return resMan.load[of image.Basic](str).generate()
 	
 	#---	Parse texture slot	---#
 	public def pm_tex() as bool:

@@ -44,20 +44,20 @@ public static class Meta:
 
 public class Shade:
 	# light models
-	public final lambert	= Object('/mod/lambert_f')
-	public final cooktorr	= Object('/mod/cooktorr_f')
-	public final phong		= Object('/mod/phong_f')
+	public final lambert	= Object.Load('/mod/lambert_f')
+	public final cooktorr	= Object.Load('/mod/cooktorr_f')
+	public final phong		= Object.Load('/mod/phong_f')
 	# meta data
-	public final emissive_u		= Object('/mod/emissive_u_f')
-	public final emissive_t2	= Object('/mod/emissive_t2d_f')
-	public final diffuse_u		= Object('/mod/diffuse_u_f')
-	public final diffuse_t2		= Object('/mod/diffuse_t2d_f')
-	public final specular_u		= Object('/mod/specular_u_f')
-	public final glossiness_u	= Object('/mod/glossiness_u_f')
-	public final bump_c			= Object('/mod/bump_c_f')
+	public final emissive_u		= Object.Load('/mod/emissive_u_f')
+	public final emissive_t2	= Object.Load('/mod/emissive_t2d_f')
+	public final diffuse_u		= Object.Load('/mod/diffuse_u_f')
+	public final diffuse_t2		= Object.Load('/mod/diffuse_t2d_f')
+	public final specular_u		= Object.Load('/mod/specular_u_f')
+	public final glossiness_u	= Object.Load('/mod/glossiness_u_f')
+	public final bump_c			= Object.Load('/mod/bump_c_f')
 	# particles
-	public final halo_u			= Object('/mod/halo_u_f')
-	public final strand_u		= Object('/mod/strand_u_g')
+	public final halo_u			= Object.Load('/mod/halo_u_f')
+	public final strand_u		= Object.Load('/mod/strand_u_g')
 
 
 public class Context:

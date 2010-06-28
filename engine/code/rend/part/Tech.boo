@@ -47,10 +47,9 @@ public class Meta( Tech ):
 		factory.onLink = setup
 	
 	protected def shade(prefix as string) as void:
-		for s in ('_v','_f'):
-			shobs.Add( Object(prefix+s) )
+		shade( prefix+s	for s in('_v','_f') )
 	protected def shade(slis as string*) as void:
-		shobs.Extend( Object(s) for s in slis )
+		shobs.Extend( Object.Load(s) for s in slis )
 	
 	private def setup(sa as Smart) as void:
 		sa.add( *kri.Ant.Inst.libShaders )

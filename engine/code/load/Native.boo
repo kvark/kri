@@ -36,6 +36,7 @@ public partial class Native:
 	public final dict	= Dictionary[of string,callable() as bool]()
 	public final skipt	= Dictionary[of string,uint]()
 	public final sets	= Settings()
+	public final resMan	= kri.res.Manager()
 	private final rep	= []
 	protected final nResList	= List[of ResNode]()
 	protected br	as IO.BinaryReader	= null
@@ -47,6 +48,9 @@ public partial class Native:
 	public def constructor():
 		initAnimations()
 		initMaterials()
+		# Init resource manager
+		resMan.register( image.Targa() )
+		resMan.register( sound.Wave() )
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		dict['grav']	= p_grav
@@ -92,7 +96,7 @@ public partial class Native:
 		dict['b_rigid'] = pb_rigid
 	
 	public def read(path as string) as Atom:
-		kri.res.check(path)
+		kri.res.Manager.Check(path)
 		rep.Clear()
 		br = IO.BinaryReader( IO.File.OpenRead(path) )
 		at = Atom(path)

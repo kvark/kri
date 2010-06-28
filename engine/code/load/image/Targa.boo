@@ -4,7 +4,7 @@ import System.IO
 import OpenTK.Graphics.OpenGL
 
 
-public class Targa:
+public class Targa( kri.res.ILoaderGen[of Basic] ):
 	private struct Header:
 		public magic	as (byte)
 		public xrig		as ushort
@@ -18,9 +18,9 @@ public class Targa:
 			return false	if xrig + yrig or bits != 24 + descr
 			return true
 
-	public static def Get(str as string) as Basic:
-		kri.res.check(str)
-		br = BinaryReader( File.OpenRead(str) )	
+	public def read(path as string) as Basic:
+		kri.res.Manager.Check(path)
+		br = BinaryReader( File.OpenRead(path) )	
 		hd = Header(
 			magic	: br.ReadBytes(8),
 			xrig	: br.ReadUInt16(),
@@ -33,4 +33,4 @@ public class Targa:
 		
 		data = br.ReadBytes( hd.wid * hd.het * (hd.bits>>3) )
 		fmt = (PixelFormat.Bgr, PixelFormat.Bgra)[ hd.descr>>3 ]
-		return Basic( str, hd.wid, hd.het, data, fmt )
+		return Basic( path, hd.wid, hd.het, data, fmt )

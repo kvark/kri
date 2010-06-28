@@ -7,9 +7,9 @@ import kri.shade
 public class Context:
 	public final tex = kri.Texture( TextureTarget.Texture2DArray )
 	public final gbuf = par.Value[of kri.Texture]('gbuf')
-	public final sh_diff	= Object('/mod/lambert_f')
-	public final sh_spec	= Object('/mod/phong_f')
-	public final sh_apply	= Object('/g/apply_f')
+	public final sh_diff	= Object.Load('/mod/lambert_f')
+	public final sh_spec	= Object.Load('/mod/phong_f')
+	public final sh_apply	= Object.Load('/g/apply_f')
 	
 	public def constructor():
 		gbuf.Value = tex
