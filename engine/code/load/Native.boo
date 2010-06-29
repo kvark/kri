@@ -56,8 +56,12 @@ public partial class Native:
 		initAnimations()
 		initMaterials()
 		# Init resource manager
-		resMan.register( image.Targa() )
-		resMan.register( sound.Wave() )
+		swImage = kri.res.Switch[of kri.Texture]()
+		swImage.ext['.tga'] = image.Targa()
+		resMan.register( swImage )
+		swSound = kri.res.Switch[of kri.sound.Buffer]()
+		swSound.ext['.wav'] = sound.Wave()
+		resMan.register( swSound )
 		# Fill chunk dictionary
 		dict['kri']		= p_sign
 		dict['grav']	= p_grav

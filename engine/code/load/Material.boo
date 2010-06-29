@@ -147,21 +147,23 @@ public partial class Native:
 		m.metaList.Add( Advanced( Name:'comp_spec', Shader:sh ))
 		return true
 
-	
-	protected def getTexture(str as string) as kri.Texture:
-		#TODO: support for other formats
-		return null	if not str.EndsWith('.tga')
-		return resMan.load[of image.Basic](str).generate()
-	
 	#---	Parse texture slot	---#
 	public def pm_tex() as bool:
 		u = geData[of AdUnit]()
 		return false	if not u
-		image.Basic.bRepeat	= br.ReadByte()>0	# extend by repeat
-		image.Basic.bMipMap	= br.ReadByte()>0	# generate mip-maps
-		image.Basic.bFilter	= br.ReadByte()>0	# linear filtering
+		bRepeat	= br.ReadByte()>0	# extend by repeat
+		bMipMap	= br.ReadByte()>0	# generate mip-maps
+		bFilter	= br.ReadByte()>0	# linear filtering
 		# texcoords & image path
 		u.pOffset.Value	= Vector4(getVector(), 0.0)
 		u.pScale.Value	= Vector4(getVector(), 1.0)
-		u.Value = getTexture( 'res' + getString() )
-		return u.Value != null
+		path = 'res' + getString()
+		u.Value = resMan.load[of kri.Texture](path)
+		return false	if not u.Value
+		# init sampler parameters, todo: use sampler object
+		u.Value.bind()
+		kri.Texture.Filter(bFilter,bMipMap)
+		wm = (TextureWrapMode.ClampToBorder,TextureWrapMode.Repeat)[bRepeat]
+		kri.Texture.Wrap(wm,2)
+		kri.Texture.GenLevels()	if bMipMap
+		return true

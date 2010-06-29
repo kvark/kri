@@ -2,7 +2,9 @@
 
 import OpenTK.Audio.OpenAL
 
-public class Basic:
+#------		BASIC WAVE 		------#
+
+public class Basic( kri.res.IGenerator[of kri.sound.Buffer] ):
 	public final channels	as int
 	public final bits		as int
 	public final rate		as int
@@ -18,7 +20,7 @@ public class Basic:
 		return ((ALFormat.Mono8,ALFormat.Mono16),
 			(ALFormat.Stereo8,ALFormat.Stereo16))[channels>1][bits>8]
 
-	public def generate() as kri.sound.Buffer:
+	public def generate() as kri.sound.Buffer:	#imp: IGenerator
 		buf = kri.sound.Buffer()
 		buf.init( getFormat(), scan,rate )
 		return buf

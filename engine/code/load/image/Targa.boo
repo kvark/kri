@@ -1,10 +1,8 @@
 ﻿namespace kri.load.image
 
 import System.IO
-import OpenTK.Graphics.OpenGL
 
-
-public class Targa( kri.res.ILoaderGen[of Basic] ):
+public class Targa( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.Texture]] ):
 	private struct Header:
 		public magic	as (byte)
 		public xrig		as ushort
@@ -18,8 +16,7 @@ public class Targa( kri.res.ILoaderGen[of Basic] ):
 			return false	if xrig + yrig or bits != 24 + descr
 			return true
 
-	public def read(path as string) as Basic:
-		kri.res.Manager.Check(path)
+	public def read(path as string) as kri.res.IGenerator[of kri.Texture]:	#imp: ILoaderGen
 		br = BinaryReader( File.OpenRead(path) )	
 		hd = Header(
 			magic	: br.ReadBytes(8),
@@ -30,7 +27,6 @@ public class Targa( kri.res.ILoaderGen[of Basic] ):
 			bits	: br.ReadByte(),
 			descr	: br.ReadByte() )
 		assert hd.check()
-		
-		data = br.ReadBytes( hd.wid * hd.het * (hd.bits>>3) )
-		fmt = (PixelFormat.Bgr, PixelFormat.Bgra)[ hd.descr>>3 ]
-		return Basic( path, hd.wid, hd.het, data, fmt )
+		d = hd.bits>>3
+		data = br.ReadBytes( hd.wid * hd.het * d )
+		return Basic( path, hd.wid, hd.het, data, d )

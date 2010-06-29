@@ -11,6 +11,10 @@ public interface ILoaderGen[of T](ILoader):
 	def read(path as string) as T
 
 
+#-------------------------------------------------------#
+#			RESOURCE MANAGER (itself)					#
+#-------------------------------------------------------#
+
 public class Manager:
 	private final loadMap	= Dictionary[of System.Type, ILoader]()
 	private final cache		= Dictionary[of string, object]()
@@ -36,6 +40,9 @@ public class Manager:
 			cache[path] = tob = loadgen.read(path)
 			return tob
 		return null as T
+	
+	public def loadTo[of T](path as string, ref val as T) as void:
+		val = load[of T](path)
 	
 	public def release(path as string) as object:
 		ob as object = null
