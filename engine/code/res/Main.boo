@@ -36,3 +36,12 @@ public class Manager:
 			cache[path] = tob = loadgen.read(path)
 			return tob
 		return null as T
+	
+	public def release(path as string) as object:
+		ob as object = null
+		cache.TryGetValue(path,ob)
+		cache.Remove(path)
+		return ob
+	
+	public def clear() as void:
+		cache.Clear()

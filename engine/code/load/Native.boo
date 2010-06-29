@@ -25,6 +25,13 @@ public struct ColorRaw:
 	public blue		as byte
 
 
+#------		NATIVE WRAPPER		------#
+
+public class Basic( Native, kri.res.ILoaderGen[of Atom] ):
+	public def read(path as string) as Atom:	#imp: ILoaderGen
+		return super.read(path)
+
+
 #------		CHUNK LOADER		------#
 
 public partial class Native:
