@@ -15,11 +15,12 @@ public class Action(IBase):
 
 
 public class Delta(IBase):
-	private last	= kri.Ant.Inst.Time
+	private last	= 0.0
 	private abstract def onDelta(delta as double) as uint:
 		pass
 	def IBase.onFrame(time as double) as uint:
-		last += (d = time - last)
+		d = time - last
+		last += d
 		return onDelta(d)
 
 

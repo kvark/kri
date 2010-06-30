@@ -34,6 +34,11 @@ public class Ant( OpenTK.GameWindow ):
 	public anim	as ani.IBase	= null		# Animation
 	public Time as double:
 		get: return sw.Elapsed.TotalSeconds
+	public PointerNdc as Vector3:
+		get: return Vector3.Multiply( Vector3(
+			0f + Mouse.X / params.parSize.Value.X,
+			1f - Mouse.Y / params.parSize.Value.Y,
+			0f ), 2f) - Vector3.One
 	# Slots
 	public final slotTechniques	= lib.Slot( lib.Const.nTech	)
 	public final slotAttributes	= lib.Slot( lib.Const.nAttrib)
