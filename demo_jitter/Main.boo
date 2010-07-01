@@ -10,7 +10,8 @@ public class Anim( kri.ani.Delta ):
 	public final view	as kri.View
 	public final lcon	as kri.load.Context
 	private final mouse = kri.Ant.Inst.Mouse
-	private final shape = Collision.Shapes.SphereShape(1f)
+	#private final shape = Collision.Shapes.SphereShape(1f)
+	private final shape = Collision.Shapes.BoxShape(2f,2f,2f)
 	private num	= 0
 	
 	public def sync(body as Dynamics.RigidBody, node as kri.Node) as void:
@@ -30,7 +31,8 @@ public class Anim( kri.ani.Delta ):
 	
 	public def genBall() as void:
 		# object
-		mesh = kri.kit.gen.Sphere( 2, Vector3.One )
+		#mesh = kri.kit.gen.Sphere( 2, Vector3.One )
+		mesh = kri.kit.gen.Cube( Vector3.One )
 		ent = kri.kit.gen.Entity( mesh, lcon )
 		view.scene.entities.Add(ent)
 		ent.node = kri.Node( 'gen-' + ++num )
@@ -113,10 +115,10 @@ def Main(argv as (string)):
 		ent = kri.kit.gen.Entity( mesh, loadCon )
 		view.scene.entities.Add(ent)
 		ent.node = kri.Node('plane')
-		ent.node.local.rot = Quaternion.FromAxisAngle( Vector3.UnitX, -0.4*Math.PI )
-		ent.node.local.pos = Vector3(0f, -5f, -20f)
+		ent.node.local.rot = Quaternion.FromAxisAngle( Vector3.UnitX, -1.2f )
+		ent.node.local.pos = Vector3(0f, -2f, -20f)
 		# body
-		r2 = 2f*radius -1f
+		r2 = 2f*radius - 1f
 		shape = Collision.Shapes.BoxShape( LinearMath.JVector(r2,r2,1f) )
 		body = Dynamics.RigidBody(shape)
 		body.IsStatic = true
