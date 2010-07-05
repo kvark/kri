@@ -35,7 +35,7 @@ public class Fill( kri.rend.tech.Meta ):
 		buf.A[0].Tex.bind()
 		fm = kri.Texture.AskFormat( kri.Texture.Class.Color, 8 )
 		fm = PixelInternalFormat.Rgb10A2
-		kri.Texture.InitArray(fm, far.Width, far.Height, 3)
+		kri.Texture.Init( fm, far.Width, far.Height, 3 )
 		kri.Texture.Filter(false,false)
 		return true
 	# work	

@@ -4,7 +4,6 @@
 public class Basic( kri.rend.Basic ):
 	public	final tid	as int		# technique ID
 	protected def constructor(name as string):
-		super(false)
 		tid = kri.Ant.Inst.slotTechniques.create(name)
 	def destructor():
 		kri.Ant.Inst.slotTechniques.delete(tid)

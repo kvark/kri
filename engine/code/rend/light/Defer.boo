@@ -51,7 +51,7 @@ public class Bake( kri.rend.Basic ):
 		het = far.Height
 		buf.init(wid,het)
 		buf.A[0].Tex.bind()
-		kri.Texture.InitArray( pif, wid, het, 3 )
+		kri.Texture.Init( pif, wid,het,3 )
 		return true
 		
 	public override def process(con as kri.rend.Context) as void:

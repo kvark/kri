@@ -10,6 +10,8 @@ public class Basic:
 	public final	bInput	as bool
 	public def constructor(inp as bool):
 		bInput = inp
+	public def constructor():
+		bInput = false
 	public virtual def setup(far as kri.frame.Array) as bool:
 		return true
 	public virtual def process(con as Context) as void:
@@ -26,7 +28,6 @@ public class Chain(Basic):
 		super(inp)
 		toScreen = out
 	public def constructor():
-		super(false)
 		toScreen = true
 	
 	public override def setup(far as kri.frame.Array) as bool:

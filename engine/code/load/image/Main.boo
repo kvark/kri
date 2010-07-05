@@ -31,7 +31,7 @@ public class Basic( kri.res.IGenerator[of kri.Texture] ):
 		tex = kri.Texture( TextureTarget.Texture2D )
 		tex.Name = name
 		tex.bind()
-		GL.TexImage2D( tex.type,0, PixelInternalFormat.Rgba8, width,height,0,\
+		GL.TexImage2D( tex.target,0, PixelInternalFormat.Rgba8, width,height,0,
 			getFormat(), PixelType.UnsignedByte, scan )
 		#kri.Texture.Init(width,height, pif, scan)
 		return tex

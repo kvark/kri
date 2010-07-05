@@ -20,7 +20,7 @@ public class Tag( kri.ITag ):
 			return null	if not bits
 			(t = kri.Texture( TextureTarget.Texture2D )).bind()
 			fm = kri.Texture.AskFormat( kri.Texture.Class.Color, bits )
-			kri.Texture.Init(w,h,fm)
+			kri.Texture.Init( fm,w,h,0 )
 			kri.Texture.Filter(filt,false)
 			return t
 		tVert,tQuat = genTex(bv),genTex(bq)

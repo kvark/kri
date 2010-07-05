@@ -46,23 +46,23 @@ public class Texture( shade.par.INamed ):
 		Index
 		Index2
 		Other
-	private static curType	as TextureTarget = TextureTarget.Texture1D
+	private static curTarget	as TextureTarget = TextureTarget.Texture1D
 	private static final zeroPtr	= System.IntPtr.Zero
-	public final type		as TextureTarget
+	public final target	as TextureTarget
 	public final id		as int
 	[Property(Name)]
-	private name	as string	= ''
+	private name		as string	= ''
 
-	public def constructor(tip as TextureTarget):
+	public def constructor(targ as TextureTarget):
 		id = GL.GenTexture()
-		type = tip
+		target = targ
 	def destructor():
 		Help.safeKill({ GL.DeleteTexture(id) })
 
 	public static def Slot(tun as int) as void:
-		GL.ActiveTexture(TextureUnit.Texture0 + tun)
+		GL.ActiveTexture( TextureUnit.Texture0 + tun )
 	public def bind() as void:
-		GL.BindTexture(curType=type,id)
+		GL.BindTexture( curTarget=target, id )
 	public def bind(tun as int) as void:
 		Slot(tun)
 		bind()
@@ -70,7 +70,7 @@ public class Texture( shade.par.INamed ):
 	# set filtering mode: point/linear
 	public static def Filter(mode as bool, mips as bool) as void:
 		vMin as TextureMinFilter
-		vMag = (TextureMagFilter.Linear if mode else TextureMagFilter.Nearest)
+		vMag = ( TextureMagFilter.Linear if mode else TextureMagFilter.Nearest )
 		if mips:
 			if mode	: vMin = TextureMinFilter.LinearMipmapLinear
 			else	: vMin = TextureMinFilter.NearestMipmapNearest
@@ -78,8 +78,8 @@ public class Texture( shade.par.INamed ):
 			if mode	: vMin = TextureMinFilter.Linear
 			else	: vMin = TextureMinFilter.Nearest
 		val = (of int: cast(int,vMin), cast(int,vMag))
-		GL.TexParameter(curType, TextureParameterName.TextureMinFilter, val[0])
-		GL.TexParameter(curType, TextureParameterName.TextureMagFilter, val[1])
+		GL.TexParameter( curTarget, TextureParameterName.TextureMinFilter, val[0] )
+		GL.TexParameter( curTarget, TextureParameterName.TextureMagFilter, val[1] )
 	
 	# set wrapping mode: clamp/repeat
 	public static def Wrap(mode as TextureWrapMode, dim as int) as void:
@@ -87,7 +87,7 @@ public class Texture( shade.par.INamed ):
 		wraps = (TextureParameterName.TextureWrapS, TextureParameterName.TextureWrapT, TextureParameterName.TextureWrapR)
 		assert dim>=0 and dim<wraps.Length
 		for wp in wraps[0:dim]:
-			GL.TexParameterI(curType, wp, val)
+			GL.TexParameterI(curTarget, wp, val)
 
 	# set shadow mode: on/off
 	public static def Shadow(en as bool) as void:
@@ -95,13 +95,14 @@ public class Texture( shade.par.INamed ):
 		if en:
 			param = cast(int, TextureCompareMode.CompareRefToTexture)
 			func = cast(int, DepthFunction.Lequal)
-			GL.TexParameterI(curType, TextureParameterName.TextureCompareFunc, func)
-		GL.TexParameterI(curType, TextureParameterName.TextureCompareMode, param)
+			GL.TexParameterI( curTarget, TextureParameterName.TextureCompareFunc, func )
+		if true:
+			GL.TexParameterI( curTarget, TextureParameterName.TextureCompareMode, param )
 		
 	# generate mipmaps
 	public static def GenLevels() as void:
-		assert curType != TextureTarget.TextureRectangle
-		ti = cast(GenerateMipmapTarget, cast(int,curType))
+		assert curTarget != TextureTarget.TextureRectangle
+		ti = cast(GenerateMipmapTarget, cast(int,curTarget))
 		GL.GenerateMipmap(ti)
 	
 	# auxilary methods for init
@@ -119,22 +120,30 @@ public class Texture( shade.par.INamed ):
 		return PixelType.Float
 	public static def AskFormat(cl as Class, bits as uint) as PixelInternalFormat:
 		return (Fm.color, Fm.depth, (Fm.stencil,), Fm.index, Fm.index2, (Fm.bad,)) [cast(int,cl)] [bits>>3]
+	private static def curTargetMulti() as TextureTargetMultisample:
+		return cast( TextureTargetMultisample, cast(int,curTarget) )
 
-	# init Texture2D format
-	public static def Init(sx as int, sy as int, fi as PixelInternalFormat) as void:
-		GL.TexImage2D(curType, 0, fi, sx, sy, 0, Fi2format(fi), Fi2type(fi), zeroPtr)
+	# init Texture2D/3D/Array format
+	public static def Init(fi as PixelInternalFormat, sx as int, sy as int, sz as int) as void:
+		fmt = Fi2format(fi)
+		type = Fi2type(fi)
+		if sz>0:	GL.TexImage3D(curTarget, 0, fi, sx, sy, sz,	0, fmt, type, zeroPtr)
+		else:		GL.TexImage2D(curTarget, 0, fi, sx, sy,		0, fmt, type, zeroPtr)
 	# init VBO link
 	public static def Init(sif as SizedInternalFormat, buf as kri.vb.Object) as void:
 		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.Extract )
 		
-	# init TextureArray format
-	public static def InitArray(fi as PixelInternalFormat, sx as int, sy as int, sz as int) as void:
-		GL.TexImage3D(curType, 0, fi, sx, sy, sz, 0, Fi2format(fi), Fi2type(fi), zeroPtr)
-	public static def InitArrayDepth(sx as int, sy as int, sz as int) as void:
-		InitArray( AskFormat(Class.Depth,0), sx,sy,sz )
+	# init depth array format
+	public static def InitDepthArray(sx as int, sy as int, sz as int) as void:
+		Init( Fm.depth[0], sx,sy,sz )
 		Shadow(true)
 	
-	# init TextureCubeMap format
+	# init multi-sampled texture
+	public static def InitMulti(fi as PixelInternalFormat, samples as byte, sx as int, sy as int, sz as int, fixedLoc as bool) as void:
+		if sz>0:	GL.TexImage3DMultisample( curTargetMulti(), samples, fi, sx, sy, sz,	fixedLoc )
+		else:		GL.TexImage2DMultisample( curTargetMulti(), samples, fi, sx, sy, 		fixedLoc )
+	
+	# init cube map format
 	public static def InitCube(fi as PixelInternalFormat, siz as int) as void:
 		format,pixtype = Fi2format(fi),Fi2type(fi)
 		for t in (
@@ -142,4 +151,3 @@ public class Texture( shade.par.INamed ):
 			TextureTarget.TextureCubeMapNegativeY,	TextureTarget.TextureCubeMapPositiveY,
 			TextureTarget.TextureCubeMapNegativeZ,	TextureTarget.TextureCubeMapPositiveZ):
 			GL.TexImage2D(t, 0, fi, siz, siz, 0, format, pixtype, zeroPtr)
-	

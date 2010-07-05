@@ -7,8 +7,6 @@ import OpenTK.Graphics
 
 public class Clear( Basic ):
 	public backColor	= Color4.Black
-	public def constructor():
-		super(false)
 	public override def process(con as Context) as void:
 		con.activate()
 		con.ClearColor( backColor )
@@ -85,7 +83,6 @@ public class Gauss(Basic):
 	public	buf		as kri.frame.Buffer	= null
 
 	public def constructor():
-		super(false)
 		dict = kri.shade.rep.Dict()
 		dict.unit(texIn)
 		sa.add('/copy_v','/filter/gauss_hor_f')

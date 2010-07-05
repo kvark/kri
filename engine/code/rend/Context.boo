@@ -61,7 +61,7 @@ public class Context:
 		swapUnit(-1,tDepth)	if Depth
 		buf.init(w,h)
 		buf.resizeFrames()
-		Input.Init(w,h, buf.A[0].Format)	if Input
+		Input.Init( buf.A[0].Format, w,h,0 )	if Input
 		return buf
 	
 	private def swapUnit(slot as int, ref tex as kri.Texture):

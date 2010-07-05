@@ -9,7 +9,6 @@ public class Map( kri.rend.Basic ):
 	public final layer	= par.Value[of single]('layer')
 	
 	public def constructor(depth as bool, id as int, t as par.IBase[of kri.Texture]):
-		super(false)
 		sa.add( '/copy_v' )
 		if depth:
 			sa.add('/show_depth_f')
@@ -43,7 +42,6 @@ public class MapCube( kri.rend.Basic ):
 	private final lit	as kri.Light
 	private final sa = kri.shade.Smart()
 	public def constructor( l as kri.Light ):
-		super(false)
 		sa.add( '/copy_v', '/copy_cube_f' )
 		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
 		lit = l
@@ -70,7 +68,6 @@ public class Attrib( kri.rend.Basic ):
 	private final sa	= kri.shade.Smart()
 	private final va	= kri.vb.Array()
 	public def constructor():
-		super(false)
 		sa.add( '/attrib_v', '/attrib_f' )
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )

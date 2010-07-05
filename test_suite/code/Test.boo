@@ -52,7 +52,7 @@ private class Offset( kri.rend.Basic ):
 		fbo.init(3,3)
 		t = kri.Texture( TextureTarget.Texture2DArray )
 		t.bind()
-		kri.Texture.InitArrayDepth(3,3,1)
+		kri.Texture.InitDepthArray(3,3,1)
 		fbo.A[-1].layer(t,0)
 		fbo.mask = 0
 		
@@ -74,8 +74,8 @@ private class Offset( kri.rend.Basic ):
 		t.bind()
 		kri.Texture.Shadow(false)
 		kri.Texture.GenLevels()
-		GL.GetTexImage(t.type, 1, PixelFormat.DepthComponent, PixelType.Float, tm1)
-		GL.GetTexImage(t.type, 0, PixelFormat.DepthComponent, PixelType.Float, tmp)
+		GL.GetTexImage(t.target, 1, PixelFormat.DepthComponent, PixelType.Float, tm1)
+		GL.GetTexImage(t.target, 0, PixelFormat.DepthComponent, PixelType.Float, tmp)
 		print tmp[0]
 
 

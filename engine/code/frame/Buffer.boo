@@ -39,7 +39,7 @@ public class Buffer(Screen):
 		for a in at:
 			continue	if not a.Tex
 			a.Tex.bind()
-			kri.Texture.Init( Width, Height, a.Format )
+			kri.Texture.Init( a.Format, Width, Height, 0 )
 			a.dFormat.clean()
 	
 	public def activate(m as uint) as void:
@@ -65,16 +65,16 @@ public class Buffer(Screen):
 			if t and a.dFormat.Dirty:	#change attachment texture format
 				a.dFormat.clean()
 				t.bind()
-				kri.Texture.Init(Width, Height, a.Format)
+				kri.Texture.Init( a.Format, Width, Height, 0 )
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				a.dLayer.clean()
 				GL.FramebufferTextureLayer( FramebufferTarget.Framebuffer,
 					a.slot, t.id, 0, a.Layer )
 			elif a.dirty:		#update texture attachment
-				if t and t.type in ( TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray ):
+				if t and t.target in ( TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray ):
 					GL.FramebufferTexture( FramebufferTarget.Framebuffer, a.slot, t.id, 0)
 				elif t:
-					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.slot, t.type, t.id, 0)
+					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.slot, t.target, t.id, 0)
 				else:
 					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.slot,
 						TextureTarget.Texture2D, 0, 0)
