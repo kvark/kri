@@ -114,7 +114,10 @@ public class Context:
 
 	public def activate() as void:
 		activate(true, Single.NaN, true)
-
+	
+	public def activeRead() as void:
+		assert target == buf
+		buf.bindRead()
 
 	public def apply(r as Basic) as void:
 		# target always contains result

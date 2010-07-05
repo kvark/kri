@@ -34,13 +34,15 @@ public class Screen(Array):
 		id = 0
 	protected def constructor(newid as int):
 		id = newid
+	
 	public def offset(x as int, y as int) as void:
 		dirtyPort = true
 		ofx,ofy = x,y
+	public def bindRead() as void:
+		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, id )
+	
 	public virtual def activate() as void:
-		GL.BindFramebuffer(FramebufferTarget.Framebuffer, id)
+		GL.BindFramebuffer( FramebufferTarget.Framebuffer, id )
 		#return if not dirtyPort
 		GL.Viewport(ofx,ofy, ofx+Width,ofy+Height)
 		dirtyPort = false
-
-

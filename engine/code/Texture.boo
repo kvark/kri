@@ -96,7 +96,7 @@ public class Texture( shade.par.INamed ):
 			param = cast(int, TextureCompareMode.CompareRefToTexture)
 			func = cast(int, DepthFunction.Lequal)
 			GL.TexParameterI( curTarget, TextureParameterName.TextureCompareFunc, func )
-		if true:
+		if 'always':
 			GL.TexParameterI( curTarget, TextureParameterName.TextureCompareMode, param )
 		
 	# generate mipmaps
@@ -139,7 +139,7 @@ public class Texture( shade.par.INamed ):
 		Shadow(true)
 	
 	# init multi-sampled texture
-	public static def InitMulti(fi as PixelInternalFormat, samples as byte, sx as int, sy as int, sz as int, fixedLoc as bool) as void:
+	public static def InitMulti(fi as PixelInternalFormat, samples as byte, fixedLoc as bool, sx as int, sy as int, sz as int) as void:
 		if sz>0:	GL.TexImage3DMultisample( curTargetMulti(), samples, fi, sx, sy, sz,	fixedLoc )
 		else:		GL.TexImage2DMultisample( curTargetMulti(), samples, fi, sx, sy, 		fixedLoc )
 	

@@ -80,6 +80,7 @@
     <Compile Include="code\rend\defer\Main.boo" />
     <Compile Include="code\rend\light\Context.boo" />
     <Compile Include="code\rend\light\Defer.boo" />
+    <Compile Include="code\rend\light\Kbuf.boo" />
     <Compile Include="code\rend\light\Omni.boo" />
     <Compile Include="code\rend\light\Simple.boo" />
     <Compile Include="code\rend\Main.boo" />
