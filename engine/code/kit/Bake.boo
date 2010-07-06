@@ -30,7 +30,7 @@ public class Tag( kri.ITag ):
 
 public class Update( kri.rend.tech.Basic ):
 	private final sa	= kri.shade.Smart()
-	private final buf	= kri.frame.Buffer()
+	private final buf	= kri.frame.Buffer(0)
 	
 	public def constructor():
 		super('bake.mesh')

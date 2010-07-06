@@ -7,7 +7,7 @@ public class Context:
 	
 
 public class Render(kri.rend.Basic):
-	private final buf	= kri.frame.Buffer()
+	private final buf	= kri.frame.Buffer(0)
 	private final sa_bright	= kri.shade.Smart()
 	private final sa_scale	= kri.shade.Smart()
 	private final sa_tone	= kri.shade.Smart()
@@ -28,7 +28,7 @@ public class Render(kri.rend.Basic):
 	
 	public virtual def setup(far as kri.frame.Array) as bool:
 		buf.init(far.Width>>reduct, far.Height>>reduct)
-		buf.resizeFrames()
+		buf.resizeFrames(0)
 		return true
 	
 	public virtual def process(con as kri.rend.Context) as void:

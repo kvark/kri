@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	RENDER PHYSICS		--------#
 
 public class Core:
-	private final fbo	= kri.frame.Buffer()
+	private final fbo	= kri.frame.Buffer(0)
 	private final cam	= kri.Camera()
 	private final sa	= kri.shade.Smart()
 	private final sb	= kri.shade.Smart()

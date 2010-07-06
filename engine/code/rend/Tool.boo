@@ -12,6 +12,15 @@ public class Clear( Basic ):
 		con.ClearColor( backColor )
 
 
+#---------	COPY	--------#
+
+public class Copy( Basic ):
+	public def constructor():
+		super(true)
+	public override def process(con as Context) as void:
+		con.activate()
+		
+
 #---------	EARLY Z FILL	--------#
 
 public class EarlyZ( tech.General ):

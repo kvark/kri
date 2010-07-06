@@ -8,7 +8,7 @@ public class Tag( kri.ITag ):
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.frame.Buffer()
+	private final buf	= kri.frame.Buffer(0)
 	private final va	= kri.vb.Array()
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint
@@ -67,6 +67,7 @@ public class Render( kri.rend.Basic ):
 			kri.Ant.Inst.emitQuad()
 			return
 		# react, todo: use PBO and actually read on demand
+		buf.activate(false)
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
 		index = (of ushort: ushort.MaxValue )
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )

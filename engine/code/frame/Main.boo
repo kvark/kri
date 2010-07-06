@@ -38,12 +38,11 @@ public class Screen(Array):
 	public def offset(x as int, y as int) as void:
 		dirtyPort = true
 		ofx,ofy = x,y
-	public def bindRead() as void:
-		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, id )
 	
-	public virtual def activate() as void:
-		# we may bind to only a Draw buffer in future
-		GL.BindFramebuffer( FramebufferTarget.Framebuffer, id )
-		#return if not dirtyPort
-		GL.Viewport(ofx,ofy, ofx+Width,ofy+Height)
-		dirtyPort = false
+	public virtual def activate(draw as bool) as FramebufferTarget:
+		target = (FramebufferTarget.ReadFramebuffer, FramebufferTarget.DrawFramebuffer)[draw]
+		GL.BindFramebuffer( target, id )
+		if draw: #and dirtyPort
+			GL.Viewport(ofx,ofy, ofx+Width,ofy+Height)
+			dirtyPort = false
+		return target

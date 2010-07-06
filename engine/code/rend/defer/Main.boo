@@ -18,7 +18,7 @@ public class Context:
 #---------	RENDER TO G-BUFFER	--------#
 
 public class Fill( kri.rend.tech.Meta ):
-	public final buf		= kri.frame.Buffer()
+	public final buf		= kri.frame.Buffer(0)
 	public GBuf as kri.Texture:	# deprecated
 		get: return buf.A[0].Tex
 	# init

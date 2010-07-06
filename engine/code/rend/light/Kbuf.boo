@@ -8,7 +8,7 @@ import kri.shade
 
 public class Init( kri.rend.Basic ):
 	public final layers	as byte
-	public final buf	= kri.frame.Buffer()
+	public final buf	= kri.frame.Buffer(0)
 	private final sa	= kri.shade.Smart()
 
 	public def constructor(nlay as byte):
@@ -39,8 +39,8 @@ public class Init( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(false,0f,true)
-		buf.activate(0)		# bind as read & draw
-		con.activeRead()	# bind as read (replace)
+		buf.activate(0)		# bind as draw
+		con.activeRead()	# bind as read
 		# depth copy
 		GL.BlitFramebuffer(
 			0,0, buf.Width, buf.Height,

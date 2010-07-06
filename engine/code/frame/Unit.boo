@@ -19,7 +19,6 @@ public struct DirtyHolder[of T]:
 public class Unit:
 	public static final	DefaultTarget	= TextureTarget.TextureRectangle
 	private tex		as kri.Texture		= null			# texture
-	public samples	as byte				= 0				# samples number
 	internal dLayer		= DirtyHolder[of int]()					# layer id
 	internal dFormat	= DirtyHolder[of PixelInternalFormat]()	# pixel format
 	internal dirty		as bool = false							# tex changed

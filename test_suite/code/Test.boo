@@ -33,7 +33,7 @@ private class Link( kri.rend.Basic ):
 
 private class Offset( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
-	final fbo	= kri.frame.Buffer()
+	final fbo	= kri.frame.Buffer(0)
 	final vbo	= kri.vb.Attrib()
 
 	public def constructor():
@@ -80,7 +80,7 @@ private class Offset( kri.rend.Basic ):
 
 
 private class Read( kri.rend.Basic ):
-	public final buf	= kri.frame.Buffer()
+	public final buf	= kri.frame.Buffer(0)
 	public def constructor():
 		super(false)
 		buf.init(2,2)

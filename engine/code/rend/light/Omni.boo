@@ -8,7 +8,7 @@ import kri
 #---------	LIGHT OMNI FILL	--------#
 
 public class Fill( rend.tech.General ):
-	protected final buf		= frame.Buffer()
+	protected final buf		= frame.Buffer(0)
 	protected final sa		= shade.Smart()
 	protected final context	as rend.light.Context
 	protected final pDist	= shade.par.Value[of Vector4]('uni_dist')

@@ -18,13 +18,13 @@ internal enum DirtyLevel:
 
 # Context passed to renders
 public class Context:
-	public final bitColor	as uint					# color storage
-	public final bitDepth	as uint					# depth storage
-	private final buf	= kri.frame.Buffer()		# intermediate FBO
+	public final bitColor	as byte					# color storage
+	public final bitDepth	as byte					# depth storage
+	private final buf	as kri.frame.Buffer			# intermediate FBO
 	private final last	as kri.frame.Screen			# final result
 	private target		as kri.frame.Screen = null	# current result
 	private dirty		as DirtyLevel				# dirty level
-	private final iDep	as int
+	private final iDep	as int						# depth attachment id
 
 	[getter(Input)]
 	private tInput	as kri.Texture	= null
@@ -53,16 +53,21 @@ public class Context:
 		ClearColor( OpenTK.Graphics.Color4.Black )
 	
 
-	public def constructor(fs as kri.frame.Screen, bc as uint, bd as uint):
+	public def constructor(fs as kri.frame.Screen, ns as byte, bc as byte, bd as byte):
+		buf = kri.frame.Buffer(ns)
 		last,bitColor,bitDepth = fs,bc,bd
 		iDep = (-1,-2)[bitDepth == 8]
 		b = bc | bd
 		assert not (b&0x7) and b<=48
+	
+	public def activeRead() as void:
+		buf.activate(false)
+
 	public def resize(w as int, h as int) as kri.frame.Screen:
 		swapUnit(0,   tInput)	if Input
 		swapUnit(iDep,tDepth)	if Depth
 		buf.init(w,h)
-		buf.resizeFrames()
+		buf.resizeFrames(0)
 		Input.Init( buf.A[0].Format, w,h,0 )	if Input
 		return buf
 	
@@ -110,17 +115,13 @@ public class Context:
 			buf.mask = (0,1)[toColor]
 			needDepth( not Single.IsNaN(offset) )
 			needColor(toColor)
-		target.activate()
+		target.activate(true)
 		SetDepth(offset,toDepth)
 		dirty = (DirtyLevel.Depth, DirtyLevel.Target)[toColor]
 
 	public def activate() as void:
 		activate(true, Single.NaN, true)
 	
-	public def activeRead() as void:
-		assert target == buf
-		buf.bindRead()
-
 	public def apply(r as Basic) as void:
 		# target always contains result
 		if r.bInput: swapUnit(0,tInput)
