@@ -17,7 +17,7 @@ public class Clear( Basic ):
 public class EarlyZ( tech.General ):
 	public final sa	= kri.shade.Smart()
 	public def constructor():
-		super('/zcull_v')
+		super('zcull')
 		# make shader
 		sa.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )

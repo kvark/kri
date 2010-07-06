@@ -3,24 +3,25 @@
 import OpenTK.Graphics.OpenGL
 
 #--------- Simple dirty value holder	---------#
-internal struct DirtyHolder[of T]:
+public struct DirtyHolder[of T]:
 	[getter(Dirty)]
 	private dirty	as bool
 	private val		as T
-	internal Value	as T:
+	public Value	as T:
 		set: dirty,val = true,value
-		get: return val
-	internal def clean():
-		dirty = false
+		get: clean(); return val
+	public def clean() as void:
+		dirty = false;
 
 
 #---------	Single frame representor inside the FBO	---------#
 
 public class Unit:
 	public static final	DefaultTarget	= TextureTarget.TextureRectangle
-	internal tex		as kri.Texture = null					# texture
-	internal dLayer		as DirtyHolder[of int]					# layer id
-	internal dFormat	as DirtyHolder[of PixelInternalFormat]	# pixel format
+	private tex		as kri.Texture		= null			# texture
+	public samples	as byte				= 0				# samples number
+	internal dLayer		= DirtyHolder[of int]()					# layer id
+	internal dFormat	= DirtyHolder[of PixelInternalFormat]()	# pixel format
 	internal dirty		as bool = false							# tex changed
 	public final slot	as FramebufferAttachment				# fbo slot
 	
@@ -40,12 +41,12 @@ public class Unit:
 		dFormat.Value = pif
 		return tex
 	# format defined by class & bits
-	public def new(cl as kri.Texture.Class, bits as uint, targ as TextureTarget) as kri.Texture:
+	public def new(cl as kri.Texture.Class, bits as byte, targ as TextureTarget) as kri.Texture:
 		if cl == kri.Texture.Class.Stencil:	assert slot == FramebufferAttachment.DepthStencilAttachment
 		if cl == kri.Texture.Class.Depth:	assert slot == FramebufferAttachment.DepthAttachment
 		return new( kri.Texture.AskFormat(cl,bits), targ )
 	# class defined by slot
-	public def new(bits as uint, targ as TextureTarget) as kri.Texture:
+	public def new(bits as byte, targ as TextureTarget) as kri.Texture:
 		cl = kri.Texture.Class.Color
 		if slot == FramebufferAttachment.DepthStencilAttachment:
 			cl = kri.Texture.Class.Stencil

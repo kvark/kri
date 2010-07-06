@@ -24,6 +24,7 @@ public class Context:
 	private final last	as kri.frame.Screen			# final result
 	private target		as kri.frame.Screen = null	# current result
 	private dirty		as DirtyLevel				# dirty level
+	private final iDep	as int
 
 	[getter(Input)]
 	private tInput	as kri.Texture	= null
@@ -54,11 +55,12 @@ public class Context:
 
 	public def constructor(fs as kri.frame.Screen, bc as uint, bd as uint):
 		last,bitColor,bitDepth = fs,bc,bd
+		iDep = (-1,-2)[bitDepth == 8]
 		b = bc | bd
 		assert not (b&0x7) and b<=48
 	public def resize(w as int, h as int) as kri.frame.Screen:
-		swapUnit(-0,tInput)	if Input
-		swapUnit(-1,tDepth)	if Depth
+		swapUnit(0,   tInput)	if Input
+		swapUnit(iDep,tDepth)	if Depth
 		buf.init(w,h)
 		buf.resizeFrames()
 		Input.Init( buf.A[0].Format, w,h,0 )	if Input
@@ -70,7 +72,7 @@ public class Context:
 		tex = t
 	
 	public def needDepth(dep as bool) as void:
-		at = buf.A[-1]
+		at = buf.A[iDep]
 		assert not at.Tex or not tDepth
 		if dep and not at.Tex:
 			# need depth but don't have one

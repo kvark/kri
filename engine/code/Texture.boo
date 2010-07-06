@@ -10,7 +10,7 @@ internal static class Fm:
 	public final stencil	= PixelInternalFormat.Depth24Stencil8
 	public final depth	= (of PixelInternalFormat:
 		PixelInternalFormat.DepthComponent,
-		bad,
+		PixelInternalFormat.Depth24Stencil8,
 		PixelInternalFormat.DepthComponent16,
 		PixelInternalFormat.DepthComponent24,
 		PixelInternalFormat.DepthComponent32
@@ -118,13 +118,21 @@ public class Texture( shade.par.INamed ):
 		return PixelType.UnsignedShort	if fi in ( Fm.index[2], Fm.index2[2] )
 		return PixelType.UnsignedInt	if fi in ( Fm.index[4], Fm.index2[4] )
 		return PixelType.Float
+	
 	public static def AskFormat(cl as Class, bits as uint) as PixelInternalFormat:
-		return (Fm.color, Fm.depth, (Fm.stencil,), Fm.index, Fm.index2, (Fm.bad,)) [cast(int,cl)] [bits>>3]
+		d = bits>>3
+		return Fm.color[d]	if cl == Class.Color
+		return Fm.depth[d]	if cl == Class.Depth
+		return Fm.stencil	if cl == Class.Stencil
+		return Fm.index[d]	if cl == Class.Index
+		return Fm.index2[d]	if cl == Class.Index2
+		return Fm.bad
 	private static def curTargetMulti() as TextureTargetMultisample:
 		return cast( TextureTargetMultisample, cast(int,curTarget) )
 
 	# init Texture2D/3D/Array format
 	public static def Init(fi as PixelInternalFormat, sx as int, sy as int, sz as int) as void:
+		assert fi != Fm.bad
 		fmt = Fi2format(fi)
 		type = Fi2type(fi)
 		if sz>0:	GL.TexImage3D(curTarget, 0, fi, sx, sy, sz,	0, fmt, type, zeroPtr)

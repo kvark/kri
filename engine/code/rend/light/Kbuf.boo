@@ -9,31 +9,38 @@ import kri.shade
 public class Init( kri.rend.Basic ):
 	public final layers	as byte
 	public final buf	= kri.frame.Buffer()
+	private final sa	= kri.shade.Smart()
 
 	public def constructor(nlay as byte):
 		maxSamples = 0
 		GL.GetInteger( GetPName.MaxSamples, maxSamples )
 		assert nlay <= maxSamples
-		multi = TextureTarget.Texture2DMultisample
 		layers = nlay
-		buf.mask = 1
-		buf.A[-0].Tex = kri.Texture(multi)
-		buf.A[-2].Tex = kri.Texture(multi)
+		# init buffer
+		multi = TextureTarget.Texture2DMultisample
+		buf.mask = 3
+		for i in (-2,0,1):
+			buf.A[i].Tex = kri.Texture(multi)
+		# init shader
+		sa.add('/copy_v','/empty_f')
+		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+	
+	private def iniTex(i as int, pif as PixelInternalFormat) as void:
+		buf.A[i].Tex.bind()
+		kri.Texture.InitMulti( pif, layers, true, buf.Width, buf.Height, 0 )
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.init( far.Width, far.Height )
-		buf.A[-0].Tex.bind()
-		kri.Texture.InitMulti( PixelInternalFormat.Rgba8,
-			layers,true, far.Width, far.Height, 0 )
-		buf.A[-2].Tex.bind()
-		kri.Texture.InitMulti( PixelInternalFormat.Depth24Stencil8,
-			layers,true, far.Width, far.Height, 0 )
+		iniTex(-2,	PixelInternalFormat.Depth24Stencil8 )
+		#iniTex(0,	PixelInternalFormat.R11fG11fB10f )
+		iniTex(0,	PixelInternalFormat.Rgb16f )
+		iniTex(1,	PixelInternalFormat.Rgb10A2 )
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(false,0f,false)
-		con.activeRead()	# bind as read FBO
-		buf.activate()
+		con.activate(false,0f,true)
+		buf.activate(0)		# bind as read & draw
+		con.activeRead()	# bind as read (replace)
 		# depth copy
 		GL.BlitFramebuffer(
 			0,0, buf.Width, buf.Height,
@@ -41,18 +48,28 @@ public class Init( kri.rend.Basic ):
 			ClearBufferMask.DepthBufferBit,
 			BlitFramebufferFilter.Nearest )
 		# stencil
-		using kri.Section( EnableCap.SampleMask ):
-			GL.StencilMask(-1)
-			for i in range(layers):
-				GL.ClearStencil(i+1)
-				GL.SampleMask(0,1<<i)
-				GL.Clear( ClearBufferMask.StencilBufferBit )
-			GL.SampleMask(0,-1)
+		GL.StencilMask(-1)
+		if 'RectangleFill':
+			con.DepTest = false
+			sa.use()
+			using kri.Section( EnableCap.SampleMask ),\
+			kri.Section( EnableCap.StencilTest ):
+				GL.StencilFunc( StencilFunction.Always, 0,0 )
+				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
+				for i in range(layers):
+					GL.SampleMask( 0, -1<<i )
+					kri.Ant.Inst.emitQuad()
+		else:
+			using kri.Section( EnableCap.SampleMask ):
+				for i in range(layers):
+					GL.SampleMask(0,1<<i)
+					GL.ClearStencil(i+1)
+					GL.Clear( ClearBufferMask.StencilBufferBit )
 		# color
+		buf.activate(3)
 		GL.ColorMask(true,true,true,true)
-		GL.ClearColor(0f,0f,0f,0f)
+		GL.ClearColor(0f,0.8f,0.6f,0f)
 		GL.Clear( ClearBufferMask.ColorBufferBit )
-
 
 
 #---------	LIGHT PRE-PASS	--------#
@@ -74,6 +91,7 @@ public class Bake( kri.rend.Basic ):
 		# baking shader
 		sa.add( '/light/kbuf/bake_v', '/light/kbuf/bake_f', '/lib/defer_f' )
 		sa.add( *kri.Ant.Inst.libShaders )
+		sa.fragout('rez_dir','rez_color')
 		d = rep.Dict()
 		d.unit(texDep)
 		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
@@ -85,20 +103,26 @@ public class Bake( kri.rend.Basic ):
 	public override def process(con as kri.rend.Context) as void:
 		con.activate()
 		texDep.Value = con.Depth
-		buf.activate()
+		buf.activate(3)
 		con.SetDepth(0f,false)
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()
 		using blender = kri.Blender(), kri.Section( EnableCap.StencilTest ):
-			GL.StencilFunc( StencilFunction.Equal, 1,-1 )
-			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr ) 
+			#GL.StencilFunc( StencilFunction.Equal, 1,-1 )
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep ) 
+			#GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr ) 
 			blender.add()
 			for l in kri.Scene.current.lights:
 				continue	if l.fov != 0f
 				kri.Ant.Inst.params.activate(l)
 				sa.use()
+				#q = kri.Query( QueryTarget.SamplesPassed )
+				#using q.catch():
 				sphere.draw(1)
+				#e = q.result()
+				#e = 0
+				break # TEMP!!!
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 
@@ -107,16 +131,19 @@ public class Bake( kri.rend.Basic ):
 
 public class Apply( kri.rend.tech.Meta ):
 	private final buf	as kri.frame.Buffer
-	private final pTex	= kri.shade.par.Texture('light')
+	private final pDir	= kri.shade.par.Texture('dir')
+	private final pCol	= kri.shade.par.Texture('color')
 	# init
 	public def constructor(init as Init):
 		super('lit.kbuf', false, null,
 			'bump','emissive','diffuse','specular','glossiness')
 		buf = init.buf
-		pTex.Value = buf.A[0].Tex
-		dict.unit( pTex )
+		pDir.Value = buf.A[0].Tex
+		pCol.Value = buf.A[1].Tex
+		dict.unit( pDir, pCol )
 		shade('/light/kbuf/apply')
 	# work
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true, 0f, false)
+		con.ClearColor()
 		drawScene()

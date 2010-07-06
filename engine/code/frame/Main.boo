@@ -42,6 +42,7 @@ public class Screen(Array):
 		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, id )
 	
 	public virtual def activate() as void:
+		# we may bind to only a Draw buffer in future
 		GL.BindFramebuffer( FramebufferTarget.Framebuffer, id )
 		#return if not dirtyPort
 		GL.Viewport(ofx,ofy, ofx+Width,ofy+Height)

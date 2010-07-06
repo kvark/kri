@@ -5,8 +5,9 @@ import OpenTK.Graphics.OpenGL
 #---------	FB lazy attachment management	---------#
 
 public class Buffer(Screen):
-	public mask		as uint = 1			# desired draw mask
+	public mask		as uint = 1		# desired draw mask
 	private oldMask	as uint = 0		# active mask
+	private static final badMask	as uint = 100	# bad mask
 	protected final at = (			# attachment controllers
 		Unit(FramebufferAttachment.DepthStencilAttachment),
 		Unit(FramebufferAttachment.DepthAttachment),
@@ -33,14 +34,13 @@ public class Buffer(Screen):
 		return status == FramebufferErrorCode.FramebufferComplete
 		
 	public def dropMask() as void:
-		oldMask = 100
+		oldMask = badMask
 	
 	public def resizeFrames() as void:
 		for a in at:
 			continue	if not a.Tex
 			a.Tex.bind()
 			kri.Texture.Init( a.Format, Width, Height, 0 )
-			a.dFormat.clean()
 	
 	public def activate(m as uint) as void:
 		mask = m
@@ -63,11 +63,9 @@ public class Buffer(Screen):
 			#todo: add RenderBuffer support
 			t = a.Tex
 			if t and a.dFormat.Dirty:	#change attachment texture format
-				a.dFormat.clean()
 				t.bind()
-				kri.Texture.Init( a.Format, Width, Height, 0 )
+				kri.Texture.Init( a.Format, Width, Height, a.samples )
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
-				a.dLayer.clean()
 				GL.FramebufferTextureLayer( FramebufferTarget.Framebuffer,
 					a.slot, t.id, 0, a.Layer )
 			elif a.dirty:		#update texture attachment
@@ -78,3 +76,4 @@ public class Buffer(Screen):
 				else:
 					GL.FramebufferTexture2D( FramebufferTarget.Framebuffer,	a.slot,
 						TextureTarget.Texture2D, 0, 0)
+				a.dirty = false

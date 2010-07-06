@@ -1,7 +1,7 @@
 #version 150 core
 
-uniform sampler2DMS unit_light;
-const vec4 lit_color = vec4(1.0);
+uniform sampler2DMS unit_dir, unit_color;
+const vec4 lit_color = vec4(0.5);
 
 // material data
 vec4 get_bump();
@@ -21,26 +21,29 @@ vec3 qrot2(vec4 q, vec3 v)	{
 
 
 void main()	{
-	// camera space normal
+	// camera space normal & reflected vector
 	vec3 bump = get_bump().xyz * vec3(v_cam.w,1.0,1.0);
 	vec3 normal = qrot2( tan2cam, bump );
 	vec3 reflected = reflect( normalize(v_cam.xyz), normal );
+	mat2x3 mv = mat2x3(normal,reflected);
 
 	ivec2 itc = ivec2( gl_FragCoord.xy );
-	vec4 kd = vec4(0.0), ks = vec4(0.0), kw = vec4(0.0);
+	vec4 kd = vec4(0.0), ks = vec4(1.0);
+	mat4 color = mat4(0.0);
 
-	for(int i=0; i<2; ++i)	{
-		vec4 data = texelFetch(unit_light, itc, i);
-		//rez_color = vec4(length(data)); return;
-		vec3 dir = data.xyz;
-		kd[i] = max(0.0, dot(dir,normal));
-		ks[i] = max(0.0, dot(dir,reflected));
-		kw[i] = data.w;
+	for(int i=0; i<4; ++i)	{
+		vec3 dir = texelFetch(unit_dir, itc, i).xyz;
+		color[i] = texelFetch(unit_color, itc, i);
+		//rez_color = color[i]; return;
+		vec2 rez = max( vec2(0.0), dir*mv );
+		kd[i] = rez.x;
+		ks[i] = rez.y;
 	}
-	
+	// apply glossiness
 	ks = pow( ks, vec4(get_glossiness()) );
-	vec4 diffuse = get_diffuse(), specular = get_specular();
 
-	rez_color = get_emissive() + lit_color*
-		(kw[0]*(diffuse*kd[0] + specular*ks[0]));
+	rez_color = get_emissive() + matrixCompMult(
+		outerProduct( get_diffuse(), kd ) +
+		outerProduct( get_specular(), ks )
+		,color) * vec4(1.0);
 }
