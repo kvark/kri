@@ -61,6 +61,7 @@ public class Context:
 		assert not (b&0x7) and b<=48
 	
 	public def activeRead() as void:
+		buf.dropMask()
 		buf.activate(false)
 
 	public def resize(w as int, h as int) as kri.frame.Screen:

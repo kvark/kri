@@ -33,9 +33,9 @@ public class Buffer(Screen):
 		tmp = Extract
 		kri.Help.safeKill({ GL.DeleteFramebuffers(1,tmp) })
 	
-	public static def Check() as bool:
-		status = GL.CheckFramebufferStatus( FramebufferTarget.Framebuffer )
-		return status == FramebufferErrorCode.FramebufferComplete
+	public static def Check(target as FramebufferTarget) as void:
+		status = GL.CheckFramebufferStatus( target )
+		assert status == FramebufferErrorCode.FramebufferComplete
 		
 	public def dropMask() as void:
 		oldMask = badMask
@@ -49,26 +49,28 @@ public class Buffer(Screen):
 		samples = nsam
 		resizeFrames()
 	
-	public def activate() as void:
-		activate(true)
-	public def activate(m as uint) as void:
-		mask = m
-		activate()
-	
-	public override def activate(draw as bool) as FramebufferTarget:
-		target = super(draw)
-		if mask != oldMask:
-			# select buffer to draw & read
-			arr = List[of DrawBuffersEnum]()
+	public def updateMask(draw as bool) as void:
+		return	if mask == oldMask
+		if draw:
+			dar = List[of DrawBuffersEnum]()
 			for k in range( at.Length-FBASE ):
 				if mask & (1<<k) and A[k].Tex:
-					arr.Add( DrawBuffersEnum.ColorAttachment0 + k )
-			if arr.Count:
-				GL.DrawBuffers( arr.Count, arr.ToArray() )
+					dar.Add( DrawBuffersEnum.ColorAttachment0 + k )
+			if dar.Count:
+				GL.DrawBuffers( dar.Count, dar.ToArray() )
 			else:
 				GL.DrawBuffer( DrawBufferMode.None )
-				GL.ReadBuffer( cast(ReadBufferMode,0) )
-			oldMask = mask
+		else:
+			index = -1
+			for k in range( at.Length-FBASE ):
+				if mask & (1<<k) and A[k].Tex:
+					index = k
+					GL.ReadBuffer( ReadBufferMode.ColorAttachment0 + k )
+					break
+			GL.ReadBuffer( cast(ReadBufferMode,0) )	if index<0
+		oldMask = mask
+	
+	private def updateUnits(target as FramebufferTarget) as void:
 		for a in at:
 			#todo: add RenderBuffer support
 			t = a.Tex
@@ -85,4 +87,15 @@ public class Buffer(Screen):
 				else:
 					GL.FramebufferTexture2D(target, a.slot, TextureTarget.Texture2D, 0, 0)
 				a.dirty = false
+		Check(target)
+	
+	public def activate() as void:
+		activate(true)
+	public def activate(m as uint) as void:
+		mask = m
+		activate()
+	public override def activate(draw as bool) as FramebufferTarget:
+		target = super(draw)
+		updateMask(draw)
+		updateUnits(target)
 		return target
