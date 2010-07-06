@@ -43,9 +43,13 @@ public class Context:
 			if value:	GL.Enable(	EnableCap.DepthTest )
 			else:		GL.Disable(	EnableCap.DepthTest )
 	
+	#Q: are we sure the writing/masking is enabled?
 	public static def ClearDepth(val as single) as void:
 		GL.ClearDepth(val)
 		GL.Clear( ClearBufferMask.DepthBufferBit )
+	public static def ClearStencil(val as int) as void:
+		GL.ClearStencil(val)
+		GL.Clear( ClearBufferMask.StencilBufferBit )
 	public static def ClearColor(val as OpenTK.Graphics.Color4) as void:
 		GL.ClearColor(val)
 		GL.Clear( ClearBufferMask.ColorBufferBit )
@@ -123,6 +127,12 @@ public class Context:
 	public def activate() as void:
 		activate(true, Single.NaN, true)
 	
+	public def copy() as void:
+		assert target != buf
+		activate()		# draw to screen
+		activeRead()	# read from buf
+		buf.blit( ClearBufferMask.ColorBufferBit )
+	
 	public def apply(r as Basic) as void:
 		# target always contains result
 		if r.bInput: swapUnit(0,tInput)
@@ -133,3 +143,4 @@ public class Context:
 			else: GL.DrawBuffer( DrawBufferMode.Back )
 		if dirty == DirtyLevel.None and r.bInput:
 			swapUnit(0,tInput)
+	

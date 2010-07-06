@@ -26,7 +26,6 @@ void main()	{
 
 	// translate to output
 	rez_color = intensity * lit_color;
-	rez_color = vec4(intensity);
 	vec3 col = rez_color.xyz;
 	if( dot(col,col) < threshold ) discard;
 	rez_dir = dir / len;	//normalized

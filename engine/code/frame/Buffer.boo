@@ -36,6 +36,10 @@ public class Buffer(Screen):
 	public static def Check(target as FramebufferTarget) as void:
 		status = GL.CheckFramebufferStatus( target )
 		assert status == FramebufferErrorCode.FramebufferComplete
+	
+	public def blit(what as ClearBufferMask) as void:
+		GL.BlitFramebuffer(0,0,Width,Height,0,0,Width,Height,
+			what, BlitFramebufferFilter.Nearest )
 		
 	public def dropMask() as void:
 		oldMask = badMask

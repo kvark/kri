@@ -34,11 +34,11 @@ void main()	{
 	for(int i=0; i<4; ++i)	{
 		vec3 dir = texelFetch(unit_dir, itc, i).xyz;
 		color[i] = texelFetch(unit_color, itc, i);
-		//rez_color = color[i]; return;
 		vec2 rez = max( vec2(0.0), dir*mv );
 		kd[i] = rez.x;
 		ks[i] = rez.y;
 	}
+	rez_color = color[0]; return;
 	// apply glossiness
 	ks = pow( ks, vec4(get_glossiness()) );
 

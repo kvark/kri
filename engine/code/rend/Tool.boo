@@ -18,7 +18,7 @@ public class Copy( Basic ):
 	public def constructor():
 		super(true)
 	public override def process(con as Context) as void:
-		con.activate()
+		con.copy()
 		
 
 #---------	EARLY Z FILL	--------#

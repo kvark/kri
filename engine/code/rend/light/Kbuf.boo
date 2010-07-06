@@ -42,34 +42,30 @@ public class Init( kri.rend.Basic ):
 		buf.activate(0)		# bind as draw
 		con.activeRead()	# bind as read
 		# depth copy
-		GL.BlitFramebuffer(
-			0,0, buf.Width, buf.Height,
-			0,0, buf.Width, buf.Height,
-			ClearBufferMask.DepthBufferBit,
-			BlitFramebufferFilter.Nearest )
-		# stencil
+		buf.blit( ClearBufferMask.DepthBufferBit )
+		# stencil init
 		GL.StencilMask(-1)
 		if 'RectangleFill':
+			assert layers > 0
 			con.DepTest = false
+			con.ClearStencil(1)
 			sa.use()
-			using kri.Section( EnableCap.SampleMask ),\
-			kri.Section( EnableCap.StencilTest ):
+			# todo: optimize to use less passes
+			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Always, 0,0 )
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
-				for i in range(layers):
+				for i in range(1,layers):
 					GL.SampleMask( 0, -1<<i )
 					kri.Ant.Inst.emitQuad()
 		else:
 			using kri.Section( EnableCap.SampleMask ):
 				for i in range(layers):
 					GL.SampleMask(0,1<<i)
-					GL.ClearStencil(i+1)
-					GL.Clear( ClearBufferMask.StencilBufferBit )
-		# color
+					con.ClearStencil(i+1)
+		# color clear
 		buf.activate(3)
 		GL.ColorMask(true,true,true,true)
-		GL.ClearColor(0f,0.8f,0.6f,0f)
-		GL.Clear( ClearBufferMask.ColorBufferBit )
+		con.ClearColor()
 
 
 #---------	LIGHT PRE-PASS	--------#
@@ -108,21 +104,17 @@ public class Bake( kri.rend.Basic ):
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()
+		sa.use()
 		using blender = kri.Blender(), kri.Section( EnableCap.StencilTest ):
-			#GL.StencilFunc( StencilFunction.Equal, 1,-1 )
-			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep ) 
-			#GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr ) 
+			GL.StencilFunc( StencilFunction.Equal, 1,-1 )
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
 			blender.add()
 			for l in kri.Scene.current.lights:
 				continue	if l.fov != 0f
 				kri.Ant.Inst.params.activate(l)
-				sa.use()
-				#q = kri.Query( QueryTarget.SamplesPassed )
-				#using q.catch():
+				sa.updatePar()
 				sphere.draw(1)
-				#e = q.result()
-				#e = 0
-				break # TEMP!!!
+				break	# !!!!!!!
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 
