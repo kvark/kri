@@ -25,7 +25,7 @@ void main()	{
 	vec3 w_norm = qrot(normalize(quat), bump);
 	float glossy = 0.01 * get_glossiness();
 	
-	c_diffuse =	vec4( get_diffuse().xyz, mat_emissive );
-	c_specular =	get_specular();
-	c_normal =	vec4(vec3(0.5) + 0.5*w_norm, glossy);
+	c_diffuse	= vec4( get_diffuse().xyz, mat_emissive );
+	c_specular	= get_specular();
+	c_normal	= vec4(vec3(0.5) + 0.5*w_norm, glossy);
 }
