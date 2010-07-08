@@ -1,13 +1,11 @@
 #version 130
 
-out vec3 pos;
-
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_lit;
 
-vec3 fixed_proj(Spatial);
+vec3 fixed_trans(Spatial);
 
 void main()	{
-	pos = fixed_proj(s_lit);
+	gl_Position = vec4( fixed_trans(s_lit), 0.0);
 }

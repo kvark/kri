@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!--
+    GLSL shaders
+With help of:
+    KVARK <kvarkus@gmail.com>
+-->
+<!DOCTYPE hrc PUBLIC "-//Cail Lomecb//DTD Colorer HRC take5//EN" "../hrc.dtd">
+<hrc version="take5" xmlns="http://colorer.sf.net/2003/hrc">
+  <type name="glsl" access="public">
+
+    <import type="def"/>
+
+    <region name="LineComment" parent="def:LineComment"/>
+    <region name="Comment" parent="def:Comment"/>
+
+    <region name="Number" parent="def:Number"/>
+    <region name="Symbol" parent="def:Symbol"/>
+    <region name="StructureSymbol" parent="def:SymbolStrong"/>
+    <region name="PrefixSymbol" parent="def:SymbolStrong"/>
+
+    <region name="Preproc" parent="def:Directive"/>
+    <region name="PreprocSpec" parent="def:KeywordStrong"/>
+    <region name="PreprocWord" parent="def:DirectiveContent"/>
+
+
+    <scheme name="glsl">
+      <inherit scheme="Preproc"/>
+      <inherit scheme="TypeDeclaration"/>
+      <inherit scheme="Comments"/>
+
+      <keywords region="def:Keyword">
+        <word name="layout"/>
+        <word name="precision"/>
+        <word name="struct"/>
+      </keywords>
+
+      <keywords region="def:FunctionKeyword">
+        <word name="dot"/>
+        <word name="cross"/>
+        <word name="length"/>
+        <word name="outerProduct"/>
+        <word name="compMatrixMult"/>
+      </keywords>
+    </scheme>
+
+    <scheme name="Preproc">
+       <keywords region="PreprocWord">
+        <word name="version"/>
+        <word name="define"/>
+        <word name="defined"/>
+        <word name="elif"/>
+        <word name="else"/>
+        <word name="endif"/>
+        <word name="error"/>
+        <word name="if"/>
+        <word name="ifdef"/>
+        <word name="ifndef"/>
+        <word name="include"/>
+        <word name="line"/>
+        <word name="pragma"/>
+        <word name="undef"/>
+      </keywords>
+    </scheme>
+
+
+    <scheme name="Comments">
+       <regexp match="/\/\*\*\//" region="Comment"/>
+       <block start="/\/\//" end="/$/" scheme="Comment" region="LineComment"/>
+       <block start="/\/\*/" end="/\*\//" scheme="Comment"
+              region="Comment" region00="def:PairStart" region10="def:PairEnd"/>
+    </scheme>
+
+
+    <scheme name="TypeDeclaration">
+
+       <inherit scheme="Comments"/>
+
+       <inherit scheme="def:PairedBrackets">
+          <virtual scheme="def:PairedBrackets" subst-scheme="TypeDeclaration"/>
+       </inherit>
+
+       <!-- numbers -->
+       <inherit scheme="def:CHexNumber"/>
+       <inherit scheme="def:FloatNumber"/>
+       <inherit scheme="def:DecNumber"/>
+
+       <!-- Standard Symbols -->
+       <keywords region="def:Error">
+          <symb name="["/><symb name="]"/>
+          <symb name="("/><symb name=")"/>
+          <symb name="{"/><symb name="}"/>
+          <symb name="*/"/>
+       </keywords>
+       <keywords region="def:Symbol">
+          <symb name=";" region="def:SymbolStrong"/>
+          <symb name="="/><symb name="+"/><symb name="-"/>
+          <symb name="/"/><symb name="*"/>
+          <symb name="&amp;"/><symb name="^"/>
+          <symb name="|"/><symb name=":"/>
+          <symb name=","/><symb name="."/>
+          <symb name="!"/><symb name="~"/>
+          <symb name="&lt;"/><symb name="&gt;"/>
+          <symb name="%"/><symb name="?"/>
+          <symb name="#"/><symb name="@"/>
+       </keywords>
+       <keywords region="def:Keyword">
+          <word name="break"/>
+          <word name="continue"/>
+          <word name="while"/>
+          <word name="do"/>
+          <word name="switch"/>
+          <word name="case"/>
+          <word name="default"/>
+          <word name="true"/>
+          <word name="false"/>
+          <word name="for"/>
+          <word name="if"/>
+          <word name="else"/>
+          <word name="discard"/>
+          <word name="return"/>
+       </keywords>
+       <keywords region="KeywordModifier">
+          <word name='attribute'/>
+          <word name='uniform'/>
+          <word name='in'/>
+          <word name='out'/>
+          <word name='inout'/>
+          <word name='const'/>
+          <word name='perspective'/>
+          <word name='noperspective'/>
+          <word name='centroid'/>
+          <word name='flat'/>
+          <word name='smooth'/>
+          <word name='vairant'/>
+          <word name='invariant'/>
+          <word name='lowp'/>
+          <word name='mediump'/>
+          <word name='highp'/>
+       </keywords>
+       <keywords region="def:TypeKeyword">
+          <word name='void'/>
+          <word name='bool'/>
+          <word name='int'/>
+          <word name='uint'/>
+          <word name='short'/>
+          <word name='ushort'/>
+          <word name='float'/>
+          <word name='vec2'/>
+          <word name='vec3'/>
+          <word name='vec4'/>
+          <word name='ivec2'/>
+          <word name='ivec3'/>
+          <word name='ivec4'/>
+          <word name='uvec2'/>
+          <word name='uvec3'/>
+          <word name='uvec4'/>
+          <word name='mat2'/>
+          <word name='mat3'/>
+          <word name='mat4'/>
+          <word name='mat2x3'/>
+          <word name='mat2x4'/>
+          <word name='mat3x2'/>
+          <word name='mat3x4'/>
+          <word name='mat4x2'/>
+          <word name='mat4x3'/>
+          <word name='sampler1D'/>
+          <word name='sampler2D'/>
+          <word name='sampler3D'/>
+          <word name='samplerCube'/>
+       </keywords>
+    </scheme>
+
+   </type>
+</hrc>

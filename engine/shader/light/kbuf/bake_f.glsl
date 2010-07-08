@@ -14,6 +14,8 @@ const float threshold = 0.01;
 
 
 void main()	{
+	rez_color = vec4(1.0); rez_dir = vec3(1.0); return;
+
 	// extract world & light space
 	float depth = texture( unit_depth, gl_FragCoord.xy ).r;
 	vec2 tc = gl_FragCoord.xy / screen_size.xy;

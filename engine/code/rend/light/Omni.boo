@@ -39,14 +39,15 @@ public class Fill( rend.tech.General ):
 			if not l.depth:
 				l.depth = Texture( TextureTarget.TextureCubeMap )
 				l.depth.bind()
-				Texture.InitCube( Texture.AskFormat(Texture.Class.Depth,0), context.size )
+				fmt = Texture.AskFormat(Texture.Class.Depth,0)
+				Texture.InitCube( fmt, context.size )
 				Texture.Shadow(true)
-			buf.init(context.size, context.size)
+			buf.init( context.size, context.size )
 			buf.A[-1].Tex = l.depth
 			buf.activate()
 			GL.ClearDepth( 1f )
 			GL.Clear( ClearBufferMask.DepthBufferBit )
-			#drawScene(1)
+			drawScene()
 
 
 #---------	LIGHT OMNI APPLY	--------#

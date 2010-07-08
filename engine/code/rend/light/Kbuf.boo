@@ -22,26 +22,27 @@ public class Init( kri.rend.Basic ):
 		for i in (-2,0,1):
 			buf.A[i].Tex = kri.Texture(multi)
 		# init shader
-		sa.add('/copy_v','/empty_f')
+		sa.add('/copy_v','/white_f') # temp
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	
-	private def iniTex(i as int, pif as PixelInternalFormat) as void:
-		buf.A[i].Tex.bind()
-		kri.Texture.InitMulti( pif, layers, true, buf.Width, buf.Height, 0 )
+	private Format[i as int] as PixelInternalFormat:
+		set:
+			buf.A[i].Tex.bind()
+			kri.Texture.InitMulti( value, layers, true, buf.Width, buf.Height, 0 )
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.init( far.Width, far.Height )
-		iniTex(-2,	PixelInternalFormat.Depth24Stencil8 )
-		#iniTex(0,	PixelInternalFormat.R11fG11fB10f )
-		iniTex(0,	PixelInternalFormat.Rgb16f )
-		iniTex(1,	PixelInternalFormat.Rgb10A2 )
+		Format[-2]	= PixelInternalFormat.Depth24Stencil8
+		#Format[0]	= PixelInternalFormat.R11fG11fB10f
+		Format[0]	= PixelInternalFormat.Rgb16f
+		Format[1]	= PixelInternalFormat.Rgb10A2
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(false,0f,true)
+		# depth copy
 		buf.activate(0)		# bind as draw
 		con.activeRead()	# bind as read
-		# depth copy
 		buf.blit( ClearBufferMask.DepthBufferBit )
 		# stencil init
 		GL.StencilMask(-1)
@@ -50,8 +51,11 @@ public class Init( kri.rend.Basic ):
 			con.DepTest = false
 			con.ClearStencil(1)
 			sa.use()
+			#sb = -1; GL.GetInteger( GetPName.SampleBuffers, sb )
+			#sm = -1; GL.GetInteger( GetPName.Samples, sm )
 			# todo: optimize to use less passes
-			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ):
+			GL.Disable( EnableCap.Multisample )
+			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
 				GL.StencilFunc( StencilFunction.Always, 0,0 )
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
 				for i in range(1,layers):
@@ -62,10 +66,18 @@ public class Init( kri.rend.Basic ):
 				for i in range(layers):
 					GL.SampleMask(0,1<<i)
 					con.ClearStencil(i+1)
+		GL.SampleMask(0,-1)
 		# color clear
 		buf.activate(3)
 		GL.ColorMask(true,true,true,true)
 		con.ClearColor()
+		# debug!
+		buf.activate(2)
+		sa.use()
+		using kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
+			GL.StencilFunc( StencilFunction.Equal, 1,-1 )	#change this to see the stencil layer
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
+			kri.Ant.Inst.emitQuad()
 
 
 #---------	LIGHT PRE-PASS	--------#
@@ -97,6 +109,7 @@ public class Bake( kri.rend.Basic ):
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 
 	public override def process(con as kri.rend.Context) as void:
+		return	# debug!
 		con.activate()
 		texDep.Value = con.Depth
 		buf.activate(3)
@@ -105,16 +118,20 @@ public class Bake( kri.rend.Basic ):
 		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()
 		sa.use()
-		using blender = kri.Blender(), kri.Section( EnableCap.StencilTest ):
+		GL.Disable( EnableCap.Multisample )
+		#GL.Disable( EnableCap.DepthTest )
+		#todo: use stencil for front faces
+		using kri.Section( EnableCap.StencilTest ):
 			GL.StencilFunc( StencilFunction.Equal, 1,-1 )
-			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
-			blender.add()
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )	# temp!!!
+			#GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
 			for l in kri.Scene.current.lights:
 				continue	if l.fov != 0f
 				kri.Ant.Inst.params.activate(l)
 				sa.updatePar()
-				sphere.draw(1)
-				break	# !!!!!!!
+				sphere.draw(2)
+				# the bug: arms are not affected
+				break	# temp!!!!!!!
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 

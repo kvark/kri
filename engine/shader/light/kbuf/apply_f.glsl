@@ -1,7 +1,6 @@
 #version 150 core
 
 uniform sampler2DMS unit_dir, unit_color;
-const vec4 lit_color = vec4(0.5);
 
 // material data
 vec4 get_bump();
@@ -33,17 +32,17 @@ void main()	{
 
 	for(int i=0; i<4; ++i)	{
 		vec3 dir = texelFetch(unit_dir, itc, i).xyz;
+		//if(dot(dir,dir) == 0.0) break;
 		color[i] = texelFetch(unit_color, itc, i);
 		vec2 rez = max( vec2(0.0), dir*mv );
 		kd[i] = rez.x;
 		ks[i] = rez.y;
 	}
-	rez_color = color[0]; return;
+	rez_color = vec4(color[0].x,color[1].x,color[2].x,color[3].x); return;
 	// apply glossiness
 	ks = pow( ks, vec4(get_glossiness()) );
 
-	rez_color = get_emissive() + matrixCompMult(
-		outerProduct( get_diffuse(), kd ) +
-		outerProduct( get_specular(), ks )
-		,color) * vec4(1.0);
+	rez_color = get_emissive() + (
+		(color*kd) * get_diffuse() +
+		(color*ks) * get_specular() );
 }
