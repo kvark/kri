@@ -27,6 +27,15 @@ vec4 qvec(vec3 axis, float angle)	{
 	return vec4( axis*sin(0.5*angle), cos(0.5*angle) );
 }
 
+//to matrix
+mat3 qmatrix(vec4 q)	{
+	return mat3(
+		vec3(q.w+q.x*q.x, 0.0, -q.x),
+		vec3(0.0, q.w+q.y*q.y, -q.y),
+		vec3(q.x, q.y, q.w*q.w) );
+}	
+
+
 //transform by Spatial forward
 vec3 trans_for(vec3 v, Spatial s)	{
 	return qrot(s.rot, v*s.pos.w) + s.pos.xyz;

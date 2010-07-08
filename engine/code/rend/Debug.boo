@@ -1,19 +1,22 @@
 ﻿namespace kri.rend.debug
 
 import System
-import OpenTK.Graphics.OpenGL
 import kri.shade
+
+
+#---------	RENDER TEXTURE LAYER		--------#
 
 public class Map( kri.rend.Basic ):
 	private final sa	= Smart()
 	public final layer	= par.Value[of single]('layer')
 	
-	public def constructor(depth as bool, id as int, t as par.IBase[of kri.Texture]):
-		sa.add( '/copy_v' )
+	public def constructor(depth as bool, cube as bool, id as int, t as par.IBase[of kri.Texture]):
+		name = ''
 		if depth:
-			sa.add('/show_depth_f')
+			name = ('show_depth','copy_cube')[cube]
 		else:
-			sa.add( ('/copy_f','/copy_ar_f')[id>=0] )
+			name = ('copy','copy_ar')[id>=0]
+		sa.add( '/copy_v', "/${name}_f" )
 		layer.Value = 1f * id
 		dict = kri.shade.rep.Dict()
 		dict.unit( 'input', t )
@@ -30,36 +33,12 @@ public class MapDepth( Map ):
 	public final pt	as par.Texture
 	public def constructor():
 		p2 = par.Texture(null)
-		super(true,-1,p2)
+		super(true,false,-1,p2)
 		pt = p2
 	public override def process(con as kri.rend.Context) as void:
 		con.needDepth(false)
 		pt.Value = con.Depth
 		super(con)
-
-
-public class MapCube( kri.rend.Basic ):
-	private final lit	as kri.Light
-	private final sa = kri.shade.Smart()
-	public def constructor( l as kri.Light ):
-		sa.add( '/copy_v', '/copy_cube_f' )
-		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
-		lit = l
-	public virtual def prepare() as void:
-		assert 'not ready'
-		#u = kri.Ant.Inst.units
-		#u.Tex[u.light] = lit.depth
-		#lit.depth.bind(u.light)
-		kri.Texture.Shadow(false)
-		ar = array[of single](4)
-		GL.GetTexImage(TextureTarget.TextureCubeMapPositiveZ, 0,
-			PixelFormat.DepthComponent, PixelType.Float, ar)
-		ar = null
-	public override def process(con as kri.rend.Context) as void:
-		prepare()	#unit activation
-		con.activate()
-		sa.use()
-		kri.Ant.inst.emitQuad()
 
 
 #---------	RENDER DEBUG ATTRIBUTE		--------#

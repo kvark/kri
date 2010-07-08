@@ -6,6 +6,9 @@ uniform struct Spatial	{
 
 vec3 fixed_trans(Spatial);
 
+out vec3 pos;
+
+
 void main()	{
-	gl_Position = vec4( fixed_trans(s_lit), 0.0);
+	pos = fixed_trans(s_lit);
 }

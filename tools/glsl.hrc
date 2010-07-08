@@ -35,6 +35,9 @@ With help of:
       </keywords>
 
       <keywords region="def:FunctionKeyword">
+        <word name="texture"/>
+        <word name="pow"/>
+        <word name="exp"/>
         <word name="dot"/>
         <word name="cross"/>
         <word name="length"/>

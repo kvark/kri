@@ -61,6 +61,8 @@ public class Texture( shade.par.INamed ):
 
 	public static def Slot(tun as int) as void:
 		GL.ActiveTexture( TextureUnit.Texture0 + tun )
+	public static def Unbind() as void:
+		GL.BindTexture( curTarget, 0 )
 	public def bind() as void:
 		GL.BindTexture( curTarget=target, id )
 	public def bind(tun as int) as void:

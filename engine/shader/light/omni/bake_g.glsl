@@ -1,13 +1,10 @@
-#version 150 core
+#version 140
 
-in gl_PerVertex	{
-	vec4 gl_Position;
-}gl_in[];
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 18) out;
 
-out gl_PerVertex	{
-	vec4 gl_Position;
-};
 
+in vec3 pos[];
 
 vec3 qrot2(vec4 q, vec3 v)	{
 	return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
@@ -18,14 +15,8 @@ uniform vec4 uni_dist;
 
 void triMake(int lid, vec4 q)	{
 	gl_Layer = lid;
-	/*mat3 mx = mat3(
-		vec3(q.w+q.x*q.x, 0.0, -q.x),
-		vec3(0.0, q.w+q.y*q.y, -q.y),
-		vec3(q.x, q.y, q.w*q.w)
-	);*/	
 	for(int i=0; i<3; ++i)	{
-		//vec3 v = mx * gl_in[i].gl_Position.xyz;
-		vec3 v = qrot2(q, gl_in[i].gl_Position.xyz);
+		vec3 v = qrot2(q, pos[i]);
 		float k = (2.0*v.z + uni_dist.y) * uni_dist.x;
 		gl_Position = vec4( v.xy, -v.z*vec2(k,1.0) );
 		EmitVertex();

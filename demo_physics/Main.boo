@@ -88,7 +88,7 @@ def Main(argv as (string)):
 		al.add(ren)
 		if not 'Debug':
 			texDebug = kri.shade.par.UnitProxy({ return ren.pr.Color })
-			rlis.Add( kri.rend.debug.Map(false,-1,texDebug) )
+			rlis.Add( kri.rend.debug.Map(false,false,-1,texDebug) )
 			#texDepth = kri.shade.par.UnitProxy({ return ren.pr.Stencil })
 			#rlis.Add( kri.rend.debug.Map(true,-1,texDepth) )
 		

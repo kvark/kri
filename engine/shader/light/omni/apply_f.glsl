@@ -1,7 +1,7 @@
 ﻿#version 130
 
 uniform vec4 lit_color, lit_data, proj_lit;
-uniform samplerCubeShadow unit_light;
+//uniform samplerCubeShadow unit_light;
 
 float get_shadow()	{
 	//return texture(unit_light, v_shadow);

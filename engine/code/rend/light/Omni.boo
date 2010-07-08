@@ -41,7 +41,8 @@ public class Fill( rend.tech.General ):
 				l.depth.bind()
 				fmt = Texture.AskFormat(Texture.Class.Depth,0)
 				Texture.InitCube( fmt, context.size )
-				Texture.Shadow(true)
+				#Texture.Shadow(true)
+				Texture.Unbind()
 			buf.init( context.size, context.size )
 			buf.A[-1].Tex = l.depth
 			buf.activate()
@@ -56,7 +57,7 @@ public class Apply( rend.tech.Meta ):
 	private lit as Light	= null
 	private final smooth	as bool
 	public def constructor(bSmooth as bool):
-		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
+		super('lit.omni.apply', false, null, *load.Meta.LightSet)
 		shade(('/light/omni/apply_v','/light/omni/apply_f','/light/common_f'))
 		smooth = bSmooth
 	protected override def getUpdate(mat as Material) as callable() as int:
@@ -68,14 +69,14 @@ public class Apply( rend.tech.Meta ):
 	public override def process(con as rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
-		Texture.Slot(8)
+		#Texture.Slot(8)
 		for l in Scene.current.lights:
 			continue	if l.fov != 0f
 			lit = l
-			if l.depth:
-				l.depth.bind()
-				Texture.Shadow(false)
-				Texture.Filter(false,false);
+			#if l.depth:
+			#	l.depth.bind()
+			#	Texture.Shadow(false)
+			#	Texture.Filter(false,false);
 			# determine subset of affected objects
 			for e in Scene.Current.entities:
 				addObject(e)
