@@ -107,8 +107,6 @@ public class Ant( OpenTK.GameWindow ):
 		GL.GetInteger( GetPName.MaxDrawBuffers, mb )
 		assert mb>=4
 		
-		
-		
 		# GL context init
 		GL.ClearColor( Color4.Black )
 		GL.Enable( EnableCap.CullFace )

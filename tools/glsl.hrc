@@ -62,9 +62,14 @@
         <word name="gl_Position"/>
         <word name="gl_ClipDistance"/>
         <word name="gl_Layer"/>
+        <word name="gl_PrimitiveIDIn"/>	
+        <word name="gl_PrimitiveID"/>
         <word name="gl_FragCoord"/>
+        <word name="gl_FrontFacing"/>
         <word name="gl_FragDepth"/>
         <word name="gl_PointCoord"/>
+        <word name="gl_VertexID"/>
+        <word name="gl_InstanceID"/>
       </keywords>
     </scheme>
 
