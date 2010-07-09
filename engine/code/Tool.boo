@@ -14,7 +14,7 @@ public static class Help:
 	# swap two abstract elements
 	public def swap[of T](ref a as T, ref b as T) as void:
 		a,b = b,a
-	# Provides skipping of resource unloading errors on exit
+	# provides skipping of resource unloading errors on exit
 	public def safeKill(fun as callable() as void) as void:
 		try: fun()
 		except e as GraphicsContextMissingException:
@@ -25,6 +25,11 @@ public static class Help:
 			ob.Semant.Add( vb.Info(
 				integer:false, size:size, slot:at,
 				type: VertexAttribPointerType.Float ))
+	# get integer state value
+	public def getInteger( pn as GetPName ) as int:
+		rez = -1
+		GL.GetInteger(pn,rez)
+		return rez
 
 
 # Provides GL state on/off mechanics
@@ -108,7 +113,7 @@ public class FpsCounter:
 	public def gen() as string:
 		fMean /= nFrames
 		fDisp = Math.Sqrt(fDisp / nFrames - fMean*fMean)
-		rez = "kri: {0,6:f3} mean, {1,6:f3} disp" % (fMean,fDisp)
+		rez = "kri: {0,6:f4} mean, {1,6:f3} disp" % (fMean,fDisp)
 		fMean = fDisp = nFrames = 0.0
 		kNext += kPeriod
 		return rez

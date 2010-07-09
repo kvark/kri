@@ -33,7 +33,8 @@ public class Attrib( ISemanted, Object ):
 	
 	public def initAll(num as int) as void:
 		off,total = 0,unitSize()
-		init(num * total)
+		if num<0:	bind()
+		else:	init(num * total)
 		semantics.ForEach() do(ref at as Info):
 			Push(at, off, total)
 			off += at.fullSize()

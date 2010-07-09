@@ -27,7 +27,7 @@ public class Ant( OpenTK.GameWindow ):
 	public static inst as Ant = null		# Singleton
 	public final debug	as bool				# is debug context
 	public final views	= List[of View]()	# *View
-	private quad	as kri.kit.gen.Quad	= null	# Standard quad
+	private quad	as kri.kit.gen.Frame	= null	# Standard quad
 	# time
 	private sw	= Diagnostics.Stopwatch()	# Time counter
 	private final fps	= FpsCounter(1.0)	# FPS counter
@@ -98,7 +98,7 @@ public class Ant( OpenTK.GameWindow ):
 	public override def OnLoad(e as EventArgs) as void:
 		slotTechniques.clear()
 		slotAttributes.clear()
-		quad = kri.kit.gen.Quad()
+		quad = kri.kit.gen.Frame( kri.kit.gen.Quad() )
 		
 		# restrictions
 		print GL.GetString( StringName.Version )
