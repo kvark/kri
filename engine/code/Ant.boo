@@ -16,8 +16,12 @@ private class Config:
 			dict[name] = val
 	public def ask(name as string, default as string) as string:
 		rez as string = null
-		return rez	if dict.TryGetValue(name,rez)
+		if dict.TryGetValue(name,rez):
+			dict[name] = null
+			return rez
 		return default
+	public def getUnused() as string*:
+		return ( d.Key	for d in dict	if d.Value!=null )
 
 
 # Main engine class Ant
@@ -59,12 +63,18 @@ public class Ant( OpenTK.GameWindow ):
 		conf = Config(confile)
 		title	= conf.ask('Title','kri')
 		shade.Code.Folder	= conf.ask('ShaderPath','../engine/shader')
-		sizes	= conf.ask('Size','0x0').Split(char('x'))
-		ver	= uint.Parse( conf.ask('ContextVersion','0'))
-		bug	= uint.Parse( conf.ask('Debug','1'))
-		fs	= uint.Parse( conf.ask('FullScreen','0'))
+		sizes	= conf.ask('Window','0x0').Split(char('x'))
+		context	= conf.ask('Context','0')
+		bug = context.EndsWith('d')
+		ver = uint.Parse( context.TrimEnd(char('r'),char('d')) )
 		wid	= uint.Parse( sizes[0] )
 		het	= uint.Parse( sizes[1] )
+		fs	= (sizes[0] + sizes[1] == 0)
+		
+		# check configuration completeness
+		unused = array( conf.getUnused() )
+		if unused.Length:
+			raise 'Unknown config parameter: ' + unused[0]
 
 		# prepare attributes
 		dd = DisplayDevice.Default
@@ -79,7 +89,7 @@ public class Ant( OpenTK.GameWindow ):
 		# start
 		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
 		sw.Start()
-		debug = bug>0
+		debug = bug
 		inst = self
 		
 		# shader library init
