@@ -315,10 +315,11 @@ def save_mesh(mesh,armature,groups,st):
 		return (tan, bit, n0, hand, n1)
 
 	class Vertex:
-		__slots__= 'face', 'vert', 'coord', 'tex', 'color', 'normal', 'quat', 'dual'
+		__slots__= 'face', 'vert','vert2', 'coord', 'tex', 'color', 'normal', 'quat', 'dual'
 		def __init__(self, v):
 			self.face = None
 			self.vert = v
+			self.vert2 = None
 			self.coord = v.co
 			self.tex = None
 			self.color = None
@@ -349,7 +350,7 @@ def save_mesh(mesh,armature,groups,st):
 			self.ta = t.normalize()
 			self.hand = hand
 	
-	#   1: convert Mesh to Triangle Mesh
+	# 1: convert Mesh to Triangle Mesh
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
 		uves,colors,nvert = [],[],len(face.verts)
@@ -368,7 +369,7 @@ def save_mesh(mesh,armature,groups,st):
 		print("\t(w) %d pure vertices detected" % (n_bad_uv))
 	else: print("\tconverted to tri-mesh")
 
-	#   2: fill sparsed vertex array
+	# 2: fill sparsed vertex array
 	avg,set_vert = 0.0,{}
 	for face in ar_face:
 		avg += face.hand
@@ -385,7 +386,7 @@ def save_mesh(mesh,armature,groups,st):
 			set_vert[vs].append(v)
 	print("\t(i) %.2f avg handness" % (avg / len(ar_face)))
 	
-	#   3: update triangle indexes
+	# 3: update triangle indexes
 	avg,ar_vert = 0.0,[]
 	for i,vgrup in enumerate(set_vert.values()):
 		v = vgrup[0]
@@ -410,7 +411,7 @@ def save_mesh(mesh,armature,groups,st):
 	print("\t(i) %.2f avg tangent accuracy" % (avg / len(ar_vert)))
 	del set_vert
 
-	#   4: unlock quaternions to make all the faces QI-friendly
+	# 4: unlock quaternions to make all the faces QI-friendly
 	def qi_check(f):	# check Quaternion Interpolation friendliness
 		qx = tuple( ar_vert[x].quat for x in f.vi )
 		assert qx[0].dot(qx[1]) >= 0 and qx[0].dot(qx[2]) >= 0
@@ -462,6 +463,8 @@ def save_mesh(mesh,armature,groups,st):
 			vc = ar_vert[ f.vi[pos] ]
 			# create mean vertex
 			v = Vertex( vc.vert )
+			v.vert = va.vert
+			v.vert2 = vb.vert
 			n_dup += 1
 			v.face = f
 			v.coord = 0.5 * (va.coord + vb.coord)
@@ -469,8 +472,8 @@ def save_mesh(mesh,armature,groups,st):
 			v.quat.normalize()
 			v.tex = tuple( 0.5*(a[0]+a[1]) for a in zip(va.tex,vb.tex) )
 			# create additional face
-			f2 = Face(f, mesh)
-			mark_used(f.vi[ia])	# caution: easy to miss case
+			f2 = Face( f, mesh )
+			mark_used( f.vi[ia] )	# caution: easy to miss case
 			v.dual = f.vi[ia] = f2.vi[ib] = len(ar_vert)
 			# it's mathematically proven that both faces are QI friendly now!
 			ar_vert.append(v)
@@ -485,7 +488,7 @@ def save_mesh(mesh,armature,groups,st):
 		for f in ar_face: qi_check(f)
 	del ex_face
 
-	#   5: face indexes
+	# 5: face indexes
 	ar_face.sort(key = lambda x: x.mat)
 	face_num = (len(mesh.materials)+1) * [0]
 	for face in ar_face:
@@ -532,7 +535,7 @@ def save_mesh(mesh,armature,groups,st):
 		out.array('H', face.vi)
 	out.end()
 
-	#   6: materials
+	# 6: materials
 	out.begin('entity')
 	for fn,m in zip(face_num,mesh.materials):
 		if not fn: break
@@ -541,7 +544,23 @@ def save_mesh(mesh,armature,groups,st):
 		print("\t+entity: %d faces, [%s]" % (fn,m.name))
 	out.pack('H',0)
 	out.end()
+	
+	# 7: shape keys
+	shapes = mesh.shape_keys.keys
+	for sk in shapes:
+		print("\t+shape: %.3f [%s]" % (sk.value,sk.name))
+		out.begin('v_shape')
+		out.text( sk.name )
+		out.pack('Bf', list(shapes).index(sk.relative_key), sk.value )
+		for v in ar_vert:
+			pos = sk.data[v.vert.index].co
+			if v.vert2:
+				p2 = sk.data[v.vert2.index].co
+				pos = 0.5*(pos+p2)
+			out.pack('3f', pos.x, pos.y, pos.z)
+		out.end()
 
+	# 8: bone weights
 	if not armature: return
 	out.begin('v_skin')
 	nempty, avg = 0, 0.0

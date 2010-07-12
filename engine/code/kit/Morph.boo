@@ -1,24 +1,88 @@
 ﻿namespace kri.kit.morph
 
-import System
 import System.Collections.Generic
+import OpenTK
 
-public class Main:
-	public final tar	= Dictionary[of string,kri.Mesh]()
-	public static final ats	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
-	public final va		= kri.vb.Array()
-	public final sa		= kri.shade.Smart()
-	public final pTime	= kri.shade.par.Value[of single]('xxx_time')
+#----------------------------------------
+#	Shape Key, stored as an entiry tag
+
+public class Key( kri.ITag ):
+	public final name	as string
+	public final data	= kri.vb.Attrib()
+	public relative	as Key		= null
+	[Getter(Dirty)]
+	private dirty	as bool		= false
+	private val		as single	= 1f
+	public Value	as single:
+		get: return val
+		set: dirty=true; val=value
+	public def constructor(s as string):
+		name = s
+
+
+#----------------------------------------
+#	Animation of morphing between to shapes
+
+public class Anim( kri.ani.Loop ):
+	public final k0	as Key
+	public final k1	as Key
+	public def constructor(e as kri.Entity, s0 as string, s1 as string):
+		assert s0 and s1 and s0!=s1
+		k0 = k1 = null
+		for tg in e.tags:
+			key = tg as Key
+			continue	if not key
+			k0 = key	if key.name == s0
+			k1 = key	if key.name == s1
+		assert k0 and k1
+	protected override def onRate(rate as double) as void:
+		k0.Value = 1.0 - rate
+		k1.Value = rate
+
+
+#----------------------------------------
+#	Update render, puts the morph result into the mesh data
+
+public class Update( kri.rend.Basic ):
 	public final tf		= kri.TransFeedback(1)
-	public static final max	=	4
-
-	public def apply(mar as (kri.Mesh), t as single) as void:
-		va.bind()
-		pTime.Value = t
-		for i in range( Math.Min(max,mar.Length-1) ):
-			m = mar[i+1]
-			assert m.nVert == mar[0].nVert
-			for j in range(ats.Length):
-				m.find(ats[j]).attribFake(max*j+i)
+	public final sa		= kri.shade.Smart()
+	public final pVal	= kri.shade.par.Value[of Vector4]('shape_value')
+	private final va	= kri.vb.Array()
+	private final slot	= kri.lib.Slot(4)
+	private final eps	= 1.0e-7
+	public def constructor():
+		super(false)
+		for i in range(4):
+			slot.create('pos'+i)
+		d = kri.shade.rep.Dict()
+		d.var(pVal)
+		sa.add('/skin/morph_v')
+		sa.feedback(true,'to_pos')
+		sa.link( slot, d, kri.Ant.Inst.dict )
+	
+	public override def process(con as kri.rend.Context) as void:
+		trans = Dictionary[of int,int]()
 		sa.use()
-		mar[0].draw(tf)
+		va.bind()
+		using kri.Discarder(true):
+			for ent in kri.Scene.Current.entities:
+				keys = List[of Key]()
+				dirty = false
+				for tg in ent.tags:
+					tk = tg as Key
+					continue	if not tk
+					keys.Add(tk)
+					dirty = true	if tk.Dirty
+				continue	if keys.Count<2 or not dirty
+				assert ent.mesh
+				pVal.Value = Vector4( keys[0].Value, keys[1].Value, 0f,0f )
+				sum = Vector4.Dot( pVal.Value, Vector4.One )
+				pVal.Value.X += 1f-sum
+				#assert System.Math.Abs(sum-1f) < eps
+				# bind attribs & draw
+				for i in range( System.Math.Min(4,keys.Count) ):
+					trans[ kri.Ant.Inst.attribs.vertex ] = i
+					keys[i].data.attribTrans(trans)
+				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))
+				sa.updatePar()
+				ent.mesh.draw(tf)

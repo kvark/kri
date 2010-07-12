@@ -4,13 +4,17 @@ import OpenTK
 import OpenTK.Graphics.OpenGL
 
 public partial class Native:
-	protected def getArray[of T(struct)](multi as uint,
+
+	protected def getArray[of T(struct)](num as uint, fun as callable) as (T):
+		ar = array[of T](num)
+		for i in range( ar.Length ):
+			ar[i] = fun()
+		return ar
+	protected def loadArray[of T(struct)](multi as uint,
 			ref ai as kri.vb.Info, fun as callable) as bool:
 		m = geData[of kri.Mesh]()
 		return false	if not m
-		ar = array[of T]( multi * m.nVert )
-		for i in range( ar.Length ):
-			ar[i] = fun()
+		ar = getArray[of T]( multi * m.nVert, fun )
 		v = kri.vb.Attrib()
 		v.init(ar,false)
 		v.Semant.Add(ai)
@@ -24,13 +28,26 @@ public partial class Native:
 		m.nVert = br.ReadInt16()
 		return true
 	
+	#---	Parse shape key		---#
+	public def pv_shape() as bool:
+		e = geData[of kri.Entity]()
+		return false	if not e or not e.mesh
+		tag = kri.kit.morph.Key( getString() )
+		br.ReadByte()	# relative ID, not used
+		tag.Value = getReal()
+		ar = getArray[of Vector3]( e.mesh.nVert, getVector )
+		tag.data.init(ar,false)
+		kri.Help.enrich( tag.data, 3, kri.Ant.Inst.attribs.vertex )
+		e.tags.Add(tag)
+		return true
+	
 	#---	Parse mesh vertices (w = handness)	---#
 	public def pv_pos() as bool:
 		ai = kri.vb.Info(
 			slot: kri.Ant.Inst.attribs.vertex, size:4,
 			type: VertexAttribPointerType.Float,
 			integer:false )
-		return getArray[of Vector4](1,ai,getVec4)
+		return loadArray[of Vector4](1,ai,getVec4)
 	
 	#---	Parse mesh quaternions 	---#
 	public def pv_quat() as bool:
@@ -38,7 +55,7 @@ public partial class Native:
 			slot: kri.Ant.Inst.attribs.quat, size:4,
 			type: VertexAttribPointerType.Float,
 			integer:false )
-		return getArray[of Quaternion](1,ai,getQuat)
+		return loadArray[of Quaternion](1,ai,getQuat)
 	
 	#---	Parse mesh texture coordinates (UV)	---#
 	public def pv_uv() as bool:
@@ -52,7 +69,7 @@ public partial class Native:
 			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
 			type:VertexAttribPointerType.Float,
 			integer:false )
-		return getArray[of Vector2](1,ai,getVec2)
+		return loadArray[of Vector2](1,ai,getVec2)
 	
 	#---	Parse mesh vertex colors	---#
 	public def pv_color() as bool:
@@ -66,7 +83,7 @@ public partial class Native:
 			slot:kri.Ant.Inst.attribs.color[slot], size:3,
 			type:VertexAttribPointerType.UnsignedByte,
 			integer:false )
-		return getArray[of ColorRaw](1,ai,getColorRaw)
+		return loadArray[of ColorRaw](1,ai,getColorRaw)
 	
 	#---	Parse mesh armature link with bone weights	---#
 	public def pv_skin() as bool:
@@ -74,7 +91,7 @@ public partial class Native:
 			slot: kri.Ant.Inst.attribs.skin, size:4,
 			type: VertexAttribPointerType.UnsignedShort,
 			integer:true )
-		rez = getArray[of ushort](4,ai, {return br.ReadUInt16()})
+		rez = loadArray[of ushort](4,ai, {return br.ReadUInt16()})
 		return false	if not rez
 		# link to the Armature
 		kri.kit.skin.Tag.prepare(
@@ -88,9 +105,7 @@ public partial class Native:
 		return false	if not m
 		m.nPoly = br.ReadUInt16()
 		if m.nPoly:	# indexes
-			af = array[of ushort](m.nPoly * 3)
-			for i in range(af.Length):
-				af[i] = br.ReadUInt16()
+			af = getArray[of ushort]( m.nPoly*3, br.ReadUInt16 )
 			m.ind = kri.vb.Index()
 			m.ind.init(af,false)
 		else: m.nPoly /= 3

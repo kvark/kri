@@ -85,6 +85,7 @@ public partial class Native:
 		dict['curve']	= p_curve
 		# mesh
 		dict['mesh']	= p_mesh
+		dict['v_shape']	= pv_shape
 		dict['v_pos']	= pv_pos
 		dict['v_quat']	= pv_quat
 		dict['v_uv']	= pv_uv
