@@ -95,15 +95,18 @@ public class Discarder(Section):
 # Window FPS counter
 public class FpsCounter:
 	public final kPeriod	as double
+	public final title		as string
 	private kNext 	= 0.0
 	private kPrev	= 0.0
 	private fMean	= 0.0
 	private fDisp	= 0.0
 	private nFrames	= 0.0
 	# interface
-	public def constructor(per as double):
+	public def constructor(per as double, name as string):
 		kPeriod = kNext = per
+		title = name
 	public def update(moment as Double) as bool:
+		return false	if kPeriod<=0.0
 		t = moment - kPrev
 		kPrev += t
 		fMean += t
@@ -113,7 +116,7 @@ public class FpsCounter:
 	public def gen() as string:
 		fMean /= nFrames
 		fDisp = Math.Sqrt(fDisp / nFrames - fMean*fMean)
-		rez = "kri: {0,6:f4} mean, {1,6:f3} disp" % (fMean,fDisp)
+		rez = "${title}: {0,6:f4} mean, {1,6:f3} disp" % (fMean,fDisp)
 		fMean = fDisp = nFrames = 0.0
 		kNext += kPeriod
 		return rez

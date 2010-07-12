@@ -34,7 +34,7 @@ public class Ant( OpenTK.GameWindow ):
 	private quad	as kri.kit.gen.Frame	= null	# Standard quad
 	# time
 	private sw	= Diagnostics.Stopwatch()	# Time counter
-	private final fps	= FpsCounter(1.0)	# FPS counter
+	private final fps	as FpsCounter		# FPS counter
 	public anim	as ani.IBase	= null		# Animation
 	public Time as double:
 		get: return sw.Elapsed.TotalSeconds
@@ -70,6 +70,7 @@ public class Ant( OpenTK.GameWindow ):
 		wid	= uint.Parse( sizes[0] )
 		het	= uint.Parse( sizes[1] )
 		fs	= (sizes[0] + sizes[1] == 0)
+		period	= single.Parse( conf.ask('StatPeriod','1.0') )
 		
 		# check configuration completeness
 		unused = array( conf.getUnused() )
@@ -88,6 +89,7 @@ public class Ant( OpenTK.GameWindow ):
 
 		# start
 		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
+		fps = FpsCounter(period,title)
 		sw.Start()
 		debug = bug
 		inst = self
