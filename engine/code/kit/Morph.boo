@@ -52,8 +52,9 @@ public class Update( kri.rend.Basic ):
 	private final eps	= 1.0e-7
 	public def constructor():
 		super(false)
+		slot.create('pos')
 		for i in range(4):
-			slot.create('pos'+i)
+			slot.create('pos'+(i+1))
 		d = kri.shade.rep.Dict()
 		d.var(pVal)
 		sa.add('/skin/morph_v')
@@ -80,8 +81,10 @@ public class Update( kri.rend.Basic ):
 				pVal.Value.X += 1f-sum
 				#assert System.Math.Abs(sum-1f) < eps
 				# bind attribs & draw
+				av = kri.Ant.Inst.attribs.vertex
+				ent.enable(false, (av,))
 				for i in range( System.Math.Min(4,keys.Count) ):
-					trans[ kri.Ant.Inst.attribs.vertex ] = i
+					trans[av] = i+1
 					keys[i].data.attribTrans(trans)
 				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))
 				sa.updatePar()

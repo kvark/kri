@@ -150,7 +150,8 @@ public class Texture( shade.par.INamed ):
 	
 	# init multi-sampled texture
 	public static def InitMulti(fi as PixelInternalFormat, samples as byte, fixedLoc as bool, sx as int, sy as int, sz as int) as void:
-		if sz>0:	GL.TexImage3DMultisample( curTargetMulti(), samples, fi, sx, sy, sz,	fixedLoc )
+		if not samples:	Init(fi,sx,sy,sz)
+		elif sz>0:	GL.TexImage3DMultisample( curTargetMulti(), samples, fi, sx, sy, sz,	fixedLoc )
 		else:		GL.TexImage2DMultisample( curTargetMulti(), samples, fi, sx, sy, 		fixedLoc )
 	
 	# init cube map format

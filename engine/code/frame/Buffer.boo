@@ -8,6 +8,7 @@ public class Buffer(Screen):
 	public mask		as uint = 1		# desired draw mask
 	private oldMask	as uint = 0		# active mask
 	private static final badMask	as uint = 100	# bad mask
+	[Getter(Samples)]
 	protected samples				as byte			# samples count
 	
 	protected final at = (			# attachment controllers
@@ -80,7 +81,7 @@ public class Buffer(Screen):
 			t = a.Tex
 			if t and a.dFormat.Dirty:	#change attachment texture format
 				t.bind()
-				kri.Texture.Init( a.Format, Width, Height, samples )
+				kri.Texture.InitMulti( a.Format, samples,false, Width,Height,0 )
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				GL.FramebufferTextureLayer(	target,	a.slot, t.id, 0, a.Layer )
 			elif a.dirty:		#update texture attachment

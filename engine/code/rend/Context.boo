@@ -72,8 +72,8 @@ public class Context:
 		swapUnit(0,   tInput)	if Input
 		swapUnit(iDep,tDepth)	if Depth
 		buf.init(w,h)
-		buf.resizeFrames(0)
-		Input.Init( buf.A[0].Format, w,h,0 )	if Input
+		buf.resizeFrames()
+		Input.InitMulti( buf.A[0].Format, buf.Samples, false, w,h,0 )	if Input
 		return buf
 	
 	private def swapUnit(slot as int, ref tex as kri.Texture):
@@ -143,4 +143,3 @@ public class Context:
 			else: GL.DrawBuffer( DrawBufferMode.Back )
 		if dirty == DirtyLevel.None and r.bInput:
 			swapUnit(0,tInput)
-	

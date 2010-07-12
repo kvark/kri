@@ -131,10 +131,10 @@ public class View:
 public class ViewScreen(View):
 	public final area	= Box2(0f,0f,1f,1f)
 	public final out	as frame.Screen
-	public def constructor(bc as uint, bd as uint):
+	public def constructor(ns as byte, bc as byte, bd as byte):
 		out = frame.Screen()
 		# assuming no anti-aliasing on the target screen
-		super( out, 0, bc, bd )
+		super( out, ns, bc, bd )
 	public override def resize(wid as int, het as int) as bool:
 		return false if not super(wid,het)
 		out.init	( cast(int, wid*area.Width),	cast(int, het*area.Height) )

@@ -86,7 +86,7 @@ private def genMap() as (single,2):
 [STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant('kri.conf',0):
-		view = kri.ViewScreen(16,0)
+		view = kri.ViewScreen(0,16,0)
 		rchain = kri.rend.Chain()
 		view.ren = rchain
 		rlis = rchain.renders

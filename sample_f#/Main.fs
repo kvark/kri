@@ -2,7 +2,7 @@
 
 let ant = new kri.Ant("kri.conf",0)
 
-let view = kri.ViewScreen(8u,0u)
+let view = kri.ViewScreen(0uy,8uy,0uy)
 let rchain = kri.rend.Chain()
 view.ren <- rchain
 let rlis = rchain.renders
