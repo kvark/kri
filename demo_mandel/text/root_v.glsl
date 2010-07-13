@@ -8,8 +8,8 @@ bool born_ready();
 
 
 void main()	{
-	reset();
+	//reset();
 	//update();
-	//if(born_ready() && update()<0.5)
-	//	reset();
+	if(born_ready() && update()<0.5)
+		reset();
 }

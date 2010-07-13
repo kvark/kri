@@ -5,7 +5,7 @@ import kri.shade
 
 
 private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
-	pm = kri.part.Manager( 2 )
+	pm = kri.part.Manager( 2000 )
 	pm.makeStandard(pc)
 	pm.col_init.extra.Add( pc.sh_tool )
 	pm.col_update.root = Object.Load('text/root_v')
@@ -13,11 +13,6 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	beh = kri.part.beh.Basic('text/beh')
 	kri.Help.enrich( beh, 4, pc.at_pos )
 	pm.behos.Add(beh)
-	
-	if not 'Dummy':
-		b2 = kri.part.beh.Basic('/part/fur/dummy')
-		kri.Help.enrich( b2, 2, pc.at_sys )
-		pm.behos.Add( b2 )
 	
 	pLimt = par.Value[of single]('limit')
 	pLimt.Value = 2.5f
@@ -47,7 +42,7 @@ private class Render( kri.rend.part.Simple ):
 [System.STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant('kri.conf',0):
-		view = kri.ViewScreen(0,16,0)
+		view = kri.ViewScreen(0,8,0)
 		rchain = kri.rend.Chain()
 		view.ren = rchain
 		rlis = rchain.renders
@@ -63,9 +58,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.rend.Clear() )
 		rlis.Add( Render(pcon) )
-		#rlis.Add( demo.test.Feedback(null) )
-		#ant.anim = al = kri.ani.Scheduler()
-		#al.add( kri.ani.Particle(pe) )
+		ant.anim = kri.ani.Particle(pe)
 		ant.Run(30.0,30.0)
 		
 		

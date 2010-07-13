@@ -60,6 +60,7 @@
       <keywords region="def:Character">
         <word name="gl_PerVertex"/>
         <word name="gl_Position"/>
+	<word name="gl_PointSize"/>
         <word name="gl_ClipDistance"/>
         <word name="gl_Layer"/>
         <word name="gl_PrimitiveIDIn"/>	

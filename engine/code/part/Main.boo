@@ -84,15 +84,15 @@ public class Emitter(DataHolder):
 
 public class Context:
 	# particle attribs
-	public final	at_sys		= kri.Ant.Inst.slotParticles.getForced('sys')
 	public final	at_pos		= kri.Ant.Inst.slotParticles.getForced('pos')
 	public final	at_rot		= kri.Ant.Inst.slotParticles.getForced('rot')
+	public final	at_sys		= kri.Ant.Inst.slotParticles.getForced('sys')
 	public final	at_sub		= kri.Ant.Inst.slotParticles.getForced('sub')
 	public final	at_speed	= kri.Ant.Inst.slotParticles.getForced('speed')
 	# particle ghost attribs
-	public final	ghost_sys	= kri.Ant.Inst.slotAttributes.getForced('@sys')
 	public final	ghost_pos	= kri.Ant.Inst.slotAttributes.getForced('@pos')
 	public final	ghost_rot	= kri.Ant.Inst.slotAttributes.getForced('@rot')
+	public final	ghost_sys	= kri.Ant.Inst.slotAttributes.getForced('@sys')
 	public final	ghost_sub	= kri.Ant.Inst.slotAttributes.getForced('@sub')
 	# root shaders
 	public final	sh_init	= Object.Load('/part/init_v')
