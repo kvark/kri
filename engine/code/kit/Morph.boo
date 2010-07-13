@@ -29,9 +29,7 @@ public class Anim( kri.ani.Loop ):
 	public def constructor(e as kri.Entity, s0 as string, s1 as string):
 		assert s0 and s1 and s0!=s1
 		k0 = k1 = null
-		for tg in e.tags:
-			key = tg as Tag
-			continue	if not key
+		for key in e.seTags[of Tag]():
 			k0 = key	if key.name == s0
 			k1 = key	if key.name == s1
 		assert k0 and k1
@@ -67,14 +65,10 @@ public class Update( kri.rend.Basic ):
 		va.bind()
 		using kri.Discarder(true):
 			for ent in kri.Scene.Current.entities:
-				keys = List[of Tag]()
-				dirty = false
-				for tg in ent.tags:
-					tk = tg as Tag
-					continue	if not tk
-					keys.Add(tk)
-					dirty = true	if tk.Dirty
-				continue	if keys.Count<2 or not dirty
+				keys = ent.seTags[of Tag]()
+				dirty = System.Array.Find(keys) do(t as Tag):
+					return t.Dirty
+				continue	if keys.Length<2 or not dirty
 				assert ent.mesh
 				pVal.Value = Vector4( keys[0].Value, keys[1].Value, 0f,0f )
 				sum = Vector4.Dot( pVal.Value, Vector4.One )
@@ -83,7 +77,7 @@ public class Update( kri.rend.Basic ):
 				# bind attribs & draw
 				av = kri.Ant.Inst.attribs.vertex
 				ent.enable(false, (av,))
-				for i in range( System.Math.Min(4,keys.Count) ):
+				for i in range( System.Math.Min(4,keys.Length) ):
 					trans[av] = i+1
 					keys[i].data.attribTrans(trans)
 				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))

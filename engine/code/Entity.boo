@@ -89,6 +89,13 @@ public class Entity( kri.ani.data.Player ):
 		return null as T
 		#return tags.Find( {t| return t isa T} ) as T
 	
+	public def seTags[of T(ITag)]() as (T):
+		tlis = List[of T]()
+		for it in tags:
+			t = it as T
+			tlis.Add(t)	if t
+		return tlis.ToArray()
+	
 	public def findAny(id as int) as kri.vb.Attrib:
 		at = store.find(id)
 		return (at	if at else	mesh.find(id))
