@@ -59,8 +59,6 @@ def save_color(rgb):
 		out.pack('B', int(255*c) )
 
 def save_matrix(mx):
-	#for i in range(4):
-	#   array.array('f',mx[i]).tofile(file)
 	pos = mx.translation_part()
 	sca = mx.scale_part()
 	rot = mx.to_quat()
@@ -86,6 +84,58 @@ def gather_anim(ob):
 def save_actions(ob,sym):
 	for act in gather_anim(ob):
 		save_meta_action(act,sym)
+
+def save_actions_ext(ob,sym):
+	import re
+	for act in gather_anim(ob):
+		offset,nf = act.get_frame_range()
+		rnas,curves = {},set() # {elem_id}{attrib_name}[sub_id]
+		indexator = None
+		# gather all
+		for f in act.fcurves:
+			bid,attrib = 0, f.data_path
+			# extract array name, index & target field
+			mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
+			if mat:
+				mg = mat.groups()
+				curArray = ob
+				for elem in mg[0].split('.'):
+					curArray = curArray.__getattribute__(elem)
+				if not indexator:
+					indexator = curArray
+				elif indexator != curArray:
+					print("\t\t(w)", 'unknown array:', mg[0])
+					continue
+				bid = 1 + indexator.keys().index( mg[1] )
+				attrib = mg[2]
+			#print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
+			if not bid in rnas:
+				rnas[bid] = {}
+			if not attrib in rnas[bid]:
+				rnas[bid][attrib] = []
+			lis = rnas[bid][attrib]
+			assert f.array_index == len(lis)
+			lis.append(f)
+		# write header or exit
+		if not len(rnas): continue
+		out.begin( 'action' )
+		out.text( act.name )
+		out.pack('f', nf * kFrameSec )
+		out.end()
+		print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+		# write in packs
+		for elem,it in rnas.items():
+			for attrib,sub in it.items():
+				curves.add( "%s[%d]" % (attrib,len(sub)) )
+				out.begin('curve')
+				assert elem<256 and len(attrib)<24
+				out.text( sym+'.'+attrib )
+				out.pack('2B', len(sub), elem )
+				save_curve_pack( sub, offset )
+				out.end()
+		print("\t\t", ', '.join(curves) )
+
+		
 
 ###  ACTION:META   ###
 
@@ -819,10 +869,7 @@ def save_scene(filename, context, st):
 			if ob.parent and ob.parent.type == 'ARMATURE':
 				arm = ob.parent.data
 			save_mesh(ob.data, arm, ob.vertex_groups, st)
-			# shape animations
-			shapes = ob.data.shape_keys
-			for act in gather_anim( shapes ):
-				save_meta_action(act,'v', shapes.keys.keys(),'keys')
+			save_actions_ext( ob.data.shape_keys, 'v' )
 		elif ob.type == 'ARMATURE':
 			save_skeleton(ob.data)
 			bar = ob.data.bones.keys()
