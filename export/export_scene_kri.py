@@ -81,11 +81,8 @@ def gather_anim(ob):
 		all.append( ad.action )
 	return all
 
-def save_actions(ob,sym):
-	for act in gather_anim(ob):
-		save_meta_action(act,sym)
 
-def save_actions_ext(ob,sym):
+def save_actions(ob,sym,symInd):
 	import re
 	for act in gather_anim(ob):
 		offset,nf = act.get_frame_range()
@@ -97,6 +94,7 @@ def save_actions_ext(ob,sym):
 			# extract array name, index & target field
 			mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
 			if mat:
+				if not symInd: continue
 				mg = mat.groups()
 				curArray = ob
 				for elem in mg[0].split('.'):
@@ -108,6 +106,7 @@ def save_actions_ext(ob,sym):
 					continue
 				bid = 1 + indexator.keys().index( mg[1] )
 				attrib = mg[2]
+			elif not sym: continue
 			#print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
 			if not bid in rnas:
 				rnas[bid] = {}
@@ -124,64 +123,19 @@ def save_actions_ext(ob,sym):
 		out.end()
 		print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 		# write in packs
+		prefix = (sym,symInd)[indexator != None]
 		for elem,it in rnas.items():
 			for attrib,sub in it.items():
 				curves.add( "%s[%d]" % (attrib,len(sub)) )
 				out.begin('curve')
 				assert elem<256 and len(attrib)<24
-				out.text( sym+'.'+attrib )
+				out.text( prefix+ '.'+attrib )
 				out.pack('2B', len(sub), elem )
 				save_curve_pack( sub, offset )
 				out.end()
 		print("\t\t", ', '.join(curves) )
 
 		
-
-###  ACTION:META   ###
-
-def save_meta_action(act,sym, indexator=None, sar=''):
-	import re
-	offset,nf = act.get_frame_range()
-	rnas,curves = {},set() # {elem_id}{attrib_name}[sub_id]
-	# gather all
-	for f in act.fcurves:
-		bid,attrib = 0, f.data_path
-		mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
-		if mat:
-			mg = mat.groups()
-			if not indexator: continue
-			if mg[0] != sar:
-				print("\t\t(w)", 'unknown array:', mg[0])
-				continue
-			bid = 1 + indexator.index( mg[1] )
-			attrib = mg[2]
-		elif indexator: continue
-		#print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
-		if not bid in rnas:
-			rnas[bid] = {}
-		if not attrib in rnas[bid]:
-			rnas[bid][attrib] = []
-		lis = rnas[bid][attrib]
-		assert f.array_index == len(lis)
-		lis.append(f)
-	# write header or exit
-	if not len(rnas): return
-	out.begin( 'action' )
-	out.text( act.name )
-	out.pack('f', nf * kFrameSec )
-	out.end()
-	print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
-	# write in packs
-	for elem,it in rnas.items():
-		for attrib,sub in it.items():
-			curves.add( "%s[%d]" % (attrib,len(sub)) )
-			out.begin('curve')
-			assert elem<256 and len(attrib)<24
-			out.text( sym+'.'+attrib )
-			out.pack('2B', len(sub), elem )
-			save_curve_pack( sub, offset )
-			out.end()
-	print("\t\t", ', '.join(curves) )
 
 ###  ACTION:CURVES   ###
 
@@ -809,22 +763,6 @@ def save_node(ob):
 	out.end()
 
 
-def gather_anim_global(ob):
-	actions = set(gather_anim(ob))
-	if ob.type == 'ARMATURE':
-		# search from global for old-style blend files
-		# new 2.5 standard places all animations locally
-		names = set( ob.data.bones.keys() )
-		def affects(a):
-			n2 = set(gr.name for gr in a.groups)
-			return not names.isdisjoint(n2)
-		a2 = list( filter(affects, bpy.data.actions) )
-		if len(a2):
-			print("\t(i) extracted %d actions from context" % (len(a2)) )
-			actions.update(a2)
-	return actions
-	
-
 ### 	 SCENE		###
 
 def save_scene(filename, context, st):
@@ -852,35 +790,28 @@ def save_scene(filename, context, st):
 	
 	for mat in context.main.materials:
 		save_mat(mat)
-		tar = mat.texture_slots
-		for act in gather_anim(mat):
-			save_meta_action(act,'m')
-			save_meta_action(act,'t', tar,'texture_slots')
+		save_actions( mat, 'm','t' )
 
 	for ob in sc.objects:
 		save_node( ob )
-		anims = gather_anim_global(ob)
-		for act in anims:
-			save_meta_action(act,'n')
+		save_actions( ob, 'n', None )
 		save_game( ob.game )
 
 		if ob.type == 'MESH':
 			arm = None
 			if ob.parent and ob.parent.type == 'ARMATURE':
 				arm = ob.parent.data
-			save_mesh(ob.data, arm, ob.vertex_groups, st)
-			save_actions_ext( ob.data.shape_keys, 'v' )
+			save_mesh( ob.data, arm, ob.vertex_groups, st )
+			save_actions( ob.data.shape_keys, '','v' )
 		elif ob.type == 'ARMATURE':
-			save_skeleton(ob.data)
-			bar = ob.data.bones.keys()
-			for act in anims:
-				save_meta_action(act,'s', bar,'pose.bones')
+			save_skeleton( ob.data )
+			save_actions( ob.data, None, 's' )
 		elif ob.type == 'LAMP':
-			save_lamp(ob.data)
-			save_actions(ob.data, 'l')
+			save_lamp( ob.data )
+			save_actions( ob.data, 'l','' )
 		elif ob.type == 'CAMERA':
-			save_camera(ob.data, ob == sc.camera)
-			save_actions(ob.data, 'c')
+			save_camera( ob.data, ob == sc.camera )
+			save_actions( ob.data, 'c','' )
 		for p in ob.particle_systems:
 			save_particle(ob,p)
 	print('Done.')
