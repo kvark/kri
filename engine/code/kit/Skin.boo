@@ -15,14 +15,14 @@ public class Tag( kri.ITag ):
 		cond = e and s and not e.seTag[of Tag]() and e.mesh.find(a.skin)
 		return false	if not cond
 		for at in (a.vertex, a.quat):
-			continue	if e.find(at)
+			continue	if e.store.find(at)
 			v = e.mesh.find(at)
 			return false	if not v
 			ai = v.Semant[0]
 			v2 = kri.vb.Attrib()
 			v2.Semant.Add(ai)
 			v2.init( e.mesh.nVert * ai.fullSize() )
-			e.vbo.Add(v2)
+			e.store.vbo.Add(v2)
 		e.tags.Add( Tag(skel:s) )
 		return true
 	
@@ -67,7 +67,7 @@ public class Update( kri.rend.tech.Basic ):
 				continue	if not e.visible or not tag or tag.Sync\
 					or not attribs(false, e, *at_all)
 				vos = Array.ConvertAll(at_mod) do(a as int):
-					return e.find(a)
+					return e.store.find(a)
 				continue	if null in vos
 				tf.Bind( *vos )
 				# run the transform

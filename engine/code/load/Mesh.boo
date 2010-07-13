@@ -32,7 +32,7 @@ public partial class Native:
 	public def pv_shape() as bool:
 		e = geData[of kri.Entity]()
 		return false	if not e or not e.mesh
-		tag = kri.kit.morph.Key( getString() )
+		tag = kri.kit.morph.Tag( getString() )
 		br.ReadByte()	# relative ID, not used
 		tag.Value = getReal()
 		ar = getArray[of Vector3]( e.mesh.nVert, getVector )

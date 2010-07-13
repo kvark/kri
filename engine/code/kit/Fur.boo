@@ -28,12 +28,12 @@ public class Context:
 		ai = kri.vb.Info(size:3, type:VertexAttribPointerType.Float, integer:false)
 		vm = (null if e.mesh.find(ats[0]) else kri.vb.Attrib())
 		for slot in ats:
-			assert not e.find(ats[0])
+			assert not e.store.find(ats[0])
 			ai.slot = slot
 			vat.Semant.Add(ai)
 			vm.Semant.Add(ai) if vm
 		vat.initAll( e.mesh.nVert )
-		e.vbo.Add(vat)
+		e.store.vbo.Add(vat)
 		if vm:
 			vm.initAll( e.mesh.nVert )
 			e.mesh.vbo.Add(vm)
@@ -73,10 +73,10 @@ public class Update( kri.rend.Basic ):
 			for e in kri.Scene.Current.entities:
 				fp = e.seTag[of Tag]()
 				continue	if not fp
-				x = e.find( Context.ats[0] )
+				x = e.store.find( Context.ats[0] )
 				y = e.mesh.find( Context.ats[0] )
 				# swap with mesh
-				e.swap(x,y)
+				e.store.swap(x,y)
 				e.mesh.swap(y,x)
 				# bind
 				tf.Bind(y)

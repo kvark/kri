@@ -49,10 +49,10 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 		a = kri.Ant.Inst.attribs
 		beh.tVert.Value = kri.Texture( TextureTarget.TextureBuffer )
 		beh.tVert.Value.bind()
-		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.vertex) )
+		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.store.find(a.vertex) )
 		beh.tQuat.Value = kri.Texture( TextureTarget.TextureBuffer )
 		beh.tQuat.Value.bind()
-		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.find(a.quat) )
+		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.store.find(a.quat) )
 		pe.onUpdate = def(e as kri.Entity):
 			assert e
 			kri.Ant.Inst.params.modelView.activate( e.node )

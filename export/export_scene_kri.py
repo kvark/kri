@@ -819,6 +819,10 @@ def save_scene(filename, context, st):
 			if ob.parent and ob.parent.type == 'ARMATURE':
 				arm = ob.parent.data
 			save_mesh(ob.data, arm, ob.vertex_groups, st)
+			# shape animations
+			shapes = ob.data.shape_keys
+			for act in gather_anim( shapes ):
+				save_meta_action(act,'v', shapes.keys.keys(),'keys')
 		elif ob.type == 'ARMATURE':
 			save_skeleton(ob.data)
 			bar = ob.data.bones.keys()

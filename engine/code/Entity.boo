@@ -63,10 +63,11 @@ public class TagMat(ITag):
 
 #--------- Entity ---------#
 
-public class Entity( vb.Storage ):
+public class Entity( kri.ani.data.Player ):
 	public node	as Node		= null
 	public mesh	as Mesh		= null
 	public visible	as bool	= true
+	public final store	= vb.Storage()
 	public final va		= array[of vb.Array]	( lib.Const.nTech )
 	public final tags	= List[of ITag]()
 	
@@ -78,6 +79,9 @@ public class Entity( vb.Storage ):
 		visible = e.visible
 		tags.AddRange( e.tags )
 	
+	public def touch() as void:
+		pass
+	
 	public def seTag[of T(ITag)]() as T:
 		for it in tags:
 			t = it as T
@@ -86,12 +90,12 @@ public class Entity( vb.Storage ):
 		#return tags.Find( {t| return t isa T} ) as T
 	
 	public def findAny(id as int) as kri.vb.Attrib:
-		at = find(id)
+		at = store.find(id)
 		return (at	if at else	mesh.find(id))
 	
 	public def enable(local as bool, ids as int*) as bool:
 		for i in ids:
-			continue if local and bind(i)
+			continue if local and store.bind(i)
 			continue if mesh.bind(i)
 			return false
 		mesh.ind.bind()	if mesh.ind

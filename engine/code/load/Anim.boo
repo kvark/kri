@@ -77,6 +77,13 @@ public partial class Native:
 			(pl as kri.Camera).fov = v*0.5f
 		anid['c.clip_start']	= racProject(fp_prin)
 		anid['c.clip_end']		= racProject(fp_prout)
+		# shape key
+		anid['v.value']		= rac(getReal) do(pl as IPlayer, v as single, i as byte):
+			shapes = List[of kri.kit.morph.Tag]()
+			for tg in (pl as kri.Entity).tags:
+				ts = tg as kri.kit.morph.Tag
+				shapes.Add(ts)	if ts
+			shapes[i-1].Value = v
 
 
 	#---	Parse action	---#

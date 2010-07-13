@@ -6,10 +6,10 @@ import OpenTK
 #----------------------------------------
 #	Shape Key, stored as an entiry tag
 
-public class Key( kri.ITag ):
+public class Tag( kri.ITag ):
 	public final name	as string
 	public final data	= kri.vb.Attrib()
-	public relative	as Key		= null
+	public relative	as Tag		= null
 	[Getter(Dirty)]
 	private dirty	as bool		= false
 	private val		as single	= 1f
@@ -24,13 +24,13 @@ public class Key( kri.ITag ):
 #	Animation of morphing between to shapes
 
 public class Anim( kri.ani.Loop ):
-	public final k0	as Key
-	public final k1	as Key
+	public final k0	as Tag
+	public final k1	as Tag
 	public def constructor(e as kri.Entity, s0 as string, s1 as string):
 		assert s0 and s1 and s0!=s1
 		k0 = k1 = null
 		for tg in e.tags:
-			key = tg as Key
+			key = tg as Tag
 			continue	if not key
 			k0 = key	if key.name == s0
 			k1 = key	if key.name == s1
@@ -67,10 +67,10 @@ public class Update( kri.rend.Basic ):
 		va.bind()
 		using kri.Discarder(true):
 			for ent in kri.Scene.Current.entities:
-				keys = List[of Key]()
+				keys = List[of Tag]()
 				dirty = false
 				for tg in ent.tags:
-					tk = tg as Key
+					tk = tg as Tag
 					continue	if not tk
 					keys.Add(tk)
 					dirty = true	if tk.Dirty

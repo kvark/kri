@@ -57,7 +57,7 @@ public class Attrib( kri.rend.Basic ):
 		va.bind()
 		for e in kri.Scene.Current.entities:
 			for a in (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat):
-				rez = e.bind(a) or e.mesh.bind(a)
+				rez = e.store.bind(a) or e.mesh.bind(a)
 				assert rez
 			e.mesh.ind.bind()
 			kri.Ant.Inst.params.modelView.activate( e.node )
