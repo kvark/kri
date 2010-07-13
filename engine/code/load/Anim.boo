@@ -79,7 +79,7 @@ public partial class Native:
 		anid['c.clip_end']		= racProject(fp_prout)
 		# shape key
 		anid['v.value']		= rac(getReal) do(pl as IPlayer, v as single, i as byte):
-			keys = (pl as kri.Entity).seTags[of kri.kit.morph.Tag]()
+			keys = (pl as kri.Entity).enuTags[of kri.kit.morph.Tag]()
 			keys[i-1].Value = v
 
 

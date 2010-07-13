@@ -54,12 +54,10 @@ public class General( IConstructor, Basic ):
 			alist = List[of int]()
 		b = Batch(e:e, va:e.va[tid], off:0)
 		tempList = List[of Batch]()
-		for tag in e.tags:
-			tm = tag as kri.TagMat
-			continue	if not tm
-			m = tm.mat
-			b.num = tm.num
-			b.off = tm.off
+		for tag in e.enuTags[of kri.TagMat]():
+			m = tag.mat
+			b.num = tag.num
+			b.off = tag.off
 			prog = m.tech[tid]
 			if not prog:
 				m.tech[tid] = prog = construct(m)

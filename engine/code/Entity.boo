@@ -89,7 +89,7 @@ public class Entity( kri.ani.data.Player ):
 		return null as T
 		#return tags.Find( {t| return t isa T} ) as T
 	
-	public def seTags[of T(ITag)]() as (T):
+	public def enuTags[of T(ITag)]() as (T):
 		tlis = List[of T]()
 		for it in tags:
 			t = it as T

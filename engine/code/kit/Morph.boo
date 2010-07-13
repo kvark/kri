@@ -29,7 +29,7 @@ public class Anim( kri.ani.Loop ):
 	public def constructor(e as kri.Entity, s0 as string, s1 as string):
 		assert s0 and s1 and s0!=s1
 		k0 = k1 = null
-		for key in e.seTags[of Tag]():
+		for key in e.enuTags[of Tag]():
 			k0 = key	if key.name == s0
 			k1 = key	if key.name == s1
 		assert k0 and k1
@@ -65,7 +65,7 @@ public class Update( kri.rend.Basic ):
 		va.bind()
 		using kri.Discarder(true):
 			for ent in kri.Scene.Current.entities:
-				keys = ent.seTags[of Tag]()
+				keys = ent.enuTags[of Tag]()
 				dirty = System.Array.Find(keys) do(t as Tag):
 					return t.Dirty
 				continue	if keys.Length<2 or not dirty
