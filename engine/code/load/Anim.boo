@@ -28,10 +28,13 @@ public partial class Native:
 			n.touch()
 	
 	private def racMatColor(name as string):
-		return rac(getColor) do(pl as IPlayer, v as Color4, i as byte):
+		return rac(getColor)	do(pl as IPlayer, v as Color4, i as byte):
 			((pl as kri.Material).Meta[name] as kri.meta.Data[of Color4]).Value = v
+	private def racTexUnit(fun as callable(kri.meta.AdUnit) as kri.shade.par.ValuePure[of Vector4]):
+		return rac(getVector)	do(pl as IPlayer, v as Vector3, i as byte):
+			fun((pl as kri.Material).unit[i-1]).Value = Vector4(v)
 	private def racProject(fun as callable(kri.Projector,single)):
-		return rac(getReal) do(pl as IPlayer, v as single, i as byte):
+		return rac(getReal)		do(pl as IPlayer, v as single, i as byte):
 			assert not i
 			fun(pl as kri.Projector, v)
 
@@ -67,13 +70,9 @@ public partial class Native:
 		# material
 		anid['m.diffuse_color']		= racMatColor( 'diffuse' )
 		anid['m.specular_color']	= racMatColor( 'specular' )
-		anid['t.offset']			= rac(getVector) do(pl as IPlayer, v as Vector3, i as byte):
-			#workaround: we don't have explicit texture units at the moment
-			unit = (pl as kri.Material).Meta['diffuse'].Unit
-			unit.pOffset.Value = Vector4(v,0.0)
-		anid['t.scale']			= rac(getVector) do(pl as IPlayer, v as Vector3, i as byte):
-			unit = (pl as kri.Material).Meta['diffuse'].Unit
-			unit.pScale.Value = Vector4(v,0.0)
+		# texture unit
+		anid['t.offset']		= racTexUnit({u| return u.pOffset })
+		anid['t.scale']			= racTexUnit({u| return u.pScale })
 		# light
 		anid['l.energy']	= rac(getReal,	{pl,v,i| (pl as kri.Light).energy = v })
 		anid['l.color']		= rac(getColor,	{pl,v,i| (pl as kri.IColored).Color = v })

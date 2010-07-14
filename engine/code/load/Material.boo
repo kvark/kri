@@ -57,14 +57,15 @@ public partial class Native:
 		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
 		tarDict['coloremission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		# map targets
-		u  = AdUnit()
+		u = AdUnit()
+		m.unit.Add(u)
 		puData(u)
 		while (name = getString()) != '':
 			targ as MapTarget
 			continue if not tarDict.TryGetValue(name,targ)
 			me = m.Meta[targ.name] as Advanced
 			continue	if not me
-			me.Unit = u
+			me.Unit = m.unit.IndexOf(u)
 			me.Shader = targ.prog
 		# map inputs
 		name = getString()

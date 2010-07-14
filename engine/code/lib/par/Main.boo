@@ -1,5 +1,6 @@
 ﻿namespace kri.lib.par
 
+import System
 import OpenTK
 import OpenTK.Graphics
 import kri.shade
@@ -19,7 +20,7 @@ public final class Light( IBase ):
 
 	par.INamed.Name as string:
 		get: return 'Light'
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		return self	# stub
 	def IBase.link(d as rep.Dict) as void:
 		d.var(color)
@@ -49,7 +50,7 @@ public final class Project( IBase ):
 		else:	# the last parameter sign shows orthogonality
 			data.Value = Vector4(-p.fov, -p.fov * p.aspect, 2f*div, -dad)
 	
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		return self	# stub
 	def IBase.link(d as rep.Dict) as void:
 		d.var(data,range)

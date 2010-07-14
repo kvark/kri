@@ -1,5 +1,6 @@
 ﻿namespace kri.lib.par.spa
 
+import System
 import OpenTK
 import kri.shade
 import kri.meta
@@ -23,7 +24,7 @@ public class Shared(IBase):
 		sp = (n.World if n else kri.Spatial.Identity)
 		activate(sp)
 	
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		sh = Shared(name)
 		sh.position.Value = position.Value
 		sh.rotation.Value = rotation.Value
@@ -59,7 +60,7 @@ public class Linked(IBase):
 	public def extract() as kri.Node:
 		return position.node
 
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		ln = Linked(name)
 		ln.activate( extract() )
 		return ln

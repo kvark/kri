@@ -28,7 +28,7 @@ public class Basic( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
 	
 	public virtual def link(d as rep.Dict) as void:
 		pass
-	def kri.meta.IBase.clone() as kri.meta.IBase:
+	def System.ICloneable.Clone() as object:
 		return Basic(self)
 	par.INamed.Name:
 		get: return 'behavior'

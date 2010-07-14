@@ -6,6 +6,7 @@ import OpenTK.Graphics.OpenGL
 public class Material( ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.rep.Dict()
+	public final unit	= List[of meta.AdUnit]()
 	public final tech	= array[of shade.Smart]( lib.Const.nTech )
 	public final metaList = List[of meta.Advanced]()
 	public Meta[str as string] as meta.Advanced:
@@ -13,17 +14,18 @@ public class Material( ani.data.Player ):
 	
 	public def constructor(str as string):
 		name = str
-	private def clone[of T(meta.IBase)](me as T) as T:
-			return me.clone() as T
+	private def clone[of T(System.ICloneable)](me as T) as T:
+			return me.Clone() as T
 	public def touch() as void:	#imp: IPlayer
 		pass
 
 	# clone with all 1-st level metas
 	public def constructor(mat as Material):
 		name = mat.name
+		for u in mat.unit:
+			unit.Add( clone(u) )
 		for me in mat.metaList:
-			mad = clone(me) as meta.Advanced
-			metaList.Add(mad)
+			metaList.Add( clone(me) )
 
 	# update dictionary
 	public def link() as void:
@@ -33,15 +35,13 @@ public class Material( ani.data.Player ):
 			return if h in lis
 			h.link(dict)
 			lis.Add(h)
-		ulis = List[of meta.AdUnit]()
-		ulis.Add(null)
 		for m in metaList:
 			push(m)
-			u = m.Unit
-			continue	if u in ulis
-			#push(u)
+			continue	if m.Unit<0
+			u = unit[m.Unit]
 			(u as meta.ISlave).link( m.Name, dict )
-			push(u.input)
+		for u in unit:
+			push( u.input )
 	
 	# collect shaders for meta data
 	public def collect(geom as bool, melist as (string)) as shade.Object*:
@@ -54,8 +54,9 @@ public class Material( ani.data.Player ):
 			m = Meta[str]
 			return null	if not m
 			push(m)
-			u = m.Unit
-			continue	if not u
+			ud = m.Unit
+			continue	if ud<0
+			u = unit[ud]
 			push( u.input )
 			din.Add( m.Name, u.input )
 		# check geometry shaders

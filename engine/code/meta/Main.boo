@@ -1,19 +1,20 @@
 namespace kri.meta
 
+import System
 import OpenTK
 import kri.shade
 
 
 #---	stand-alone meta interface	---#
-public interface IBase( par.INamed ):
-	def clone() as IBase
+
+public interface IBase( par.INamed, ICloneable ):
 	def link(d as rep.Dict) as void
 
-public interface ISlave:
+public interface ISlave( ICloneable ):
 	def link(name as string, d as rep.Dict) as void
 
 public interface IUnited:
-	Unit as AdUnit:
+	Unit as int:
 		get
 
 public interface IShaded:
@@ -32,7 +33,7 @@ public class Hermit(IBase,IShaded):
 		h.name = name
 		h.shader = shader
 		return h
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		return copyTo(Hermit())
 	def IBase.link(d as rep.Dict) as void:
 		pass
@@ -42,7 +43,7 @@ public class Hermit(IBase,IShaded):
 public class InputObject(Hermit):
 	public final pNode	= kri.lib.par.spa.Linked('s_target')
 	#don't inherit as the name is different
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		ib = InputObject()
 		ib.pNode.activate( pNode.extract() )
 		return copyTo(ib)
@@ -53,8 +54,8 @@ public class InputObject(Hermit):
 #---	Advanced meta-data with unit link	---#
 public class Advanced(IUnited,Hermit):
 	[Property(Unit)]
-	private unit	as AdUnit	= null
-	def IBase.clone() as IBase:
+	private unit	as int	= -1
+	def ICloneable.Clone() as object:
 		return copyTo( Advanced( Unit:unit ) )
 	
 
@@ -65,6 +66,9 @@ public class AdUnit( ISlave, par.ValuePure[of kri.Texture] ):
 	public final pScale		= par.ValuePure[of Vector4]()
 	portal Offset	as Vector4	= pOffset.Value
 	portal Scale	as Vector4	= pScale.Value
+	
+	def ICloneable.Clone() as object:
+		return AdUnit( Value:Value, input:input, Offset:Offset, Scale:Scale )
 	
 	def ISlave.link(name as string, d as rep.Dict) as void:
 		d.unit(name,self)
@@ -84,7 +88,7 @@ public class Data[of T(struct)]( Advanced ):
 		Name = s
 		Shader = sh
 		Value = val
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		d2 = Data[of T](Name,Shader,Value)
 		d2.Unit = Unit
 		return d2
@@ -98,7 +102,7 @@ public class Strand(Advanced):
 	private final pData	= par.Value[of Vector4]('strand_data')
 	portal Data		as Vector4	= pData.Value
 	
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		return copyTo( Strand( Data:Data ))
 	def IBase.link(d as rep.Dict) as void:
 		d.var(pData)
@@ -109,7 +113,7 @@ public class Halo(Advanced):
 	private final pData	= par.Value[of Vector4]('halo_data')
 	portal Data		as Vector4	= pData.Value
 	
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		return copyTo( Halo( Data:Data ))
 	def IBase.link(d as rep.Dict) as void:
 		d.var(pData)
@@ -117,7 +121,7 @@ public class Halo(Advanced):
 #---	instance	---#
 public class Inst(Advanced):
 	public ent	as kri.Entity	= null
-	def IBase.clone() as IBase:
+	def ICloneable.Clone() as object:
 		return copyTo( Inst( ent:ent ))
 	def IBase.link(d as rep.Dict) as void:
 		pass
