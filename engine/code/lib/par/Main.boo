@@ -46,8 +46,8 @@ public final class Project( IBase ):
 			tn = 1f / System.Math.Tan(p.fov)
 			data.Value = Vector4(tn, tn * p.aspect, dad,
 				2f*div*(p.rangeIn*p.rangeOut) )
-		else:
-			data.Value = Vector4(-p.fov, -p.fov, 2f*div, dad)
+		else:	# the last parameter sign shows orthogonality
+			data.Value = Vector4(-p.fov, -p.fov * p.aspect, 2f*div, -dad)
 	
 	def IBase.clone() as IBase:
 		return self	# stub

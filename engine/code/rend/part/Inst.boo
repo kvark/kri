@@ -14,9 +14,9 @@ public class Inst( kri.rend.tech.Meta ):
 	public def constructor(pc as kri.part.Context):
 		super('part.object', false, null, 'emissive')
 		# attributes
-		trans[ pc.at_sys ] = pc.ghost_sys
 		trans[ pc.at_pos ] = pc.ghost_pos
 		trans[ pc.at_rot ] = pc.ghost_rot
+		trans[ pc.at_sys ] = pc.ghost_sys
 		trans[ pc.at_sub ] = pc.ghost_sub
 		# shade
 		pBase.Value = Vector4.UnitX

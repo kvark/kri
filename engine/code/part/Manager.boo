@@ -41,10 +41,10 @@ public class Manager(DataHolder):
 		col_update.mets['update']	= kri.shade.DefMethod.Float
 		col_init.root	= pc.sh_fur_init
 		col_update.root	= pc.sh_fur_root
-		# bug! driver hangs without this line
-		b2 = beh.Basic('/part/fur/dummy')
-		kri.Help.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
-		behos.Add(b2)
+		if not 'Attrib zero bug workaround':
+			b2 = beh.Basic('/part/fur/dummy')
+			kri.Help.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
+			behos.Add(b2)
 	
 	public def seBeh[of T(beh.Basic)]() as T:
 		for beh in behos:
@@ -81,9 +81,8 @@ public class Manager(DataHolder):
 		col.prog.use()
 		using kri.Discarder(true), tf.catch():
 			draw()
+		assert tf.result() == total
 		if not 'Debug':
-			GL.Finish()
-			assert tf.result() == total
 			ar = array[of single]( total * data.unitSize() >>2 )
 			pe.va.bind()
 			pe.data.read(ar)

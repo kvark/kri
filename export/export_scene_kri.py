@@ -84,6 +84,7 @@ def gather_anim(ob):
 
 def save_actions(ob,sym,symInd):
 	import re
+	if not ob: return
 	for act in gather_anim(ob):
 		offset,nf = act.get_frame_range()
 		rnas,curves = {},set() # {elem_id}{attrib_name}[sub_id]
@@ -92,7 +93,7 @@ def save_actions(ob,sym,symInd):
 		for f in act.fcurves:
 			bid,attrib = 0, f.data_path
 			# extract array name, index & target field
-			mat = re.search('([\.\w]+)\[\"(.+)\"\]\.(\w+)',attrib)
+			mat = re.search('([\.\w]+)\[(.+)\]\.(\w+)',attrib)
 			if mat:
 				if not symInd: continue
 				mg = mat.groups()
@@ -104,7 +105,9 @@ def save_actions(ob,sym,symInd):
 				elif indexator != curArray:
 					print("\t\t(w)", 'unknown array:', mg[0])
 					continue
-				bid = 1 + indexator.keys().index( mg[1] )
+				sub = mg[1].strip('"')
+				if sub == mg[1]: bid = 1 + int(sub)
+				else: bid = 1 + indexator.keys().index(sub)
 				attrib = mg[2]
 			elif not sym: continue
 			#print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
@@ -550,8 +553,8 @@ def save_mesh(mesh,armature,groups,st):
 	out.end()
 	
 	# 7: shape keys
-	shapes = mesh.shape_keys.keys
-	for sk in shapes:
+	shapes = mesh.shape_keys
+	for sk in (shapes.keys if shapes else []):
 		print("\t+shape: %.3f [%s]" % (sk.value,sk.name))
 		out.begin('v_shape')
 		out.text( sk.name )
@@ -631,12 +634,17 @@ def save_lamp(lamp):
 
 def save_camera(cam, is_cur):
 	if is_cur: print("\t(i) active")
+	fov = cam.angle
+	if cam.type == 'ORTHO':
+		scale = cam.ortho_scale
+		print("\t(i) ortho scale: %.2f" % (scale))
+		fov = -4.0 / scale	# will be scaled by 0.5 on reading
 	print("\t%s, dist: [%.2f-%.2f], fov: %.2f" % (
-		('A' if is_cur else '_'), cam.clip_start,
-		cam.clip_end, cam.angle) )
+		('A' if is_cur else '_'),
+		cam.clip_start, cam.clip_end, fov) )
 	out.begin('cam')
 	out.pack('B3f', is_cur,
-		cam.clip_start, cam.clip_end, cam.angle)
+		cam.clip_start, cam.clip_end, fov)
 	out.end()
 
 

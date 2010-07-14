@@ -95,7 +95,7 @@ public class Bake( kri.rend.Basic ):
 	public final tf		= kri.TransFeedback(1)
 	private final pWid	= kri.shade.par.Value[of int]('width')
 	private final pVert	= kri.shade.par.Texture('vert')
-	private final pQuat	= kri.shade.par.Texture('/lib/quat_v')
+	private final pQuat	= kri.shade.par.Texture('quat')
 	private final pInit	= kri.shade.par.Value[of Vector4]('fur_init')
 
 	public def constructor():

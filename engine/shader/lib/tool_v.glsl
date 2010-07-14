@@ -13,7 +13,11 @@ float get_attenuation(float d)	{
 vec4 get_projection(vec3 v, vec4 pr)	{
 	//float w = -v.z*pr.w, z1 = (v.z+pr.x)*pr.z;
 	//return vec4( v.xy, z1*w, w );
-	return vec4( v.xy * pr.xy, v.z*pr.z + pr.w, -v.z);
+	//return vec4( v.xy * pr.xy, v.z*pr.z + pr.w, -v.z);
+	float ortho = step( 0.0, pr.w );
+	return vec4( v.xy * pr.xy,
+		v.z*pr.z + (1.0-ortho*2.0)*pr.w,
+		mix( -v.z, 1.0, ortho ) );
 }
 
 //perspective depth only

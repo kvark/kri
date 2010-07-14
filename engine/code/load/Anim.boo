@@ -67,6 +67,13 @@ public partial class Native:
 		# material
 		anid['m.diffuse_color']		= racMatColor( 'diffuse' )
 		anid['m.specular_color']	= racMatColor( 'specular' )
+		anid['t.offset']			= rac(getVector) do(pl as IPlayer, v as Vector3, i as byte):
+			#workaround: we don't have explicit texture units at the moment
+			unit = (pl as kri.Material).Meta['diffuse'].Unit
+			unit.pOffset.Value = Vector4(v,0.0)
+		anid['t.scale']			= rac(getVector) do(pl as IPlayer, v as Vector3, i as byte):
+			unit = (pl as kri.Material).Meta['diffuse'].Unit
+			unit.pScale.Value = Vector4(v,0.0)
 		# light
 		anid['l.energy']	= rac(getReal,	{pl,v,i| (pl as kri.Light).energy = v })
 		anid['l.color']		= rac(getColor,	{pl,v,i| (pl as kri.IColored).Color = v })
