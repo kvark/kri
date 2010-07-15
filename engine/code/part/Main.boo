@@ -106,6 +106,7 @@ public class Context:
 	public final	sh_born_instant	= Object.Load('/part/born/instant_v')
 	public final	sh_born_static	= Object.Load('/part/born/static_v')
 	public final	sh_born_time	= Object.Load('/part/born/time_v')
+	public final	sh_born_loop	= Object.Load('/part/born/loop_v')
 	# emit surface shaders
 	public final	sh_surf_node	= Object.Load('/part/surf/node_v')
 	public final	sh_surf_vertex	= Object.Load('/part/surf/vertex_v')

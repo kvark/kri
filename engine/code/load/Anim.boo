@@ -8,7 +8,6 @@ public partial class Native:
 	public final badCurves	= Dictionary[of string,byte]()
 	#todo: gen static class here with separate generator methods?
 
-	# should be callable(ref kri.Spatial,ref T) as void (waiting for BOO-854)
 	# generates invalid binary format if using generics, bypassing with extenions
 	[ext.spec.Method(( Vector3,Quaternion,single ))]
 	[ext.RemoveSource()]
@@ -116,6 +115,25 @@ public partial class Native:
 		c.lerp = def(ref a as single, ref b as single, t as single) as single:
 			return (1-t)*a + t*b
 	
+	/*
+	private def fixChan2[of T(struct)](c as Channel[of T]) as void:
+		if T == Quaternion:
+			c.lerp = Quaternion.Slerp
+			c.bezier = false
+		elif T == Vector2:
+			c.lerp = Vector2.Lerp
+		elif T == Vector3:
+			c.lerp = Vector3.Lerp
+		elif T == Vector4:
+			c.lerp = Vector4.Lerp
+		elif T == Color4:
+			c.lerp = def(a as Color4, b as Color4, t as single) as Color4:
+				return Color4.Gray
+		elif T == single:
+			c.lerp = def(a as single, b as single, t as single) as single:
+				return (1-t)*a + t*b
+	*/	
+
 	#---	Read Abstract Channel (rac) constructor	---#
 	
 	# bypassing BOO-854
@@ -124,7 +142,7 @@ public partial class Native:
 	public def rac[of T(struct)](fread as callable() as T, fup as callable(IPlayer,T,byte)) as callable() as IChannel:
 		return do():
 			ind = br.ReadByte() # element index
-			num = br.ReadUInt16()
+			num = cast(int, br.ReadUInt16() )
 			chan = Channel[of T](num,ind,fup)
 			fixChan(chan)
 			chan.extrapolate = br.ReadByte()>0

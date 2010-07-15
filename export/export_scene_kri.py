@@ -197,10 +197,12 @@ def save_mat_unit(mtex):
 				cur = 0
 			else:	cur = uves.index( name )
 			if cur == primary: continue
-			if primary != -1:
-				print("\t\t(w)",'failed to resolve UV layer')
 			primary = cur
-		print("\t\t(i) layer: %s -> %d" % (mtex.uv_layer, primary))
+		if primary == -1:
+			print("\t\t(w)",'failed to resolve UV layer')
+			primary = 0
+		else:
+			print("\t\t(i) layer: %s -> %d" % (mtex.uv_layer, primary))
 		out.pack('B',primary)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	if tc == 'ORCO':	out.text( mp )
@@ -375,6 +377,9 @@ def save_mesh(mesh,armature,groups,st):
 	if n_bad_uv:
 		print("\t(w) %d pure vertices detected" % (n_bad_uv))
 	else: print("\tconverted to tri-mesh")
+	if not len(ar_face):
+		print("\t(e)",'objects without faces are not supported')
+		return
 
 	# 2: fill sparsed vertex array
 	avg,set_vert = 0.0,{}

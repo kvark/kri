@@ -17,6 +17,7 @@ public struct SetBake:
 
 public partial class Settings:
 	public bake		= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:false )
+	public bLoop	= false
 
 
 
@@ -32,7 +33,8 @@ public partial class Native:
 				if ps:
 					pm.behos.Add( kri.part.beh.Sys(pcon) )
 					pm.makeStandard(pcon)
-					pm.col_update.extra.Add( pcon.sh_born_time )
+					born = (pcon.sh_born_time, pcon.sh_born_loop)[ sets.bLoop ]
+					pm.col_update.extra.Add(born)
 				elif ph: pm.makeHair(pcon)
 				else: continue
 				pm.init(pcon)
@@ -83,7 +85,7 @@ public partial class Native:
 			pe.onUpdate = upNode
 		elif source == 'VERT':
 			for i in range(2):
-				t = kri.shade.par.Value[of kri.Texture]( ('vertex','/lib/quat_v')[i] )
+				t = kri.shade.par.Value[of kri.Texture]( ('vertex','quat')[i] )
 				pm.dict.unit(t.Name,t)
 				t.Value = kri.Texture( TextureTarget.TextureBuffer )
 				t.Value.bind()
@@ -96,7 +98,7 @@ public partial class Native:
 			sh = pcon.sh_surf_vertex
 		elif source == 'FACE':
 			tVert = kri.shade.par.Value[of kri.Texture]('vertex')
-			tQuat = kri.shade.par.Value[of kri.Texture]('/lib/quat_v')
+			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
 			pm.dict.unit(tVert,tQuat)
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
@@ -149,7 +151,7 @@ public partial class Native:
 		ps = pe.owner.seBeh[of kri.part.beh.Standard]()
 		ph = pe.owner.seBeh[of kri.kit.hair.Behavior]()
 		if ps:		# standard
-			ps.parVelObj.Value = Vector4( objFactor )
+			ps.parVelObj.Value = Vector4( objFactor, add.Y )
 			ps.parVelTan.Value = Vector4( tan, tanFactor.Z )
 			ps.parVelKeep.Value = Vector4.Zero
 		elif ph:	# hair

@@ -81,8 +81,8 @@ public class Manager(DataHolder):
 		col.prog.use()
 		using kri.Discarder(true), tf.catch():
 			draw()
-		assert tf.result() == total
 		if not 'Debug':
+			assert tf.result() == total
 			ar = array[of single]( total * data.unitSize() >>2 )
 			pe.va.bind()
 			pe.data.read(ar)

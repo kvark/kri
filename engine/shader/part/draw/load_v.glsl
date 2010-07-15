@@ -11,5 +11,5 @@ void part_draw(vec3,float);
 void main()	{
 	make_tex_coords();
 	gl_ClipDistance[0] = at_sys.x;
-	part_draw( at_pos, halo_data.x );
+	part_draw( at_pos, 0.5*halo_data.x );
 }
