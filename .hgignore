@@ -1,6 +1,7 @@
 syntax: glob
 
 archive
+plugin
 blender
 export\scenes
 ext\Newton

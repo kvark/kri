@@ -271,6 +271,8 @@ def save_mat(mat):
 	if	mat.type == 'HALO':
 		out.begin('m_halo')
 		halo = mat.halo
+		if halo.rings or halo.lines or halo.star:
+			print("\t(w)",'halo rights, lines & star modes are not supportd')
 		data = (halo.size, halo.hardness, halo.add)
 		out.array('f', data)
 		out.pack('B', halo.texture)

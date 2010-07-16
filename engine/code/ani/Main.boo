@@ -16,7 +16,7 @@ public class Action(IBase):
 
 public class Delta(IBase):
 	private last	= 0.0
-	private abstract def onDelta(delta as double) as uint:
+	protected abstract def onDelta(delta as double) as uint:
 		pass
 	def IBase.onFrame(time as double) as uint:
 		d = time - last

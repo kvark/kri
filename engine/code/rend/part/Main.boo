@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	RENDER PARTICLES BASE		--------#
 
 public class Basic( kri.rend.Basic ):
-	public bAdd		as bool = false
+	public bAdd		as single = 0f
 	protected def constructor():
 		super(false)
 	protected abstract def prepare(pe as kri.part.Emitter) as kri.shade.Program:
@@ -16,7 +16,7 @@ public class Basic( kri.rend.Basic ):
 		using blend = kri.Blender(),\
 		kri.Section( EnableCap.ClipPlane0 ),\
 		kri.Section( EnableCap.VertexProgramPointSize ):
-			if bAdd:	blend.add()
+			if bAdd>0f:	blend.add()
 			else:		blend.alpha()
 			for pe in kri.Scene.Current.particles:
 				sa = prepare(pe)

@@ -45,7 +45,6 @@
     <Compile Include="code\frame\Main.boo" />
     <Compile Include="code\frame\Unit.boo" />
     <Compile Include="code\kit\Bake.boo" />
-    <Compile Include="code\kit\Fur.boo" />
     <Compile Include="code\kit\gen\Complex.boo" />
     <Compile Include="code\kit\gen\Main.boo" />
     <Compile Include="code\kit\gen\Noise.boo" />

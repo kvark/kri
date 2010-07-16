@@ -9,7 +9,7 @@ float get_attenuation(float d)	{
 	return a.x * lit_attenu.x / (a.y*a.z);
 }
 
-//perspective project
+//perspective/orhto project
 vec4 get_projection(vec3 v, vec4 pr)	{
 	//float w = -v.z*pr.w, z1 = (v.z+pr.x)*pr.z;
 	//return vec4( v.xy, z1*w, w );

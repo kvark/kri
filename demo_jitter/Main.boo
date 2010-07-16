@@ -59,7 +59,7 @@ public class Anim( kri.ani.Delta ):
 			assert n and not n.Parent
 			sync(n,rb)
 	
-	private override def onDelta(delta as double) as uint:
+	protected override def onDelta(delta as double) as uint:
 		world.Step(delta,false)
 		toRemove = List[of Dynamics.RigidBody]()
 		
