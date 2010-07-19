@@ -2,7 +2,6 @@
 
 import System.Collections.Generic
 import OpenTK.Graphics
-import OpenTK.Graphics.OpenGL
 import kri.shade
 import kri.meta
 
@@ -63,14 +62,6 @@ public class Shade:
 public class Context:
 	public final slib	= Shade()
 	public final mDef	= kri.Material('default')
-	
-	public static def MakeTex(*data as (byte)) as kri.Texture:
-		tex = kri.Texture( TextureTarget.Texture2D )
-		tex.bind()
-		kri.Texture.Filter(false,false)
-		GL.TexImage2D( tex.target, 0, PixelInternalFormat.Rgba8, 1,1,0,\
-			PixelFormat.Rgba, PixelType.UnsignedByte, data )
-		return tex
 	
 	public def constructor():
 		mlis = mDef.metaList

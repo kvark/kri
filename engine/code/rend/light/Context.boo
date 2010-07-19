@@ -22,17 +22,13 @@ public class Context:
 	public mipmap	as bool = false
 	public smooth	as bool	= true
 	public type 	= LiType.SIMPLE
-	public final defShadow	= kri.Texture( TextureTarget.Texture2D )
+	public final defShadow	= kri.kit.gen.Texture.depth
 	# init
 	public def constructor(nlay as uint, qlog as uint):
 		dict.var(pDark,pOff,pHemi)
 		dict.var(pX)
 		dict.unit(texLit)
 		layers,size	= nlay,1<<qlog
-		defShadow.bind()
-		kri.Texture.Filter(false,false)
-		GL.TexImage2D( defShadow.target, 0, PixelInternalFormat.DepthComponent,
-			1,1,0, PixelFormat.DepthComponent, PixelType.UnsignedInt, (-1,) )
 	# exponential
 	public def setExpo(darkness as single, kernel as single) as void:
 		type = LiType.EXPONENT

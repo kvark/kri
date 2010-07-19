@@ -49,6 +49,7 @@
     <Compile Include="code\kit\gen\Main.boo" />
     <Compile Include="code\kit\gen\Noise.boo" />
     <Compile Include="code\kit\gen\Simple.boo" />
+    <Compile Include="code\kit\gen\Texture.boo" />
     <Compile Include="code\kit\Hair.boo" />
     <Compile Include="code\kit\HDR.boo" />
     <Compile Include="code\kit\Morph.boo" />

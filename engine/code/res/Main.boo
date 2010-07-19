@@ -25,7 +25,7 @@ public class Manager:
 		raise 'Resource not found'
 	
 	public def register[of T](loader as ILoaderGen[of T]) as void:
-		loadMap[ typeof(T) ] = loader
+		loadMap[T] = loader
 	
 	public def load[of T](path as string) as T:
 		ob as object = null
