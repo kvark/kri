@@ -1,7 +1,7 @@
 ﻿namespace kri.lib
 
 import OpenTK
-
+import kri.shade
 
 # Shader Parameter Library
 public final class Param:
@@ -11,8 +11,8 @@ public final class Param:
 	public final litProj	= par.Project('lit')	# light projection
 	public final camView	= par.spa.Shared('s_cam')	# camera->world
 	public final camProj	= par.Project('cam')	# camera projection
-	public final parSize	= kri.shade.par.Value[of Vector4]('screen_size')	# viewport size
-	public final parTime	= kri.shade.par.Value[of Vector4]('cur_time')		# task time & delta
+	public final parSize	= par.Value[of Vector4]('screen_size')	# viewport size
+	public final parTime	= par.Value[of Vector4]('cur_time')		# task time & delta
 	
 	public def activate(c as kri.Camera) as void:
 		kri.Camera.Current = c
@@ -24,7 +24,7 @@ public final class Param:
 		litProj.activate(l)
 		litView.activate( l.node )
 		
-	public def constructor(d as kri.shade.rep.Dict):
+	public def constructor(d as rep.Dict):
 		for me in (of kri.meta.IBase: modelView, light,litView,litProj, camView,camProj):
 			me.link(d)
 		d.var(parSize,parTime)

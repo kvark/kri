@@ -8,7 +8,8 @@ public class Noise:
 	private final tPerm	= par.Texture('perm')
 	private final tGrad	= par.Texture('grad')
 	public final dict	= rep.Dict()
-	public final shader	= Object.Load('/gen/noise_f')
+	public final sh_simplex	= Object.Load('/gen/noise_f')
+	public final sh_tile	= Object.Load('/gen/tile_f')
 
 	public def constructor(order as byte):
 		dict.unit(tPerm,tGrad)

@@ -1,6 +1,6 @@
 ﻿namespace kri.rend.light
 
-import OpenTK.Graphics.OpenGL
+import kri.shade
 
 public enum LiType:
 	SIMPLE
@@ -13,12 +13,12 @@ public class Context:
 	public final size	as uint
 	public final layers	as uint
 	public bits	as uint	= 0
-	public final texLit	= kri.shade.par.Texture('light')
-	public final pDark	= kri.shade.par.Value[of single]('k_dark')
-	public final pX		= kri.shade.par.Value[of OpenTK.Vector4]('dark')
-	public final pOff	= kri.shade.par.Value[of single]('texel_offset')
-	public final pHemi	= kri.shade.par.Value[of single]('hemi')
-	public final dict	= kri.shade.rep.Dict()
+	public final texLit	= par.Texture('light')
+	public final pDark	= par.Value[of single]('k_dark')
+	public final pX		= par.Value[of OpenTK.Vector4]('dark')
+	public final pOff	= par.Value[of single]('texel_offset')
+	public final pHemi	= par.Value[of single]('hemi')
+	public final dict	= rep.Dict()
 	public mipmap	as bool = false
 	public smooth	as bool	= true
 	public type 	= LiType.SIMPLE
