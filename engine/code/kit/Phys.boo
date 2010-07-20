@@ -26,9 +26,9 @@ public class Core:
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
 		tt = TextureTarget.Texture2D
-		fbo.A[-2].new( 0, tt )
+		fbo.A[-2].make( 0, tt )
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
-		fbo.A[0].new( pif,tt )
+		fbo.A[0].make( pif,tt )
 		# 8 bit stencil + 2*[8,16] bit color
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader

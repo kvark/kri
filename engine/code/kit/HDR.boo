@@ -1,12 +1,13 @@
 ﻿namespace kri.kit.hdr
 
 import System
+import OpenTK.Graphics.OpenGL
 
 public class Context:
 	public avg	as single	= 1f
 	
 
-public class Render(kri.rend.Basic):
+public class Render( kri.rend.Basic ):
 	private final buf	= kri.frame.Buffer(0)
 	private final sa_bright	= kri.shade.Smart()
 	private final sa_scale	= kri.shade.Smart()
@@ -24,7 +25,7 @@ public class Render(kri.rend.Basic):
 		sa_scale	.link(sl, kri.Ant.Inst.dict)
 		sa_tone		.add('/hdr/tone_f')
 		sa_tone		.link(sl, kri.Ant.Inst.dict)
-		buf.A[0].new(16)
+		buf.A[0].make( 16, TextureTarget.TextureRectangle )
 	
 	public virtual def setup(far as kri.frame.Array) as bool:
 		buf.init(far.Width>>reduct, far.Height>>reduct)

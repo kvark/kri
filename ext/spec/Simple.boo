@@ -99,9 +99,9 @@ public class ForkMethod(Method):
 	protected final fnew as Ast.ReferenceExpression
 
 	public def constructor(old as Ast.ReferenceExpression,
-	new as Ast.ReferenceExpression, typar as Ast.ArrayLiteralExpression):
+	nex as Ast.ReferenceExpression, typar as Ast.ArrayLiteralExpression):
 		super(typar)
-		fold,fnew = old,new
+		fold,fnew = old,nex
 		pred = def(n as Ast.Node):
 			exp = n as Ast.ReferenceExpression
 			return false if not exp

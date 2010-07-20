@@ -19,8 +19,9 @@ public class Fill( kri.rend.tech.General ):
 		buf.init(lc.size, lc.size)
 		if lc.type == LiType.VARIANCE:
 			buf.mask = 1
-			buf.A[-1].new(0)
-			buf.A[1].new( PixelInternalFormat.Rg16, TextureTarget.Texture2D )
+			tt = TextureTarget.Texture2D
+			buf.A[-1].make( 0,tt )
+			buf.A[1].make( PixelInternalFormat.Rg16, tt )
 		else: buf.mask = 0
 		# spot shader
 		baker = '/empty_f'
@@ -43,7 +44,7 @@ public class Fill( kri.rend.tech.General ):
 			if not l.depth:
 				ask = kri.Texture.AskFormat( kri.Texture.Class.Depth, licon.bits )
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
-				l.depth = buf.A[index].new( pif, TextureTarget.Texture2D )
+				l.depth = buf.A[index].make( pif, TextureTarget.Texture2D )
 			else:	buf.A[index].Tex = l.depth
 			buf.activate()
 			con.ClearColor( OpenTK.Graphics.Color4.White )	if not index

@@ -28,8 +28,7 @@ public struct ColorRaw:
 #------		NATIVE WRAPPER		------#
 
 public class Basic( Native, kri.res.ILoaderGen[of Atom] ):
-	public def read(path as string) as Atom:	#imp: ILoaderGen
-		return super.read(path)
+	pass
 
 
 #------		CHUNK LOADER		------#
@@ -145,7 +144,7 @@ public partial class Native:
 		return null as T
 	protected def puData[of T](r as T) as void:
 		#rep.RemoveAll(predicate)
-		rep.Remove( geData[of T] )
+		rep.Remove( geData[of T]() )
 		rep.Insert(0,r)
 	
 	protected def getReal() as single:

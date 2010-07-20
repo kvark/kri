@@ -20,6 +20,7 @@ internal enum DirtyLevel:
 public class Context:
 	public final bitColor	as byte					# color storage
 	public final bitDepth	as byte					# depth storage
+	private final defTexTarget	= TextureTarget.TextureRectangle
 	private final buf	as kri.frame.Buffer			# intermediate FBO
 	private final last	as kri.frame.Screen			# final result
 	private target		as kri.frame.Screen = null	# current result
@@ -89,7 +90,7 @@ public class Context:
 			if tDepth:
 				at.Tex = tDepth
 				tDepth = null
-			else: at.new(bitDepth)
+			else: at.make( bitDepth, defTexTarget )
 		if not dep and at.Tex:
 			# don't need it but it's there
 			tDepth = at.Tex
@@ -100,7 +101,7 @@ public class Context:
 		if (col and not at.Tex) or not (col or tInput):
 			swapUnit(0,tInput)
 		if (col and not at.Tex):
-			at.new(bitColor)
+			at.make( bitColor, defTexTarget )
 		
 	
 	public static def SetDepth(offset as single, write as bool) as void:

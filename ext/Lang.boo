@@ -5,7 +5,8 @@ import Boo.Lang.PatternMatching
 
 #---	Transparent property portal		---#
 
-macro portal(bex as Ast.BinaryExpression):
+macro portal(exp as Ast.Expression):
+	bex = exp as Ast.BinaryExpression
 	assert bex and bex.Operator == Ast.BinaryOperatorType.Assign
 	# the type inference doesn't work perfectly with macroses
 	# so I need to pass the type explicitely here

@@ -32,7 +32,7 @@ public class Manager(Basic):
 			return j.rend.setup(far)
 	
 	public override def process(con as Context) as void:
-		jord = array[of Job]( j for j in jall.Values if j.rend.active )
+		jord = array( j for j in jall.Values if j.rend.active )
 		total = 0
 		for j in jord:
 			total += j.difficulty

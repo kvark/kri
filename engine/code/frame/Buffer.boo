@@ -80,18 +80,20 @@ public class Buffer(Screen):
 			#todo: add RenderBuffer support
 			t = a.Tex
 			if t and a.dFormat.Dirty:	#change attachment texture format
+				a.dFormat.clean()
 				t.bind()
 				kri.Texture.InitMulti( a.Format, samples,false, Width,Height,0 )
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
+				a.dLayer.clean()
 				GL.FramebufferTextureLayer(	target,	a.slot, t.id, 0, a.Layer )
-			elif a.dirty:		#update texture attachment
+			elif a.dTex.Dirty:		#update texture attachment
+				a.dTex.clean()
 				if t and t.target in ( TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray ):
 					GL.FramebufferTexture(	target, a.slot, t.id, 0)
 				elif t:
 					GL.FramebufferTexture2D(target, a.slot, t.target, t.id, 0)
 				else:
 					GL.FramebufferTexture2D(target, a.slot, TextureTarget.Texture2D, 0, 0)
-				a.dirty = false
 		Check(target)
 	
 	public def activate() as void:
