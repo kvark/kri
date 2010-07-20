@@ -10,7 +10,7 @@ uniform vec2 tile_scale;	//Ph,Pv
 uniform vec2 num_colors;	//Kh,Kv
 
 
-float edgeOrder(vec2 q)	{
+float edge_order(vec2 q)	{
 	if(q.x < q.y) return 2*q.x + q.y*q.y;
 	if(q.x == q.y)	{
 		if(q.x>0.0) return q.x*q.x + 2.0*q.x - 1.0;
@@ -23,7 +23,7 @@ float edgeOrder(vec2 q)	{
 }
 
 
-vec4 sample(vec2 tc)	{
+vec4 tile_sample(vec2 tc)	{
 	vec2 thisTile = floor( fract(tc) * map_scale );
 	vec2 nextTile = mod( thisTile + vec2(1.0), map_scale );
 	vec2 help = vec2(
@@ -38,8 +38,8 @@ vec4 sample(vec2 tc)	{
 		);
 	edges = mod( edges, num_colors.xyxy );
 	vec2 inTile = vec2(
-		edgeOrder( edges.wy ),
-		edgeOrder( edges.xz )
+		edge_order( edges.wy ),
+		edge_order( edges.xz )
 		);
 	vec2 mapAd = tc * map_scale;
 	vec2 tileTex = mapAd / tile_scale;

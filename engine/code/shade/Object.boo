@@ -48,7 +48,9 @@ public class Object:
 		#Debug.WriteLine("Shader: "+tag+"\n"+info);
 		result as int
 		GL.GetShader(sid, ShaderParameter.CompileStatus, result)
-		raise info	if not result
+		if not result:
+			print 'Failed to compile ' + tag
+			raise info
 	
 	# check current shader
 	public def check() as void:

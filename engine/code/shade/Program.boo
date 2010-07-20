@@ -25,16 +25,11 @@ public class Program:
 		linked = true
 	def destructor():
 		kri.Help.safeKill({ GL.DeleteProgram(id) })
-	public def check() as void:
+	public def check(pp as ProgramParameter) as void:
 		GL.GetProgramInfoLog(id,log)
 		result as int
-		GL.GetProgram(id, ProgramParameter.LinkStatus, result)
-		raise log	if not result
-	public def validate() as void:
-		GL.ValidateProgram(id)
-		GL.GetProgramInfoLog(id,log)
-		result as int
-		GL.GetProgram(id, ProgramParameter.ValidateStatus, result)
+		GL.GetProgram(id, pp, result)
+		print "Check ${pp} failed for program ${id}"
 		raise log	if not result
 	
 	# add specific objects
@@ -52,11 +47,13 @@ public class Program:
 		#assert not linked
 		linked = true
 		GL.LinkProgram(id)
-		check()
+		check( ProgramParameter.LinkStatus )
 	# activate program
 	public virtual def use() as void:
 		assert linked
-		validate()	if kri.Ant.Inst.debug
+		if kri.Ant.Inst.debug:
+			GL.ValidateProgram(id)
+			check( ProgramParameter.ValidateStatus )
 		GL.UseProgram(id)
 
 	# assign vertex attribute slot
