@@ -19,8 +19,6 @@ public class Context:
 
 public class Fill( kri.rend.tech.Meta ):
 	public final buf		= kri.frame.Buffer(0)
-	public GBuf as kri.Texture:	# deprecated
-		get: return buf.A[0].Tex
 	# init
 	public def constructor(con as Context):
 		super('g.make', false, ('c_diffuse','c_specular','c_normal'), *kri.load.Meta.LightSet)
@@ -46,4 +44,3 @@ public class Fill( kri.rend.tech.Meta ):
 		con.SetDepth(0f, false)
 		con.ClearColor()
 		drawScene()
-
