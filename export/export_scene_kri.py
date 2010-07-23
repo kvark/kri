@@ -13,12 +13,9 @@ This script exports the whole scene to the KRI binary file.
 '''
 
 import bpy
-import struct,array
-import math
 file_ext = '.scene'
 out = None
 kFrameSec = 1.0 / 25.0
-kMaxBones = 100
 
 
 class Settings:
@@ -33,9 +30,11 @@ class Writer:
 		self.fx = open(path,'wb')
 		self.pos = 0
 	def pack(self,tip,*args):
+		import struct
 		assert self.pos
 		self.fx.write( struct.pack('<'+tip,*args) )
 	def array(self,tip,ar):
+		import array
 		assert self.pos
 		array.array(tip,ar).tofile(self.fx)
 	def text(self,*args):
@@ -44,10 +43,12 @@ class Writer:
 			assert n<256
 			self.pack("B%ds"%(n), n,s)
 	def begin(self,name):
+		import struct
 		assert len(name)<8 and not self.pos
 		self.fx.write( struct.pack('<8sL',name,0) )
 		self.pos = self.fx.tell()
 	def end(self):
+		import struct
 		assert self.pos
 		off = self.fx.tell() - self.pos
 		self.fx.seek(-off-4,1)
@@ -60,6 +61,7 @@ def save_color(rgb):
 		out.pack('B', int(255*c) )
 
 def save_matrix(mx):
+	import math
 	pos = mx.translation_part()
 	sca = mx.scale_part()
 	rot = mx.to_quat()
@@ -663,7 +665,6 @@ def save_camera(cam, is_cur):
 def save_skeleton(skel):
 	out.begin('skel')
 	nbon = len(skel.bones)
-	assert nbon < kMaxBones
 	print("\t(i)", nbon ,'bones')
 	out.pack('B', nbon)
 	for bone in skel.bones:
