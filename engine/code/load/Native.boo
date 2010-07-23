@@ -28,8 +28,8 @@ public struct ColorRaw:
 #------		NATIVE WRAPPER		------#
 
 #blocked: BOO-1294
-public class Basic( Native, kri.res.ILoaderGen[of Atom] ):
-	pass
+#public class Basic( Native, kri.res.ILoaderGen[of Atom] ):
+#	pass
 
 
 #------		CHUNK LOADER		------#

@@ -29,8 +29,9 @@ public class Program:
 		GL.GetProgramInfoLog(id,log)
 		result as int
 		GL.GetProgram(id, pp, result)
-		print "Check ${pp} failed for program ${id}"
-		raise log	if not result
+		return	if result
+		print "Check ${pp} failed for program ${id}:\n${log}"
+		raise log
 	
 	# add specific objects
 	public def add(*shads as (Object)) as void:

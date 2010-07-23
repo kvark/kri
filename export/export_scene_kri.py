@@ -1,9 +1,9 @@
 # coding: utf-8
-__author__ = ['Dmitry Malyshev']
+__author__ = ['Dzmitry Malyshau']
 __url__ = ('kvgate.com')
 __version__ = '0.5'
 __bpydoc__ = '''KRI scene exporter.
-This script exports the whole scene to the scene binary file.
+This script exports the whole scene to the KRI binary file.
 '''
 
 ''' Math notes:
@@ -25,6 +25,7 @@ class Settings:
 	doQuatInt	= True
 	putUv		= True
 	putColor	= False
+	logInfo		= True
 
 class Writer:
 	__slots__= 'fx','pos'
@@ -228,7 +229,7 @@ def save_mat_image(mtex):
 	for v in (mtex.offset,mtex.size):
 		out.pack('3f', v[0],v[1],v[2])
 	# image path
-	fullname = img.filename
+	fullname = img.filepath
 	print("\t\t", img.source, ':',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
@@ -261,8 +262,6 @@ def save_mat(mat):
 		out.end()
 	if mat.strand:	# hair strand
 		st = mat.strand
-		if not st.blender_units:
-			print("\t(w)",'strand size in units required')
 		out.begin('m_hair')
 		out.pack('4fB', st.root_size, st.tip_size, st.shape,
 			st.width_fade, st.tangent_shading )
@@ -271,8 +270,8 @@ def save_mat(mat):
 	if	mat.type == 'HALO':
 		out.begin('m_halo')
 		halo = mat.halo
-		if halo.rings or halo.lines or halo.star:
-			print("\t(w)",'halo rights, lines & star modes are not supportd')
+		if halo.ring or halo.lines or halo.star:
+			print("\t(w)",'halo rights, lines & star modes are not supported')
 		data = (halo.size, halo.hardness, halo.add)
 		out.array('f', data)
 		out.pack('B', halo.texture)
@@ -308,7 +307,7 @@ def save_mat(mat):
 ###  MESH   ###
 
 def save_mesh(mesh,armature,groups,st):
-	import Mathutils as Math
+	import mathutils
 	def calc_TBN(verts, uvs):
 		va = verts[1].co - verts[0].co
 		vb = verts[2].co - verts[0].co
@@ -352,7 +351,7 @@ def save_mesh(mesh,armature,groups,st):
 			self.vi = [ face.verts[i]	for i in ind   ]
 			self.v  = tuple( m.verts[x]	for x in self.vi )
 			self.no = tuple( x.normal	for x in self.v  )
-			self.normal = ( face.normal, Math.Vector(0,0,0) )[face.smooth]
+			self.normal = ( face.normal, mathutils.Vector((0,0,0)) )[face.smooth]
 			self.uv		= tuple(tuple( layer[i]	for i in ind ) for layer in uves)
 			self.color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
@@ -362,16 +361,20 @@ def save_mesh(mesh,armature,groups,st):
 			self.hand = hand
 	
 	# 1: convert Mesh to Triangle Mesh
+	for layer in mesh.uv_textures:
+		if not len(layer.data):
+			print("\t(e)",'UV layer is locked by the user')
+			return
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
 		uves,colors,nvert = [],[],len(face.verts)
 		for layer in ( mesh.uv_textures		if st.putUv	else [] ):
 			d = layer.data[i]
-			cur = tuple(Math.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
+			cur = tuple(mathutils.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
 			uves.append(cur)
 		for layer in ( mesh.vertex_colors	if st.putColor	else [] ):
 			d = layer.data[i]
-			cur = tuple(Math.Vector(x) for x in (d.color1,d.color2,d.color3,d.color4))
+			cur = tuple(mathutils.Vector(x) for x in (d.color1,d.color2,d.color3,d.color4))
 			colors.append(cur)
 		if nvert>=3:	ar_face.append( Face(face, mesh, (0,1,2), uves,colors) )
 		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves,colors) )
@@ -404,7 +407,7 @@ def save_mesh(mesh,armature,groups,st):
 	avg,ar_vert = 0.0,[]
 	for i,vgrup in enumerate(set_vert.values()):
 		v = vgrup[0]
-		tan,lensum = Math.Vector(0,0,0),0.0
+		tan,lensum = mathutils.Vector((0,0,0)),0.0
 		for v2 in vgrup:
 			f = v2.face
 			ind = f.v.index(v2.vert)
@@ -419,7 +422,7 @@ def save_mesh(mesh,armature,groups,st):
 		no.normalize()
 		bit = no.cross(tan) * v.face.hand   # using handness
 		tan = bit.cross(no) # handness will be applied in shader
-		tbn = Math.Matrix(tan, bit, no) # tbn is orthonormal, right-handed
+		tbn = mathutils.Matrix(tan, bit, no) # tbn is orthonormal, right-handed
 		v.quat = tbn.to_quat().normalize()
 		ar_vert.append(v)
 	print("\t(i) %.2f avg tangent accuracy" % (avg / len(ar_vert)))
@@ -681,7 +684,7 @@ def save_skeleton(skel):
 
 def save_particle(obj,part):
 	st = part.settings
-	life = (st.start, st.end, st.lifetime)
+	life = (st.frame_start, st.frame_end, st.lifetime)
 	mat = obj.material_slots[ st.material-1 ].material
 	matname = (mat.name if mat else '')
 	info = (part.name, matname, st.amount)
@@ -694,6 +697,8 @@ def save_particle(obj,part):
 	if st.type == 'HAIR' and not part.cloth:
 		print("\t(w)",'hair dynamics has to be enabled')
 	elif st.type == 'HAIR' and part.cloth:
+		if not mat.strand.blender_units:
+			print("\t(w)",'material strand size in units required')
 		cset = part.cloth.settings
 		print("\t\thair: %d segments" % (st.hair_step,) )
 		out.begin('p_hair')
@@ -772,9 +777,7 @@ def save_node(ob):
 	out.begin('node')
 	par_name = (ob.parent.name if ob.parent else '')
 	out.text( ob.name, par_name )
-	# transform matrix world->local space
-	local = (ob.matrix * ob.parent.matrix.copy().invert()) if ob.parent else ob.matrix
-	save_matrix( local )
+	save_matrix( ob.matrix_local )
 	out.end()
 
 
@@ -838,20 +841,21 @@ def save_scene(filename, context, st):
 
 class ExportKRI( bpy.types.Operator ):
 	''' Export to KRI scene format (.scene).'''
-	from bpy.props	import StringProperty
-	bl_idname = 'export.scene_kri'
+	from bpy.props	import StringProperty,BoolProperty
+	
+	bl_idname = 'export.kri_scene'
 	bl_label = 'Export KRI'
 	st = Settings()
-	
-	path		= bpy.props.StringProperty( name='File Path',
-		description='Export destination for KRI scene',
-		maxlen=1024,	default='')
-	quat_int	= bpy.props.BoolProperty( name='Process quaternions',
+
+	filepath	= StringProperty( name='File Path',
+		description='Filepath used for exporting the KRI scene',
+		maxlen=1024, default='')
+	quat_int	= BoolProperty( name='Process quaternions',
 		description='Prepare mesh quaternions for interpolation',
-		default = st.doQuatInt )
-	put_uv		= bpy.props.BoolProperty( name='Put UV layers',
+		default=st.doQuatInt )
+	put_uv		= BoolProperty( name='Put UV layers',
 		description='Export vertex UVs',	default=st.putUv )
-	put_color	= bpy.props.BoolProperty( name='Put color layers',
+	put_color	= BoolProperty( name='Put color layers',
 		description='Export vertex colors',	default=st.putColor )
 	
 	def execute(self, context):
@@ -860,7 +864,7 @@ class ExportKRI( bpy.types.Operator ):
 		st.putUv	= self.properties.put_uv
 		st.putColor	= self.properties.put_color
 
-		save_scene(self.properties.path, context, st)
+		save_scene(self.properties.filepath, context, st)
 		return {'FINISHED'}
 	
 	def invoke(self, context, event):
@@ -870,11 +874,12 @@ class ExportKRI( bpy.types.Operator ):
 	def poll(self, context):
 		return context.active_object
 
+
 # Add to a menu
 def menu_func(self, context):
-	global file_ext
-	default_path = bpy.data.filename.replace('.blend',file_ext)
-	self.layout.operator(ExportKRI.bl_idname, text='Scene KRI...').path = default_path
+	import os
+	default_path = os.path.splitext( bpy.data.filepath )[0] + file_ext
+	self.layout.operator(ExportKRI.bl_idname, text='Scene KRI...').filepath = default_path
 
 def register():
     bpy.types.register(ExportKRI)
