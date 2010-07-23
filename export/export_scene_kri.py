@@ -39,6 +39,7 @@ class Writer:
 		array.array(tip,ar).tofile(self.fx)
 	def text(self,*args):
 		for s in args:
+			if not s:	s=''
 			n = len(s)
 			assert n<256
 			self.pack("B%ds"%(n), n,s)
@@ -215,22 +216,41 @@ def save_mat_unit(mtex):
 ###  MATERIAL:IMAGE   ###
 
 def save_mat_image(mtex):
-	# texture unit chunk
-	if not mtex.texture or mtex.texture.type != 'IMAGE':
-		print("\t\t(w)",'tex type is not IMAGE')
-		return
-	img = mtex.texture.image
-	out.begin('tex')
 	it = mtex.texture
-	out.pack( '3B',	# binary flags
-		('CLIP','REPEAT').index( it.extension ),
-		it.mipmap, it.interpolation)
-	# tex coords transformation
+	assert it
+	# tex mapping
+	out.begin('im_map')
 	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
 		print("\t(w)",'tex coord swizzling not supported')
-	for v in (mtex.offset,mtex.size):
-		out.pack('3f', v[0],v[1],v[2])
+	out.array('f', mtex.offset+mtex.size )
+	out.end()
+
+	if it.type == 'ENVIRONMENT_MAP':
+		# environment map chunk
+		env = mtex.texture.environment_map
+		if env.source != 'IMAGE_FILE':
+			clip = (env.clip_start, env.clip_end)
+			print("\t\t+environ: %s [%.2f-%2.f]" % (env.mapping,clip[0],clip[1]))
+			out.begin('im_env')
+			out.pack('2BH3f', env.source=='ANIMATED',
+				env.depth, env.resolution, env.zoom,
+				clip[0], clip[1] )
+			out.text( env.mapping, env.viewpoint_object )
+			out.end()
+			return
+	elif it.type != 'IMAGE':
+		print("\t\t(w)",'unknown texture type',mtt)
+		return
+	else:	# texture image
+		out.begin('im_sample')
+		out.pack( '3B',
+			('CLIP','REPEAT').index( it.extension ),
+			it.mipmap, it.interpolation )
+		out.end()
+
 	# image path
+	out.begin('im_path')
+	img = it.image
 	fullname = img.filepath
 	print("\t\t", img.source, ':',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
