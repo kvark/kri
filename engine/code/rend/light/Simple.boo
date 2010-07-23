@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT MAP FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	public final buf		= kri.frame.Buffer(0)
+	public final buf		= kri.frame.Buffer(0, TextureTarget.Texture2D )
 	public final sh_bake	as kri.shade.Object
 	protected final sa		= kri.shade.Smart()
 	protected final licon	as Context
@@ -19,9 +19,8 @@ public class Fill( kri.rend.tech.General ):
 		buf.init(lc.size, lc.size)
 		if lc.type == LiType.VARIANCE:
 			buf.mask = 1
-			tt = TextureTarget.Texture2D
-			buf.A[-1].make( 0,tt )
-			buf.A[1].make( PixelInternalFormat.Rg16, tt )
+			buf.emit(-1,0)
+			buf.emit(1, PixelInternalFormat.Rg16 )
 		else: buf.mask = 0
 		# spot shader
 		baker = '/empty_f'
@@ -44,7 +43,7 @@ public class Fill( kri.rend.tech.General ):
 			if not l.depth:
 				ask = kri.Texture.AskFormat( kri.Texture.Class.Depth, licon.bits )
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
-				l.depth = buf.A[index].make( pif, TextureTarget.Texture2D )
+				l.depth = buf.emit(index,pif)
 			else:	buf.A[index].Tex = l.depth
 			buf.activate()
 			con.ClearColor( OpenTK.Graphics.Color4.White )	if not index

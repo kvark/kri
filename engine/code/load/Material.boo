@@ -161,14 +161,19 @@ public partial class Native:
 	public def pmt_env() as bool:
 		u = geData[of AdUnit]()
 		return false	if not u
-		animated	= br.ReadByte()>0
-		depth		= br.ReadByte
-		resolution	= br.ReadUInt16()
-		zoom		= getReal()
-		clip_start	= getReal()
-		clip_end	= getReal()
-		cubic		= getString() == 'CUBE'
-		origin		= getString()
+		tag = kri.kit.reflect.Tag(u)
+		tag.counter = 0-br.ReadByte()
+		tag.depth	= br.ReadByte()
+		tag.size	= br.ReadUInt16()
+		tag.zoom	= getReal()
+		tag.rangeIn		= getReal()
+		tag.rangeOut	= getReal()
+		tag.cubic	= getString() == 'CUBE'
+		addResolve() do(n as kri.Node):
+			ent = at.scene.entities.Find() do(e as kri.Entity):
+				e.node == n
+			assert ent
+			ent.tags.Add(tag)
 		return true
 
 	#---	Texture: sampling	---#

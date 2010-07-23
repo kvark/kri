@@ -5,28 +5,26 @@ import kri.shade
 
 
 public class Context:
-	public final tex = kri.Texture( TextureTarget.Texture2DArray )
-	public final gbuf = par.Value[of kri.Texture]('gbuf')
+	public final buf		= kri.frame.Buffer()
+	public final gbuf		= par.Value[of kri.Texture]('gbuf')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
 	
 	public def constructor():
-		gbuf.Value = tex
+		# diffuse, specular, world space normal
+		gbuf.Value = buf.emitArray(3)
 
 
 #---------	RENDER TO G-BUFFER	--------#
 
 public class Fill( kri.rend.tech.Meta ):
-	public final buf		= kri.frame.Buffer(0)
+	private final buf	as kri.frame.Buffer
 	# init
 	public def constructor(con as Context):
 		super('g.make', false, ('c_diffuse','c_specular','c_normal'), *kri.load.Meta.LightSet)
 		shade(('/g/make_v','/g/make_f','/light/common_f'))
-		buf.A[0].layer(con.tex,0) # diffuse
-		buf.A[1].layer(con.tex,1) # specular
-		buf.A[2].layer(con.tex,2) # world space normal
-		buf.mask = 0x7
+		buf = con.buf
 	# resize
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.init( far.Width, far.Height )

@@ -55,6 +55,7 @@
     <Compile Include="code\kit\Morph.boo" />
     <Compile Include="code\kit\Phys.boo" />
     <Compile Include="code\kit\Pick.boo" />
+    <Compile Include="code\kit\Reflect.boo" />
     <Compile Include="code\kit\Skin.boo" />
     <Compile Include="code\lib\Main.boo" />
     <Compile Include="code\lib\par\Main.boo" />

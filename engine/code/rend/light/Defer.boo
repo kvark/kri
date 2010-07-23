@@ -6,15 +6,11 @@ import kri.shade
 
 
 public class Context:
-	public final buf		= kri.frame.Buffer(0)
+	public final buf		= kri.frame.Buffer()
 	public final tool		= kri.shade.Object.Load('/light/defer/sh_f')
 
 	public def constructor():
-		buf.mask = 0
-		tar = kri.Texture( TextureTarget.Texture2DArray )
-		for i in range(3):
-			buf.A[i].layer(tar,i)
-			buf.mask |= 1<<i
+		buf.emitArray(3)
 
 
 #---------	LIGHT PRE-PASS	--------#

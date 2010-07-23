@@ -7,30 +7,25 @@ public class Tag( kri.ITag ):
 	public world	as bool = true	# in world space
 	public clear	as bool = true	# clear textures
 	public texid	as byte = 0		# tex-coord channel
-	public final wid	as uint	= 0
-	public final het	as uint = 0
-	public final tVert	as kri.Texture	= null
-	public final tQuat	as kri.Texture	= null
+	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
+	
 	public Size as uint:
-		get: return wid*het* 4* sizeof(single)
+		get: return buf.Width * buf.Height * sizeof(single) *4
 	
 	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
-		wid,het = w,h
-		def genTex(bits as byte) as kri.Texture:
-			return null	if not bits
-			(t = kri.Texture( TextureTarget.Texture2D )).bind()
-			fm = kri.Texture.AskFormat( kri.Texture.Class.Color, bits )
-			kri.Texture.Init( fm,w,h,0 )
+		buf.init(w,h)
+		buf.mask = 0
+		for i in range(2):
+			bits = (bv,bq)[i]
+			continue	if not bits
+			buf.emit(0,bits).bind()
 			kri.Texture.Filter(filt,false)
-			return t
-		tVert,tQuat = genTex(bv),genTex(bq)
 
 
 #---------	RENDER VERTEX SPATIAL TO UV		--------#
 
 public class Update( kri.rend.tech.Basic ):
 	private final sa	= kri.shade.Smart()
-	private final buf	= kri.frame.Buffer(0)
 	
 	public def constructor():
 		super('bake.mesh')
@@ -49,13 +44,7 @@ public class Update( kri.rend.tech.Basic ):
 			assert tag.texid == 0
 			n = (e.node if tag.world else null)
 			kri.Ant.Inst.params.modelView.activate(n)
-			buf.init( tag.wid, tag.het )
-			buf.mask = 0
-			for i in range(2):
-				buf.A[i].Tex = t = (tag.tVert,tag.tQuat)[i]
-				continue	if not t
-				buf.mask |= 1<<i
-			buf.activate()
+			tag.buf.activate()
 			# todo: clear only on init
 			con.ClearColor( Color4(0f,0f,0f,0f) )	if tag.clear
 			sa.use()

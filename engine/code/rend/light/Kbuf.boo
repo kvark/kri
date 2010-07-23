@@ -7,35 +7,25 @@ import kri.shade
 #---------	LIGHT INIT	--------#
 
 public class Init( kri.rend.Basic ):
-	public final layers	as byte
-	public final buf	= kri.frame.Buffer(0)
+	public final buf	as kri.frame.Buffer
 	private final sa	= kri.shade.Smart()
 
 	public def constructor(nlay as byte):
 		maxSamples = 0
 		GL.GetInteger( GetPName.MaxSamples, maxSamples )
 		assert nlay <= maxSamples
-		layers = nlay
 		# init buffer
-		multi = TextureTarget.Texture2DMultisample
+		buf = kri.frame.Buffer(nlay, TextureTarget.Texture2DMultisample )
 		buf.mask = 3
-		for i in (-2,0,1):
-			buf.A[i].Tex = kri.Texture(multi)
+		buf.emit(-2,	PixelInternalFormat.Depth24Stencil8 )
+		buf.emit(0,		PixelInternalFormat.Rgb16f )	# R11fG11fB10f
+		buf.emit(1,		PixelInternalFormat.Rgb10A2 )
 		# init shader
 		sa.add('/copy_v','/white_f') # temp
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	
-	private Format[i as int] as PixelInternalFormat:
-		set:
-			buf.A[i].Tex.bind()
-			kri.Texture.InitMulti( value, layers, true, buf.Width, buf.Height, 0 )
-	
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.init( far.Width, far.Height )
-		Format[-2]	= PixelInternalFormat.Depth24Stencil8
-		#Format[0]	= PixelInternalFormat.R11fG11fB10f
-		Format[0]	= PixelInternalFormat.Rgb16f
-		Format[1]	= PixelInternalFormat.Rgb10A2
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:
@@ -47,7 +37,7 @@ public class Init( kri.rend.Basic ):
 		# stencil init
 		GL.StencilMask(-1)
 		if 'RectangleFill':
-			assert layers > 0
+			assert buf.Samples > 0
 			con.DepTest = false
 			con.ClearStencil(1)
 			sa.use()
@@ -58,12 +48,12 @@ public class Init( kri.rend.Basic ):
 			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
 				GL.StencilFunc( StencilFunction.Always, 0,0 )
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
-				for i in range(1,layers):
+				for i in range(1, buf.Samples ):
 					GL.SampleMask( 0, -1<<i )
 					kri.Ant.Inst.emitQuad()
 		else:
 			using kri.Section( EnableCap.SampleMask ):
-				for i in range(layers):
+				for i in range( buf.Samples ):
 					GL.SampleMask(0,1<<i)
 					con.ClearStencil(i+1)
 		GL.SampleMask(0,-1)

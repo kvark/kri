@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	RENDER PHYSICS		--------#
 
 public class Core:
-	private final fbo	= kri.frame.Buffer(0)
+	private final fbo	= kri.frame.Buffer(0, TextureTarget.Texture2D )
 	private final cam	= kri.Camera()
 	private final sa	= kri.shade.Smart()
 	private final sb	= kri.shade.Smart()
@@ -25,10 +25,9 @@ public class Core:
 		big = large
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
-		tt = TextureTarget.Texture2D
-		fbo.A[-2].make( 0, tt )
+		fbo.emit(-2,0)
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
-		fbo.A[0].make( pif,tt )
+		fbo.emit(0,pif)
 		# 8 bit stencil + 2*[8,16] bit color
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader

@@ -8,7 +8,7 @@ public class Tag( kri.ITag ):
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.frame.Buffer(0)
+	private final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
 	private final va	= kri.vb.Array()
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint
@@ -25,10 +25,9 @@ public class Render( kri.rend.Basic ):
 		qlog = reduct
 		mouse.ButtonDown += ev
 		# make buffer
-		tt = TextureTarget.Texture2D
-		buf.A[-1].make( 0,tt )
 		assert numorder<=16
-		buf.A[0].make( kri.Texture.Class.Index, 16, tt )
+		buf.emit(-1,0)
+		buf.emit(0, kri.Texture.Class.Index, 16)
 		# make shader
 		sa.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
 		d = kri.shade.rep.Dict()

@@ -128,9 +128,9 @@ public class Bake( kri.rend.Basic ):
 			tBake	= e.seTag[of kri.kit.bake.Tag]()
 			if tBake:	# emit from face
 				vbo.initAll( tCur.pixels )
-				pWid.Value	= tBake.wid
-				pVert.Value	= tBake.tVert
-				pQuat.Value	= tBake.tQuat
+				pWid.Value	= tBake.buf.Width
+				pVert.Value	= tBake.buf.A[0].Tex
+				pQuat.Value	= tBake.buf.A[1].Tex
 				s_face.use()
 				using kri.Discarder(true), tf.catch():
 					GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )

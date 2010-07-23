@@ -8,7 +8,7 @@ public class Context:
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.frame.Buffer(0)
+	private final buf	= kri.frame.Buffer(0, TextureTarget.TextureRectangle )
 	private final sa_bright	= kri.shade.Smart()
 	private final sa_scale	= kri.shade.Smart()
 	private final sa_tone	= kri.shade.Smart()
@@ -25,7 +25,7 @@ public class Render( kri.rend.Basic ):
 		sa_scale	.link(sl, kri.Ant.Inst.dict)
 		sa_tone		.add('/hdr/tone_f')
 		sa_tone		.link(sl, kri.Ant.Inst.dict)
-		buf.A[0].make( 16, TextureTarget.TextureRectangle )
+		buf.emit(0,16)
 	
 	public virtual def setup(far as kri.frame.Array) as bool:
 		buf.init(far.Width>>reduct, far.Height>>reduct)
