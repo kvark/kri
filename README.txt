@@ -11,5 +11,11 @@ In order to build me, you need to fulfill the following conditions:
 That's it. Open the test/code/kri.sln with your IDE and build everything.
 If you did everything correctly, it will use the project dependancies to build OpenTK first, then 'ext', then 'engine' and all the demoes after.
 
+In order to use 'export' you need to put/link export/export_scene_kri.py into the Blender's script/io folder (and restart it). You'll need the latest Blender version to export correctly. As of today, this version is 2.53-beta.
+
+If something goes wrong, contact me through the project tracker:
+http://code.google.com/p/kri/issues/list
+or directly by email: kvarkus <dog> gmail com
+
 Good luck with that!
 kv
