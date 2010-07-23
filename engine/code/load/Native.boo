@@ -79,7 +79,11 @@ public partial class Native:
 		dict['m_diff']	= pm_diff
 		dict['m_spec']	= pm_spec
 		dict['unit']	= pm_unit
-		dict['tex']		= pm_tex
+		dict['mt_map']	= pmt_map
+		dict['mt_env']	= pmt_env
+		dict['mt_samp']	= pmt_samp
+		dict['mt_path']	= pmt_path
+		dict['mt_seq']	= pmt_seq
 		# animations
 		dict['action']	= p_action
 		dict['curve']	= p_curve

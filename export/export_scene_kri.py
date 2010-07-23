@@ -39,7 +39,6 @@ class Writer:
 		array.array(tip,ar).tofile(self.fx)
 	def text(self,*args):
 		for s in args:
-			if not s:	s=''
 			n = len(s)
 			assert n<256
 			self.pack("B%ds"%(n), n,s)
@@ -219,7 +218,7 @@ def save_mat_image(mtex):
 	it = mtex.texture
 	assert it
 	# tex mapping
-	out.begin('im_map')
+	out.begin('mt_map')
 	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
 		print("\t(w)",'tex coord swizzling not supported')
 	out.array('f', mtex.offset+mtex.size )
@@ -230,27 +229,25 @@ def save_mat_image(mtex):
 		env = mtex.texture.environment_map
 		if env.source != 'IMAGE_FILE':
 			clip = (env.clip_start, env.clip_end)
-			print("\t\t+environ: %s [%.2f-%2.f]" % (env.mapping,clip[0],clip[1]))
-			out.begin('im_env')
+			print("\t\tenviron: %s [%.2f-%2.f]" % (env.mapping,clip[0],clip[1]))
+			view = ''
+			if not env.viewpoint_object:
+				print("\t\t(w)",'View point is not set')
+			else: view = env.viewpoint_object.name
+			out.begin('mt_env')
 			out.pack('2BH3f', env.source=='ANIMATED',
 				env.depth, env.resolution, env.zoom,
 				clip[0], clip[1] )
-			out.text( env.mapping, env.viewpoint_object )
+			out.text( env.mapping, view )
 			out.end()
 			return
 	elif it.type != 'IMAGE':
 		print("\t\t(w)",'unknown texture type',mtt)
 		return
-	else:	# texture image
-		out.begin('im_sample')
-		out.pack( '3B',
-			('CLIP','REPEAT').index( it.extension ),
-			it.mipmap, it.interpolation )
-		out.end()
-
 	# image path
-	out.begin('im_path')
 	img = it.image
+	assert img
+	out.begin('mt_path')
 	fullname = img.filepath
 	print("\t\t", img.source, ':',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
@@ -258,10 +255,17 @@ def save_mat_image(mtex):
 		print("\t\t(w) path cut to:", name)
 	out.text( name)
 	out.end()
+	if it.type == 'IMAGE':
+		# texture image sampling
+		out.begin('mt_samp')
+		out.pack( '3B',
+			('CLIP','REPEAT').index( it.extension ),
+			it.mipmap, it.interpolation )
+		out.end()
 	if img.source == 'SEQUENCE':
 		# image sequence chunk
 		user = mtex.texture.image_user
-		out.begin('im_seq')
+		out.begin('mt_seq')
 		out.pack( '3H', user.frames, user.offset, user.start_frame )
 		out.end()
 	elif img.source != 'FILE':

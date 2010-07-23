@@ -148,23 +148,53 @@ public partial class Native:
 		m.metaList.Add( Advanced( Name:'comp_spec', Shader:sh ))
 		return true
 
-	#---	Parse texture slot	---#
-	public def pm_tex() as bool:
+	#---	Texture: mapping	---#
+	public def pmt_map() as bool:
+		u = geData[of AdUnit]()
+		return false	if not u
+		# tex-coords
+		u.pOffset.Value	= Vector4(getVector(), 0.0)
+		u.pScale.Value	= Vector4(getVector(), 1.0)
+		return true
+
+	#---	Texture: environment	---#
+	public def pmt_env() as bool:
+		u = geData[of AdUnit]()
+		return false	if not u
+		animated	= br.ReadByte()>0
+		depth		= br.ReadByte
+		resolution	= br.ReadUInt16()
+		zoom		= getReal()
+		clip_start	= getReal()
+		clip_end	= getReal()
+		cubic		= getString() == 'CUBE'
+		origin		= getString()
+		return true
+
+	#---	Texture: sampling	---#
+	public def pmt_samp() as bool:
 		u = geData[of AdUnit]()
 		return false	if not u
 		bRepeat	= br.ReadByte()>0	# extend by repeat
 		bMipMap	= br.ReadByte()>0	# generate mip-maps
 		bFilter	= br.ReadByte()>0	# linear filtering
-		# texcoords & image path
-		u.pOffset.Value	= Vector4(getVector(), 0.0)
-		u.pScale.Value	= Vector4(getVector(), 1.0)
-		path = 'res' + getString()
-		u.Value = resMan.load[of kri.Texture](path)
-		return false	if not u.Value
 		# init sampler parameters, todo: use sampler object
+		assert u.Value
 		u.Value.bind()
 		kri.Texture.Filter(bFilter,bMipMap)
 		wm = (TextureWrapMode.ClampToBorder,TextureWrapMode.Repeat)[bRepeat]
 		kri.Texture.Wrap(wm,2)
 		kri.Texture.GenLevels()	if bMipMap
 		return true
+
+	#---	Texture: file path	---#
+	public def pmt_path() as bool:
+		u = geData[of AdUnit]()
+		return false	if not u
+		path = 'res' + getString()
+		u.Value = resMan.load[of kri.Texture](path)
+		return u.Value != null
+
+	#---	Texture: sequence	---#
+	public def pmt_seq() as bool:
+		return false
