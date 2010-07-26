@@ -34,7 +34,8 @@ public class Meta(General):
 	
 	protected def constructor(name as string, gs as bool, outs as (string), *mets as (string)):
 		super(name)
-		lMets,lOuts,geom = mets,outs,gs
+		lMets,lOuts = mets,outs
+		geom = gs
 		factory.onLink = onLink
 	
 	protected def shade(prefix as string) as void:

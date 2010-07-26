@@ -19,7 +19,7 @@ public class Fill( kri.rend.tech.General ):
 		buf.init(lc.size, lc.size)
 		if lc.type == LiType.VARIANCE:
 			buf.mask = 1
-			buf.emit(-1,0)
+			buf.emitAuto(-1,0)
 			buf.emit(1, PixelInternalFormat.Rg16 )
 		else: buf.mask = 0
 		# spot shader

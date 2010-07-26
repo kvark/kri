@@ -28,5 +28,6 @@ public class Unit:
 	
 	internal def constructor(s as FramebufferAttachment):
 		slot = s
+		dLayer.clean()
 	public Format as PixelInternalFormat:
 		get: return dFormat.Value

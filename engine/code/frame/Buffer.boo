@@ -54,7 +54,7 @@ public class Buffer(Screen):
 	public def emit(id as int, cl as kri.Texture.Class, bits as byte) as kri.Texture:
 		return emit( id, kri.Texture.AskFormat(cl,bits) )
 	
-	public def emit(id as int, bits as byte) as kri.Texture:
+	public def emitAuto(id as int, bits as byte) as kri.Texture:
 		cl = kri.Texture.Class.Color
 		if id==-2:	cl = kri.Texture.Class.Stencil
 		if id==-1:	cl = kri.Texture.Class.Depth

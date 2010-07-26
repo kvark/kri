@@ -26,7 +26,7 @@ public class Render( kri.rend.Basic ):
 		mouse.ButtonDown += ev
 		# make buffer
 		assert numorder<=16
-		buf.emit(-1,0)
+		buf.emitAuto(-1,0)
 		buf.emit(0, kri.Texture.Class.Index, 16)
 		# make shader
 		sa.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')

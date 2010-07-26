@@ -25,7 +25,7 @@ public class Core:
 		big = large
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
-		fbo.emit(-2,0)
+		fbo.emitAuto(-2,0)
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
 		fbo.emit(0,pif)
 		# 8 bit stencil + 2*[8,16] bit color

@@ -38,7 +38,7 @@ public class Fill( kri.rend.tech.General ):
 			setLight(l)
 			buf.init( context.size, context.size )
 			if not l.depth:
-				l.depth = buf.emit(-1,0)
+				l.depth = buf.emitAuto(-1,0)
 			else:	buf.A[-1].Tex = l.depth
 			buf.activate()
 			GL.ClearDepth( 1f )

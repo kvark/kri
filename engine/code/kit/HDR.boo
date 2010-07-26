@@ -25,7 +25,7 @@ public class Render( kri.rend.Basic ):
 		sa_scale	.link(sl, kri.Ant.Inst.dict)
 		sa_tone		.add('/hdr/tone_f')
 		sa_tone		.link(sl, kri.Ant.Inst.dict)
-		buf.emit(0,16)
+		buf.emitAuto(0,16)
 	
 	public virtual def setup(far as kri.frame.Array) as bool:
 		buf.init(far.Width>>reduct, far.Height>>reduct)

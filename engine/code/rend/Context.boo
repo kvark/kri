@@ -89,7 +89,7 @@ public class Context:
 			if tDepth:
 				at.Tex = tDepth
 				tDepth = null
-			else: buf.emit(iDep,bitDepth)
+			else: buf.emitAuto(iDep,bitDepth)
 		if not dep and at.Tex:
 			# don't need it but it's there
 			tDepth = at.Tex
@@ -100,7 +100,7 @@ public class Context:
 		if (col and not at.Tex) or not (col or tInput):
 			swapUnit(0,tInput)
 		if (col and not at.Tex):
-			buf.emit(0,bitColor)
+			buf.emitAuto(0,bitColor)
 		
 	
 	public static def SetDepth(offset as single, write as bool) as void:

@@ -22,8 +22,8 @@ public class Update( kri.rend.Basic ):
 	private final buCube	= kri.frame.Buffer(0, TextureTarget.TextureCubeMap )
 	
 	public def constructor():
-		buPlane	.emit(-1,0)
-		buCube	.emit(-1,0)
+		buPlane	.emitAuto(-1,0)
+		buCube	.emitAuto(-1,0)
 	
 	private def drawScene() as void:
 		pass	# draw everything!
@@ -36,7 +36,7 @@ public class Update( kri.rend.Basic ):
 			buf = (buPlane,buCube)[tag.cubic]
 			tag.counter -= 1
 			if not tag.pTex.Value:
-				tag.pTex.Value = buf.emit(0,8)
+				tag.pTex.Value = buf.emitAuto(0,8)
 			else: buf.A[0].Tex = tag.pTex.Value
 			buf.activate()
 			con.ClearDepth(1f)

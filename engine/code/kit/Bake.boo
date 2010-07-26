@@ -18,7 +18,7 @@ public class Tag( kri.ITag ):
 		for i in range(2):
 			bits = (bv,bq)[i]
 			continue	if not bits
-			buf.emit(0,bits).bind()
+			buf.emitAuto(0,bits).bind()
 			kri.Texture.Filter(filt,false)
 
 
