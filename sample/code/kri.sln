@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-# SharpDevelop 3.2.0.5848
-Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "test", "test.booproj", "{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}"
+# SharpDevelop 3.2.0.6278
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "sample", "sample.booproj", "{A23FCD40-5B18-41ED-A9F1-9BB6AC4EA140}"
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "ext", "..\..\ext\ext.booproj", "{ACE1CC26-970D-4F3B-9129-70911A339AC7}"
 EndProject
