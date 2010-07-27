@@ -23,13 +23,15 @@ public struct Batch:	# why struct?
 		sa.use()
 		e.mesh.draw(off,num,nob)
 		
+	#public static cMat	= CompMat()
 	public class CompMat( IComparer[of Batch] ):
 		public def Compare(a as Batch, b as Batch) as int:
 			r = a.sa.id - b.sa.id
 			return r	if r
 			r = a.va.id - b.va.id
 			return r
-	public static cMat	= CompMat()
+
+	public static cMat	as IComparer[of Batch]	= CompMat()
 
 
 #---------	GENERAL TECHNIQUE	--------#

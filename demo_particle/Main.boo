@@ -43,8 +43,8 @@ private def createParticle(ent as kri.Entity) as kri.part.Emitter:
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			tag = e.seTag[of kri.kit.bake.Tag]()
 			if tag:
-				beh.tVert.Value = tag.tVert
-				beh.tQuat.Value = tag.tQuat
+				beh.tVert.Value = tag.Vert
+				beh.tQuat.Value = tag.Quat
 	else: #vertex
 		a = kri.Ant.Inst.attribs
 		beh.tVert.Value = kri.Texture( TextureTarget.TextureBuffer )

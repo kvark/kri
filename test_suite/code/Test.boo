@@ -33,7 +33,7 @@ private class Link( kri.rend.Basic ):
 
 private class Offset( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
-	final fbo	= kri.frame.Buffer(0)
+	final fbo	= kri.frame.Buffer(0, TextureTarget.Texture2DArray )
 	final vbo	= kri.vb.Attrib()
 
 	public def constructor():
@@ -50,10 +50,11 @@ private class Offset( kri.rend.Basic ):
 		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
 		fbo.init(3,3)
-		t = kri.Texture( TextureTarget.Texture2DArray )
+		t = kri.Texture( fbo.texTarget )
 		t.bind()
 		kri.Texture.InitDepthArray(3,3,1)
-		fbo.A[-1].layer(t,0)
+		fbo.A[-1].Tex = t
+		fbo.A[-1].Layer = 0
 		fbo.mask = 0
 		
 	public override def process(con as kri.rend.Context) as void:
@@ -80,11 +81,11 @@ private class Offset( kri.rend.Basic ):
 
 
 private class Read( kri.rend.Basic ):
-	public final buf	= kri.frame.Buffer(0)
+	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
 	public def constructor():
 		super(false)
 		buf.init(2,2)
-		buf.A[0].Tex = tex = kri.Texture( TextureTarget.Texture2D )
+		buf.A[0].Tex = tex = kri.Texture( buf.texTarget )
 		tex.bind()
 		data = (of short: 1,2,3,4)
 		GL.TexImage2D( TextureTarget.Texture2D, 0, PixelInternalFormat.R16i, 2,2,0, PixelFormat.RedInteger, PixelType.Short, data)

@@ -1,6 +1,7 @@
 ﻿namespace kri.kit.gen
 
 import OpenTK
+import System.Runtime.InteropServices
 
 
 #----	COMMON DATA STORING & CREATION	----#

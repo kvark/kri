@@ -2,6 +2,7 @@
 
 import System
 import System.Collections.Generic
+import System.Runtime.InteropServices
 import OpenTK
 
 #------		LOAD ATOM		------#

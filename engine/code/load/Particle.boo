@@ -104,8 +104,8 @@ public partial class Native:
 				upNode(e)
 				tag = e.seTag[of kri.kit.bake.Tag]()
 				return false	if not tag
-				tVert.Value = tag.buf.A[0].Tex
-				tQuat.Value = tag.buf.A[1].Tex
+				tVert.Value = tag.Vert
+				tQuat.Value = tag.Quat
 				return true
 			sh = pcon.sh_surf_face
 		else: assert not 'supported :('

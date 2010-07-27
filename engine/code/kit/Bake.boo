@@ -11,6 +11,10 @@ public class Tag( kri.ITag ):
 	
 	public Size as uint:
 		get: return buf.Width * buf.Height * sizeof(single) *4
+	public Vert as kri.Texture:
+		get: return buf.A[0].Tex
+	public Quat as kri.Texture:
+		get: return buf.A[1].Tex
 	
 	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
 		buf.init(w,h)
