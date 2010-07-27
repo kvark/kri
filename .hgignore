@@ -5,8 +5,8 @@ plugin
 blender
 export\scenes
 ext\Newton
-demo
-demo_dude
+demo\test
+demo\dude
 test_cl
 test_bugs
 game_*
