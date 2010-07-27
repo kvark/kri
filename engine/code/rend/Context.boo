@@ -96,10 +96,10 @@ public class Context:
 			at.Tex = null
 
 	public def needColor(col as bool) as void:
-		at = buf.A[0]
-		if (col and not at.Tex) or not (col or tInput):
+		t = buf.A[0].Tex
+		if (col and not t) or not (col or tInput):
 			swapUnit(0,tInput)
-		if (col and not at.Tex):
+		if (col and not t):
 			buf.emitAuto(0,bitColor)
 		
 	

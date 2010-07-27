@@ -8,7 +8,8 @@ public struct DirtyHolder[of T]:
 	private dirty	as bool
 	private val		as T
 	public def constructor(t as T):
-		Value = t
+		val = t
+		dirty = false
 	public Value	as T:
 		get: return val
 		set: dirty,val = true,value
@@ -28,6 +29,5 @@ public class Unit:
 	
 	internal def constructor(s as FramebufferAttachment):
 		slot = s
-		dLayer.clean()
 	public Format as PixelInternalFormat:
 		get: return dFormat.Value
