@@ -12,6 +12,7 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm.col_update.extra.Add( Object.Load('text/born_v') )
 	beh = kri.part.beh.Basic('text/beh')
 	kri.Help.enrich( beh, 4, pc.at_pos )
+	kri.Help.enrich( beh, 1, pc.at_sys )
 	pm.behos.Add(beh)
 	
 	pLimt = par.Value[of single]('limit')
@@ -31,7 +32,7 @@ private class Render( kri.rend.part.Simple ):
 		dTest,bAdd = false,true
 		# dict init
 		pSize.Value = 5f
-		pBrit.Value = 0.025f
+		pBrit.Value = 0.002f
 		d = rep.Dict()
 		d.var(pSize,pBrit)
 		# prog init

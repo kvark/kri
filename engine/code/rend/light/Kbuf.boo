@@ -45,7 +45,7 @@ public class Init( kri.rend.Basic ):
 			#sb = -1; GL.GetInteger( GetPName.SampleBuffers, sb )
 			#sm = -1; GL.GetInteger( GetPName.Samples, sm )
 			# todo: optimize to use less passes
-			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
+			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Always, 0,0 )
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
 				for i in range(1, buf.Samples ):
