@@ -59,7 +59,8 @@ public class Context:
 
 	public def constructor(fs as kri.frame.Screen, ns as byte, bc as byte, bd as byte):
 		buf = kri.frame.Buffer(ns, TextureTarget.TextureRectangle )
-		last,bitColor,bitDepth = fs,bc,bd
+		bitColor,bitDepth = bc,bd
+		target = last = fs
 		iDep = (-1,-2)[bitDepth == 8]
 		b = bc | bd
 		assert not (b&0x7) and b<=48

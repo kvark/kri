@@ -1,7 +1,11 @@
 #version 130
+//	Augmentation tools for noise-based texture generation
+
+float snoise(vec2);
+float snoise(vec3);
+
 
 //	Turbulence 2D	//
-float snoise(vec2);
 
 float turbulence(vec2 Point, vec3 Derivate, int steps)	{
 	float rez = 0.0;
@@ -19,7 +23,6 @@ float turbulence(vec2 Point, vec3 Current, vec3 Derivate, int steps)	{
 
 
 //	Turbulence 3D	//
-float snoise(vec3);
 
 float turbulence(vec3 Point, vec4 Derivate, int steps)	{
 	float rez = 0.0;
@@ -33,4 +36,12 @@ float turbulence(vec3 Point, vec4 Derivate, int steps)	{
 
 float turbulence(vec3 Point, vec4 Current, vec4 Derivate, int steps)	{
 	return Current.w * turbulence( Point*Current.xyz, Derivate, steps );
+}
+
+
+//	Ridge filter	//
+
+float ridge(float h, float offset)	{
+	float x = offset - abs(h);
+	return x*x;
 }

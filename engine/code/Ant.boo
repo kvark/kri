@@ -139,11 +139,10 @@ public class Ant( OpenTK.GameWindow ):
 			raise 'View resize fail!'
 	
 	public override def OnUpdateFrame(e as FrameEventArgs) as void:
-		return	if not anim
 		tc = Time
 		old = params.parTime.Value.X
 		params.parTime.Value = Vector4(tc, tc-old, 0f,0f)
-		anim = null	if anim.onFrame(Time)
+		anim = null	if anim and anim.onFrame(Time)
 
 	public override def OnRenderFrame(e as FrameEventArgs) as void:
 		SwapBuffers()

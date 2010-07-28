@@ -1,4 +1,4 @@
-﻿namespace demo
+﻿namespace demo.pick
 
 import System
 import System.Collections.Generic

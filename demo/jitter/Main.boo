@@ -1,4 +1,4 @@
-﻿namespace demo
+﻿namespace demo.jitter
 
 import System
 import Jitter

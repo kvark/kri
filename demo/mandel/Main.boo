@@ -1,4 +1,4 @@
-﻿namespace demo
+﻿namespace demo.mandel
 
 import OpenTK
 import kri.shade
