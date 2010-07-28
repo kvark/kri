@@ -39,11 +39,11 @@ void main()	{
 		ks[i] = rez.y;
 	}
 	//rez_color = kd; return;
-	//rez_color = vec4(color[0].x,color[1].x,color[2].x,color[3].x); return;
+	rez_color = vec4(color[0].x,color[1].x,color[2].x,color[3].x); return;
 	// apply glossiness
 	ks = pow( ks, vec4(get_glossiness()) );
 
 	rez_color = get_emissive() + (
-		(color*kd) * 1.0/*get_diffuse()*/ +
+		(color*kd) * get_diffuse() +
 		(color*ks) * get_specular() );
 }

@@ -30,6 +30,7 @@ public class Init( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(false,0f,true)
+		GL.Disable( EnableCap.Multisample )
 		# depth copy
 		buf.activate(0)		# bind as draw
 		con.activeRead()	# bind as read
@@ -44,7 +45,6 @@ public class Init( kri.rend.Basic ):
 			#sb = -1; GL.GetInteger( GetPName.SampleBuffers, sb )
 			#sm = -1; GL.GetInteger( GetPName.Samples, sm )
 			# todo: optimize to use less passes
-			GL.Disable( EnableCap.Multisample )
 			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
 				GL.StencilFunc( StencilFunction.Always, 0,0 )
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
@@ -65,8 +65,8 @@ public class Init( kri.rend.Basic ):
 		# debug!
 		buf.activate(2)
 		sa.use()
-		using kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
-			GL.StencilFunc( StencilFunction.Equal, 3,-1 )	#change this to see the stencil layer
+		using kri.Section( EnableCap.StencilTest ):
+			GL.StencilFunc( StencilFunction.Equal, 1,-1 )	#change this to see the stencil layer
 			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
 			kri.Ant.Inst.emitQuad()
 
@@ -75,6 +75,7 @@ public class Init( kri.rend.Basic ):
 
 public class Bake( kri.rend.Basic ):
 	protected final sa		= Smart()
+	protected final sb		= Smart()
 	protected final context	as kri.rend.light.Context
 	protected final sphere	as kri.Mesh
 	private final buf		as kri.frame.Buffer
@@ -98,35 +99,40 @@ public class Bake( kri.rend.Basic ):
 		va.bind()	# the buffer objects are bound in creation
 		sphere = kri.kit.gen.Sphere( geoQuality, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
+		# create white shader
+		sb.add('/zcull_v','/empty_f')
+		sb.add( *kri.Ant.Inst.libShaders )
+		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
-	private def drawLights() as void:
+	private def drawLights(mask as byte, sx as Smart) as void:
+		buf.activate(mask)
+		sx.use()
 		for l in kri.Scene.current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
-			sa.updatePar()
-			sphere.draw(2)
-			# the bug: arms are not affected
-			#break	# temp!!!!!!!
+			sx.updatePar()
+			sphere.draw(1)
+			#break	# !debug!
 
 	public override def process(con as kri.rend.Context) as void:
-		#return	# debug!
+		#return	# !debug!
 		con.activate()
 		texDep.Value = con.Depth
-		buf.activate(3)
 		con.SetDepth(0f,false)
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()
-		sa.use()
 		GL.Disable( EnableCap.Multisample )
-		#GL.Disable( EnableCap.DepthTest )
 		#todo: use stencil for front faces
 		using kri.Section( EnableCap.StencilTest ):
+			# write color values
 			GL.StencilFunc( StencilFunction.Equal, 1,-1 )
-			#GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )	# temp!!!
-			GL.StencilOp( StencilOp.Decr, StencilOp.Decr, StencilOp.Decr )
-			drawLights()
-			#GL.StencilOp( StencilOp.Keep, StencilOp.Decr, StencilOp.Decr )
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
+			drawLights(3,sa)
+			# shift stencil route
+			GL.StencilFunc( StencilFunction.Always, 0,0 )
+			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
+			drawLights(0,sb)
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 

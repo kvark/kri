@@ -80,6 +80,7 @@ public class Smart(Program):
 	
 	# re-upload parameters
 	public def updatePar() as void:
+		#assert currentProgram == id
 		for rp in repList:
 			iv = sourceList[ rp.loc ]
 			rp.upload(iv)
