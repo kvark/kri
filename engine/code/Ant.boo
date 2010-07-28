@@ -62,7 +62,7 @@ public class Ant( OpenTK.GameWindow ):
 		# read config
 		conf = Config(confile)
 		title	= conf.ask('Title','kri')
-		shade.Code.Folder	= conf.ask('ShaderPath','../engine/shader')
+		shade.Code.Folder	= conf.ask('ShaderPath','../../engine/shader')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
 		context	= conf.ask('Context','0')
 		bug = context.EndsWith('d')
@@ -97,7 +97,7 @@ public class Ant( OpenTK.GameWindow ):
 		# shader library init
 		resMan.register( shade.Loader() )
 		libShaders = array( resMan.load[of kri.shade.Object]('/lib/'+str)
-			for str in ('quat_v','tool_v','fixed_v','math_f'))
+			for str in ('quat_v','tool_v','orient_v','fixed_v','math_f'))
 		
 
 	def destructor():

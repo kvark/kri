@@ -61,11 +61,12 @@ public class Init( kri.rend.Basic ):
 		buf.activate(3)
 		GL.ColorMask(true,true,true,true)
 		con.ClearColor()
+		return
 		# debug!
 		buf.activate(2)
 		sa.use()
 		using kri.Section( EnableCap.StencilTest ), kri.Section( EnableCap.Multisample ):
-			GL.StencilFunc( StencilFunction.Equal, 1,-1 )	#change this to see the stencil layer
+			GL.StencilFunc( StencilFunction.Equal, 3,-1 )	#change this to see the stencil layer
 			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
 			kri.Ant.Inst.emitQuad()
 
@@ -98,8 +99,17 @@ public class Bake( kri.rend.Basic ):
 		sphere = kri.kit.gen.Sphere( geoQuality, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 
+	private def drawLights() as void:
+		for l in kri.Scene.current.lights:
+			continue	if l.fov != 0f
+			kri.Ant.Inst.params.activate(l)
+			sa.updatePar()
+			sphere.draw(2)
+			# the bug: arms are not affected
+			#break	# temp!!!!!!!
+
 	public override def process(con as kri.rend.Context) as void:
-		return	# debug!
+		#return	# debug!
 		con.activate()
 		texDep.Value = con.Depth
 		buf.activate(3)
@@ -113,15 +123,10 @@ public class Bake( kri.rend.Basic ):
 		#todo: use stencil for front faces
 		using kri.Section( EnableCap.StencilTest ):
 			GL.StencilFunc( StencilFunction.Equal, 1,-1 )
-			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )	# temp!!!
-			#GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
-			for l in kri.Scene.current.lights:
-				continue	if l.fov != 0f
-				kri.Ant.Inst.params.activate(l)
-				sa.updatePar()
-				sphere.draw(2)
-				# the bug: arms are not affected
-				break	# temp!!!!!!!
+			#GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )	# temp!!!
+			GL.StencilOp( StencilOp.Decr, StencilOp.Decr, StencilOp.Decr )
+			drawLights()
+			#GL.StencilOp( StencilOp.Keep, StencilOp.Decr, StencilOp.Decr )
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 

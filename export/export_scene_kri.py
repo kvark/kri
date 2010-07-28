@@ -221,7 +221,7 @@ def save_mat_image(mtex):
 	out.begin('mt_map')
 	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
 		print("\t(w)",'tex coord swizzling not supported')
-	out.array('f', mtex.offset+mtex.size )
+	out.array('f', tuple(mtex.offset) + tuple(mtex.size) )
 	out.end()
 
 	if it.type == 'ENVIRONMENT_MAP':
@@ -258,8 +258,8 @@ def save_mat_image(mtex):
 	if it.type == 'IMAGE':
 		# texture image sampling
 		out.begin('mt_samp')
-		out.pack( '3B',
-			('CLIP','REPEAT').index( it.extension ),
+		repeat = (it.extension == 'EXTEND')
+		out.pack( '3B', repeat,
 			it.mipmap, it.interpolation )
 		out.end()
 	if img.source == 'SEQUENCE':

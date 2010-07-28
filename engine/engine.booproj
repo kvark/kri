@@ -119,7 +119,6 @@
     <None Include="shader\copy_f.glsl" />
     <None Include="shader\copy_v.glsl" />
     <None Include="shader\depth_field_f.glsl" />
-    <None Include="shader\fur\update_v.glsl" />
     <None Include="shader\g\apply_f.glsl" />
     <None Include="shader\g\make_f.glsl" />
     <None Include="shader\g\make_v.glsl" />
@@ -190,7 +189,6 @@
     <Folder Include="code\rend" />
     <Folder Include="code\rend\light" />
     <Folder Include="shader" />
-    <Folder Include="shader\fur" />
     <Folder Include="shader\g" />
     <Folder Include="shader\hdr" />
     <Folder Include="shader\lib" />

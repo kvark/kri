@@ -14,7 +14,7 @@ const float threshold = 0.01;
 
 
 void main()	{
-	rez_color = vec4(1.0); rez_dir = vec3(1.0); return;
+	//rez_color = vec4(1.0); rez_dir = vec3(1.0); return;
 
 	// extract world & light space
 	float depth = texture( unit_depth, gl_FragCoord.xy ).r;
@@ -24,7 +24,7 @@ void main()	{
 	// compute components
 	vec3 dir = lit_pos.w * (lit_pos.xyz - p_camera);
 	float len = length( dir );
-	float intensity = max(0.0, get_attenuation2(len) );
+	float intensity = clamp( get_attenuation2(len), 0.0,1.0 );
 
 	// translate to output
 	rez_color = intensity * lit_color;
