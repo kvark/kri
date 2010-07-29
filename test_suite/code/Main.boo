@@ -8,10 +8,11 @@ def Main(argv as (string)):
 		view.ren = rchain
 		rlis = rchain.renders
 		
-		rlis.Add( Link() )
-		rlis.Add( Offset() )
-		rlis.Add( Read() )
-		rlis.Add( Feedback(null) )
+		#rlis.Add( ShaderLink() )
+		#rlis.Add( PolygonOffset() )
+		#rlis.Add( TextureRead() )
+		#rlis.Add( Feedback(null) )
+		rlis.Add( DrawToStencil() )
 		
 		ant.views.Add( view )
 		ant.Run(10.0,10.0)

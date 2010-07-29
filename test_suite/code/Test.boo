@@ -2,7 +2,7 @@
 
 import OpenTK.Graphics.OpenGL
 
-private class Link( kri.rend.Basic ):
+private class ShaderLink( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
 	
 	public def constructor():
@@ -31,7 +31,7 @@ private class Link( kri.rend.Basic ):
 		sa.link()
 
 
-private class Offset( kri.rend.Basic ):
+private class PolygonOffset( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
 	final fbo	= kri.frame.Buffer(0, TextureTarget.Texture2DArray )
 	final vbo	= kri.vb.Attrib()
@@ -80,7 +80,7 @@ private class Offset( kri.rend.Basic ):
 		print tmp[0]
 
 
-private class Read( kri.rend.Basic ):
+private class TextureRead( kri.rend.Basic ):
 	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
 	public def constructor():
 		super(false)
@@ -154,3 +154,31 @@ private class Feedback( kri.rend.Basic ):
 		q = tf.result()
 		vot.read(dar)
 		assert q == 2
+
+
+private class DrawToStencil( kri.rend.Basic ):
+	public override def process(con as kri.rend.Context) as void:
+		prog	= kri.shade.Smart()
+		#make program
+		text = """
+		#version 130
+		out	uint to_stencil;
+		void main()	{
+			to_stencil = 0;
+		}"""
+		pob = kri.shade.Object(ShaderType.FragmentShader,'my',text)
+		prog.add('/copy_v')
+		prog.add(pob)
+		prog.link( kri.Ant.Inst.slotAttributes )
+		#make data
+		fbo = kri.frame.Buffer(0, TextureTarget.Texture2D )
+		fbo.init(10,10)
+		t = fbo.emitAuto(-2,0)
+		con.DepTest = false
+		GL.Disable( EnableCap.StencilTest )
+		fbo.activate(0)
+		fbo.A[0].Tex = t
+		fbo.activate(1)
+		#run!
+		prog.use()
+		kri.Ant.Inst.emitQuad()

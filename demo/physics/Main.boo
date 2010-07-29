@@ -46,7 +46,7 @@ def Main(argv as (string)):
 			hm = matrix(single,3,3)	# matrix[of single](2,2)
 			for i in range(3):
 				for j in range(3):
-					hm[i,j] = 2f - Math.Abs(i-1) - Math.Abs(j-1)
+					hm[i,j] = 2f - 0.5f*(Math.Abs(i-1) + Math.Abs(j-1))
 			mesh = kri.kit.gen.Landscape(hm, Vector3.One)
 			e = kri.Entity( mesh:mesh )
 			e.tags.Add( kri.TagMat( mat:con.mDef, num:mesh.nPoly ) )
@@ -56,7 +56,7 @@ def Main(argv as (string)):
 			n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,0f)
 			view.scene.entities.Add(e)
 			
-			al.add( kri.ani.ControlMouse(n,0.1f) )
+			al.add( kri.ani.ControlMouse(n,0.01f) )
 			lic = kri.rend.light.Context(2,2)
 			rlis.Add( kri.rend.light.Fill(lic) )
 			rlis.Add( kri.rend.light.Apply(lic) )
@@ -70,7 +70,7 @@ def Main(argv as (string)):
 		n.local.pos.Z = -10f
 		n.local.pos.Y = 1f
 		n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
-		#view.scene.entities.Add(ent)
+		view.scene.entities.Add(ent)
 		
 		mesh = kri.kit.gen.Sphere( 1, size )
 		e2 = kri.kit.gen.Entity( mesh, con )

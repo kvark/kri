@@ -107,6 +107,11 @@ public class Texture( shade.par.INamed ):
 		ti = cast(GenerateMipmapTarget, cast(int,curTarget))
 		GL.GenerateMipmap(ti)
 	
+	# select a range of LODs to sample from
+	public static def SetLevels(a as int, b as int) as void:
+		GL.TexParameterI( curTarget, TextureParameterName.TextureBaseLevel, a )	if a>=0
+		GL.TexParameterI( curTarget, TextureParameterName.TextureMaxLevel, b )	if b>=0
+	
 	# auxilary methods for init
 	private static def Fi2format(fi as PixelInternalFormat) as PixelFormat:
 		return PixelFormat.DepthStencil		if fi == Fm.stencil

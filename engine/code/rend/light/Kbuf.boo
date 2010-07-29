@@ -100,7 +100,7 @@ public class Bake( kri.rend.Basic ):
 		sphere = kri.kit.gen.Sphere( geoQuality, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 		# create white shader
-		sb.add('/zcull_v','/empty_f')
+		sb.add('/light/kbuf/bake_v','/empty_f')
 		sb.add( *kri.Ant.Inst.libShaders )
 		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 

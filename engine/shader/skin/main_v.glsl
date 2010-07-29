@@ -14,7 +14,7 @@ void finish(vec3);
 
 void main()	{
 	//to_vertex = at_vertex; to_quat = at_quat; return;
-	uvec4 ids = at_skin >> uint(8);
+	uvec4 ids = at_skin >> 8u;
 	vec4 wes = vec4(at_skin & uvec4(255)) * (1.0/255.0);
 	for(int i=0; i<4; ++i)
 		append( wes[i], bone[int(ids[i])] );

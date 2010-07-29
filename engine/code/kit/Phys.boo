@@ -25,17 +25,34 @@ public class Core:
 		big = large
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
-		fbo.emitAuto(-2,0)
+		tSten = fbo.emitAuto(-2,0)
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
-		fbo.emit(0,pif)
+		tColor = fbo.emit(0,pif)
+		# setup target parameters
+		fbo.activate(1)
+		for tex in (tSten,tColor):
+			tex.bind()
+			kri.Texture.Filter(false,false)
+			kri.Texture.GenLevels()
 		# 8 bit stencil + 2*[8,16] bit color
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader
 		tid = techId
 		d = kri.shade.rep.Dict()
+		pSten	= kri.shade.par.Texture('sten')
+		pColor	= kri.shade.par.Texture('color')
+		pSten.Value	= tSten
+		pColor.Value = tColor
+		d.unit(pSten,pColor)
 		d.var(pId)
-		sa.add('/zcull_v','/physics_f','/lib/tool_v','/lib/quat_v','/lib/fixed_v')
+		# create draw program
+		sa.add('/zcull_v','/physics_f')
+		sa.add( *kri.Ant.Inst.libShaders )
 		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		# create down-sample program
+		sb.add('/copy_v','/filter/phys_max_f')
+		sb.fragout('to_sten','to_color')
+		sb.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 
 	private def drawAll(scene as kri.Scene) as void:
 		kid = 1f / ((1 << (8,16)[big]) - 1f)
@@ -77,6 +94,7 @@ public class Core:
 		GL.DepthFunc( DepthFunction.Lequal )
 		GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )
 		GL.Enable( EnableCap.PolygonOffsetFill )
+		GL.StencilFunc( StencilFunction.Always, 0,0 )
 		using kri.Section( EnableCap.StencilTest ):
 			GL.PolygonOffset(1f,1f)
 			GL.CullFace( CullFaceMode.Back )
@@ -91,11 +109,23 @@ public class Core:
 		# resize the map
 		GL.Disable( EnableCap.PolygonOffsetFill )
 		GL.ColorMask(true,true,true,true)
-		#fbo.A[1].layer( fbo.A[-2].Tex, 1 )
-		#fbo.A[2].layer( fbo.A[-0].Tex, 1 )
-
+		
+		GL.Disable( EnableCap.DepthTest )
+		sb.use()
+		tc = fbo.A[0].Tex
+		ts = fbo.A[-2].Tex
+		for i in range(3):
+			for tex in (tc,ts):
+				tex.bind()
+				kri.Texture.SetLevels(i,i+1)
+			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
+				FramebufferAttachment.ColorAttachment0, tc.target, tc.id, i+1)
+			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
+				FramebufferAttachment.ColorAttachment1, ts.target, ts.id, i+1)
+			
 		# read back result
 		pbo.bind()
+		fbo.activate(false)
 		size = fbo.Width * fbo.Height
 		GL.ReadBuffer( cast(ReadBufferMode,0) )
 		GL.ReadPixels(0,0, fbo.Width, fbo.Height, PixelFormat.StencilIndex, PixelType.Byte, IntPtr.Zero )
