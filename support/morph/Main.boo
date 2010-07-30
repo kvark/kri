@@ -25,6 +25,8 @@ public class Tag( kri.ITag ):
 #	Engine extension - loader
 
 public class Extra( kri.IExtension ):
+	private static def getReal(r as kri.load.Reader):
+		return r.getReal()
 	private def racShape(pl as kri.ani.data.IPlayer, v as single, i as byte):
 		keys = (pl as kri.Entity).enuTags[of Tag]()
 		keys[i-1].Value = v
@@ -33,7 +35,7 @@ public class Extra( kri.IExtension ):
 		nt.readers['v_shape']	= pv_shape
 		# shape key
 		anil = kri.Ant.Inst.loaders.animations
-		anil.anid['v.value']	= kri.load.ExAnim.Rac( kri.load.ExAnim.getReal, racShape)
+		anil.anid['v.value']	= kri.load.ExAnim.Rac(getReal,racShape)
 	
 	#---	Parse shape key		---#
 	public def pv_shape(r as kri.load.Reader) as bool:
