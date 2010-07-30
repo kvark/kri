@@ -9,6 +9,7 @@ import OpenTK.Graphics.OpenGL
 public class Smart(Program):
 	private final repList	= List[of rep.Base]()
 	private sourceList		as (par.IBaseRoot)
+	private static activeProgram		as Smart	= null
 	public static final prefixAttrib	as string	= 'at_'
 	public static final prefixGhost		as string	= 'ghost_'
 	public static final ghostSym		as string	= '@'
@@ -36,8 +37,9 @@ public class Smart(Program):
 		attribs(sl, *array(range(sl.Size)) )
 	
 	public override def use() as void:
+		activeProgram = self
 		super()
-		updatePar()
+		UpdatePar()
 	
 	# link with attributes
 	public def link(sl as kri.lib.Slot, *dicts as (rep.Dict)) as void:
@@ -79,10 +81,9 @@ public class Smart(Program):
 			assert sl.find( pre + str.Substring(ps.Length) ) >= 0
 	
 	# re-upload parameters
-	public def updatePar() as void:
-		#assert currentProgram == id
-		for rp in repList:
-			iv = sourceList[ rp.loc ]
+	public static def UpdatePar() as void:
+		for rp in activeProgram.repList:
+			iv = activeProgram.sourceList[ rp.loc ]
 			rp.upload(iv)
 	
 	# setup units & gather uniforms

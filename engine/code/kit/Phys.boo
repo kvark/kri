@@ -63,7 +63,7 @@ public class Core:
 			e.va[tid].bind()
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			sa.updatePar()
+			kri.shade.Smart.UpdatePar()
 			e.mesh.draw(1)
 
 	public def tick(s as kri.Scene) as void:

@@ -81,5 +81,5 @@ public class Update( kri.rend.Basic ):
 					trans[av] = i+1
 					keys[i].data.attribTrans(trans)
 				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))
-				sa.updatePar()
+				kri.shade.Smart.UpdatePar()
 				ent.mesh.draw(tf)

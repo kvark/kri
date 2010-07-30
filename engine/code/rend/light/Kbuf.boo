@@ -110,7 +110,7 @@ public class Bake( kri.rend.Basic ):
 		for l in kri.Scene.current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
-			sx.updatePar()
+			Smart.UpdatePar()
 			sphere.draw(1)
 			#break	# !debug!
 

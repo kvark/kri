@@ -4,6 +4,7 @@ import Boo.Lang.Compiler
 import Boo.Lang.PatternMatching
 
 #---	Transparent property portal		---#
+#usage: portal 'name' as 'type' = 'expression'
 
 macro portal(exp as Ast.Expression):
 	bex = exp as Ast.BinaryExpression
@@ -20,3 +21,20 @@ macro portal(exp as Ast.Expression):
 			get: return $(rit)
 			set: $(rit) = value
 	|]
+
+
+#---	Method wrapper		---#
+#usage: wrapper 'class' = ('met1','met2')
+
+macro wrapper(exp as Ast.Expression):
+	bex = exp as Ast.BinaryExpression
+	assert bex	# operator doesn't matter
+	clName = bex.Left as Ast.ReferenceExpression
+	arMet = bex.Right as Ast.ArrayLiteralExpression
+	assert clName and arMet
+	for met in arMet.Items:
+		metName = met as Ast.ReferenceExpression
+		yield [|
+			private def $(metName)(x as $(clName)):
+				return x.$(metName)()
+		|]

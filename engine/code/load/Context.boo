@@ -41,6 +41,8 @@ public static class Meta:
 		return rez
 
 
+#------		MATERIAL CONTEXT		------#
+
 public class Shade:
 	# light models
 	public final lambert	= Object.Load('/mod/lambert_f')

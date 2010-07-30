@@ -24,6 +24,10 @@ private class Config:
 		return ( d.Key	for d in dict	if d.Value!=null )
 
 
+public interface IExtension:
+	def attach(nt as load.Native) as void
+
+
 # Main engine class Ant
 # Controls all events
 public class Ant( OpenTK.GameWindow ):
@@ -48,10 +52,13 @@ public class Ant( OpenTK.GameWindow ):
 	public final slotAttributes	= lib.Slot( lib.Const.nAttrib)
 	public final slotParticles	= lib.Slot( lib.Const.nPart	)
 	
+	# extensions
+	public final extensions	= List[of IExtension]()
+	public final loaders	as load.Standard
 	# resource manager
-	public final resMan	= res.Manager()
+	public final resMan		= res.Manager()
 	# main uniform dictionary
-	public final dict	= shade.rep.Dict()
+	public final dict		= shade.rep.Dict()
 	# libraries
 	public final params		= lib.Param(dict)
 	public final attribs	= lib.Attrib(slotAttributes)
@@ -98,6 +105,9 @@ public class Ant( OpenTK.GameWindow ):
 		resMan.register( shade.Loader() )
 		libShaders = array( resMan.load[of kri.shade.Object]('/lib/'+str)
 			for str in ('quat_v','tool_v','orient_v','fixed_v','math_f'))
+		# extensions init
+		loaders = load.Standard()
+		extensions.Add(loaders)
 		
 
 	def destructor():

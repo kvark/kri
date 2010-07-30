@@ -1,13 +1,34 @@
 ﻿namespace kri.load
 
+import System.Collections.Generic
 import kri.meta
+import OpenTK
 import OpenTK.Graphics
+import OpenTK.Graphics.OpenGL
 
 
-public partial class Native:
-	public final limDict	= Dictionary[of string,callable() as Hermit]()
-
-	public def initMaterials() as void:
+public class ExMaterial( kri.IExtension ):
+	public final limDict	= Dictionary[of string,callable(Reader) as Hermit]()
+	public final con		= Context()
+	
+	public def attach(nt as Native) as void:	#imp: kri.IExtension
+		init()
+		# material
+		nt.readers['mat']		= p_mat
+		nt.readers['m_hair']	= pm_hair
+		nt.readers['m_halo']	= pm_halo
+		nt.readers['m_surf']	= pm_surf
+		nt.readers['m_diff']	= pm_diff
+		nt.readers['m_spec']	= pm_spec
+		nt.readers['unit']		= pm_unit
+		nt.readers['mt_map']	= pmt_map
+		nt.readers['mt_env']	= pmt_env
+		nt.readers['mt_samp']	= pmt_samp
+		nt.readers['mt_path']	= pmt_path
+		nt.readers['mt_seq']	= pmt_seq
+	
+	
+	private def init() as void:
 		uvShaders = [	kri.shade.Object.Load("/mi/uv${i}_v") for i in range(4) ]
 		orcoVert =	kri.shade.Object.Load('/mi/orco_v')
 		orcoHalo =	kri.shade.Object.Load('/mi/orco_halo_f')
@@ -24,24 +45,20 @@ public partial class Native:
 			mt = Hermit( Shader:sh, Name:slow )	# careful!
 			limDict[s] = genFun(mt)
 		# non-trivial sources
-		limDict['UV'] = do():
-			lid = br.ReadByte()
+		limDict['UV']		= do(r as Reader):
+			lid = r.getByte()
 			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
-		limDict['ORCO'] = do():
-			mat = geData[of kri.Material]()
+		limDict['ORCO']		= do(r as Reader):
+			mat = r.geData[of kri.Material]()
 			assert mat
-			getString()	# mapping type, not supported
+			r.getString()	# mapping type, not supported
 			sh = (orcoVert,orcoHalo)[ mat.Meta['halo'] != null ]
 			return Hermit( Shader:sh, Name:'orco' )
-		limDict['OBJECT'] = do():
+		limDict['OBJECT']	= do(r as Reader):
 			mio = InputObject( Shader:objectShader,	Name:'object' )
-			addResolve( mio.pNode.activate )
+			r.addResolve( mio.pNode.activate )
 			return mio
 	
-	public def finishMaterials() as void:
-		for m in at.mats.Values:
-			m.link()
-
 
 	#---	Parse texture unit	---#
 	private struct MapTarget:
@@ -50,8 +67,8 @@ public partial class Native:
 		public def constructor(s as string, p as kri.shade.Object):
 			name,prog = s,p
 	
-	public def pm_unit() as bool:
-		m = geData[of kri.Material]()
+	public def pm_unit(r as Reader) as bool:
+		m = r.geData[of kri.Material]()
 		return false	if not m
 		tarDict = Dictionary[of string,MapTarget]()
 		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
@@ -59,8 +76,8 @@ public partial class Native:
 		# map targets
 		u = AdUnit()
 		m.unit.Add(u)
-		puData(u)
-		while (name = getString()) != '':
+		r.puData(u)
+		while (name = r.getString()) != '':
 			targ as MapTarget
 			continue if not tarDict.TryGetValue(name,targ)
 			me = m.Meta[targ.name] as Advanced
@@ -68,61 +85,63 @@ public partial class Native:
 			me.Unit = m.unit.IndexOf(u)
 			me.Shader = targ.prog
 		# map inputs
-		name = getString()
-		fun as callable() as Hermit = null
+		name = r.getString()
+		fun as callable(Reader) as Hermit = null
 		if limDict.TryGetValue(name,fun):
-			u.input = fun()
+			u.input = fun(r)
 			return true
 		return false
 
 
 	#---	Parse material	---#
-	public def p_mat() as bool:
-		m = kri.Material( getString() )
-		at.mats[m.name] = m
-		puData(m)
+	public def p_mat(r as Reader) as bool:
+		m = kri.Material( r.getString() )
+		r.at.mats[m.name] = m
+		r.puData(m)
+		r.addPostProcess() do(n as kri.Node):
+			m.link()
 		return true
-	
-	#---	Strand properties	---#
-	public def pm_hair() as bool:
-		m = geData[of kri.Material]()
+
+#---	Strand properties	---#
+	public def pm_hair(r as Reader) as bool:
+		m = r.geData[of kri.Material]()
 		return false	if not m
-		ms = Strand( Name:'strand', Data:getVec4() )
-		br.ReadByte()	# tangent shading
+		ms = Strand( Name:'strand', Data:r.getVec4() )
+		r.getByte()	# tangent shading
 		ms.Shader = con.slib.strand_u
 		m.metaList.Add(ms)
 		return true
 	
 	#---	Halo properties		---#
-	public def pm_halo() as bool:
-		m = geData[of kri.Material]()
+	public def pm_halo(r as Reader) as bool:
+		m = r.geData[of kri.Material]()
 		return false	if not m
-		mh = Halo( Name:'halo', Data:Vector4(getVector()) )
-		br.ReadByte()	# use texture - ignored
+		mh = Halo( Name:'halo', Data:Vector4(r.getVector()) )
+		r.getByte()	# use texture - ignored
 		mh.Shader = con.slib.halo_u
 		m.metaList.Add(mh)
 		return true
 	
 	#---	Surface properties	---#
-	public def pm_surf() as bool:
-		m = geData[of kri.Material]()
+	public def pm_surf(r as Reader) as bool:
+		m = r.geData[of kri.Material]()
 		return false	if not m
-		br.ReadByte()	# shadeless
-		getReal()		# parallax
+		r.getByte()	# shadeless
+		r.getReal()		# parallax
 		m.metaList.Add( Advanced( Name:'bump', Shader:con.slib.bump_c ))
 		m.metaList.Add( Data[of single]('emissive',
-			con.slib.emissive_u, getReal() ))
-		getReal()	# ambient
-		getReal()	# translucency
+			con.slib.emissive_u, r.getReal() ))
+		r.getReal()	# ambient
+		r.getReal()	# translucency
 		return true
 	
 	#---	Meta: diffuse	---#
-	public def pm_diff() as bool:
-		m = geData[of kri.Material]()
+	public def pm_diff(r as Reader) as bool:
+		m = r.geData[of kri.Material]()
 		return false	if not m
 		m.metaList.Add( Data[of Color4]('diffuse',
-			con.slib.diffuse_u,	getColorFull() ))
-		model = getString()
+			con.slib.diffuse_u,	r.getColorFull() ))
+		model = r.getString()
 		sh = { '':		con.slib.lambert,
 			'LAMBERT':	con.slib.lambert
 			}[model]
@@ -131,14 +150,14 @@ public partial class Native:
 		return true
 
 	#---	Meta: specular	---#
-	public def pm_spec() as bool:
-		m = geData[of kri.Material]()
+	public def pm_spec(r as Reader) as bool:
+		m = r.geData[of kri.Material]()
 		return false	if not m
 		m.metaList.Add( Data[of Color4]('specular',
-			con.slib.specular_u,	getColorFull() ))
+			con.slib.specular_u,	r.getColorFull() ))
 		m.metaList.Add( Data[of single]('glossiness',
-			con.slib.glossiness_u,	getReal() ))
-		model = getString()
+			con.slib.glossiness_u,	r.getReal() ))
+		model = r.getString()
 		sh = {
 			'COOKTORR':	con.slib.cooktorr,
 			'PHONG':	con.slib.phong,
@@ -149,40 +168,40 @@ public partial class Native:
 		return true
 
 	#---	Texture: mapping	---#
-	public def pmt_map() as bool:
-		u = geData[of AdUnit]()
+	public def pmt_map(r as Reader) as bool:
+		u = r.geData[of AdUnit]()
 		return false	if not u
 		# tex-coords
-		u.pOffset.Value	= Vector4(getVector(), 0.0)
-		u.pScale.Value	= Vector4(getVector(), 1.0)
+		u.pOffset.Value	= Vector4(r.getVector(), 0.0)
+		u.pScale.Value	= Vector4(r.getVector(), 1.0)
 		return true
 
 	#---	Texture: environment	---#
-	public def pmt_env() as bool:
-		u = geData[of AdUnit]()
+	public def pmt_env(r as Reader) as bool:
+		u = r.geData[of AdUnit]()
 		return false	if not u
 		tag = kri.kit.reflect.Tag(u)
-		tag.counter = 0-br.ReadByte()
-		tag.depth	= br.ReadByte()
-		tag.size	= br.ReadUInt16()
-		tag.zoom	= getReal()
-		tag.rangeIn		= getReal()
-		tag.rangeOut	= getReal()
-		tag.cubic	= getString() == 'CUBE'
-		addResolve() do(n as kri.Node):
-			ent = at.scene.entities.Find() do(e as kri.Entity):
+		tag.counter = 0 - r.getByte()
+		tag.depth	= r.getByte()
+		tag.size	= r.bin.ReadUInt16()
+		tag.zoom	= r.getReal()
+		tag.rangeIn		= r.getReal()
+		tag.rangeOut	= r.getReal()
+		tag.cubic	= r.getString() == 'CUBE'
+		r.addResolve() do(n as kri.Node):
+			ent = r.at.scene.entities.Find() do(e as kri.Entity):
 				e.node == n
 			assert ent
 			ent.tags.Add(tag)
 		return true
 
 	#---	Texture: sampling	---#
-	public def pmt_samp() as bool:
-		u = geData[of AdUnit]()
+	public def pmt_samp(r as Reader) as bool:
+		u = r.geData[of AdUnit]()
 		return false	if not u
-		bRepeat	= br.ReadByte()>0	# extend by repeat
-		bMipMap	= br.ReadByte()>0	# generate mip-maps
-		bFilter	= br.ReadByte()>0	# linear filtering
+		bRepeat	= r.getByte()>0	# extend by repeat
+		bMipMap	= r.getByte()>0	# generate mip-maps
+		bFilter	= r.getByte()>0	# linear filtering
 		# init sampler parameters, todo: use sampler object
 		assert u.Value
 		u.Value.bind()
@@ -193,13 +212,13 @@ public partial class Native:
 		return true
 
 	#---	Texture: file path	---#
-	public def pmt_path() as bool:
-		u = geData[of AdUnit]()
+	public def pmt_path(r as Reader) as bool:
+		u = r.geData[of AdUnit]()
 		return false	if not u
-		path = 'res' + getString()
-		u.Value = resMan.load[of kri.Texture](path)
+		path = 'res' + r.getString()
+		u.Value = r.res.load[of kri.Texture](path)
 		return u.Value != null
 
 	#---	Texture: sequence	---#
-	public def pmt_seq() as bool:
+	public def pmt_seq(r as Reader) as bool:
 		return false

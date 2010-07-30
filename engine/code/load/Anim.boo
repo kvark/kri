@@ -1,12 +1,23 @@
 ﻿namespace kri.load
 
+import System.Collections.Generic
 import OpenTK
+import OpenTK.Graphics
 import kri.ani.data
 
-public partial class Native:
-	public final anid		= Dictionary[of string,callable() as IChannel]()
+
+public class ExAnim( kri.IExtension ):
+	public final anid		= Dictionary[of string,callable(Reader) as IChannel]()
 	public final badCurves	= Dictionary[of string,byte]()
-	#todo: gen static class here with separate generator methods?
+	
+	public def attach(nt as Native) as void:	#imp: kri.IExtension
+		init()
+		# animations
+		nt.readers['action']	= p_action
+		nt.readers['curve']		= p_curve
+	
+	# generate private method wrappers here, to pass to 'rac' function
+	wrapper Reader = (getReal,getVec2,getVector,getVec4,getScale,getColor,getQuatRev,getQuatEuler)
 
 	# generates invalid binary format if using generics, bypassing with extenions
 	[ext.spec.Method(( Vector3,Quaternion,single ))]
@@ -27,7 +38,7 @@ public partial class Native:
 			n.touch()
 	
 	private def racMatColor(name as string):
-		return rac(getColor)	do(pl as IPlayer, v as Color4, i as byte):
+		return rac(getColor)		do(pl as IPlayer, v as Color4, i as byte):
 			((pl as kri.Material).Meta[name] as kri.meta.Data[of Color4]).Value = v
 	private def racTexUnit(fun as callable(kri.meta.AdUnit) as kri.shade.par.ValuePure[of Vector4]):
 		return rac(getVector)	do(pl as IPlayer, v as Vector3, i as byte):
@@ -38,7 +49,7 @@ public partial class Native:
 			fun(pl as kri.Projector, v)
 
 	# fill action dictionary
-	public def initAnimations() as void:
+	private def init() as void:
 		# skeleton sub-trans
 		def fs_pos(b as kri.NodeBone, ref v as Vector3):
 			b.local.pos = b.bindPose.byPoint(v)
@@ -59,22 +70,22 @@ public partial class Native:
 		def fp_prout(pr as kri.Projector, v as single):
 			pr.rangeOut = v
 		# skeleton bone
-		anid['s.location']				= rac(getVector,	genBone(fs_pos) )
-		anid['s.rotation_quaternion']	= rac(getQuatRev,	genBone(fs_rot) )
-		anid['s.scale']					= rac(getScale,		genBone(fs_sca) )
+		anid['s.location']				= rac( getVector,	genBone(fs_pos) )
+		anid['s.rotation_quaternion']	= rac( getQuatRev,	genBone(fs_rot) )
+		anid['s.scale']					= rac( getScale,	genBone(fs_sca) )
 		# node
-		anid['n.location']			= rac(getVector,	genSpatial(ft_pos) )
-		anid['n.rotation_euler']	= rac(getQuatEuler,	genSpatial(ft_rot) )
-		anid['n.scale']				= rac(getScale,		genSpatial(ft_sca) )
+		anid['n.location']			= rac( getVector,		genSpatial(ft_pos) )
+		anid['n.rotation_euler']	= rac( getQuatEuler,	genSpatial(ft_rot) )
+		anid['n.scale']				= rac( getScale,		genSpatial(ft_sca) )
 		# material
-		anid['m.diffuse_color']		= racMatColor( 'diffuse' )
-		anid['m.specular_color']	= racMatColor( 'specular' )
+		anid['m.diffuse_color']		= racMatColor('diffuse')
+		anid['m.specular_color']	= racMatColor('specular')
 		# texture unit
 		anid['t.offset']		= racTexUnit({u| return u.pOffset })
 		anid['t.scale']			= racTexUnit({u| return u.pScale })
 		# light
-		anid['l.energy']	= rac(getReal,	{pl,v,i| (pl as kri.Light).energy = v })
-		anid['l.color']		= rac(getColor,	{pl,v,i| (pl as kri.IColored).Color = v })
+		anid['l.energy']	= rac( getReal,		{pl,v,i| (pl as kri.Light).energy = v })
+		anid['l.color']		= rac( getColor,	{pl,v,i| (pl as kri.IColored).Color = v })
 		anid['l.clip_start']	= racProject(fp_prin)
 		anid['l.clip_end']		= racProject(fp_prout)
 		# camera
@@ -89,13 +100,13 @@ public partial class Native:
 
 
 	#---	Parse action	---#
-	public def p_action() as bool:
-		player = geData[of Player]()
+	public def p_action(r as Reader) as bool:
+		player = r.geData[of Player]()
 		return false	if not player
-		name = getString()
-		rec = Record( name, getReal() )
+		name = r.getString()
+		rec = Record( name, r.getReal() )
 		player.anims.Add(rec)
-		puData(rec)
+		r.puData(rec)
 		return true
 		
 	#---	Channel pre-defined interpolators per type	---#
@@ -115,8 +126,8 @@ public partial class Native:
 		c.lerp = def(ref a as single, ref b as single, t as single) as single:
 			return (1-t)*a + t*b
 	
-	/*
-	private def fixChan2[of T(struct)](c as Channel[of T]) as void:
+	
+/*	private def fixChan2[of T(struct)](c as Channel[of T]) as void:
 		if T == Quaternion:
 			c.lerp = Quaternion.Slerp
 			c.bezier = false
@@ -132,29 +143,29 @@ public partial class Native:
 		elif T == single:
 			c.lerp = def(a as single, b as single, t as single) as single:
 				return (1-t)*a + t*b
-	*/	
+*/		
 
 	#---	Read Abstract Channel (rac) constructor	---#
 	
 	# bypassing BOO-854
 	[ext.spec.ForkMethodEx(Channel, (single,Vector2,Vector3,Vector4,Quaternion,Color4))]
 	[ext.RemoveSource()]
-	public def rac[of T(struct)](fread as callable() as T, fup as callable(IPlayer,T,byte)) as callable() as IChannel:
-		return do():
-			ind = br.ReadByte() # element index
-			num = cast(int, br.ReadUInt16() )
+	public def rac[of T(struct)](fread as callable(Reader) as T, fup as callable(IPlayer,T,byte)) as callable(Reader) as IChannel:
+		return do(r as Reader):
+			ind = r.getByte() # element index
+			num = cast(int, r.bin.ReadUInt16() )
 			chan = Channel[of T](num,ind,fup)
 			fixChan(chan)
-			chan.extrapolate = br.ReadByte()>0
+			chan.extrapolate = r.getByte()>0
 			for i in range(num):
-				chan.kar[i] = Key[of T]( t:getReal(),
-					co:fread(), h1:fread(), h2:fread() )
+				chan.kar[i] = Key[of T]( t:r.getReal(),
+					co:fread(r), h1:fread(r), h2:fread(r) )
 			return chan
 	
 	#---	Unknown channel read	---#
 	protected def readNullChannel() as IChannel:
 		return null
-	protected def readDefaultChannel(size as byte) as callable() as IChannel:
+	protected def readDefaultChannel(size as byte) as callable(Reader) as IChannel:
 		if size == 1:	return rac( getReal, null )
 		elif size == 2:	return rac( getVec2, null )
 		elif size == 3:	return rac( getVector, null )
@@ -162,16 +173,16 @@ public partial class Native:
 		else: return readNullChannel
 	
 	#---	Parse curve	---#
-	public def p_curve() as bool:
-		rec	= geData[of Record]()
+	public def p_curve(r as Reader) as bool:
+		rec	= r.geData[of Record]()
 		return false	if not rec
-		data_path = getString()
-		siz = br.ReadByte()	# element size in floats
-		fun as callable() as IChannel
+		data_path = r.getString()
+		siz = r.getByte()	# element size in floats
+		fun as callable(Reader) as IChannel
 		if not anid.TryGetValue(data_path,fun):
 			badCurves[data_path] = siz
 			fun = readDefaultChannel(siz)
-		chan = fun()
+		chan = fun(r)
 		return false	if not chan
 		chan.Tag = data_path
 		rec.channels.Add(chan)

@@ -81,6 +81,6 @@ public class Update( kri.rend.tech.Basic ):
 					s1.inverse()
 					spa.combine(s0,s1)	# ->model
 					par[i+1].activate(spa)
-				sa.updatePar()
+				kri.shade.Smart.UpdatePar()
 				e.mesh.draw(tf)
 				tag.Sync = true

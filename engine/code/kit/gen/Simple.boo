@@ -24,7 +24,7 @@ public class Quad( kri.Mesh ):
 		self.nVert = 4
 		self.nPoly = 4
 		vat = kri.vb.Attrib()
-		vat.init[of Vector2h]((
+		vat.init[of Vector2h]((of Vector2h:
 			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
 			Vector2h(-1f,1f),	Vector2h(1f,1f),
 			), false)
