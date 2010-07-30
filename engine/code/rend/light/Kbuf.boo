@@ -11,9 +11,7 @@ public class Init( kri.rend.Basic ):
 	private final sa	= kri.shade.Smart()
 
 	public def constructor(nlay as byte):
-		maxSamples = 0
-		GL.GetInteger( GetPName.MaxSamples, maxSamples )
-		assert nlay <= maxSamples
+		assert nlay <= kri.Ant.Inst.caps.multiSamples
 		# init buffer
 		buf = kri.frame.Buffer(nlay, TextureTarget.Texture2DMultisample )
 		buf.mask = 3

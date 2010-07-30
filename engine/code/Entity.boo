@@ -32,7 +32,10 @@ public class Mesh( vb.Storage ):
 	
 	public def draw(off as uint, num as uint, nob as uint) as void:
 		assert off>=0 and num>=0 and num+off<=nPoly
-		if ind and nob != 1: # works for Uint16 indeces only
+		if ind: assert num*polySize <= kri.Ant.Inst.caps.elemIndices
+		assert nVert <= kri.Ant.Inst.caps.elemVertices
+		# works for Uint16 indices only
+		if ind and nob != 1:
 			GL.DrawElementsInstanced( drawMode, polySize*num,
 				DrawElementsType.UnsignedShort, IntPtr(polySize*2*off), nob)
 		elif ind:	GL.DrawElements ( drawMode, polySize*num,

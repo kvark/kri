@@ -20,9 +20,8 @@ public class Simplex( kri.rend.Basic ):
 		noise.dict.var( pMouse )
 		sa.link( kri.Ant.Inst.slotAttributes, noise.dict, kri.Ant.Inst.dict )
 		# init mouse
-		mouse = kri.Ant.Inst.Mouse
-		mouse.Move += def():
-			pMouse.Value = Vector4( mouse.X * kwid, 1f - mouse.Y * khet, 0f,0f )
+		kri.Ant.Inst.Mouse.Move += def():
+			pMouse.Value.Xyz = kri.Ant.Inst.PointerNdc
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		kwid = 1f / far.Width

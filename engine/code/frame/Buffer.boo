@@ -25,6 +25,7 @@ public class Buffer(Screen):
 		get: return at[target+FBASE]
 	
 	public def constructor(nsam as byte, tg as TextureTarget):
+		assert 4 <= kri.Ant.Inst.caps.colorAttaches
 		tmp = 0
 		GL.GenFramebuffers(1,tmp)
 		super(tmp)

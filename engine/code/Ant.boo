@@ -33,6 +33,7 @@ public interface IExtension:
 public class Ant( OpenTK.GameWindow ):
 	[getter(Inst)]
 	public static inst as Ant = null		# Singleton
+	public final caps	as Capabilities		# Render capabilities
 	public final debug	as bool				# is debug context
 	public final views	= List[of View]()	# *View
 	private quad	as kri.kit.gen.Frame	= null	# Standard quad
@@ -49,7 +50,7 @@ public class Ant( OpenTK.GameWindow ):
 			0f ), 2f) - Vector3.One
 	# Slots
 	public final slotTechniques	= lib.Slot( lib.Const.nTech	)
-	public final slotAttributes	= lib.Slot( lib.Const.nAttrib)
+	public final slotAttributes	= lib.Slot( lib.Const.nAttrib )
 	public final slotParticles	= lib.Slot( lib.Const.nPart	)
 	
 	# extensions
@@ -98,6 +99,7 @@ public class Ant( OpenTK.GameWindow ):
 		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
 		fps = FpsCounter(period,title)
 		sw.Start()
+		caps = Capabilities()
 		debug = bug
 		inst = self
 		
@@ -121,13 +123,6 @@ public class Ant( OpenTK.GameWindow ):
 		slotTechniques.clear()
 		slotAttributes.clear()
 		quad = kri.kit.gen.Frame( kri.kit.gen.Quad() )
-		
-		# restrictions
-		print GL.GetString( StringName.Version )
-		print GL.GetString( StringName.ShadingLanguageVersion )
-		mb = 0
-		GL.GetInteger( GetPName.MaxDrawBuffers, mb )
-		assert mb>=4
 		
 		# GL context init
 		GL.ClearColor( Color4.Black )

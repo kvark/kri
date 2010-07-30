@@ -59,9 +59,11 @@ public class Program:
 
 	# assign vertex attribute slot
 	public def attrib(index as int, name as string) as void:
+		assert index < kri.Ant.Inst.caps.vertexAttribs
 		GL.BindAttribLocation(id, index, name)
 	# assign fragment output slot
 	public def fragout(*names as (string)) as void:
+		assert names.Length <= kri.Ant.Inst.caps.drawBuffers
 		for i in range(names.Length):
 			GL.BindFragDataLocation(id, i, names[i])
 	# assign transform feedback
