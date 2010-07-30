@@ -35,6 +35,6 @@ macro wrapper(exp as Ast.Expression):
 	for met in arMet.Items:
 		metName = met as Ast.ReferenceExpression
 		yield [|
-			private def $(metName)(x as $(clName)):
+			public static def $(metName)(x as $(clName)):
 				return x.$(metName)()
 		|]

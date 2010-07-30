@@ -1,4 +1,4 @@
-﻿namespace kri.kit.hdr
+﻿namespace support.hdr
 
 import System
 import OpenTK.Graphics.OpenGL

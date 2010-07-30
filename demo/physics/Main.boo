@@ -83,7 +83,7 @@ def Main(argv as (string)):
 		#b.vAngular = Vector3(1f,0f,0f)
 		#b.vLinear = Vector3(0f,0f,-0.2f)
 		view.scene.bodies.Add(b)
-		ren = kri.ani.sim.Render( view.scene, 4, rz )
+		ren = support.phys.Simulator( view.scene, 4, rz )
 		al.add( AniKey(b) )
 		al.add(ren)
 		if not 'Debug':

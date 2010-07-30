@@ -75,7 +75,7 @@ private class Task:
 		m = kri.kit.gen.Cube( Vector3(2f,1f,0.5f) )
 		e = kri.Entity( mesh:m )
 		e.tags.Add( kri.TagMat( mat:mat, num:m.nPoly ) )
-		e.tags.Add( kri.kit.pick.Tag( pick:fun ) )
+		e.tags.Add( support.pick.Tag( pick:fun ) )
 		return e
 	
 	private def makeRec() as kri.ani.data.Record:
@@ -111,7 +111,7 @@ private class Task:
 			ar.Add(ec)
 		(ec = ar[0]).visible = false
 		ec.tags.RemoveAll() do(t as kri.ITag):
-			t2 = t as kri.kit.pick.Tag
+			t2 = t as support.pick.Tag
 			return t2 != null
 
 
@@ -133,9 +133,9 @@ def Main(argv as (string)):
 		licon = kri.rend.light.Context(2,8)
 		
 		view.ren = rm = kri.rend.Manager(false)
-		rm.add('skin',	1,	kri.kit.skin.Update(true) )
-		rm.add('emi',	3,	rem, 'skin')
-		rm.add('pick',	3,	kri.kit.pick.Render(2,8), 'emi')
+		#rm.add('skin',	1,	kri.kit.skin.Update(true) )
+		rm.add('emi',	3,	rem)
+		rm.add('pick',	3,	support.pick.Render(2,8), 'emi')
 		rm.add('fill',	2,	kri.rend.light.Fill(licon) )
 		rm.add('app',	4,	kri.rend.light.Apply(licon), 'emi','fill')
 		

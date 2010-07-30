@@ -1,24 +1,7 @@
-﻿namespace kri.kit.morph
+﻿namespace support.morph
 
 import System.Collections.Generic
 import OpenTK
-
-#----------------------------------------
-#	Shape Key, stored as an entiry tag
-
-public class Tag( kri.ITag ):
-	public final name	as string
-	public final data	= kri.vb.Attrib()
-	public relative	as Tag		= null
-	[Getter(Dirty)]
-	private dirty	as bool		= false
-	private val		as single	= 1f
-	public Value	as single:
-		get: return val
-		set: dirty=true; val=value
-	public def constructor(s as string):
-		name = s
-
 
 #----------------------------------------
 #	Animation of morphing between to shapes

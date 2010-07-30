@@ -22,7 +22,6 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['m_spec']	= pm_spec
 		nt.readers['unit']		= pm_unit
 		nt.readers['mt_map']	= pmt_map
-		nt.readers['mt_env']	= pmt_env
 		nt.readers['mt_samp']	= pmt_samp
 		nt.readers['mt_path']	= pmt_path
 		nt.readers['mt_seq']	= pmt_seq
@@ -174,25 +173,6 @@ public class ExMaterial( kri.IExtension ):
 		# tex-coords
 		u.pOffset.Value	= Vector4(r.getVector(), 0.0)
 		u.pScale.Value	= Vector4(r.getVector(), 1.0)
-		return true
-
-	#---	Texture: environment	---#
-	public def pmt_env(r as Reader) as bool:
-		u = r.geData[of AdUnit]()
-		return false	if not u
-		tag = kri.kit.reflect.Tag(u)
-		tag.counter = 0 - r.getByte()
-		tag.depth	= r.getByte()
-		tag.size	= r.bin.ReadUInt16()
-		tag.zoom	= r.getReal()
-		tag.rangeIn		= r.getReal()
-		tag.rangeOut	= r.getReal()
-		tag.cubic	= r.getString() == 'CUBE'
-		r.addResolve() do(n as kri.Node):
-			ent = r.at.scene.entities.Find() do(e as kri.Entity):
-				e.node == n
-			assert ent
-			ent.tags.Add(tag)
 		return true
 
 	#---	Texture: sampling	---#

@@ -1,4 +1,4 @@
-﻿namespace kri.kit.pick
+﻿namespace support.pick
 
 import OpenTK.Graphics.OpenGL
 

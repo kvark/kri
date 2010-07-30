@@ -7,12 +7,10 @@ public class ExMesh( kri.IExtension ):
 	public def attach(nt as Native) as void:	#imp: kri.IExtension
 		# mesh
 		nt.readers['mesh']		= p_mesh
-		nt.readers['v_shape']	= pv_shape
 		nt.readers['v_pos']		= pv_pos
 		nt.readers['v_quat']	= pv_quat
 		nt.readers['v_uv']		= pv_uv
 		nt.readers['v_color']	= pv_color
-		nt.readers['v_skin']	= pv_skin
 		nt.readers['v_ind']		= pv_ind
 	
 	public static def GetArray[of T(struct)](num as uint, fun as callable) as (T):
@@ -37,19 +35,6 @@ public class ExMesh( kri.IExtension ):
 		m = kri.Mesh( BeginMode.Triangles )
 		r.puData(m)
 		m.nVert = r.bin.ReadInt16()
-		return true
-	
-	#---	Parse shape key		---#
-	public def pv_shape(r as Reader) as bool:
-		e = r.geData[of kri.Entity]()
-		return false	if not e or not e.mesh
-		tag = kri.kit.morph.Tag( r.getString() )
-		r.getByte()	# relative ID, not used
-		tag.Value = r.getReal()
-		ar = GetArray[of Vector3]( e.mesh.nVert, r.getVector )
-		tag.data.init(ar,false)
-		kri.Help.enrich( tag.data, 3, kri.Ant.Inst.attribs.vertex )
-		e.tags.Add(tag)
 		return true
 	
 	#---	Parse mesh vertices (w = handness)	---#
@@ -95,20 +80,6 @@ public class ExMesh( kri.IExtension ):
 			type:VertexAttribPointerType.UnsignedByte,
 			integer:false )
 		return LoadArray[of ColorRaw]( r,1,ai, r.getColorRaw )
-	
-	#---	Parse mesh armature link with bone weights	---#
-	public def pv_skin(r as Reader) as bool:
-		ai = kri.vb.Info(
-			slot: kri.Ant.Inst.attribs.skin, size:4,
-			type: VertexAttribPointerType.UnsignedShort,
-			integer:true )
-		rez = LoadArray[of ushort]( r,4,ai, {return r.bin.ReadUInt16()})
-		return false	if not rez
-		# link to the Armature
-		kri.kit.skin.Tag.prepare(
-			r.geData[of kri.Entity](),
-			r.geData[of kri.Skeleton]() )
-		return true
 	
 	#---	Parse mesh indexes	---#
 	public def pv_ind(r as Reader) as bool:

@@ -49,17 +49,6 @@ public class Native(Basic):
 		n.local.rot.Normalize()
 		n.touch()
 
-
-public class Render(Native):
-	public final pr	as	kri.kit.phys.Core
-	public def constructor( s as kri.Scene, ord as int, rz as kri.rend.EarlyZ ):
-		super(s)
-		pr = kri.kit.phys.Core( ord, true, rz.tid )
-	protected override def onDelta(delta as double) as uint:
-		super(delta)
-		pr.tick(scene)
-		return 0
-
 /*
 public class Newton(Basic):
 	#private final world	= Newton.Create(0,0)

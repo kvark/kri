@@ -45,6 +45,8 @@ public class Channel[of T(struct)](IChannel):
 	IChannel.Valid as bool:
 		get: return fup!=null and lerp!=null
 
+	public def constructor(num as int, id as byte, f as callable):
+		self(num,id,f)
 	public def constructor(num as int, id as byte, f as callable(IPlayer,T,byte)):
 		kar = array[of Key[of T]](num)
 		elid,fup = id,f

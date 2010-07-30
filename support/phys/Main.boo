@@ -1,7 +1,18 @@
-﻿namespace kri.kit.phys
+﻿namespace support.phys
 
 import System
 import OpenTK.Graphics.OpenGL
+
+
+public class Simulator( kri.ani.sim.Native ):
+	public final pr	as	Core
+	public def constructor( s as kri.Scene, ord as int, rz as kri.rend.EarlyZ ):
+		super(s)
+		pr = Core( ord, true, rz.tid )
+	protected override def onDelta(delta as double) as uint:
+		super(delta)
+		pr.tick(scene)
+		return 0
 
 
 #---------	RENDER PHYSICS		--------#
