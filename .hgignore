@@ -12,6 +12,8 @@ test_bugs
 game_*
 bin
 obj
+_bin
+_obj
 *.xml
 *.pdb
 *.dll*

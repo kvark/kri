@@ -16,9 +16,10 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>BCW0014</NoWarn>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <BaseIntermediateOutputPath>_obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>_bin\Debug\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>

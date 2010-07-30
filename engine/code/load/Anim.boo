@@ -16,7 +16,7 @@ public class ExAnim( kri.IExtension ):
 		nt.readers['action']	= p_action
 		nt.readers['curve']		= p_curve
 	
-	# generate private method wrappers here, to pass to 'rac' function
+	# generate private method wrappers here, to pass to 'Rac' function
 	wrapper Reader = (getReal,getVec2,getVector,getVec4,getScale,getColor,getQuatRev,getQuatEuler)
 
 	# generates invalid binary format if using generics, bypassing with extenions
