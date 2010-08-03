@@ -67,6 +67,7 @@
     <Compile Include="code\load\sound\Main.boo" />
     <Compile Include="code\load\sound\Wave.boo" />
     <Compile Include="code\Material.boo" />
+    <Compile Include="code\meta\App.boo" />
     <Compile Include="code\meta\Main.boo" />
     <Compile Include="code\part\Emitter.boo" />
     <Compile Include="code\part\Main.boo" />
