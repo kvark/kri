@@ -96,7 +96,7 @@ public class Bake( kri.rend.Basic ):
 		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
 		# create geometry
 		va.bind()	# the buffer objects are bound in creation
-		sphere = kri.kit.gen.Sphere( geoQuality, OpenTK.Vector3.One )
+		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 		# create white shader
 		sb.add('/light/kbuf/bake_v','/empty_f')

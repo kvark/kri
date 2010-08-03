@@ -9,11 +9,11 @@ public class Simplex( kri.rend.Basic ):
 	private kwid	as single	= 1f
 	private khet	as single	= 1f
 
-	public def constructor(win as kri.Window, noise as kri.kit.gen.Noise):
+	public def constructor(win as kri.Window, noise as kri.gen.Noise):
 		super(false)
 		# init textures
 		if noise:	noise.generate(8)
-		else:	noise = kri.kit.gen.Noise(8)
+		else:	noise = kri.gen.Noise(8)
 		# init shader
 		sa.add('/copy_v','text/main_f')
 		sa.add( noise.sh_simplex, noise.sh_turbo )

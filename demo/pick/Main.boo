@@ -72,7 +72,7 @@ private class Task:
 	private def makeEnt() as kri.Entity:
 		mat = makeMat()
 		# create mesh
-		m = kri.kit.gen.Cube( Vector3(2f,1f,0.5f) )
+		m = kri.gen.Cube( Vector3(2f,1f,0.5f) )
 		e = kri.Entity( mesh:m )
 		e.tags.Add( kri.TagMat( mat:mat, num:m.nPoly ) )
 		e.tags.Add( support.pick.Tag( pick:fun ) )

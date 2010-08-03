@@ -1,4 +1,4 @@
-﻿namespace kri.kit.gen
+﻿namespace kri.gen
 
 import OpenTK.Graphics.OpenGL
 import kri.shade

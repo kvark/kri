@@ -33,8 +33,8 @@ public class Anim( kri.ani.Delta ):
 	public def genBall() as void:
 		# object
 		#mesh = kri.kit.gen.Sphere( 2, Vector3.One )
-		mesh = kri.kit.gen.Cube( Vector3.One )
-		ent = kri.kit.gen.Entity( mesh, lcon )
+		mesh = kri.gen.Cube( Vector3.One )
+		ent = kri.gen.Entity( mesh, lcon )
 		view.scene.entities.Add(ent)
 		ent.node = kri.Node( 'gen-' + ++num )
 		# pos from NDC
@@ -98,8 +98,8 @@ def Main(argv as (string)):
 		shape as Collision.Shapes.Shape = null
 		
 		# object
-		mesh = kri.kit.gen.Sphere( 2, Vector3.One )
-		ent = kri.kit.gen.Entity( mesh, loadCon )
+		mesh = kri.gen.Sphere( 2, Vector3.One )
+		ent = kri.gen.Entity( mesh, loadCon )
 		view.scene.entities.Add(ent)
 		ent.node = kri.Node('sphere')
 		ent.node.local.pos.Z = -20f
@@ -111,8 +111,8 @@ def Main(argv as (string)):
 		
 		# plane
 		radius = 10f
-		mesh = kri.kit.gen.Plane( Vector2(radius,radius) )
-		ent = kri.kit.gen.Entity( mesh, loadCon )
+		mesh = kri.gen.Plane( Vector2(radius,radius) )
+		ent = kri.gen.Entity( mesh, loadCon )
 		view.scene.entities.Add(ent)
 		ent.node = kri.Node('plane')
 		ent.node.local.rot = Quaternion.FromAxisAngle( Vector3.UnitX, -1.2f )

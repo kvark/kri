@@ -48,7 +48,7 @@ def Main(argv as (string)):
 			for i in range(3):
 				for j in range(3):
 					hm[i,j] = 2f - 0.5f*(Math.Abs(i-1) + Math.Abs(j-1))
-			mesh = kri.kit.gen.Landscape(hm, Vector3.One)
+			mesh = kri.gen.Landscape(hm, Vector3.One)
 			e = kri.Entity( mesh:mesh )
 			e.tags.Add( kri.TagMat( mat:con.mDef, num:mesh.nPoly ) )
 			n = e.node = kri.Node('landscape')
@@ -65,16 +65,16 @@ def Main(argv as (string)):
 		
 		size = Vector3(1f,1f,1f)
 		
-		mesh = kri.kit.gen.Cube( size )
-		ent = kri.kit.gen.Entity( mesh, con )
+		mesh = kri.gen.Cube( size )
+		ent = kri.gen.Entity( mesh, con )
 		n = ent.node = kri.Node('cube')
 		n.local.pos.Z = -10f
 		n.local.pos.Y = 1f
 		n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
 		view.scene.entities.Add(ent)
 		
-		mesh = kri.kit.gen.Sphere( 1, size )
-		e2 = kri.kit.gen.Entity( mesh, con )
+		mesh = kri.gen.Sphere( 1, size )
+		e2 = kri.gen.Entity( mesh, con )
 		n = e2.node = kri.Node('sphere')
 		n.local = ent.node.local
 		n.local.pos.Y = -1f

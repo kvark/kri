@@ -45,11 +45,11 @@
     <Compile Include="code\frame\Buffer.boo" />
     <Compile Include="code\frame\Main.boo" />
     <Compile Include="code\frame\Unit.boo" />
-    <Compile Include="code\kit\gen\Complex.boo" />
-    <Compile Include="code\kit\gen\Main.boo" />
-    <Compile Include="code\kit\gen\Noise.boo" />
-    <Compile Include="code\kit\gen\Simple.boo" />
-    <Compile Include="code\kit\gen\Texture.boo" />
+    <Compile Include="code\gen\Complex.boo" />
+    <Compile Include="code\gen\Main.boo" />
+    <Compile Include="code\gen\Noise.boo" />
+    <Compile Include="code\gen\Simple.boo" />
+    <Compile Include="code\gen\Texture.boo" />
     <Compile Include="code\lib\Cap.boo" />
     <Compile Include="code\lib\Main.boo" />
     <Compile Include="code\lib\par\Main.boo" />
@@ -161,8 +161,7 @@
   <ItemGroup>
     <Folder Include="code" />
     <Folder Include="code\frame" />
-    <Folder Include="code\kit" />
-    <Folder Include="code\kit\gen" />
+    <Folder Include="code\gen" />
     <Folder Include="code\lib\par" />
     <Folder Include="code\load\image" />
     <Folder Include="code\load\sound" />

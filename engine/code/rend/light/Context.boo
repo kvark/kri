@@ -22,7 +22,7 @@ public class Context:
 	public mipmap	as bool = false
 	public smooth	as bool	= true
 	public type 	= LiType.SIMPLE
-	public final defShadow	= kri.kit.gen.Texture.depth
+	public final defShadow	= kri.gen.Texture.depth
 	# init
 	public def constructor(nlay as uint, qlog as uint):
 		dict.var(pDark,pOff,pHemi)
