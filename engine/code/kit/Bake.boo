@@ -40,7 +40,7 @@ public class Update( kri.rend.tech.Basic ):
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
 	public override def process(con as kri.rend.Context) as void:
-		con.DepTest = false
+		con.DepthTest = false
 		for e in kri.Scene.Current.entities:
 			tag = e.seTag[of Tag]()
 			a = kri.Ant.Inst.attribs

@@ -28,7 +28,7 @@ public class Init( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(false,0f,true)
-		GL.Disable( EnableCap.Multisample )
+		con.Multisample = false
 		# depth copy
 		buf.activate(0)		# bind as draw
 		con.activeRead()	# bind as read
@@ -37,7 +37,7 @@ public class Init( kri.rend.Basic ):
 		GL.StencilMask(-1)
 		if 'RectangleFill':
 			assert buf.Samples > 0
-			con.DepTest = false
+			con.DepthTest = false
 			con.ClearStencil(1)
 			sa.use()
 			#sb = -1; GL.GetInteger( GetPName.SampleBuffers, sb )
@@ -59,14 +59,15 @@ public class Init( kri.rend.Basic ):
 		buf.activate(3)
 		GL.ColorMask(true,true,true,true)
 		con.ClearColor()
-		return
-		# debug!
-		buf.activate(2)
-		sa.use()
-		using kri.Section( EnableCap.StencilTest ):
-			GL.StencilFunc( StencilFunction.Equal, 1,-1 )	#change this to see the stencil layer
-			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
-			kri.Ant.Inst.emitQuad()
+		if not 'DebugColor':
+			debugLayer = 1
+			buf.activate(2)
+			sa.use()
+			using kri.Section( EnableCap.StencilTest ):
+				GL.StencilFunc( StencilFunction.Equal, debugLayer,-1 )
+				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
+				kri.Ant.Inst.emitQuad()
+		con.Multisample = true
 
 
 #---------	LIGHT PRE-PASS	--------#
@@ -115,12 +116,12 @@ public class Bake( kri.rend.Basic ):
 	public override def process(con as kri.rend.Context) as void:
 		#return	# !debug!
 		con.activate()
+		con.Multisample = false
 		texDep.Value = con.Depth
 		con.SetDepth(0f,false)
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()
-		GL.Disable( EnableCap.Multisample )
 		#todo: use stencil for front faces
 		using kri.Section( EnableCap.StencilTest ):
 			# write color values
@@ -133,6 +134,7 @@ public class Bake( kri.rend.Basic ):
 			drawLights(0,sb)
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
+		con.Multisample = true
 
 
 #---------	LIGHT APPLICATION	--------#

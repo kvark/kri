@@ -174,7 +174,7 @@ private class DrawToStencil( kri.rend.Basic ):
 		fbo = kri.frame.Buffer(0, TextureTarget.Texture2D )
 		fbo.init(10,10)
 		t = fbo.emitAuto(-2,0)
-		con.DepTest = false
+		con.DepthTest = false
 		GL.Disable( EnableCap.StencilTest )
 		fbo.activate(0)
 		fbo.A[0].Tex = t

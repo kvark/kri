@@ -36,14 +36,11 @@ public class Context:
 	public Screen	as bool:
 		get: return target == last
 		set: target = (last if value else buf)
-	public MultiSample	as bool:
-		get: return buf.Samples>0
-		
-	public static DepTest	as bool:
-		get: return GL.IsEnabled(	EnableCap.DepthTest )
-		set:
-			if value:	GL.Enable(	EnableCap.DepthTest )
-			else:		GL.Disable(	EnableCap.DepthTest )
+	public BufSamples	as byte:
+		get: return buf.Samples
+	
+	state DepthTest
+	state Multisample
 	
 	#Q: are we sure the writing/masking is enabled?
 	public static def ClearDepth(val as single) as void:
@@ -108,7 +105,7 @@ public class Context:
 		
 	
 	public static def SetDepth(offset as single, write as bool) as void:
-		DepTest = on = (not Single.IsNaN(offset))
+		DepthTest = on = (not Single.IsNaN(offset))
 		# set polygon offset
 		return	if not on
 		GL.DepthMask(write)

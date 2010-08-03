@@ -33,7 +33,7 @@ public class Render( kri.rend.Basic ):
 		return true
 	
 	public virtual def process(con as kri.rend.Context) as void:
-		con.DepTest = false
+		con.DepthTest = false
 		# bright filter
 		assert 'not ready'
 		# u.Tex[ u.input ] = con.Input

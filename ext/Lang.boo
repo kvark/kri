@@ -38,3 +38,17 @@ macro wrapper(exp as Ast.Expression):
 			private static def $(metName)(x as $(clName)):
 				return x.$(metName)()
 		|]
+
+
+#---	OpenGL boolean state wrapper		---#
+
+macro state(exp as Ast.Expression):
+	name = exp.ToString()
+	cap = [| EnableCap.$(name) |]
+	yield [|
+		public static $(name) as bool:
+			get: return GL.IsEnabled($(cap))
+			set:
+				if(value):	GL.Enable($(cap))
+				else:		GL.Disable($(cap))
+	|]
