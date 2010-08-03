@@ -116,6 +116,7 @@ public class Context:
 	
 	public def activate(toColor as bool, offset as single, toDepth as bool) as void:
 		assert target
+		kri.Ant.Inst.params.activate(target)
 		if target == buf:
 			buf.mask = (0,1)[toColor]
 			needDepth( not Single.IsNaN(offset) )
@@ -129,9 +130,9 @@ public class Context:
 	
 	public def copy() as void:
 		assert target != buf
-		activate()		# draw to screen
-		activeRead()	# read from buf
-		buf.blit( ClearBufferMask.ColorBufferBit )
+		buf.dropMask()
+		needColor(true)
+		buf.blit(target)
 	
 	public def apply(r as Basic) as void:
 		# target always contains result

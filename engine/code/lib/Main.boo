@@ -23,6 +23,8 @@ public final class Param:
 		light.activate(l)
 		litProj.activate(l)
 		litView.activate( l.node )
+	public def activate(fs as kri.frame.Screen) as void:
+		parSize.Value = Vector4( 1f*fs.Width, 1f*fs.Height, 0.5f*(fs.Width+fs.Height), 0f)
 		
 	public def constructor(d as rep.Dict):
 		for me in (of kri.meta.IBase: modelView, light,litView,litProj, camView,camProj):

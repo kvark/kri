@@ -129,14 +129,14 @@ public class View:
 public class ViewScreen(View):
 	public final area	= Box2(0f,0f,1f,1f)
 	public final out	as frame.Screen
+	public final tune	as int
 	public def constructor():
-		self(0,8,8)
-	public def constructor(ns as byte, bc as byte, bd as byte):
+		self(0,0,8,8)
+	public def constructor(sizeTune as int, ns as byte, bc as byte, bd as byte):
 		out = frame.Screen()
-		# assuming no anti-aliasing on the target screen
+		tune = sizeTune
 		super( out, ns,bc,bd )
 	public override def resize(wid as int, het as int) as bool:
-		return false if not super(wid,het)
 		out.init	( cast(int, wid*area.Width),	cast(int, het*area.Height) )
 		out.offset	( cast(int, wid*area.Left),		cast(int, het*area.Top) )
-		return true
+		return super( Help.shiftInt(wid,tune), Help.shiftInt(het,tune) )

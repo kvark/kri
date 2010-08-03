@@ -76,6 +76,13 @@ public class Buffer(Screen):
 	public def blit(what as ClearBufferMask) as void:
 		GL.BlitFramebuffer(0,0,Width,Height,0,0,Width,Height,
 			what, BlitFramebufferFilter.Nearest )
+	
+	public def blit(to as Screen) as void:
+		assert Width==to.Width or not samples
+		activate(false)
+		to.activate(true)
+		GL.BlitFramebuffer( 0,0,Width,Height, 0,0,to.Width,to.Height,
+			ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Linear )
 		
 	public def dropMask() as void:
 		oldMask = badMask

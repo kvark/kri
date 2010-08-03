@@ -35,7 +35,6 @@ public class Ant( OpenTK.GameWindow ):
 	public static inst	as Ant = null		# Singleton
 	public final caps	as Capabilities		# Render capabilities
 	public final debug	as bool				# is debug context
-	public final sizeTune	as int			# resolution tunehint
 	public final views	= List[of View]()	# *View
 	private quad	as kri.kit.gen.Frame	= null	# Standard quad
 	# time
@@ -46,8 +45,8 @@ public class Ant( OpenTK.GameWindow ):
 		get: return sw.Elapsed.TotalSeconds
 	public PointerNdc as Vector3:
 		get: return Vector3.Multiply( Vector3(
-			0f + Mouse.X / params.parSize.Value.X,
-			1f - Mouse.Y / params.parSize.Value.Y,
+			0f + Mouse.X*1f / Width,
+			1f - Mouse.Y*1f / Height,
 			0f ), 2f) - Vector3.One
 	# Slots
 	public final slotTechniques	= lib.Slot( lib.Const.nTech	)
@@ -73,7 +72,6 @@ public class Ant( OpenTK.GameWindow ):
 		title	= conf.ask('Title','kri')
 		shade.Code.Folder	= conf.ask('ShaderPath','../../engine/shader')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
-		tune	= int.Parse( conf.ask('SizeTune','0') )
 		context	= conf.ask('Context','0')
 		bug = context.EndsWith('d')
 		ver = uint.Parse( context.TrimEnd(char('r'),char('d')) )
@@ -103,7 +101,6 @@ public class Ant( OpenTK.GameWindow ):
 		sw.Start()
 		caps = Capabilities()
 		debug = bug
-		sizeTune = tune
 		inst = self
 		
 		# shader library init
@@ -141,11 +138,8 @@ public class Ant( OpenTK.GameWindow ):
 		GC.WaitForPendingFinalizers()
 
 	public override def OnResize(e as EventArgs) as void:
-		w = Help.shiftInt(Width,sizeTune)
-		h = Help.shiftInt(Height,sizeTune)
-		params.parSize.Value = Vector4(1f*w, 1f*h, 0.5f*(w+h), 0f)
 		for v in views:
-			continue	if v.resize(w,h)
+			continue	if v.resize(Width,Height)
 			raise 'View resize fail!'
 	
 	public override def OnUpdateFrame(e as FrameEventArgs) as void:
