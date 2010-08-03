@@ -9,7 +9,8 @@ public class Anim( kri.ani.Delta ):
 	public final world	as World
 	public final view	as kri.View
 	public final lcon	as kri.load.Context
-	private final mouse = kri.Ant.Inst.Mouse
+	private final mouse as Input.MouseDevice
+	private final win	as kri.Window
 	#private final shape = Collision.Shapes.SphereShape(1f)
 	private final shape = Collision.Shapes.BoxShape(2f,2f,2f)
 	private num	= 0
@@ -37,7 +38,7 @@ public class Anim( kri.ani.Delta ):
 		view.scene.entities.Add(ent)
 		ent.node = kri.Node( 'gen-' + ++num )
 		# pos from NDC
-		ptr = kri.Ant.Inst.PointerNdc
+		ptr = win.PointerNdc
 		ptr.Z = -5f
 		if view.cam.node:
 			ent.node.local.pos = view.cam.node.World.byPoint(ptr)
@@ -49,11 +50,10 @@ public class Anim( kri.ani.Delta ):
 		world.AddBody(body)
 		sync( ent.node, body )
 
-	public def constructor(w as World, v as kri.View, ln as kri.load.Context):
-		mouse.ButtonDown += genBall
-		world = w
-		view = v
-		lcon = ln
+	public def constructor(window as kri.Window, w as World, v as kri.View, ln as kri.load.Context):
+		win = window; world = w
+		view = v; lcon = ln
+		win.Mouse.ButtonDown += genBall
 		for rb in world.RigidBodies:
 			n = rb.Tag as kri.Node
 			assert n and not n.Parent
@@ -80,10 +80,10 @@ public class Anim( kri.ani.Delta ):
 
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',24):
-		view = kri.ViewScreen(0,4,8,0)
-		ant.views.Add( view )
-		ant.VSync = VSyncMode.On
+	using win = kri.Window('kri.conf',24):
+		view = kri.ViewScreen(-2,0,8,0)
+		win.views.Add( view )
+		win.VSync = VSyncMode.On
 		
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera( rangeIn:1f, rangeOut:50f )
@@ -134,6 +134,6 @@ def Main(argv as (string)):
 		rc.renders.Add( kri.rend.light.omni.Apply(false) )
 		rc.renders.Add( kri.rend.Blit() )
 		
-		ant.anim = al = kri.ani.Scheduler()
-		al.add( Anim( world, view, loadCon ))
-		ant.Run(30.0,30.0)
+		win.core.anim = al = kri.ani.Scheduler()
+		al.add( Anim( win, world, view, loadCon ))
+		win.Run(30.0,30.0)

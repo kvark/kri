@@ -6,7 +6,8 @@ public class Basic( kri.rend.Basic ):
 	protected def constructor(name as string):
 		tid = kri.Ant.Inst.slotTechniques.create(name)
 	def destructor():
-		kri.Ant.Inst.slotTechniques.delete(tid)
+		core = kri.Ant.Inst
+		core.slotTechniques.delete(tid)	if core
 	protected def attribs(local as bool, e as kri.Entity, *ats as (int)) as bool:
 		return false	if e.va[tid] == kri.vb.Array.Default
 		if e.va[tid]:	e.va[tid].bind()

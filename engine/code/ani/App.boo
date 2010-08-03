@@ -36,14 +36,14 @@ public class Particle( IBase ):
 public class ControlMouse(IBase):
 	private final node	as kri.Node
 	private final sense	as single
-	private final mouse = kri.Ant.Inst.Mouse
+	private final mouse as Input.MouseDevice
 	private active	= false
 	private x	= -1
 	private y	= -1
 	private base	as kri.Spatial
-	public def constructor(n as kri.Node, sen as single):
+	public def constructor(rat as Input.MouseDevice, n as kri.Node, sen as single):
 		assert n
-		node,sense = n,sen
+		mouse=rat; node=n; sense=sen
 		mouse.ButtonDown	+= def():
 			x = mouse.X
 			y = mouse.Y

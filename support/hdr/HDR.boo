@@ -40,7 +40,7 @@ public class Render( kri.rend.Basic ):
 		buf.mask = 1
 		buf.activate()
 		sa_bright.use()
-		kri.Ant.Inst.emitQuad()
+		kri.Ant.Inst.quad.draw()
 		# gen levels
 		kri.Texture.GenLevels()
 		# read a pixel
@@ -51,7 +51,7 @@ public class Render( kri.rend.Basic ):
 				#set base level = scale-i
 				#set target = base level-1
 				sa_scale.use()
-				kri.Ant.Inst.emitQuad()
+				kri.Ant.Inst.quad.draw()
 			blend.add()
 			# tone filter
 			#set input level 0
@@ -59,5 +59,5 @@ public class Render( kri.rend.Basic ):
 			buf.mask = 2
 			buf.activate()
 			sa_tone.use()
-			kri.Ant.Inst.emitQuad()
+			kri.Ant.Inst.quad.draw()
 			buf.A[1].Tex = null

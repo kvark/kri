@@ -2,10 +2,9 @@
 
 [System.STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',0):
-		view = kri.ViewScreen()
-		rchain = kri.rend.Chain()
-		view.ren = rchain
+	using kri.Window('kri.conf',0):
+		view = kri.View(null,0,8,8)
+		view.ren = rchain = kri.rend.Chain()
 		rlis = rchain.renders
 		
 		#rlis.Add( ShaderLink() )
@@ -14,5 +13,5 @@ def Main(argv as (string)):
 		#rlis.Add( Feedback(null) )
 		rlis.Add( DrawToStencil() )
 		
-		ant.views.Add( view )
-		ant.Run(10.0,10.0)
+		view.resize(10,10)
+		view.update()

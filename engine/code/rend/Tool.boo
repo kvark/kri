@@ -106,7 +106,7 @@ public class Gauss(Basic):
 			texIn.Value = buf.A[i].Tex
 			buf.activate(3 ^ (1<<i))
 			(sa,sb)[i].use()
-			kri.Ant.inst.emitQuad()
+			kri.Ant.inst.quad.draw()
 
 
 

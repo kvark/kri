@@ -58,7 +58,7 @@ public class Filter(Basic):
 		texIn.Value = con.Input
 		con.activate()
 		sa.use()
-		kri.Ant.inst.emitQuad()
+		kri.Ant.inst.quad.draw()
 
 public class FilterCopy(Filter):
 	public def constructor():

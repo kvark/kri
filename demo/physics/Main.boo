@@ -6,11 +6,12 @@ import OpenTK.Input
 
 
 private class AniKey( kri.ani.IBase ):
+	private final kb	as KeyboardDevice
 	private final body	as kri.Body
-	public def constructor(b as kri.Body):
+	public def constructor(keyDevice as KeyboardDevice, b as kri.Body):
+		kb = keyDevice
 		body = b
 	def kri.ani.IBase.onFrame(time as double) as uint:
-		kb = kri.Ant.Inst.Keyboard
 		z = 0f
 		if kb.Item[Key.Up]:		z = 1f
 		if kb.Item[Key.Down]:	z = -1f
@@ -20,19 +21,19 @@ private class AniKey( kri.ani.IBase ):
 
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',0):
+	using win = kri.Window('kri.conf',0):
 		view = kri.ViewScreen()
 		rchain = kri.rend.Chain()
 		view.ren = rchain
 		rlis = rchain.renders
-		ant.views.Add( view )
-		ant.VSync = VSyncMode.On
+		win.views.Add( view )
+		win.VSync = VSyncMode.On
 		
 		con = kri.load.Context()
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera()
 		view.scene.cameras.Add( view.cam )
-		ant.anim = al = kri.ani.Scheduler()
+		win.core.anim = al = kri.ani.Scheduler()
 		
 		rz = kri.rend.EarlyZ()
 		rem = kri.rend.Emission( fillDepth:false )
@@ -56,7 +57,7 @@ def Main(argv as (string)):
 			n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,0f)
 			view.scene.entities.Add(e)
 			
-			al.add( kri.ani.ControlMouse(n,0.01f) )
+			al.add( kri.ani.ControlMouse( win.Mouse,n,0.01f ))
 			lic = kri.rend.light.Context(2,2)
 			rlis.Add( kri.rend.light.Fill(lic) )
 			rlis.Add( kri.rend.light.Apply(lic) )
@@ -84,7 +85,7 @@ def Main(argv as (string)):
 		#b.vLinear = Vector3(0f,0f,-0.2f)
 		view.scene.bodies.Add(b)
 		ren = support.phys.Simulator( view.scene, 4, rz )
-		al.add( AniKey(b) )
+		al.add( AniKey( win.Keyboard, b ))
 		al.add(ren)
 		if not 'Debug':
 			texDebug = kri.shade.par.UnitProxy({ return ren.pr.Color })
@@ -92,4 +93,4 @@ def Main(argv as (string)):
 			#texDepth = kri.shade.par.UnitProxy({ return ren.pr.Stencil })
 			#rlis.Add( kri.rend.debug.Map(true,-1,texDepth) )
 		
-		ant.Run(30.0,30.0)
+		win.Run(30.0,30.0)

@@ -67,7 +67,7 @@ private class PolygonOffset( kri.rend.Basic ):
 		
 		GL.Enable( EnableCap.PolygonOffsetFill )
 		GL.PolygonOffset( 0.0f, 2.0f )
-		kri.Ant.Inst.emitQuad()
+		kri.Ant.Inst.quad.draw()
 		
 		tmp = array[of single](9)
 		tm1 = array[of single](1)
@@ -181,4 +181,4 @@ private class DrawToStencil( kri.rend.Basic ):
 		fbo.activate(1)
 		#run!
 		prog.use()
-		kri.Ant.Inst.emitQuad()
+		kri.Ant.Inst.quad.draw()

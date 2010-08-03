@@ -118,10 +118,10 @@ private class Task:
 
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',24):
+	using win = kri.Window('kri.conf',24):
 		view = kri.ViewScreen()
-		ant.views.Add( view )
-		ant.VSync = VSyncMode.On
+		win.views.Add( view )
+		win.VSync = VSyncMode.On
 		
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera( rangeIn:30f, rangeOut:50f )
@@ -135,14 +135,14 @@ def Main(argv as (string)):
 		view.ren = rm = kri.rend.Manager(false)
 		#rm.add('skin',	1,	kri.kit.skin.Update(true) )
 		rm.add('emi',	3,	rem)
-		rm.add('pick',	3,	support.pick.Render(2,8), 'emi')
+		rm.add('pick',	3,	support.pick.Render(win,2,8), 'emi')
 		rm.add('fill',	2,	kri.rend.light.Fill(licon) )
 		rm.add('app',	4,	kri.rend.light.Apply(licon), 'emi','fill')
 		
-		ant.anim = al = kri.ani.Scheduler()
+		win.core.anim = al = kri.ani.Scheduler()
 		Task( view.scene.entities, al )
 		#e = at.scene.entities[0]
 		#skel = e.seTag[of kri.kit.skin.Tag]().skel
 		#skel.moment(3f, skel.find('Action'))
 		#al.add( kri.kit.skin.Anim(e,'Action') )
-		ant.Run(30.0,30.0)
+		win.Run(30.0,30.0)

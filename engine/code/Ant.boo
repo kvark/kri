@@ -6,7 +6,7 @@ import OpenTK
 import OpenTK.Graphics
 
 
-private class Config:
+public class Config:
 	private final dict	= Collections.Generic.Dictionary[of string,string]()
 	public def constructor(path as string):
 		for line in IO.File.ReadAllLines(path):
@@ -23,30 +23,94 @@ private class Config:
 		return ( d.Key	for d in dict	if d.Value!=null )
 
 
-public interface IExtension:
-	def attach(nt as load.Native) as void
+#-----------------------------------------------------------#
+#			APPWINDOW = window calls wrapper				#
+#-----------------------------------------------------------#
 
-
-# Main engine class Ant
-# Controls all events
-public class Ant( OpenTK.GameWindow ):
-	[getter(Inst)]
-	public static inst	as Ant = null		# Singleton
-	public final caps	as Capabilities		# Render capabilities
-	public final debug	as bool				# is debug context
+public class Window( GameWindow ):
 	public final views	= List[of View]()	# *View
-	private quad	as kri.kit.gen.Frame	= null	# Standard quad
-	# time
-	private sw	= Diagnostics.Stopwatch()	# Time counter
+	public final core	as Ant				# KRI Core
 	private final fps	as FpsCounter		# FPS counter
-	public anim	as ani.IBase	= null		# Animation
-	public Time as double:
-		get: return sw.Elapsed.TotalSeconds
+	
 	public PointerNdc as Vector3:
 		get: return Vector3.Multiply( Vector3(
 			0f + Mouse.X*1f / Width,
 			1f - Mouse.Y*1f / Height,
 			0f ), 2f) - Vector3.One
+
+	public def constructor(cPath as string, depth as int):
+		# read config
+		conf = Config(cPath)
+		title	= conf.ask('Title','kri')
+		sizes	= conf.ask('Window','0x0').Split(char('x'))
+		context	= conf.ask('Context','0')
+		bug = context.EndsWith('d')
+		ver = uint.Parse( context.TrimEnd(char('r'),char('d')) )
+		wid	= uint.Parse( sizes[0] )
+		het	= uint.Parse( sizes[1] )
+		fs	= (sizes[0] + sizes[1] == 0)
+		period	= single.Parse( conf.ask('StatPeriod','1.0') )
+
+		# prepare attributes
+		dd = DisplayDevice.Default
+		gm = GraphicsMode( ColorFormat(8), depth, 0 )
+		conFlags  = GraphicsContextFlags.ForwardCompatible
+		conFlags |= GraphicsContextFlags.Debug	if bug
+		gameFlags  = GameWindowFlags.Default
+		gameFlags |= GameWindowFlags.Fullscreen	if fs
+		wid = dd.Width	if not wid
+		het = dd.Height	if not het
+
+		# start
+		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
+		core = Ant(conf,bug)
+		fps = FpsCounter(period,title)
+		
+
+	public override def Dispose() as void:
+		views.Clear()
+		(core as IDisposable).Dispose()
+		super()
+	
+	public override def OnResize(e as EventArgs) as void:
+		for v in views:
+			continue	if v.resize(Width,Height)
+			raise 'View resize fail!'
+	
+	public override def OnUpdateFrame(e as FrameEventArgs) as void:
+		core.update()
+
+	public override def OnRenderFrame(e as FrameEventArgs) as void:
+		SwapBuffers()
+		# update counter
+		if fps.update(core.Time):
+			Title = fps.gen()
+		# redraw views
+		for v in views:
+			v.update()
+
+
+#-----------------------------------------------------------#
+#			ANT = kri engine core							#
+#-----------------------------------------------------------#
+
+public interface IExtension:
+	def attach(nt as load.Native) as void
+
+
+public class Ant(IDisposable):
+	[getter(Inst)]
+	public static inst	as Ant = null		# Singleton
+	# context
+	public final caps	= Capabilities()	# Render capabilities
+	public final debug	as bool				# is debug context
+	public final quad	as kri.kit.gen.Frame		# Standard quad
+	# time
+	private final sw	= Diagnostics.Stopwatch()	# Time counter
+	public anim	as ani.IBase	= null		# Animation
+	public Time as double:
+		get: return sw.Elapsed.TotalSeconds
+	
 	# Slots
 	public final slotTechniques	= lib.Slot( lib.Const.nTech	)
 	public final slotAttributes	= lib.Slot( lib.Const.nAttrib )
@@ -65,42 +129,24 @@ public class Ant( OpenTK.GameWindow ):
 	public final libShaders	as (kri.shade.Object)
 
 
-	public def constructor(confile as string, depth as int):
-		# read config
-		conf = Config(confile)
-		title	= conf.ask('Title','kri')
-		shade.Code.Folder	= conf.ask('ShaderPath','../../engine/shader')
-		sizes	= conf.ask('Window','0x0').Split(char('x'))
-		context	= conf.ask('Context','0')
-		bug = context.EndsWith('d')
-		ver = uint.Parse( context.TrimEnd(char('r'),char('d')) )
-		wid	= uint.Parse( sizes[0] )
-		het	= uint.Parse( sizes[1] )
-		fs	= (sizes[0] + sizes[1] == 0)
-		period	= single.Parse( conf.ask('StatPeriod','1.0') )
+	public def constructor(conf as Config, bug as bool):
+		# config read
+		defPath = '../../engine/shader'
+		if conf:
+			defPath	= conf.ask('ShaderPath',defPath)
+			# check configuration completeness
+			unused = array( conf.getUnused() )
+			if unused.Length:
+				raise 'Unknown config parameter: ' + unused[0]
 		
-		# check configuration completeness
-		unused = array( conf.getUnused() )
-		if unused.Length:
-			raise 'Unknown config parameter: ' + unused[0]
+		# context init
+		kri.rend.Context.Init()
+		shade.Code.Folder = defPath
 
-		# prepare attributes
-		dd = DisplayDevice.Default
-		gm = GraphicsMode( ColorFormat(8), depth, 0 )
-		conFlags  = GraphicsContextFlags.ForwardCompatible
-		conFlags |= GraphicsContextFlags.Debug	if bug
-		gameFlags  = GameWindowFlags.Default
-		gameFlags |= GameWindowFlags.Fullscreen	if fs
-		wid = dd.Width	if not wid
-		het = dd.Height	if not het
-
-		# start
-		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
-		fps = FpsCounter(period,title)
 		sw.Start()
-		caps = Capabilities()
 		debug = bug
 		inst = self
+		quad = kri.kit.gen.Frame( kri.kit.gen.Quad() )
 		
 		# shader library init
 		resMan.register( shade.Loader() )
@@ -110,41 +156,14 @@ public class Ant( OpenTK.GameWindow ):
 		loaders = load.Standard()
 		extensions.Add(loaders)
 		
-
-	def destructor():
+	def IDisposable.Dispose() as void:
 		inst = null
 		sw.Stop()
-	
-	public def emitQuad() as void:
-		quad.draw()
-
-	public override def OnLoad(e as EventArgs) as void:
-		slotTechniques.clear()
-		slotAttributes.clear()
-		quad = kri.kit.gen.Frame( kri.kit.gen.Quad() )
-		kri.rend.Context.Init()
-	
-	public override def OnUnload(e as EventArgs) as void:
-		views.Clear()
 		GC.Collect()
 		GC.WaitForPendingFinalizers()
 
-	public override def OnResize(e as EventArgs) as void:
-		for v in views:
-			continue	if v.resize(Width,Height)
-			raise 'View resize fail!'
-	
-	public override def OnUpdateFrame(e as FrameEventArgs) as void:
+	public def update() as void:
 		tc = Time
 		old = params.parTime.Value.X
 		params.parTime.Value = Vector4(tc, tc-old, 0f,0f)
 		anim = null	if anim and anim.onFrame(Time)
-
-	public override def OnRenderFrame(e as FrameEventArgs) as void:
-		SwapBuffers()
-		# update counter
-		if fps.update(Time):
-			Title = fps.gen()
-		# redraw views
-		for v in views:
-			v.update()

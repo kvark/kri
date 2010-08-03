@@ -9,7 +9,7 @@ public class Simplex( kri.rend.Basic ):
 	private kwid	as single	= 1f
 	private khet	as single	= 1f
 
-	public def constructor(noise as kri.kit.gen.Noise):
+	public def constructor(win as kri.Window, noise as kri.kit.gen.Noise):
 		super(false)
 		# init textures
 		if noise:	noise.generate(8)
@@ -20,8 +20,8 @@ public class Simplex( kri.rend.Basic ):
 		noise.dict.var( pMouse )
 		sa.link( kri.Ant.Inst.slotAttributes, noise.dict, kri.Ant.Inst.dict )
 		# init mouse
-		kri.Ant.Inst.Mouse.Move += def():
-			pMouse.Value.Xyz = kri.Ant.Inst.PointerNdc
+		win.Mouse.Move += def():
+			pMouse.Value.Xyz = win.PointerNdc
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		kwid = 1f / far.Width
@@ -31,15 +31,15 @@ public class Simplex( kri.rend.Basic ):
 	public override def process(con as kri.rend.Context) as void:
 		con.activate()
 		sa.use()
-		kri.Ant.Inst.emitQuad()
+		kri.Ant.Inst.quad.draw()
 
 
 
 [System.STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',0):
+	using win = kri.Window('kri.conf',0):
 		view = kri.ViewScreen()
-		view.ren = Simplex(null)
-		ant.views.Add( view )
-		ant.VSync = VSyncMode.On
-		ant.Run(30.0)
+		view.ren = Simplex(win,null)
+		win.views.Add( view )
+		win.VSync = VSyncMode.On
+		win.Run(30.0)

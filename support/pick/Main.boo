@@ -1,6 +1,7 @@
 ﻿namespace support.pick
 
 import OpenTK.Graphics.OpenGL
+import OpenTK.Input
 
 public class Tag( kri.ITag ):
 	#todo: interface with pick function?
@@ -13,16 +14,17 @@ public class Render( kri.rend.Basic ):
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint
 	private final pInd	= kri.shade.par.Value[of single]('index')
-	private final mouse	= kri.Ant.Inst.Mouse
+	private final mouse	as MouseDevice
 	private coord	=	(of uint: 0,0)
 	#debug data
 	private final sb	= kri.shade.Smart()
 	private final pTex	= kri.shade.par.Value[of kri.Texture]('input')
 
-	public def constructor(reduct as uint, numorder as uint):
+	public def constructor(win as kri.Window, reduct as uint, numorder as uint):
 		super(false)
 		active = false
 		qlog = reduct
+		mouse = win.Mouse
 		mouse.ButtonDown += ev
 		# make buffer
 		assert numorder<=16
@@ -64,7 +66,7 @@ public class Render( kri.rend.Basic ):
 			con.activate(true,0f,false)
 			pTex.Value = buf.A[0].Tex
 			sb.use()
-			kri.Ant.Inst.emitQuad()
+			kri.Ant.Inst.quad.draw()
 			return
 		# react, todo: use PBO and actually read on demand
 		buf.activate(false)

@@ -42,13 +42,13 @@ private class Render( kri.rend.part.Simple ):
 
 [System.STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',0):
+	using win = kri.Window('kri.conf',0):
 		view = kri.ViewScreen()
 		rchain = kri.rend.Chain()
 		view.ren = rchain
 		rlis = rchain.renders
-		ant.views.Add( view )
-		ant.VSync = VSyncMode.On
+		win.views.Add( view )
+		win.VSync = VSyncMode.On
 		
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera()
@@ -59,7 +59,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.rend.Clear() )
 		rlis.Add( Render(pcon) )
-		ant.anim = kri.ani.Particle(pe)
-		ant.Run(30.0,30.0)
+		win.core.anim = kri.ani.Particle(pe)
+		win.Run(30.0,30.0)
 		
 		

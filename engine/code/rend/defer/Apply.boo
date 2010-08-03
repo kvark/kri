@@ -74,7 +74,7 @@ public class Apply( ApplyBase ):
 	# work
 	private override def onInit() as void:
 		s0.use()
-		kri.Ant.Inst.emitQuad()
+		kri.Ant.Inst.quad.draw()
 	private override def onDraw() as void:
 		for l in kri.Scene.current.lights:
 			bindShadow( l.depth )

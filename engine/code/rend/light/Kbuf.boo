@@ -48,7 +48,7 @@ public class Init( kri.rend.Basic ):
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
 				for i in range(1, buf.Samples ):
 					GL.SampleMask( 0, -1<<i )
-					kri.Ant.Inst.emitQuad()
+					kri.Ant.Inst.quad.draw()
 		else:
 			using kri.Section( EnableCap.SampleMask ):
 				for i in range( buf.Samples ):
@@ -66,7 +66,7 @@ public class Init( kri.rend.Basic ):
 			using kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Equal, debugLayer,-1 )
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
-				kri.Ant.Inst.emitQuad()
+				kri.Ant.Inst.quad.draw()
 		con.Multisample = true
 
 
