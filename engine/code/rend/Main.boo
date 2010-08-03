@@ -65,3 +65,12 @@ public class FilterCopy(Filter):
 		super()
 		sa.add('/copy_v','/copy_screen_f')
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+
+
+#---------	BLIT BUFFER	--------#
+
+public class Blit( Basic ):
+	public def constructor():
+		super(true)
+	public override def process(con as Context) as void:
+		con.copy()

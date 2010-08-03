@@ -66,6 +66,7 @@ public class Context:
 		assert not (b&0x7) and b<=48
 	
 	public def activeRead() as void:
+		needColor(true)
 		buf.dropMask()
 		buf.activate(false)
 
@@ -97,10 +98,9 @@ public class Context:
 			at.Tex = null
 
 	public def needColor(col as bool) as void:
-		t = buf.A[0].Tex
-		if (col and not t) or not (col or tInput):
+		if (col and not buf.A[0].Tex) or not (col or tInput):
 			swapUnit(0,tInput)
-		if (col and not t):
+		if (col and not buf.A[0].Tex):
 			buf.emitAuto(0,bitColor)
 		
 	
