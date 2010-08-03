@@ -1,3 +1,7 @@
+// DEPRECATED!
+// leftover from kri 2-nd iteration
+// pending adoption to the current iter
+
 #extension GL_ARB_texture_rectangle : require
 uniform sampler2DRect texture,tex_depth;
 uniform float focal,inv_radius;

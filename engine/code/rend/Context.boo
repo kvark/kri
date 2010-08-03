@@ -30,14 +30,16 @@ public class Context:
 	private tInput	as kri.Texture	= null
 	[getter(Depth)]
 	private tDepth	as kri.Texture	= null
-	public Aspect as single:
+	public Aspect	as single:
 		get: return buf.Width * 1f / buf.Height
 	
-	public Screen as bool:
+	public Screen	as bool:
 		get: return target == last
 		set: target = (last if value else buf)
+	public MultiSample	as bool:
+		get: return buf.Samples>0
 		
-	public static DepTest as bool:
+	public static DepTest	as bool:
 		get: return GL.IsEnabled(	EnableCap.DepthTest )
 		set:
 			if value:	GL.Enable(	EnableCap.DepthTest )
@@ -58,7 +60,8 @@ public class Context:
 	
 
 	public def constructor(fs as kri.frame.Screen, ns as byte, bc as byte, bd as byte):
-		buf = kri.frame.Buffer(ns, TextureTarget.TextureRectangle )
+		tt = (TextureTarget.Texture2D, TextureTarget.Texture2DMultisample)[ns>0]
+		buf = kri.frame.Buffer(ns,tt)
 		bitColor,bitDepth = bc,bd
 		target = last = fs
 		iDep = (-1,-2)[bitDepth == 8]

@@ -2,7 +2,7 @@
 
 //---	UNIFORMS	---//
 
-uniform sampler2DRect	unit_depth;
+uniform sampler2D	unit_depth;
 uniform sampler2DArray	unit_gbuf;
 uniform sampler2D	unit_light;
 
@@ -35,8 +35,8 @@ out vec4 rez_color;
 
 void main()	{
 	//extract world & light space
-	float depth = texture(unit_depth, gl_FragCoord.xy).r;
 	vec2 tc = gl_FragCoord.xy / screen_size.xy;
+	float depth = texture(unit_depth,tc).r;
 	vec3 p_camera	= unproject( vec3(tc,depth), proj_cam );
 	vec3 p_world	= trans_for2(p_camera, s_cam);
 	vec3 p_light	= trans_inv2(p_world, s_light);

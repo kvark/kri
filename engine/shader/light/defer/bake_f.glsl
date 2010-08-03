@@ -1,7 +1,7 @@
 #version 140
 
 uniform vec4 screen_size, lit_color, proj_cam;
-uniform sampler2DRect unit_depth;
+uniform sampler2D unit_depth;
 
 vec3 unproject(vec3,vec4);
 float get_attenuation2(float);
@@ -15,8 +15,8 @@ uniform vec4 lit_attenu;
 
 void main()	{
 	// extract world & light space
-	float depth = texture( unit_depth, gl_FragCoord.xy ).r;
 	vec2 tc = gl_FragCoord.xy / screen_size.xy;
+	float depth = texture(unit_depth,tc).r;
 	vec3 p_camera = unproject( vec3(tc,depth), proj_cam );
 	
 	// compute components
