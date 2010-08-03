@@ -30,6 +30,9 @@ public static class Help:
 		rez = -1
 		GL.GetInteger(pn,rez)
 		return rez
+	# smart logical shift
+	public def shiftInt(val as int, shift as int) as int:
+		return (val<<shift	if shift>0 else val>>-shift)
 
 
 # Provides GL state on/off mechanics

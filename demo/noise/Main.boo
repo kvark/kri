@@ -38,7 +38,7 @@ public class Simplex( kri.rend.Basic ):
 [System.STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant('kri.conf',0):
-		view = kri.ViewScreen(0,8,0)
+		view = kri.ViewScreen()
 		view.ren = Simplex(null)
 		ant.views.Add( view )
 		ant.VSync = VSyncMode.On

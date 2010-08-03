@@ -32,9 +32,10 @@ public interface IExtension:
 # Controls all events
 public class Ant( OpenTK.GameWindow ):
 	[getter(Inst)]
-	public static inst as Ant = null		# Singleton
+	public static inst	as Ant = null		# Singleton
 	public final caps	as Capabilities		# Render capabilities
 	public final debug	as bool				# is debug context
+	public final sizeTune	as int			# resolution tunehint
 	public final views	= List[of View]()	# *View
 	private quad	as kri.kit.gen.Frame	= null	# Standard quad
 	# time
@@ -72,6 +73,7 @@ public class Ant( OpenTK.GameWindow ):
 		title	= conf.ask('Title','kri')
 		shade.Code.Folder	= conf.ask('ShaderPath','../../engine/shader')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
+		tune	= int.Parse( conf.ask('SizeTune','0') )
 		context	= conf.ask('Context','0')
 		bug = context.EndsWith('d')
 		ver = uint.Parse( context.TrimEnd(char('r'),char('d')) )
@@ -101,6 +103,7 @@ public class Ant( OpenTK.GameWindow ):
 		sw.Start()
 		caps = Capabilities()
 		debug = bug
+		sizeTune = tune
 		inst = self
 		
 		# shader library init
@@ -138,9 +141,11 @@ public class Ant( OpenTK.GameWindow ):
 		GC.WaitForPendingFinalizers()
 
 	public override def OnResize(e as EventArgs) as void:
-		params.parSize.Value = Vector4(1f*Width, 1f*Height, 0.5f*(Width+Height), 0f)
+		w = Help.shiftInt(Width,sizeTune)
+		h = Help.shiftInt(Height,sizeTune)
+		params.parSize.Value = Vector4(1f*w, 1f*h, 0.5f*(w+h), 0f)
 		for v in views:
-			continue	if v.resize(Width,Height)
+			continue	if v.resize(w,h)
 			raise 'View resize fail!'
 	
 	public override def OnUpdateFrame(e as FrameEventArgs) as void:

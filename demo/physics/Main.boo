@@ -21,7 +21,7 @@ private class AniKey( kri.ani.IBase ):
 [STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant('kri.conf',0):
-		view = kri.ViewScreen(0,8,0)
+		view = kri.ViewScreen()
 		rchain = kri.rend.Chain()
 		view.ren = rchain
 		rlis = rchain.renders

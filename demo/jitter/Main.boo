@@ -81,7 +81,7 @@ public class Anim( kri.ani.Delta ):
 [STAThread]
 def Main(argv as (string)):
 	using ant = kri.Ant('kri.conf',24):
-		view = kri.ViewScreen(4,8,0)
+		view = kri.ViewScreen(0,8,0)
 		ant.views.Add( view )
 		ant.VSync = VSyncMode.On
 		

@@ -112,9 +112,7 @@ public class View:
 	public scene	as Scene	= null
 
 	public def constructor(buffer as frame.Screen, ns as byte, bc as byte, bd as byte):
-		con = rend.Context(buffer,ns,bc,bd)
-	public def constructor(buffer as frame.Screen):
-		con = rend.Context(buffer,0,0,0)
+		con = rend.Context(buffer, ns,bc,bd )
 	public virtual def resize(wid as int, het as int) as bool:
 		return ren.setup( con.resize(wid,het) )
 	public def update() as void:
@@ -131,10 +129,12 @@ public class View:
 public class ViewScreen(View):
 	public final area	= Box2(0f,0f,1f,1f)
 	public final out	as frame.Screen
+	public def constructor():
+		self(0,8,8)
 	public def constructor(ns as byte, bc as byte, bd as byte):
 		out = frame.Screen()
 		# assuming no anti-aliasing on the target screen
-		super( out, ns, bc, bd )
+		super( out, ns,bc,bd )
 	public override def resize(wid as int, het as int) as bool:
 		return false if not super(wid,het)
 		out.init	( cast(int, wid*area.Width),	cast(int, het*area.Height) )

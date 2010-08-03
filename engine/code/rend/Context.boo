@@ -102,7 +102,6 @@ public class Context:
 			swapUnit(0,tInput)
 		if (col and not buf.A[0].Tex):
 			buf.emitAuto(0,bitColor)
-		
 	
 	public static def SetDepth(offset as single, write as bool) as void:
 		DepthTest = on = (not Single.IsNaN(offset))
