@@ -42,6 +42,13 @@ public class Context:
 	state DepthTest
 	state Multisample
 	
+	public static def Init() as void:
+		GL.Enable( EnableCap.CullFace )
+		GL.CullFace( CullFaceMode.Back )
+		GL.ClearDepth(1f)
+		GL.DepthRange(0f,1f)
+		GL.DepthFunc( DepthFunction.Lequal )
+	
 	#Q: are we sure the writing/masking is enabled?
 	public static def ClearDepth(val as single) as void:
 		GL.ClearDepth(val)

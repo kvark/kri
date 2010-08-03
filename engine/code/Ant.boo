@@ -4,7 +4,6 @@ import System
 import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics
-import OpenTK.Graphics.OpenGL
 
 
 private class Config:
@@ -123,14 +122,7 @@ public class Ant( OpenTK.GameWindow ):
 		slotTechniques.clear()
 		slotAttributes.clear()
 		quad = kri.kit.gen.Frame( kri.kit.gen.Quad() )
-		
-		# GL context init
-		GL.ClearColor( Color4.Black )
-		GL.Enable( EnableCap.CullFace )
-		GL.CullFace( CullFaceMode.Back )
-		GL.ClearDepth(1f)
-		GL.DepthRange(0f,1f)
-		GL.DepthFunc( DepthFunction.Lequal )
+		kri.rend.Context.Init()
 	
 	public override def OnUnload(e as EventArgs) as void:
 		views.Clear()
