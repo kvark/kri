@@ -8,7 +8,9 @@ import OpenTK.Graphics
 
 public class Config:
 	private final dict	= Collections.Generic.Dictionary[of string,string]()
-	public def constructor(path as string):
+	public def constructor():
+		pass
+	public def read(path as string) as void:
 		for line in IO.File.ReadAllLines(path):
 			continue	if line =~ /^\s*#/
 			name,val = /\s*=\s*/.Split(line)
@@ -40,7 +42,7 @@ public class Window( GameWindow ):
 
 	public def constructor(cPath as string, depth as int):
 		# read config
-		conf = Config(cPath)
+		(conf = Config()).read(cPath)
 		title	= conf.ask('Title','kri')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
 		context	= conf.ask('Context','0')
@@ -102,9 +104,9 @@ public class Ant(IDisposable):
 	[getter(Inst)]
 	public static inst	as Ant = null		# Singleton
 	# context
-	public final caps	= Capabilities()	# Render capabilities
-	public final debug	as bool				# is debug context
-	public final quad	as kri.kit.gen.Frame		# Standard quad
+	public final caps	= lib.Capabilities()	# Render capabilities
+	public final debug	as bool					# is debug context
+	public final quad	as kri.kit.gen.Frame	# Standard quad
 	# time
 	private final sw	= Diagnostics.Stopwatch()	# Time counter
 	public anim	as ani.IBase	= null		# Animation
@@ -112,9 +114,9 @@ public class Ant(IDisposable):
 		get: return sw.Elapsed.TotalSeconds
 	
 	# Slots
-	public final slotTechniques	= lib.Slot( lib.Const.nTech	)
-	public final slotAttributes	= lib.Slot( lib.Const.nAttrib )
-	public final slotParticles	= lib.Slot( lib.Const.nPart	)
+	public final slotTechniques	= lib.Slot( 24 )
+	public final slotAttributes	= lib.Slot( caps.vertexAttribs )
+	public final slotParticles	= lib.Slot( caps.vertexAttribs )
 	
 	# extensions
 	public final extensions	= List[of IExtension]()

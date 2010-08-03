@@ -71,7 +71,7 @@ public class Entity( kri.ani.data.Player ):
 	public mesh	as Mesh		= null
 	public visible	as bool	= true
 	public final store	= vb.Storage()
-	public final va		= array[of vb.Array]	( lib.Const.nTech )
+	public final va		= array[of vb.Array]	( kri.Ant.Inst.slotTechniques.Size )
 	public final tags	= List[of ITag]()
 	
 	public def constructor():

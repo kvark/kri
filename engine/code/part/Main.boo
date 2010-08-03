@@ -41,7 +41,7 @@ public class Emitter(DataHolder):
 	public final owner	as Manager
 	public final name	as string
 	public final extList	= List[of ExtAttrib]()
-	public final techReady	= array[of TechState]( kri.lib.Const.nTech )
+	public final techReady	= array[of TechState]( kri.Ant.Inst.slotTechniques.Size )
 
 	public def constructor(pm as Manager, str as string):
 		owner,name = pm,str
