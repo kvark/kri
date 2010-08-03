@@ -10,6 +10,7 @@ public class Buffer(Screen):
 	private static final badMask	as uint = 100	# bad mask
 	[Getter(Samples)]
 	protected samples		as byte				# samples count
+	public fixedSampleLoc	as bool	= false
 	public final texTarget	as TextureTarget	# texture target
 	
 	protected final at = (			# attachment controllers
@@ -83,7 +84,7 @@ public class Buffer(Screen):
 		for a in at:
 			continue	if not a.Tex
 			a.Tex.bind()
-			kri.Texture.Init( a.Format, Width, Height, samples )
+			kri.Texture.InitMulti( a.Format, samples,fixedSampleLoc, Width,Height,0 )
 	public def resizeFrames(nsam as byte) as void:
 		samples = nsam
 		resizeFrames()
@@ -120,7 +121,7 @@ public class Buffer(Screen):
 				a.dFormat.clean()
 				t.bind()
 				if t.target != TextureTarget.TextureCubeMap:
-					kri.Texture.InitMulti( a.Format, samples,false, Width,Height,0 )
+					kri.Texture.InitMulti( a.Format, samples,fixedSampleLoc, Width,Height,0 )
 				else:	kri.Texture.InitCube( a.Format, Width )
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				a.dLayer.clean()
