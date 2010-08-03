@@ -1,7 +1,8 @@
-﻿namespace kri.kit.bake
+﻿namespace support.bake
 
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
+
 
 public class Tag( kri.ITag ):
 	public world	as bool = true	# in world space

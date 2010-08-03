@@ -45,13 +45,11 @@
     <Compile Include="code\frame\Buffer.boo" />
     <Compile Include="code\frame\Main.boo" />
     <Compile Include="code\frame\Unit.boo" />
-    <Compile Include="code\kit\Bake.boo" />
     <Compile Include="code\kit\gen\Complex.boo" />
     <Compile Include="code\kit\gen\Main.boo" />
     <Compile Include="code\kit\gen\Noise.boo" />
     <Compile Include="code\kit\gen\Simple.boo" />
     <Compile Include="code\kit\gen\Texture.boo" />
-    <Compile Include="code\kit\Hair.boo" />
     <Compile Include="code\lib\Cap.boo" />
     <Compile Include="code\lib\Main.boo" />
     <Compile Include="code\lib\par\Main.boo" />
@@ -65,7 +63,6 @@
     <Compile Include="code\load\Material.boo" />
     <Compile Include="code\load\Mesh.boo" />
     <Compile Include="code\load\Object.boo" />
-    <Compile Include="code\load\Particle.boo" />
     <Compile Include="code\load\Read.boo" />
     <Compile Include="code\load\sound\Main.boo" />
     <Compile Include="code\load\sound\Wave.boo" />
@@ -164,6 +161,7 @@
   <ItemGroup>
     <Folder Include="code" />
     <Folder Include="code\frame" />
+    <Folder Include="code\kit" />
     <Folder Include="code\kit\gen" />
     <Folder Include="code\lib\par" />
     <Folder Include="code\load\image" />
@@ -172,7 +170,6 @@
     <Folder Include="code\load" />
     <Folder Include="code\ani" />
     <Folder Include="code\lib" />
-    <Folder Include="code\kit" />
     <Folder Include="code\part\beh" />
     <Folder Include="code\rend\defer" />
     <Folder Include="code\rend\part" />

@@ -26,7 +26,7 @@ public class Config:
 
 
 #-----------------------------------------------------------#
-#			APPWINDOW = window calls wrapper				#
+#			WINDOW = opengl window calls wrapper			#
 #-----------------------------------------------------------#
 
 public class Window( GameWindow ):
@@ -71,6 +71,8 @@ public class Window( GameWindow ):
 	public override def Dispose() as void:
 		views.Clear()
 		(core as IDisposable).Dispose()
+		GC.Collect()
+		GC.WaitForPendingFinalizers()
 		super()
 	
 	public override def OnResize(e as EventArgs) as void:
@@ -162,8 +164,6 @@ public class Ant(IDisposable):
 		resMan.clear()
 		extensions.Clear()
 		sw.Stop()
-		GC.Collect()
-		GC.WaitForPendingFinalizers()
 
 	public def update() as void:
 		tc = Time; old = params.parTime.Value.X

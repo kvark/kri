@@ -84,11 +84,9 @@ public class Standard( kri.IExtension ):
 	public final meshes		= ExMesh()
 	public final materials	= ExMaterial()
 	public final animations	= ExAnim()
-	public final particles	= ExParticle()
 	
 	public def attach(nt as Native) as void:	#imp: kri.IExtension
 		objects		.attach(nt)
 		meshes		.attach(nt)
 		materials	.attach(nt)
 		animations	.attach(nt)
-		particles	.attach(nt)

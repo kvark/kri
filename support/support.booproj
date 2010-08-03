@@ -36,9 +36,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="bake\Main.boo" />
+    <Compile Include="hair\Beh.boo" />
+    <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\HDR.boo" />
     <Compile Include="morph\Main.boo" />
     <Compile Include="morph\App.boo" />
+    <Compile Include="corp\Main.boo" />
     <Compile Include="phys\Main.boo" />
     <Compile Include="pick\Main.boo" />
     <Compile Include="reflect\App.boo" />
@@ -57,6 +61,9 @@
     </ProjectReference>
     <Folder Include="morph" />
     <Folder Include="hdr" />
+    <Folder Include="hair" />
+    <Folder Include="bake" />
+    <Folder Include="corp" />
     <Folder Include="pick" />
     <Folder Include="phys" />
     <Folder Include="skin" />

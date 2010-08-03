@@ -1,4 +1,4 @@
-﻿namespace kri.load
+﻿namespace support.corp
 
 import System
 import OpenTK
@@ -15,15 +15,15 @@ public struct SetBake:
 		assert ratio > 0f
 		side = Math.Sqrt(pixels / ratio)
 		wid,het = cast(int,side*ratio),cast(int,side)
-		return kri.kit.bake.Tag(wid,het,b_pos,b_rot,filt)
+		return support.bake.Tag(wid,het,b_pos,b_rot,filt)
 
 
-public class ExParticle( kri.IExtension ):
+public class Extra( kri.IExtension ):
 	public final pcon	= kri.part.Context()
 	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:false )
 	public bLoop		= false
 	
-	public def attach(nt as Native) as void:	#imp: kri.IExtension
+	public def attach(nt as kri.load.Native) as void:	#imp: kri.IExtension
 		# particles
 		nt.readers['part']		= p_part
 		nt.readers['p_dist']	= pp_dist
@@ -37,7 +37,7 @@ public class ExParticle( kri.IExtension ):
 		pm = pe.owner
 		if not pm.Ready:
 			ps = pm.seBeh[of kri.part.beh.Standard]()
-			ph = pm.seBeh[of kri.kit.hair.Behavior]()
+			ph = pm.seBeh[of support.hair.Behavior]()
 			if ps:
 				pm.behos.Add( kri.part.beh.Sys(pcon) )
 				pm.makeStandard(pcon)
@@ -55,7 +55,7 @@ public class ExParticle( kri.IExtension ):
 
 
 	#---	Parse emitter object	---#
-	public def p_part(r as Reader) as bool:
+	public def p_part(r as kri.load.Reader) as bool:
 		pm = kri.part.Manager( r.bin.ReadUInt32() )
 		r.puData(pm)
 		# create emitter
@@ -73,7 +73,7 @@ public class ExParticle( kri.IExtension ):
 
 
 	#---	Parse distribution		---#
-	public def pp_dist(r as Reader) as bool:
+	public def pp_dist(r as kri.load.Reader) as bool:
 		source = r.getString()
 		r.getString()	# type
 		r.getReal()		# jitter factor
@@ -82,8 +82,8 @@ public class ExParticle( kri.IExtension ):
 		return false	if not pe
 		pm = pe.owner
 		
-		ph = pm.seBeh[of kri.kit.hair.Behavior]()
-		if not ent.seTag[of kri.kit.bake.Tag]():
+		ph = pm.seBeh[of support.hair.Behavior]()
+		if not ent.seTag[of support.bake.Tag]():
 			st = bake
 			st.pixels = pm.total	if ph
 			ent.tags.Add( st.tag() )
@@ -114,7 +114,7 @@ public class ExParticle( kri.IExtension ):
 			pm.dict.unit(tVert,tQuat)
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
-				tag = e.seTag[of kri.kit.bake.Tag]()
+				tag = e.seTag[of support.bake.Tag]()
 				return false	if not tag
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat
@@ -126,7 +126,7 @@ public class ExParticle( kri.IExtension ):
 
 
 	#---	Parse life data	(emitter)	---#
-	public def pp_life(r as Reader) as bool:
+	public def pp_life(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		beh = kri.part.beh.Standard(pcon)
@@ -136,11 +136,11 @@ public class ExParticle( kri.IExtension ):
 		return true
 	
 	#---	Parse hair dynamics data	---#
-	public def pp_hair(r as Reader) as bool:
+	public def pp_hair(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		segs = r.getByte()
-		pm.behos.Add( kri.kit.hair.Behavior(pcon,segs) )
+		pm.behos.Add( support.hair.Behavior(pcon,segs) )
 		dyn = r.getVector()	# stiffness, mass, bending
 		dyn.Z *= 20f
 		damp = r.getVec2()	# spring, air
@@ -152,7 +152,7 @@ public class ExParticle( kri.IExtension ):
 		return true
 	
 	#---	Parse velocity setup		---#
-	public def pp_vel(r as Reader) as bool:
+	public def pp_vel(r as kri.load.Reader) as bool:
 		pe = r.geData[of kri.part.Emitter]()
 		return false	if not pe or not pe.owner
 		objFactor	= r.getVector()	# object-aligned factor
@@ -161,7 +161,7 @@ public class ExParticle( kri.IExtension ):
 		tan	= Vector3( tanFactor.Y, 0f, tanFactor.X )
 		# get behavior
 		ps = pe.owner.seBeh[of kri.part.beh.Standard]()
-		ph = pe.owner.seBeh[of kri.kit.hair.Behavior]()
+		ph = pe.owner.seBeh[of support.hair.Behavior]()
 		if ps:		# standard
 			ps.parVelObj.Value = Vector4( objFactor, add.Y )
 			ps.parVelTan.Value = Vector4( tan, tanFactor.Z )
@@ -174,7 +174,7 @@ public class ExParticle( kri.IExtension ):
 		else: return false
 		return true
 	
-	public def pp_rot(r as Reader) as bool:
+	public def pp_rot(r as kri.load.Reader) as bool:
 		mode = r.getString()
 		factor = r.getReal()
 		if mode == 'SPIN':
@@ -183,13 +183,13 @@ public class ExParticle( kri.IExtension ):
 			pm.behos.Add( kri.part.beh.Rotate(factor,pcon) )
 		return true
 	
-	public def pp_phys(r as Reader) as bool:
+	public def pp_phys(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		pg = r.at.scene.pGravity
 		if pg:
 			bgav = kri.part.beh.Gravity(pg)
-			if pm.seBeh[of kri.kit.hair.Behavior]():
+			if pm.seBeh[of support.hair.Behavior]():
 				pm.behos.Insert(0,bgav)
 			else: pm.behos.Add(bgav)
 		biz = kri.part.beh.Physics()
@@ -199,7 +199,7 @@ public class ExParticle( kri.IExtension ):
 		pm.behos.Add(biz)
 		return true
 	
-	public def ppr_inst(r as Reader) as bool:
+	public def ppr_inst(r as kri.load.Reader) as bool:
 		pe = r.geData[of kri.part.Emitter]()
 		return false	if not pe or not pe.mat or\
 			pe.mat == kri.Ant.Inst.loaders.materials.con.mDef
