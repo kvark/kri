@@ -36,10 +36,10 @@ public class Extra( kri.IExtension ):
 	public def finish(pe as kri.part.Emitter) as void:
 		pm = pe.owner
 		if not pm.Ready:
-			ps = pm.seBeh[of kri.part.beh.Standard]()
+			ps = pm.seBeh[of beh.Standard]()
 			ph = pm.seBeh[of support.hair.Behavior]()
 			if ps:
-				pm.behos.Add( kri.part.beh.Sys(pcon) )
+				pm.behos.Add( beh.Sys(pcon) )
 				pm.makeStandard(pcon)
 				born = (pcon.sh_born_time, pcon.sh_born_loop)[ bLoop ]
 				pm.col_update.extra.Add(born)
@@ -129,10 +129,10 @@ public class Extra( kri.IExtension ):
 	public def pp_life(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
-		beh = kri.part.beh.Standard(pcon)
-		pm.behos.Add( beh )
+		bh = beh.Standard(pcon)
+		pm.behos.Add( bh )
 		data = r.getVec4()	# start,end, life time, random
-		beh.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
+		bh.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
 		return true
 	
 	#---	Parse hair dynamics data	---#
@@ -145,10 +145,10 @@ public class Extra( kri.IExtension ):
 		dyn.Z *= 20f
 		damp = r.getVec2()	# spring, air
 		damp.X *= 1.5f
-		pm.behos.Insert(0, kri.part.beh.Damp( damp.X ))
+		pm.behos.Insert(0, beh.Damp( damp.X ))
 		// standard behavior appears here
-		pm.behos.Add( kri.part.beh.Bend( dyn.Z ))
-		pm.behos.Add( kri.part.beh.Norm() )
+		pm.behos.Add( beh.Bend( dyn.Z ))
+		pm.behos.Add( beh.Norm() )
 		return true
 	
 	#---	Parse velocity setup		---#
@@ -160,7 +160,7 @@ public class Extra( kri.IExtension ):
 		add			= r.getVec2()	# object speed, random
 		tan	= Vector3( tanFactor.Y, 0f, tanFactor.X )
 		# get behavior
-		ps = pe.owner.seBeh[of kri.part.beh.Standard]()
+		ps = pe.owner.seBeh[of beh.Standard]()
 		ph = pe.owner.seBeh[of support.hair.Behavior]()
 		if ps:		# standard
 			ps.parVelObj.Value = Vector4( objFactor, add.Y )
@@ -180,7 +180,7 @@ public class Extra( kri.IExtension ):
 		if mode == 'SPIN':
 			pm = r.geData[of kri.part.Manager]()
 			return false	if not pm
-			pm.behos.Add( kri.part.beh.Rotate(factor,pcon) )
+			pm.behos.Add( beh.Rotate(factor,pcon) )
 		return true
 	
 	public def pp_phys(r as kri.load.Reader) as bool:
@@ -188,11 +188,11 @@ public class Extra( kri.IExtension ):
 		return false	if not pm
 		pg = r.at.scene.pGravity
 		if pg:
-			bgav = kri.part.beh.Gravity(pg)
+			bgav = beh.Gravity(pg)
 			if pm.seBeh[of support.hair.Behavior]():
 				pm.behos.Insert(0,bgav)
 			else: pm.behos.Add(bgav)
-		biz = kri.part.beh.Physics()
+		biz = beh.Physics()
 		biz.pSize.Value = Vector4( r.getVec2() )
 		# forces: brownian, drag, damp
 		biz.pForce.Value = Vector4( r.getVector() )

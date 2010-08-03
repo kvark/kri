@@ -6,7 +6,7 @@ import OpenTK
 #		Main Hair Behavior			#
 #-----------------------------------#
 
-public class Behavior( kri.part.beh.Basic ):
+public class Behavior( kri.part.Behavior ):
 	# Y = cur seg ID, Z = 1 / segments
 	public final pSegment	= kri.shade.par.Value[of Vector4]('fur_segment')
 	# number of layers

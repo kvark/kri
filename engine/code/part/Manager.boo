@@ -10,7 +10,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Manager(DataHolder):
 	protected final tf	= kri.TransFeedback(1)
-	public final behos	= List[of beh.Basic]()
+	public final behos	= List[of Behavior]()
 	public final dict	= kri.shade.rep.Dict()
 	public final total	as uint
 
@@ -42,11 +42,11 @@ public class Manager(DataHolder):
 		col_init.root	= pc.sh_fur_init
 		col_update.root	= pc.sh_fur_root
 		if not 'Attrib zero bug workaround':
-			b2 = beh.Basic('/part/fur/dummy')
+			b2 = Behavior('/part/fur/dummy')
 			kri.Help.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
 			behos.Add(b2)
 	
-	public def seBeh[of T(beh.Basic)]() as T:
+	public def seBeh[of T(Behavior)]() as T:
 		for beh in behos:
 			bt = beh as T
 			return bt	if bt
@@ -57,8 +57,8 @@ public class Manager(DataHolder):
 			col_init.prog.clear()
 			col_update.prog.clear()
 		# collect shaders
-		col_init	.absorb[of beh.Basic](behos)
-		col_update	.absorb[of beh.Basic](behos)
+		col_init	.absorb[of Behavior](behos)
+		col_update	.absorb[of Behavior](behos)
 		# collect attributes
 		sem = List[of kri.vb.Info]()
 		for b in behos:

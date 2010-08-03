@@ -37,6 +37,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="bake\Main.boo" />
+    <Compile Include="corp\beh\Main.boo" />
+    <Compile Include="corp\beh\Small.boo" />
     <Compile Include="hair\Beh.boo" />
     <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\HDR.boo" />
@@ -59,6 +61,7 @@
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>
+    <Folder Include="corp\beh" />
     <Folder Include="morph" />
     <Folder Include="hdr" />
     <Folder Include="hair" />

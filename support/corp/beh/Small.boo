@@ -1,30 +1,31 @@
-﻿namespace kri.part.beh
+﻿namespace support.corp.beh
 
 import OpenTK
 import kri.shade
+import kri.part
 
 
-public class Sys(Basic):	# at_sys storage for standard root
+public class Sys(Behavior):	# at_sys storage for standard root
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/sys')
 		kri.Help.enrich( self, 2, pc.at_sys )
 
 
-public class Pad(Basic):	# padding for rgba32f align
+public class Pad(Behavior):	# padding for rgba32f align
 	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
 	public def constructor():
 		super('/part/beh/pad')
 		kri.Help.enrich( self, 1, slot )
 
 
-public class Norm(Basic):	# fur normalizing
+public class Norm(Behavior):	# fur normalizing
 	public def constructor():
 		super('/part/beh/fur_norm')
 
 
 #---	 SIMULATION		---#
 
-public class Physics(Basic):
+public class Physics(Behavior):
 	public final pSize	= par.Value[of Vector4]('part_size')
 	public final pForce	= par.Value[of Vector4]('port_force')
 	public override def link(d as rep.Dict) as void:
@@ -33,7 +34,7 @@ public class Physics(Basic):
 
 #---	 GRAVITY	---#
 
-public class Gravity(Basic):
+public class Gravity(Behavior):
 	public final par	as par.Value[of Vector4]
 	public def constructor(pg as par.Value[of Vector4]):
 		super('/part/beh/grav')
@@ -46,7 +47,7 @@ public class Gravity(Basic):
 #	SIMPLE BEHAVIOR BASE					#
 #-------------------------------------------#
 
-public class Simple[of T(struct)](Basic):
+public class Simple[of T(struct)](Behavior):
 	public final pData	as par.Value[of T]
 	public def constructor(path as string, varname as string, data as T):
 		super(path)
