@@ -47,10 +47,9 @@ public class Window( GameWindow ):
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
 		context	= conf.ask('Context','0')
 		bug = context.EndsWith('d')
-		ver = uint.Parse( context.TrimEnd(char('r'),char('d')) )
+		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
 		wid	= uint.Parse( sizes[0] )
 		het	= uint.Parse( sizes[1] )
-		fs	= (sizes[0] + sizes[1] == 0)
 		period	= single.Parse( conf.ask('StatPeriod','1.0') )
 
 		# prepare attributes
@@ -59,7 +58,7 @@ public class Window( GameWindow ):
 		conFlags  = GraphicsContextFlags.ForwardCompatible
 		conFlags |= GraphicsContextFlags.Debug	if bug
 		gameFlags  = GameWindowFlags.Default
-		gameFlags |= GameWindowFlags.Fullscreen	if fs
+		gameFlags |= GameWindowFlags.Fullscreen	if wid+het==0
 		wid = dd.Width	if not wid
 		het = dd.Height	if not het
 
@@ -145,9 +144,9 @@ public class Ant(IDisposable):
 		kri.rend.Context.Init()
 		shade.Code.Folder = defPath
 
+		inst = self
 		sw.Start()
 		debug = bug
-		inst = self
 		quad = kri.kit.gen.Frame( kri.kit.gen.Quad() )
 		
 		# shader library init
@@ -160,12 +159,13 @@ public class Ant(IDisposable):
 		
 	def IDisposable.Dispose() as void:
 		inst = null
+		resMan.clear()
+		extensions.Clear()
 		sw.Stop()
 		GC.Collect()
 		GC.WaitForPendingFinalizers()
 
 	public def update() as void:
-		tc = Time
-		old = params.parTime.Value.X
+		tc = Time; old = params.parTime.Value.X
 		params.parTime.Value = Vector4(tc, tc-old, 0f,0f)
 		anim = null	if anim and anim.onFrame(Time)
