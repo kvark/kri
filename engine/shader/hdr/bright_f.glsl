@@ -1,21 +1,27 @@
+#version 130
+
 //#define USE_FILTER
-#extension GL_ARB_texture_rectangle : require
-uniform sampler2DRect texture;
+uniform sampler2D unit_input;
 const vec3 lumask = vec3(0.2125, 0.7154, 0.0721);
+const float bright_add = 0.25;
+
+noperspective in vec2 tex_coord;
+out vec4 rez_color;
+
 
 void main()	{
 	#ifdef	USE_FILTER
-	vec2 tc = gl_TexCoord[0].st, add = vec2(1.0,0.0);
+	const ivec2 add = ivec2(1,0);
 	vec3 color = 0.25*(
-		texture2DRect(texture, tc+add.xy)+
-		texture2DRect(texture, tc-add.xy)+
-		texture2DRect(texture, tc+add.yx)+
-		texture2DRect(texture, tc-add.yx)
-	).rgb;
+		textureOffset(unit_input, tex_coord, +add.xy)+
+		textureOffset(unit_input, tex_coord, -add.xy)+
+		textureOffset(unit_input, tex_coord, +add.yx)+
+		textureOffset(unit_input, tex_coord, -add.yx)
+	).xyz;
 	#else	//USE_FILTER
-	vec3 color = texture2DRect(texture, gl_TexCoord[0].st).rgb;
+	vec3 color = texture(unit_input,tex_coord).xyz;
 	#endif	//USE_FILTER
-	float bright = log(dot(color, lumask) + 0.25);
-	color += 0.2*sin(-10.0*color/(color+2.0));
-	gl_FragColor = vec4(color, bright);
+	float bright = log(dot(color, lumask) + bright_add);
+	color += 0.2*sin(-10.0*color/(color+vec3(2.0)));
+	rez_color = vec4(color, bright);
 }

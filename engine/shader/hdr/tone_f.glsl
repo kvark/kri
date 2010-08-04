@@ -1,8 +1,13 @@
-#extension GL_ARB_texture_rectangle : require
-uniform sampler2DRect texture;
+#version 130
+
+uniform sampler2D unit_input;
 uniform float exposure;
 
+noperspective in vec2 tex_coord;
+out vec4 tone_color;
+
+
 void main()	{
-	vec3 color = texture2DRect(texture, gl_TexCoord[0].st).rgb;
-	gl_FragColor = vec4(1.0) - vec4(exp(-exposure*color),0.0);
+	vec3 color = texture(unit_input,tex_coord).xyz;
+	tone_color = vec4(1.0) - vec4(exp(-exposure*color),0.0);
 }

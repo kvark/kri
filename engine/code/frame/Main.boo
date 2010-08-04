@@ -15,6 +15,9 @@ public class Array:
 	public def init(x as uint, y as uint) as void:
 		dirtyPort = true
 		wid,het = x,y
+	public def init(x as uint, y as uint, lod as byte) as void:
+		off = 0	#(1<<lod)-1
+		init((x+off)>>lod, (y+off)>>lod)
 	public static def Clear(depth as bool) as void:
 		mask = ClearBufferMask.ColorBufferBit
 		if depth:

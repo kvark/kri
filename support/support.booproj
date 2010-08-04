@@ -41,7 +41,7 @@
     <Compile Include="corp\beh\Small.boo" />
     <Compile Include="hair\Beh.boo" />
     <Compile Include="hair\Main.boo" />
-    <Compile Include="hdr\HDR.boo" />
+    <Compile Include="hdr\Main.boo" />
     <Compile Include="morph\Main.boo" />
     <Compile Include="morph\App.boo" />
     <Compile Include="corp\Main.boo" />

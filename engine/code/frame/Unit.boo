@@ -23,11 +23,13 @@ public class Unit:
 	public final slot	as FramebufferAttachment				# fbo slot
 	internal dTex		= DirtyHolder[of kri.Texture](null)		# texture
 	internal dLayer		= DirtyHolder[of byte](0)				# layer id
+	internal dLevel		= DirtyHolder[of byte](0)				# LOD level
 	internal dFormat	= DirtyHolder[of PixelInternalFormat]( kri.Fm.bad )	# pixel format
+	
 	portal Tex		as kri.Texture	= dTex.Value
 	portal Layer	as int			= dLayer.Value
+	portal Level	as int			= dLevel.Value
+	portal Format	as PixelInternalFormat	= dFormat.Value
 	
 	internal def constructor(s as FramebufferAttachment):
 		slot = s
-	public Format as PixelInternalFormat:
-		get: return dFormat.Value

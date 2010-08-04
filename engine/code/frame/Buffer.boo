@@ -83,6 +83,10 @@ public class Buffer(Screen):
 		to.activate(true)
 		GL.BlitFramebuffer( 0,0,Width,Height, 0,0,to.Width,to.Height,
 			ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Linear )
+	
+	public def read(pf as PixelFormat, pt as PixelType) as void:
+		activate(false)
+		GL.ReadPixels(0,0,Width,Height, pf,pt, System.IntPtr.Zero)
 		
 	public def dropMask() as void:
 		oldMask = badMask
@@ -132,13 +136,15 @@ public class Buffer(Screen):
 				else:	kri.Texture.InitCube( a.Format, Width )
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				a.dLayer.clean()
-				GL.FramebufferTextureLayer(	target,	a.slot, t.id, 0, a.Layer )
-			elif a.dTex.Dirty:		#update texture attachment
+				a.dLevel.clean()
+				GL.FramebufferTextureLayer(	target,	a.slot, t.id, a.Level, a.Layer )
+			elif a.dTex.Dirty or a.dLevel.Dirty:		#update texture attachment
 				a.dTex.clean()
+				a.dLevel.clean()
 				if t and t.target in ( TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray ):
-					GL.FramebufferTexture(	target, a.slot, t.id, 0)
+					GL.FramebufferTexture(	target, a.slot, t.id, a.Level)
 				elif t:
-					GL.FramebufferTexture2D(target, a.slot, t.target, t.id, 0)
+					GL.FramebufferTexture2D(target, a.slot, t.target, t.id, a.Level)
 				else:
 					GL.FramebufferTexture2D(target, a.slot, TextureTarget.Texture2D, 0, 0)
 		Check(target)

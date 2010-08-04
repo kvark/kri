@@ -102,10 +102,13 @@ public class Texture( shade.par.INamed ):
 			GL.TexParameterI( curTarget, TextureParameterName.TextureCompareMode, param )
 		
 	# generate mipmaps
-	public static def GenLevels() as void:
+	public static def GenLevels() as byte:
 		assert curTarget != TextureTarget.TextureRectangle
 		ti = cast(GenerateMipmapTarget, cast(int,curTarget))
 		GL.GenerateMipmap(ti)
+		num as int = 0
+		GL.GetTexParameterI(curTarget, GetTextureParameter.TextureMaxLod, num)
+		return System.Math.Min(0xFF,num+1)
 	
 	# select a range of LODs to sample from
 	public static def SetLevels(a as int, b as int) as void:

@@ -116,7 +116,6 @@
     <None Include="shader\g\make_f.glsl" />
     <None Include="shader\g\make_v.glsl" />
     <None Include="shader\hdr\bright_f.glsl" />
-    <None Include="shader\hdr\scale_f.glsl" />
     <None Include="shader\hdr\tone_f.glsl" />
     <None Include="shader\lib\fixed_v.glsl" />
     <None Include="shader\lib\math_f.glsl" />
@@ -131,9 +130,6 @@
     <None Include="shader\light\shadow\simple_f.glsl" />
     <None Include="shader\mat_base_f.glsl" />
     <None Include="shader\mat_base_v.glsl" />
-    <None Include="shader\mod\bump_0_v.glsl" />
-    <None Include="shader\mod\bump_2d_f.glsl" />
-    <None Include="shader\mod\bump_uv_v.glsl" />
     <None Include="shader\mod\cooktorr_f.glsl" />
     <None Include="shader\mod\lambert_f.glsl" />
     <None Include="shader\mod\shift0_f.glsl" />
@@ -141,16 +137,7 @@
     <None Include="shader\mod\phong2_f.glsl" />
     <None Include="shader\mod\phong_f.glsl" />
     <None Include="shader\empty_f.glsl" />
-    <None Include="shader\mod\text_0_v.glsl" />
-    <None Include="shader\mod\text_2d_f.glsl" />
-    <None Include="shader\mod\text_uv_v.glsl" />
-    <None Include="shader\part\beh_simple.glsl" />
-    <None Include="shader\part\born_instant.glsl" />
-    <None Include="shader\part\draw_simple_f.glsl" />
-    <None Include="shader\part\draw_simple_v.glsl" />
-    <None Include="shader\part\init_g.glsl" />
     <None Include="shader\part\init_v.glsl" />
-    <None Include="shader\part\root.glsl" />
     <None Include="shader\skin\dual_v.glsl" />
     <None Include="shader\skin\empty_v.glsl" />
     <None Include="shader\skin\main_v.glsl" />
