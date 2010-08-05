@@ -23,7 +23,7 @@ public class Particle( IBase ):
 	private ready		as bool	= false
 	public def constructor(ps as kri.part.Emitter):
 		pe = ps
-	def kri.ani.IBase.onFrame(time as double) as uint:
+	def IBase.onFrame(time as double) as uint:
 		if ready: pe.owner.tick(pe)
 		else: ready = pe.owner.init(pe)
 		return 0
@@ -39,8 +39,9 @@ public class Compensate( Action ):
 		par = node.Parent
 		assert par
 		sp = par.local
-		par.local.combine(sp, node.local)
+		par.local.combine(node.local,sp)
 		par.touch()
+		node.local = kri.Spatial.Identity
 	
 	public static def Wrap(n as kri.Node, name as string, loops as int) as IBase:
 		ag = Graph()
