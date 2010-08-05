@@ -1,6 +1,7 @@
 ﻿namespace kri.ani
 
 import System
+import System.Collections.Generic
 
 #-----------------------#
 #	Animation Graph		#

@@ -29,6 +29,29 @@ public class Particle( IBase ):
 		return 0
 
 
+###		Compensate parent	###
+
+public class Compensate( Action ):
+	public final node	as kri.Node
+	public def constructor(n as kri.Node):
+		node = n
+	protected override def execute() as void:
+		par = node.Parent
+		assert par
+		sp = par.local
+		par.local.combine(sp, node.local)
+		par.touch()
+	
+	public static def Wrap(n as kri.Node, name as string, loops as int) as IBase:
+		ag = Graph()
+		c0 = ag.init.append( n.play(name) )
+		c1 = c0.append( Compensate(n) )
+		c2 = c1.append( Counter(loops) )
+		c2.to.Add(ag.init)
+		c2.to.Add(null)
+		return ag
+
+
 #-------------------------------#
 #	Rotate node with mouse		#
 #-------------------------------#

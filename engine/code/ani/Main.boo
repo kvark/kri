@@ -2,13 +2,13 @@
 
 # Animation Interface
 public interface IBase:
+	# more onTick than onFrame, a legacy name
 	def onFrame(time as double) as uint
 
 
 public class Action(IBase):
 	protected virtual def execute() as void:
 		pass
-	# more onTick than onFrame, a legacy name
 	def IBase.onFrame(time as double) as uint:
 		execute()
 		return 1
