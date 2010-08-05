@@ -13,7 +13,7 @@ public class Wave( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.sound.Buffer]
 		public def check() as bool:
 			return numChannels * sampleBits * sampleRate == 8 * byteRate
 
-	public def read(path as string) as kri.res.IGenerator[of kri.sound.Buffer]:	#imp: ILoaderGen
+	public def read(path as string) as kri.res.IGenerator[of kri.sound.Buffer]:	#imp: kri.res.ILoaderGen
 		using br = BinaryReader( File.OpenRead(path) ):
 			signature = string(br.ReadChars(4))
 			assert signature == 'RIFF'

@@ -9,7 +9,7 @@ import OpenTK.Graphics.OpenGL
 //----------------------------------//
 
 public class Loader( kri.res.ILoaderGen[of Object] ):
-	public def read(path as string) as Object:
+	public def read(path as string) as Object:	#imp: kri.res.ILoaderGen
 		text = Code.Read(path)
 		type = Object.Type(path)
 		return Object(type, path, text)

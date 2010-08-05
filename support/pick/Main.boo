@@ -4,7 +4,6 @@ import OpenTK.Graphics.OpenGL
 import OpenTK.Input
 
 public class Tag( kri.ITag ):
-	#todo: interface with pick function?
 	public pick	as callable(kri.Entity, OpenTK.Vector3) as void	= null
 	
 

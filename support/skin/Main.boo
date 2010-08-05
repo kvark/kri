@@ -22,7 +22,7 @@ public class Tag( kri.ITag ):
 public class Extra( kri.IExtension ):
 	public final attrib	= kri.Ant.Inst.slotAttributes.create('skin')
 	
-	public def attach(nt as kri.load.Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as kri.load.Native) as void:
 		nt.readers['v_skin']	= pv_skin
 	
 	#---	Parse mesh armature link with bone weights	---#

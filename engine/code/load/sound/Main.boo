@@ -20,7 +20,7 @@ public class Basic( kri.res.IGenerator[of kri.sound.Buffer] ):
 		return ((ALFormat.Mono8,ALFormat.Mono16),
 			(ALFormat.Stereo8,ALFormat.Stereo16))[channels>1][bits>8]
 
-	public def generate() as kri.sound.Buffer:	#imp: IGenerator
+	public def generate() as kri.sound.Buffer:	#imp: kri.res.IGenerator
 		buf = kri.sound.Buffer()
 		buf.init( getFormat(), scan,rate )
 		return buf

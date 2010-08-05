@@ -6,7 +6,7 @@ import OpenTK.Graphics.OpenGL
 #	RENDER SYSTEM CAPABILITIES		#
 #-----------------------------------#
 
-public class Capabilities:
+public final class Capabilities:
 	public final drawBuffers	as byte	
 	public final multiSamples	as byte
 	public final vertexAttribs	as byte

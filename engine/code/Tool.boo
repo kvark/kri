@@ -42,7 +42,7 @@ public class Section(IDisposable):
 		cap = state
 		assert not GL.IsEnabled(cap)
 		GL.Enable(cap)
-	public virtual def Dispose() as void:
+	def IDisposable.Dispose() as void:
 		assert GL.IsEnabled(cap)
 		GL.Disable(cap)
 
@@ -52,7 +52,7 @@ public class SectionOff(IDisposable):
 		cap = state
 		assert GL.IsEnabled(cap)
 		GL.Disable(cap)
-	public virtual def Dispose() as void:
+	def IDisposable.Dispose() as void:
 		assert not GL.IsEnabled(cap)
 		GL.Enable(cap)
 
@@ -89,7 +89,7 @@ public class Discarder(Section):
 			GL.PointSize(1.0)
 			GL.ColorMask(false,false,false,false)
 			GL.Disable( EnableCap.DepthTest )
-	public virtual def Dispose() as void:
+	def IDisposable.Dispose() as void:
 		if safe:
 			GL.ColorMask(true,true,true,true)
 		super()
@@ -134,7 +134,7 @@ public class Catcher(IDisposable):
 	public def constructor(q as Query):
 		t = q.target
 		GL.BeginQuery( t, q.qid )
-	public virtual def Dispose() as void:
+	def IDisposable.Dispose() as void:
 		GL.EndQuery(t)
 
 public class Query:

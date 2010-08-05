@@ -25,7 +25,7 @@ public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code 
 		semantics.AddRange( b.Semant )
 		sh = b.sh
 	
-	public virtual def link(d as rep.Dict) as void:
+	public virtual def link(d as rep.Dict) as void:	#imp: kri.meta.IBase
 		pass
 	def System.ICloneable.Clone() as object:
 		return Behavior(self)

@@ -27,7 +27,7 @@ public class Basic( kri.res.IGenerator[of kri.Texture] ):
 		pa = PixelFormat.Alpha
 		return (pa,pa,pa, PixelFormat.Bgr, PixelFormat.Bgra)[bits>>3]
 	
-	public def generate() as kri.Texture:
+	public def generate() as kri.Texture:	#imp: kri.res.IGenerator
 		tex = kri.Texture( TextureTarget.Texture2D )
 		tex.Name = name
 		tex.bind()

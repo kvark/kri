@@ -53,5 +53,5 @@ public class UnitProxy( IBase[of kri.Texture] ):
 	private final fun as callable() as kri.Texture
 	public def constructor(f as callable() as kri.Texture):
 		fun = f
-	public Value as kri.Texture:
+	public override Value as kri.Texture:
 		get: return fun()

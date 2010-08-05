@@ -23,7 +23,7 @@ public class Tag( kri.ITag ):
 #	Engine extension - loader
 
 public class Extra( kri.IExtension ):
-	public def attach(nt as kri.load.Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as kri.load.Native) as void:
 		nt.readers['mt_env']	= pmt_env
 
 	#---	Texture: environment	---#

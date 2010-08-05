@@ -11,7 +11,7 @@ public class ExMaterial( kri.IExtension ):
 	public final limDict	= Dictionary[of string,callable(Reader) as Hermit]()
 	public final con		= Context()
 	
-	public def attach(nt as Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as Native) as void:
 		init()
 		# material
 		nt.readers['mat']		= p_mat

@@ -45,7 +45,7 @@ public class Native( kri.res.ILoaderGen[of Atom] ):
 		for ext in kri.Ant.Inst.extensions:
 			ext.attach(self)
 
-	public def read(path as string) as Atom:
+	public def read(path as string) as Atom:	#imp: kri.res.ILoaderGen
 		kri.res.Manager.Check(path)
 		rd = Reader(path,resMan)
 		bs = rd.bin.BaseStream
@@ -85,8 +85,6 @@ public class Standard( kri.IExtension ):
 	public final materials	= ExMaterial()
 	public final animations	= ExAnim()
 	
-	public def attach(nt as Native) as void:	#imp: kri.IExtension
-		objects		.attach(nt)
-		meshes		.attach(nt)
-		materials	.attach(nt)
-		animations	.attach(nt)
+	def kri.IExtension.attach(nt as Native) as void:
+		for ex as kri.IExtension in (objects,meshes,materials,animations):
+			ex.attach(nt)

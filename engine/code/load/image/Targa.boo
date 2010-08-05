@@ -16,7 +16,7 @@ public class Targa( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.Texture]] ):
 			return false	if xrig + yrig or bits != 24 + descr
 			return true
 
-	public def read(path as string) as kri.res.IGenerator[of kri.Texture]:	#imp: ILoaderGen
+	public def read(path as string) as kri.res.IGenerator[of kri.Texture]:	#imp: kri.res.ILoaderGen
 		br = BinaryReader( File.OpenRead(path) )	
 		hd = Header(
 			magic	: br.ReadBytes(8),

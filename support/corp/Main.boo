@@ -23,7 +23,7 @@ public class Extra( kri.IExtension ):
 	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:false )
 	public bLoop		= false
 	
-	public def attach(nt as kri.load.Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as kri.load.Native) as void:
 		# particles
 		nt.readers['part']		= p_part
 		nt.readers['p_dist']	= pp_dist

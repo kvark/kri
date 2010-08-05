@@ -37,7 +37,7 @@ public class Shared(IBase):
 public class TransVal( par.IBase[of Vector4] ):
 	public node			as kri.Node = null
 	public final fun	as callable(ref kri.Spatial) as Vector4
-	public Value		as Vector4:
+	public override Value	as Vector4:
 		get:
 			assert node and fun
 			s = node.World

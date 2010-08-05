@@ -31,7 +31,7 @@ public class Extra( kri.IExtension ):
 		keys = (pl as kri.Entity).enuTags[of Tag]()
 		keys[i-1].Value = v
 	
-	public def attach(nt as kri.load.Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as kri.load.Native) as void:
 		nt.readers['v_shape']	= pv_shape
 		# shape key
 		anil = kri.Ant.Inst.loaders.animations

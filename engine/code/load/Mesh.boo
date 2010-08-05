@@ -4,7 +4,7 @@ import OpenTK
 import OpenTK.Graphics.OpenGL
 
 public class ExMesh( kri.IExtension ):
-	public def attach(nt as Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as Native) as void:
 		# mesh
 		nt.readers['mesh']		= p_mesh
 		nt.readers['v_pos']		= pv_pos

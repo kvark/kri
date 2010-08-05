@@ -1,7 +1,7 @@
 ﻿namespace kri.load
 
 public class ExObject( kri.IExtension ):
-	public def attach(nt as Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as Native) as void:
 		# objects
 		nt.readers['node']		= p_node
 		nt.readers['entity']	= p_entity

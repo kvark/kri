@@ -10,7 +10,7 @@ public class ExAnim( kri.IExtension ):
 	public final anid		= Dictionary[of string,callable(Reader) as IChannel]()
 	public final badCurves	= Dictionary[of string,byte]()
 	
-	public def attach(nt as Native) as void:	#imp: kri.IExtension
+	def kri.IExtension.attach(nt as Native) as void:
 		init()
 		# animations
 		nt.readers['action']	= p_action
