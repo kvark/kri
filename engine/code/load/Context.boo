@@ -44,6 +44,7 @@ public static class Meta:
 #------		MATERIAL CONTEXT		------#
 
 public class Shade:
+	public final tc_uv0		= Object.Load("/mi/uv0_v")
 	# light models
 	public final lambert	= Object.Load('/mod/lambert_f')
 	public final cooktorr	= Object.Load('/mod/cooktorr_f')
@@ -64,16 +65,30 @@ public class Shade:
 public class Context:
 	public final slib	= Shade()
 	public final mDef	= kri.Material('default')
-	
+
+	public def fillMat(mat as kri.Material, emi as single, diff as Color4, spec as Color4, glossy as single) as void:
+		ml = mat.metaList
+		ml.Add( Data[of single]('emissive',	slib.emissive_u, emi ))
+		ml.Add( Data[of Color4]('diffuse',	slib.diffuse_u, diff ))
+		ml.Add( Data[of Color4]('specular',	slib.specular_u, spec ))
+		ml.Add( Data[of single]('glossiness',	slib.glossiness_u, glossy ))
+		ml.Add(Advanced	( Name:'bump', 		Shader:slib.bump_c ))
+		ml.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
+		ml.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
+
+	public def setMatTexture(mat as kri.Material, name as string, tex as kri.Texture) as void:
+		id = mat.unit.Count
+		un = kri.meta.AdUnit( Value:tex )
+		un.input = kri.meta.Hermit( Name:name, Shader:slib.tc_uv0 )
+		mat.unit.Add(un)
+		me = mat.Meta['emissive']
+		md = mat.Meta['diffuse']
+		assert me and md
+		me.Shader = slib.emissive_t2
+		md.Shader = slib.diffuse_t2
+		me.Unit = md.Unit = id
+
 	public def constructor():
-		mlis = mDef.metaList
-		mlis.Add( Data[of single]('emissive',	slib.emissive_u,	0f ))
-		mlis.Add( Data[of Color4]('diffuse',	slib.diffuse_u,		Color4.Gray ))
-		mlis.Add( Data[of Color4]('specular',	slib.specular_u,	Color4.Gray ))
-		mlis.Add( Data[of single]('glossiness',	slib.glossiness_u,	50f ))
-		mlis.Add(Advanced	( Name:'bump', 		Shader:slib.bump_c ))
-		mlis.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
-		mlis.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
-		mlis.Add(Halo		( Name:'halo',		Shader:slib.halo_u,\
-			Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
+		fillMat(mDef, 0f, Color4.Gray, Color4.Gray, 50f)
+		mDef.metaList.Add(Halo( Name:'halo', Shader:slib.halo_u, Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
 		mDef.link()

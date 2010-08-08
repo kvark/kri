@@ -51,21 +51,52 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			.unk2 = rd.getByte()
 			.unk3 = rd.getLong()
 
+	public static final Signature	= 'B3D 1.1 '
+	public final con	as kri.load.Context
+	public final res	= kri.res.Manager()
+
 	public def getMaterials(rd as Reader) as bool:
 		mid		= rd.getString()
 		name	= rd.getString()
 		# read mat
+		amb		= rd.getColor()
+		diff	= rd.getColor()
+		emi		= rd.getColor()
+		spec	= rd.getColor()
+		glossy	= rd.getReal()
+		alpha	= rd.getReal()
+		return false	if not con
 		m = kri.Material(name)
+		con.fillMat(m, 1f,diff,spec,glossy)
+		m.link()
+		rd.ent.tags.Add( kri.TagMat(mat:m) )
 		# read the rest
 		blend = rd.getString()
 		mtype = rd.getString()
 		flag1 = rd.getLong()
 		flag2 = rd.getLong()
+		# unused vars
+		mid=''
+		amb = emi
+		alpha = 0f
 		blend = mtype = ''
 		flag1 = flag2 = 0
 		return true
 
 	public def getTextures(rd as Reader) as bool:
+		rd.getByte()	#?
+		name	= rd.getString()
+		file	= rd.getString()
+		wid		= rd.getLong()
+		het		= rd.getLong()
+		tm = rd.ent.seTag[of kri.TagMat]()
+		assert tm
+		basic = res.load[of kri.load.image.Basic](file)
+		assert basic
+		tex = basic.generate()
+		assert con
+		con.setMatTexture( tm.mat, name, tex )
+		wid = het = 0
 		return true
 
 	public def getNodes(rd as Reader) as bool:
@@ -77,8 +108,9 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 	public def getVertices(rd as Reader) as bool:
 		return true
 
-	public static final Signature	= 'B3D 1.1 '
-
+	public def constructor(lc as kri.load.Context):
+		con = lc
+		res.register( kri.load.image.Targa() )
 
 	public def read(path as string) as kri.Entity:	#imp: kri.res.ILoaderGen
 		kri.res.Manager.Check(path)
