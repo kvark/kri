@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectGuid>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -16,6 +17,8 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoWarn>BCW0014</NoWarn>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -31,6 +34,18 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
@@ -146,43 +161,41 @@
     <None Include="shader\zcull_v.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="code" />
-    <Folder Include="code\frame" />
-    <Folder Include="code\gen" />
-    <Folder Include="code\lib\par" />
-    <Folder Include="code\load\image" />
-    <Folder Include="code\load\sound" />
-    <Folder Include="code\meta" />
-    <Folder Include="code\load" />
-    <Folder Include="code\ani" />
-    <Folder Include="code\lib" />
-    <Folder Include="code\rend\defer" />
-    <Folder Include="code\rend\part" />
-    <Folder Include="code\sound" />
-    <Folder Include="code\res" />
-    <Folder Include="code\rend\tech" />
-    <Folder Include="code\vb" />
-    <Folder Include="code\shade" />
-    <Folder Include="code\part" />
-    <Folder Include="code\rend" />
-    <Folder Include="code\rend\light" />
-    <Folder Include="shader" />
-    <Folder Include="shader\g" />
-    <Folder Include="shader\hdr" />
-    <Folder Include="shader\lib" />
-    <Folder Include="shader\light" />
-    <Folder Include="shader\light\shadow" />
-    <Folder Include="shader\mod" />
-    <Folder Include="shader\part" />
-    <Folder Include="shader\skin" />
     <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">
-      <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
+      <Project>{8D28B261-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
     <ProjectReference Include="..\ext\ext.booproj">
       <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
       <Name>ext</Name>
     </ProjectReference>
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\lib\" />
+    <Folder Include="code\load\" />
+    <Folder Include="code\load\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\rend\" />
+    <Folder Include="code\rend\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\rend\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\" />
+    <Folder Include="code\rend\" />
+    <Folder Include="shader\" />
+    <Folder Include="shader\" />
+    <Folder Include="shader\" />
+    <Folder Include="shader\" />
+    <Folder Include="shader\light\" />
+    <Folder Include="shader\" />
+    <Folder Include="shader\" />
+    <Folder Include="shader\" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>
