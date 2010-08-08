@@ -5,7 +5,8 @@
 public class Update( kri.rend.tech.Basic ):
 	private final tf	= kri.TransFeedback(1)
 	private final sa	= kri.shade.Smart()
-	private final par	= array( kri.lib.par.spa.Shared("bone[${i}]") for i in range(80) )
+	private final par	= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
+		for i in range(80) ).ToArray()
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	as (int)
 
@@ -22,7 +23,7 @@ public class Update( kri.rend.tech.Basic ):
 		sa.feedback(true, 'to_vertex', 'to_quat')
 		sl = kri.Ant.Inst.slotAttributes
 		sa.link(sl, dict, kri.Ant.Inst.dict)
-		at_all = array( sa.gatherAttribs(sl,false) )
+		at_all = List[of int]( sa.gatherAttribs(sl,false) ).ToArray()
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)

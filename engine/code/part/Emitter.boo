@@ -73,5 +73,5 @@ public class Emitter(DataHolder):
 			else: vat.attrib( fa.dest )
 
 	public def listAttribs() as (int):
-		return	array(sem.slot	for sem in data.Semant) + \
-				array(ext.dest	for ext in extList)
+		return	List[of int](sem.slot	for sem in data.Semant).ToArray() + \
+				List[of int](ext.dest	for ext in extList).ToArray()

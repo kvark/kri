@@ -24,3 +24,4 @@ _obj
 *.dll*
 *.exe
 *.cache
+*.orig

@@ -12,10 +12,10 @@ public class Cube( kri.Mesh ):
 	public def constructor(scale as Vector3):
 		con = Constructor()
 		sar = (-1f,1f)
-		verts = array( Vector4( scale.X * sar[i&1],\
+		verts = List[of Vector4]( Vector4( scale.X * sar[i&1],\
 			scale.Y * sar[(i>>1)&1],\
 			scale.Z * sar[i>>2], 1f)\
-			for i in range(8))
+			for i in range(8)).ToArray()
 		#vi = (0,1,4,5,7,1,3,0,2,4,6,7,2,3)	# tri-strip version
 		vi = (0,4,5,1, 4,6,7,5, 6,2,3,7, 2,0,1,3, 2,6,4,0, 1,5,7,3)
 		ang = 0.5f * PI
@@ -27,9 +27,9 @@ public class Cube( kri.Mesh ):
 			Quaternion.FromAxisAngle( Vector3.UnitY, -ang ),	#-X
 			Quaternion.FromAxisAngle( Vector3.UnitY, ang )		#+X
 			)
-		con.v = array( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24))
+		con.v = List[of Vertex]( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24)).ToArray()
 		offsets = (of ushort: 0,3,2,0,2,1)
-		con.i = array( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36))
+		con.i = List[of ushort]( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36)).ToArray()
 		super( BeginMode.Triangles )
 		con.apply(self)
 
@@ -44,10 +44,10 @@ public class Sphere( kri.Mesh ):
 			-Vector3.UnitZ, Vector3.UnitX,
 			Vector3.UnitY, -Vector3.UnitX,
 			-Vector3.UnitY, Vector3.UnitZ)
-		vert = array(Vector4( Vector3.Multiply(scale,x),1f ) for x in ar)
+		vert = List[of Vector4](Vector4( Vector3.Multiply(scale,x),1f ) for x in ar).ToArray()
 		# no quaternions needed at this stage
 		con = Constructor()
-		con.v = array(Vertex(v,Quaternion.Identity) for v in vert)
+		con.v = List[of Vertex](Vertex(v,Quaternion.Identity) for v in vert).ToArray()
 		con.i = (of ushort: 0,1,4, 0,2,1, 0,3,2, 0,4,3, 5,4,1, 5,1,2, 5,2,3, 5,3,4)
 		return con
 	

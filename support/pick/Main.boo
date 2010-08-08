@@ -53,7 +53,7 @@ public class Render( kri.rend.Basic ):
 		#GL.ClearBuffer(ClearBuffer.Color, 0, (of uint:10,10,10,10))
 		va.bind()
 		pInd.Value = 0f
-		ents = array(e for e in kri.Scene.Current.entities if e.seTag[of Tag]())
+		ents = List[of kri.Entity](e for e in kri.Scene.Current.entities if e.seTag[of Tag]()).ToArray()
 		for i in range(ents.Length):
 			pInd.Value = (i+1f) / ((1<<16)-1)
 			e = ents[i]

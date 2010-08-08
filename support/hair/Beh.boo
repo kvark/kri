@@ -25,7 +25,8 @@ public class Behavior( kri.part.Behavior ):
 
 	# generate fur layers
 	public def genLayers(em as kri.part.Emitter, init as Vector4) as (kri.part.Emitter):
-		lar = array( kri.part.Emitter(em.owner,"${em.name}-${i}") for i in range(layers) )
+		lar = List[of kri.part.Emitter]( kri.part.Emitter(em.owner,"${em.name}-${i}")\
+			for i in range(layers) ).ToArray()
 		assert not em.obj.seTag[of Tag]()
 		tag = Tag( em.owner.total )
 		tag.param = init

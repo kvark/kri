@@ -61,8 +61,7 @@ public class Material( ani.data.Player ):
 			din.Add( m.Name, u.input )
 		# check geometry shaders
 		if not geom:
-			kar = array( dd.Keys )
-			for dk in kar:
+			for dk in dd.Keys:
 				if dk.type == ShaderType.GeometryShader:
 					#dd.Remove(dk)
 					return null

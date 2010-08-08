@@ -42,7 +42,8 @@ public class Window( GameWindow ):
 
 	public def constructor(cPath as string, depth as int):
 		# read config
-		(conf = Config()).read(cPath)
+		conf = Config()
+		conf.read(cPath)
 		title	= conf.ask('Title','kri')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
 		context	= conf.ask('Context','0')
@@ -138,7 +139,7 @@ public class Ant(IDisposable):
 		if conf:
 			defPath	= conf.ask('ShaderPath',defPath)
 			# check configuration completeness
-			unused = array( conf.getUnused() )
+			unused = List[of string]( conf.getUnused() ).ToArray()
 			if unused.Length:
 				raise 'Unknown config parameter: ' + unused[0]
 		
@@ -153,8 +154,8 @@ public class Ant(IDisposable):
 		
 		# shader library init
 		resMan.register( shade.Loader() )
-		libShaders = array( resMan.load[of kri.shade.Object]('/lib/'+str)
-			for str in ('quat_v','tool_v','orient_v','fixed_v','math_f'))
+		libShaders = List[of shade.Object]( resMan.load[of shade.Object]('/lib/'+str)
+			for str in ('quat_v','tool_v','orient_v','fixed_v','math_f')).ToArray()
 		# extensions init
 		loaders = load.Standard()
 		extensions.Add(loaders)

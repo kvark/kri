@@ -1,8 +1,9 @@
-﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <RootNamespace>support</RootNamespace>
     <AssemblyName>support</AssemblyName>
@@ -16,6 +17,8 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <BaseIntermediateOutputPath>_obj\</BaseIntermediateOutputPath>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -34,6 +37,18 @@
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="bake\Main.boo" />
@@ -51,26 +66,18 @@
     <Compile Include="reflect\Main.boo" />
     <Compile Include="skin\App.boo" />
     <Compile Include="skin\Main.boo" />
+    <Compile Include="vanburen\Model.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">
-      <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
+      <Project>{8D28B261-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
     <ProjectReference Include="..\engine\engine.booproj">
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>
-    <Folder Include="corp\beh" />
-    <Folder Include="morph" />
-    <Folder Include="hdr" />
-    <Folder Include="hair" />
-    <Folder Include="bake" />
-    <Folder Include="corp" />
-    <Folder Include="pick" />
-    <Folder Include="phys" />
-    <Folder Include="skin" />
-    <Folder Include="reflect" />
+    <Folder Include="corp\" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

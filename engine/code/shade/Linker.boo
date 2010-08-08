@@ -14,7 +14,7 @@ public class Linker:
 	
 	public def constructor(ats as kri.lib.Slot, *cad as (rep.Dict)):
 		aslot = ats
-		condict = array(cad)
+		condict = cad
 	
 	public def link(sl as Object*, dc as rep.Dict) as Smart:
 		key = join( (x.id.ToString() for x in sl), ',' )
@@ -27,7 +27,7 @@ public class Linker:
 			# because the meta-data sets already matched (kri.load.meta.MakeTexCoords)
 		else:
 			sa = Smart()
-			sa.add( *array(sl) )
+			sa.add( *List[of Object](sl).ToArray() )
 			onLink(sa)	if onLink
 			sa.link( aslot, *(condict+(dc,)) )
 			samap.Add(key,sa)

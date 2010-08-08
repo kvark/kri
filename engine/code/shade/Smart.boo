@@ -34,7 +34,7 @@ public class Smart(Program):
 				attrib( a, prefixGhost + name.Substring(ghostSym.Length) )
 			else: attrib( a, prefixAttrib+name )
 	public def attribs(sl as kri.lib.Slot) as void:
-		attribs(sl, *array(range(sl.Size)) )
+		attribs(sl, *List[of int](range(sl.Size)).ToArray() )
 	
 	public override def use() as void:
 		activeProgram = self

@@ -47,7 +47,7 @@ public class Meta(General):
 	private virtual def onLink(sa as kri.shade.Smart) as void:
 		sa.fragout( *lOuts )	if lOuts
 		sa.add( *kri.Ant.Inst.libShaders )
-		sa.add( *array(shobs) )
+		sa.add( *shobs.ToArray() )
 
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		sl = mat.collect(geom,lMets)

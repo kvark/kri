@@ -40,9 +40,8 @@ public class Inst( kri.rend.tech.Meta ):
 			continue	if not inst
 			ent = inst.ent
 			continue	if not ent
-			pats = array(sem.slot	for sem in pe.data.Semant)
-			continue	if not Array.TrueForAll(
-				array(trans.Keys),	{at| return at in pats })
+			pats = List[of int](sem.slot	for sem in pe.data.Semant)
+			continue	if not List[of int](trans.Keys).TrueForAll({at| return at in pats })
 			cur = pe
 			addObject(ent)
 		for b in butch:

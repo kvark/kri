@@ -112,8 +112,8 @@ public class Collector:
 		prog.add(root)
 		prog.add( *extra.ToArray() )
 		if sem:
-			names = array( 'to_'+sl.Name[at.slot] for at in sem )
-			prog.feedback(false,*names)
+			names = List[of string]( 'to_'+sl.Name[at.slot] for at in sem )
+			prog.feedback( false, *names.ToArray() )
 		prog.link(sl,*dicts)
 
 
@@ -136,7 +136,7 @@ public class Template(ICode):
 		while (p2 = text.IndexOf('%',pos)) >=0:
 			pos = p2+1
 			dk[ text.Substring(pos,1).ToLower() ] = null
-		keys = array( dk.Keys )
+		keys = List[of string]( dk.Keys ).ToArray()
 
 	def ICode.getMethod(base as string) as string:
 		return null

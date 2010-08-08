@@ -23,7 +23,7 @@ public class Tech( Basic, kri.rend.tech.IConstructor ):
 			m.tech[tid] = sa = construct(m)
 		return null	if sa == Smart.Fixed
 		if pe.techReady[tid] == kri.part.TechState.Unknown:
-			ats = array( sa.gatherAttribs( kri.Ant.Inst.slotParticles, false ))
+			ats = List[of int]( sa.gatherAttribs( kri.Ant.Inst.slotParticles, false )).ToArray()
 			pat = pe.listAttribs()
 			ok = Array.TrueForAll(ats, {a| return a in pat })
 			pe.techReady[tid] = (kri.part.TechState.Invalid, kri.part.TechState.Ready)[ok]
@@ -53,7 +53,7 @@ public class Meta( Tech ):
 	
 	private def setup(sa as Smart) as void:
 		sa.add( *kri.Ant.Inst.libShaders )
-		sa.add( *array(shobs) )
+		sa.add( *shobs.ToArray() )
 
 	public override def construct(mat as kri.Material) as Smart:
 		sl = mat.collect(geom,lMets)
