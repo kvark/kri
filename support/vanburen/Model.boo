@@ -164,7 +164,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 
 	public def getMaterials(rd as Reader) as bool:
 		# doesn't store the result
-		mid		= rd.getString()
+		rd.getString()	#mtl_id
 		name	= rd.getString()
 		# read mat
 		amb		= rd.getColor()
@@ -175,7 +175,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		alpha	= rd.getReal()
 		assert con
 		m = kri.Material(name)
-		con.fillMat(m, 1f,diff,spec,glossy)
+		con.fillMat(m, emi,diff,spec,glossy)
 		m.link()
 		# read the rest
 		blend = rd.getString()
@@ -183,11 +183,9 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		flag1 = rd.getLong()
 		flag2 = rd.getLong()
 		# unused vars
-		mid=''
-		amb = emi
-		alpha = 0f
-		blend = mtype = ''
-		flag1 = flag2 = 0
+		amb.A = alpha
+		blend = mtype
+		flag1 = flag2
 		return true
 
 	public def getTextures(rd as Reader) as bool:
@@ -199,7 +197,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		het		= rd.getLong()
 		res.load[of kri.Texture]( pathPrefix+file )
 		name = null
-		wid = het = 0
+		wid = het
 		return true
 
 	public def getNodes(rd as Reader) as bool:
@@ -271,11 +269,11 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 				emi		= rd.getColor()
 				spec	= rd.getColor()
 				glossy	= rd.getReal()
-				amb.A = emi.A = 0f
-				con.fillMat(tm.mat, 1f,diff,spec,glossy)
+				amb.A = 0f
+				con.fillMat(tm.mat, emi,diff,spec,glossy)
 				blend = rd.getString()
 				mtype = rd.getString()
-				blend = mtype = ''
+				blend = mtype
 				unk5 = rd.getLong()	#?
 				for j in range(16):
 					unk5 = rd.getLong()

@@ -66,9 +66,9 @@ public class Context:
 	public final slib	= Shade()
 	public final mDef	= kri.Material('default')
 
-	public def fillMat(mat as kri.Material, emi as single, diff as Color4, spec as Color4, glossy as single) as void:
+	public def fillMat(mat as kri.Material, emi as Color4, diff as Color4, spec as Color4, glossy as single) as void:
 		ml = mat.metaList
-		ml.Add( Data[of single]('emissive',	slib.emissive_u, emi ))
+		ml.Add( Data[of Color4]('emissive',	slib.emissive_u, emi ))
 		ml.Add( Data[of Color4]('diffuse',	slib.diffuse_u, diff ))
 		ml.Add( Data[of Color4]('specular',	slib.specular_u, spec ))
 		ml.Add( Data[of single]('glossiness',	slib.glossiness_u, glossy ))
@@ -89,6 +89,6 @@ public class Context:
 		me.Unit = md.Unit = id
 
 	public def constructor():
-		fillMat(mDef, 0f, Color4.Gray, Color4.Gray, 50f)
+		fillMat(mDef, Color4.DarkGray, Color4.Gray, Color4.Gray, 50f)
 		mDef.metaList.Add(Halo( Name:'halo', Shader:slib.halo_u, Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
 		mDef.link()

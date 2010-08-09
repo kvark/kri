@@ -280,10 +280,12 @@ def save_mat(mat):
 	out.text( mat.name )
 	out.end()
 	# diffuse subroutine
+	def save_diff_intensity(val):
+		save_color( mat.diffuse_color )
+		out.pack('2f', mat.alpha, val )
 	def save_diffuse(model):
 		out.begin('m_diff')
-		save_color( mat.diffuse_color )
-		out.pack('2f', mat.alpha, mat.diffuse_intensity )
+		save_diff_intensity( mat.diffuse_intensity )
 		out.text(model)
 		out.end()
 	if mat.strand:	# hair strand
@@ -308,8 +310,11 @@ def save_mat(mat):
 	elif	mat.type == 'SURFACE':
 		out.begin('m_surf')
 		parallax = 0.5
-		out.pack('B4f', mat.shadeless, parallax,
-			mat.emit, mat.ambient, mat.translucency )
+		out.pack('B3f', mat.shadeless, parallax,
+			mat.ambient, mat.translucency )
+		out.end()
+		out.begin('m_emis')
+		save_diff_intensity( mat.emit )
 		out.end()
 		sh = (mat.diffuse_shader, mat.specular_shader)
 		print("\tshading: %s %s" % sh)

@@ -1,6 +1,6 @@
 #version 130
 
-uniform float mat_emissive;
+uniform vec4 mat_emissive;
 uniform sampler2D unit_emissive;
 
 vec4 tc_emissive();
