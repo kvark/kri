@@ -110,6 +110,14 @@ public class Texture( shade.par.INamed ):
 		GL.GetTexParameterI(curTarget, GetTextureParameter.TextureMaxLod, num)
 		return System.Math.Min(0xFF,num+1)
 	
+	# init all state
+	public def setState(repeat as bool, filt as bool, mips as bool) as void:
+		bind()
+		wm = (TextureWrapMode.ClampToBorder,TextureWrapMode.Repeat)[repeat]
+		Wrap(wm,2)
+		Filter(filt,mips)
+		GenLevels()	if mips
+	
 	# select a range of LODs to sample from
 	public static def SetLevels(a as int, b as int) as void:
 		GL.TexParameterI( curTarget, TextureParameterName.TextureBaseLevel, a )	if a>=0

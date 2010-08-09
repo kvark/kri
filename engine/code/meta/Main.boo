@@ -55,6 +55,10 @@ public class AdUnit( ISlave, par.ValuePure[of kri.Texture] ):
 	portal Offset	as Vector4	= pOffset.Value
 	portal Scale	as Vector4	= pScale.Value
 	
+	public def constructor():
+		pOffset	.Value = Vector4.Zero
+		pScale	.Value = Vector4.One
+	
 	def ICloneable.Clone() as object:
 		return AdUnit( Value:Value, input:input, Offset:Offset, Scale:Scale )
 	

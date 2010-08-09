@@ -4,7 +4,6 @@ import System.Collections.Generic
 import kri.meta
 import OpenTK
 import OpenTK.Graphics
-import OpenTK.Graphics.OpenGL
 
 
 public class ExMaterial( kri.IExtension ):
@@ -185,11 +184,7 @@ public class ExMaterial( kri.IExtension ):
 		bFilter	= r.getByte()>0	# linear filtering
 		# init sampler parameters, todo: use sampler object
 		assert u.Value
-		u.Value.bind()
-		kri.Texture.Filter(bFilter,bMipMap)
-		wm = (TextureWrapMode.ClampToBorder,TextureWrapMode.Repeat)[bRepeat]
-		kri.Texture.Wrap(wm,2)
-		kri.Texture.GenLevels()	if bMipMap
+		u.Value.setState(bRepeat,bFilter,bMipMap)
 		return true
 
 	#---	Texture: file path	---#

@@ -43,10 +43,10 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Vertex:
-		public pos	as Vector3
+		public pos	as Vector4
 		public rot	as Quaternion
-		public col	as Color4
 		public tc	as Vector2
+		public col	as int
 	
 	[StructLayout(LayoutKind.Sequential)]
 	public struct BoneLink:
@@ -79,6 +79,59 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		v.Semant.Add(ai)
 		m.vbo.Add(v)
 		return true
+	
+	public static def ProcessVertices(vin as (ushort), var as (Vertex)) as kri.vb.Attrib:
+		# prepare quaternions
+		tar = array[of Vector4]( var.Length )
+		for i in range(tar.Length):
+			tar[i] = Vector4.Zero
+		for i in range(vin.Length / 3):
+			v0 = var[vin[i*3+0]]
+			v1 = var[vin[i*3+1]]
+			v2 = var[vin[i*3+2]]
+			va = (v1.pos - v0.pos).Xyz
+			vb = (v2.pos - v0.pos).Xyz
+			ta = v1.tc - v0.tc
+			tb = v2.tc - v0.tc
+			tan = va*tb.Y - vb*ta.Y
+			tan.NormalizeFast()
+			bit = vb*ta.X - va*tb.X
+			bit.NormalizeFast()
+			n0 = Vector3.Cross(va,vb)
+			n0.NormalizeFast()
+			n1 = Vector3.Cross(tan,bit)
+			hand = Vector3.Dot(n0,n1)
+			x = Vector4(tan,hand)
+			for j in range(i*3,i*3+3):
+				#assert tar[vin[j]].W * x.W >= 0f
+				tar[vin[j]] += x
+		for i in range(tar.Length):
+			var[i].pos.W = hand = Math.Sign( tar[i].W )
+			tan = tar[i].Xyz
+			tan.Normalize()
+			no = var[i].rot.Xyz
+			bit = Vector3.Cross(no,tan) * hand
+			tan = Vector3.Cross(bit,no)
+			mx = Matrix4(Vector4(tan),Vector4(bit),Vector4(no),Vector4.UnitW)
+			#var[i].rot = mx.Quaternion
+		# book-keeping
+		rez = kri.vb.Attrib()
+		ai = kri.vb.Info( size:4, integer:false,
+			type: VertexAttribPointerType.Float )
+		ai.slot = kri.Ant.Inst.attribs.vertex
+		rez.Semant.Add(ai)
+		ai.slot = kri.Ant.Inst.attribs.quat
+		rez.Semant.Add(ai)
+		ai.slot = kri.Ant.Inst.attribs.tex[0]
+		ai.size = 2
+		rez.Semant.Add(ai)
+		ai.slot = kri.Ant.Inst.attribs.color[0]
+		ai.size = 4
+		ai.type = VertexAttribPointerType.UnsignedByte
+		rez.Semant.Add(ai)
+		# push to GPU
+		rez.init(var,false)
+		return rez
 
 
 	public struct Header:
@@ -107,6 +160,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 	public final at_un1	= kri.Ant.Inst.slotAttributes.create('un1')
 	public final at_un2	= kri.Ant.Inst.slotAttributes.create('un2')
 	public final at_un3	= kri.Ant.Inst.slotAttributes.create('un3')
+
 
 	public def getMaterials(rd as Reader) as bool:
 		# doesn't store the result
@@ -188,11 +242,12 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			size = rd.getLong()
 			assert size == 44
 			for i in range(num):
-				va[i].pos 		= rd.getVector()
+				va[i].pos.Xyz	= rd.getVector()
 				va[i].rot.Xyz	= rd.getVector()
-				va[i].col		= rd.getColorByte()
+				va[i].col		= rd.bin.ReadInt32()
 				va[i].tc 		= rd.getVec2()
 				unk3			= rd.getVec2()
+			# read bones
 			unk3.X = 0f
 			for i in range(6):
 				rd.getReal()
@@ -227,7 +282,8 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 					continue	if not unk5
 					zone = rd.getString()
 					tex = res.load[of kri.Texture]( pathPrefix+zone )
-					con.setMatTexture(tm.mat,tex)
+					tex.setState(false,true,true)
+					con.setMatTexture( tm.mat, tex )
 					unk5 = rd.getLong()
 					for k in range(unk5):
 						unk6 = rd.getString()	#?
@@ -239,8 +295,9 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			sum as long = 0
 			for tm in rd.ent.enuTags[of kri.TagMat]():
 				tm.off = sum
-				tm.num = rd.getLong()
-				sum += tm.num
+				num = rd.getLong()
+				tm.num = num / 3
+				sum += num
 			for i in range(nmat):
 				rd.getLong()	#mat vertex num?
 			# read indices
@@ -250,12 +307,15 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			mesh.nPoly = sum / 3
 			mesh.ind = kri.vb.Index()
 			mesh.ind.init(data,false)
+			# deferred vertex push
+			vat = ProcessVertices(data,va)
+			rd.ent.mesh.vbo.Add(vat)
 		else:
 			# not debugged yet
 			for i in range(num):
-				va[i].pos 		= rd.getVector()
+				va[i].pos.Xyz	= rd.getVector()
 				va[i].rot.Xyz	= rd.getVector()
-				va[i].col		= rd.getColor()
+				va[i].col		= rd.bin.ReadUInt32()
 				for j in range(rd.getLong()):
 					tc = rd.getVec2()
 					va[i].tc = tc	if not j

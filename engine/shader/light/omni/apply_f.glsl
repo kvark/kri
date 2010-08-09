@@ -19,7 +19,7 @@ out vec4 rez_color;
 void main()	{
 	vec3 v_lit = normalize(v2lit);
 	vec3 v_cam = normalize(v2cam);
-	rez_color = vec4(1.0);
+	//rez_color = vec4(1.0); return;
 	
 	float intensity = lit_int * get_shadow();
 	if(intensity < 0.01) discard;

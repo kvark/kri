@@ -78,8 +78,7 @@ public class Color( tech.General ):
 				blend.add()
 				drawScene()
 		else:
-			OpenGL.GL.Disable( OpenGL.EnableCap.Blend )
-			OpenGL.GL.ColorMask(true,true,true,true)
+			con.ClearColor()
 			drawScene()
 
 
