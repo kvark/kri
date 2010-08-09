@@ -13,7 +13,8 @@ public class Targa( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.Texture]] ):
 		public descr	as byte
 		public def check() as bool:
 			return false	if magic[0] or magic[1] or magic[2]!=2
-			return false	if xrig + yrig or bits != 24 + descr
+			return false	if xrig + yrig
+			return false	if descr<bits and bits != 24+descr
 			return true
 
 	public def read(path as string) as kri.res.IGenerator[of kri.Texture]:	#imp: kri.res.ILoaderGen

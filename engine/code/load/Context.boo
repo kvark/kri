@@ -76,10 +76,10 @@ public class Context:
 		ml.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
 		ml.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
 
-	public def setMatTexture(mat as kri.Material, name as string, tex as kri.Texture) as void:
+	public def setMatTexture(mat as kri.Material, tex as kri.Texture) as void:
 		id = mat.unit.Count
 		un = kri.meta.AdUnit( Value:tex )
-		un.input = kri.meta.Hermit( Name:name, Shader:slib.tc_uv0 )
+		un.input = kri.meta.Hermit( Name:'uv0', Shader:slib.tc_uv0 )
 		mat.unit.Add(un)
 		me = mat.Meta['emissive']
 		md = mat.Meta['diffuse']

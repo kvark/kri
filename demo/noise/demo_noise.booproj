@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{05B8BDE6-806C-4D5A-8D13-04DB8F7A51D4}</ProjectGuid>
@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\opentk\Source\OpenTK\OpenTK.csproj">
-      <Project>{8D28B261-0000-0000-0000-000000000000}</Project>
+      <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\engine\engine.booproj">

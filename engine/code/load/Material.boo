@@ -10,6 +10,7 @@ import OpenTK.Graphics.OpenGL
 public class ExMaterial( kri.IExtension ):
 	public final limDict	= Dictionary[of string,callable(Reader) as Hermit]()
 	public final con		= Context()
+	public prefix	as string	= 'res'
 	
 	def kri.IExtension.attach(nt as Native) as void:
 		init()
@@ -195,7 +196,7 @@ public class ExMaterial( kri.IExtension ):
 	public def pmt_path(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		return false	if not u
-		path = 'res' + r.getString()
+		path = prefix + r.getString()
 		u.Value = r.res.load[of kri.Texture](path)
 		return u.Value != null
 
