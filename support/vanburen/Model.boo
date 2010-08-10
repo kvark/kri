@@ -12,12 +12,20 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		public final bin	as IO.BinaryReader
 		public final head	as Header
 		public final ent	= kri.Entity()
+		public final bones	= List[of kri.NodeBone]()
+		
 		public def constructor(path as string):
 			bin = IO.BinaryReader( IO.File.OpenRead(path) )
 			head = Header(self)
 		public def finish() as kri.Entity:
 			bin.Close()
 			return ent
+		public def makeSkeleton() as void:
+			tag = support.skin.Tag()
+			tag.skel = kri.Skeleton( null, bones.Count )
+			bones.CopyTo( tag.skel.bones )
+			ent.tags.Add(tag)
+		
 		public def getByte() as byte:
 			return bin.ReadByte()
 		public def getLong() as long:
@@ -80,6 +88,17 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		m.vbo.Add(v)
 		return true
 	
+	public static def QuatBasis(hand as single, ref a as Vector3, ref b as Vector3, ref c as Vector3) as Quaternion:
+		q = Quaternion()
+		q.W = Math.Sqrt(Math.Max(0f, hand +a.X +b.Y +c.Z))
+		q.X = Math.Sqrt(Math.Max(0f, hand +a.X -b.Y -c.Z))
+		q.Y = Math.Sqrt(Math.Max(0f, hand -a.X +b.Y -c.Z))
+		q.Z = Math.Sqrt(Math.Max(0f, hand -a.X -b.Y +c.Z))
+		q.X *= 0.5f * Math.Sign(c.Y-b.Z)
+		q.Y *= 0.5f * Math.Sign(a.Z-c.X)
+		q.Z *= 0.5f * Math.Sign(b.X-a.Y)
+		return Quaternion.Invert( Quaternion.Normalize(q) )
+	
 	public static def ProcessVertices(vin as (ushort), var as (Vertex)) as kri.vb.Attrib:
 		# prepare quaternions
 		tar = array[of Vector4]( var.Length )
@@ -109,11 +128,10 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			var[i].pos.W = hand = Math.Sign( tar[i].W )
 			tan = tar[i].Xyz
 			tan.Normalize()
-			no = var[i].rot.Xyz
-			bit = Vector3.Cross(no,tan) * hand
-			tan = Vector3.Cross(bit,no)
-			mx = Matrix4(Vector4(tan),Vector4(bit),Vector4(no),Vector4.UnitW)
-			#var[i].rot = mx.Quaternion
+			nor = Vector3.NormalizeFast( var[i].rot.Xyz )
+			bit = Vector3.Cross(nor,tan) * hand
+			tan = Vector3.Cross(bit,nor)
+			var[i].rot = QuatBasis(1f,tan,bit,nor)
 		# book-keeping
 		rez = kri.vb.Attrib()
 		ai = kri.vb.Info( size:4, integer:false,
@@ -139,6 +157,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		public globalScale	as single
 		public coordScale	as single
 		public coordName	as string
+		public texMod		as long
 		public def constructor(rd as Reader):
 			.sign = string( rd.bin.ReadChars(8) )
 			unk2 = rd.bin.ReadUInt16()
@@ -149,7 +168,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			rd.getByte()	#?
 			.coordName = rd.getString()
 			rd.getByte()	#?
-			rd.bin.ReadUInt32()	#?
+			texMod = rd.getLong()
 			unk2 = unk3 = 0
 
 	public static final Signature	= 'B3D 1.1 '
@@ -201,9 +220,12 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		return true
 
 	public def getNodes(rd as Reader) as bool:
-		rd.getByte()	#?
+		parent = rd.getByte()
+		parent = 0
 		name = rd.getString()
-		rd.ent.node = kri.Node(name)
+		n = kri.Node(name)
+		n.Parent = rd.ent.node
+		rd.ent.node = n
 		return true
 	
 	public def getFinish(rd as Reader) as bool:
@@ -219,10 +241,11 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		unk2 = rd.getByte()	#?
 		flag = rd.getByte()
 		if flag!=0:
-			sp.pos = rd.getVector()
+			sp.pos = rd.getVector()	#?
 			if flag==3: sp.rot = rd.getQuat()
 			if flag==2: sp.scale = rd.getReal()	#?
-		kri.NodeBone(name,sp)	#where to put?
+		bon = kri.NodeBone(name,sp)	#where to put?
+		rd.bones.Add(bon)
 		unk1 = unk2 = 0
 		return true
 
@@ -251,6 +274,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 				rd.getReal()
 			hasBones = rd.getByte()
 			if hasBones:
+				rd.makeSkeleton()
 				nb = rd.getLong()
 				ai = kri.vb.Info(
 					slot: kri.Ant.Inst.slotAttributes.getForced('skin'),
