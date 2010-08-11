@@ -2,9 +2,38 @@
 
 uniform sampler2D unit_wave;
 
+uniform struct Spatial	{
+	vec4 pos,rot;
+}s_lit;
+uniform vec4 lit_color, lit_data;
+
+
 noperspective in vec2 tex_coord;
 out vec4 rez_color;
 
+const vec4 mat_diffuse	= vec4(0.5,0.7,1.0,0.0);
+const vec4 mat_specular	= vec4(1.0);
+const float glossiness	= 150.0;
+
+
 void main()	{
-	rez_color = texture(unit_wave, tex_coord);
+	const ivec3 off = ivec3(-1,0,1);
+	float s11 = texture(unit_wave, tex_coord).x;
+	float s01 = textureOffset(unit_wave, tex_coord, off.xy).x;
+	float s21 = textureOffset(unit_wave, tex_coord, off.zy).x;
+	float s10 = textureOffset(unit_wave, tex_coord, off.yx).x;
+	float s12 = textureOffset(unit_wave, tex_coord, off.yz).x;
+	vec3 va = normalize(vec3(2.0,0.0,s21-s11));
+	vec3 vb = normalize(vec3(0.0,2.0,s12-s10));
+	vec4 bump = vec4( cross(va,vb), s11 );
+
+	vec3 pos = 2.0*vec3(tex_coord,0.0) - vec3(1.0);
+	vec3 to_lit = normalize(s_lit.pos.xyz), to_cam = -normalize(pos);
+	vec3 reflected = reflect(-to_lit, bump.xyz);
+	float diff = max(0.0, dot(bump.xyz, to_lit ));
+	float spec = max(0.0, dot(to_cam, reflected ));
+	float spow = pow(spec, glossiness);
+	vec4 color = lit_color * (diff * mat_diffuse + spow * mat_specular);
+
+	rez_color = color;
 }
