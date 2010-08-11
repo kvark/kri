@@ -32,11 +32,16 @@ def Main(argv as (string)):
 		view.cam.makeOrtho(1f)
 		view.scene.lights.Add( kri.Light() )
 		
+		con = Context()
+		con.setKernel(6,16)
+		win.core.anim = ac = kri.ani.Scheduler()
+		ac.add( Update(con) )
+		ac.add( Touch(win,con) )
+		
 		view.ren = rc = kri.rend.Chain()
-		rc.renders.Add( wat = Water() )
-		wat.setKernel(6,8)
+		rc.renders.Add( wat = Draw(con) )
 		wat.lit = kri.Light()
 		wat.lit.node = n = kri.Node('lit')
-		n.local.pos = Vector3(5f,3f,10f)
+		n.local.pos = Vector3(1f,2f,10f)
 		
 		win.Run(30.0,30.0)

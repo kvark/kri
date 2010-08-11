@@ -193,7 +193,7 @@ public class ExMaterial( kri.IExtension ):
 		bFilter	= r.getByte()>0	# linear filtering
 		# init sampler parameters, todo: use sampler object
 		assert u.Value
-		u.Value.setState(bRepeat,bFilter,bMipMap)
+		u.Value.setState( (0,1)[bRepeat], bFilter, bMipMap )
 		return true
 
 	#---	Texture: file path	---#

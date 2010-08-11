@@ -16,7 +16,22 @@ public class Frame:
 		mesh.draw(1)
 
 
-#--------- QUAD ---------#
+
+#---------	POINT	---------#
+
+public class Point( kri.Mesh ):
+	public def constructor():
+		super( BeginMode.Points )
+		.nVert = .nPoly = 1
+		vat = kri.vb.Attrib()
+		vat.init(1)
+		ai = kri.vb.Info( slot:kri.Ant.Inst.attribs.vertex,
+			size:1, type:VertexAttribPointerType.UnsignedByte )
+		vat.Semant.Add(ai)
+		vbo.Add(vat)
+
+
+#---------	QUAD	---------#
 
 public class Quad( kri.Mesh ):
 	public def constructor():
@@ -32,7 +47,6 @@ public class Quad( kri.Mesh ):
 			size:2, type:VertexAttribPointerType.HalfFloat )
 		vat.Semant.Add(ai)
 		vbo.Add(vat)
-
 
 
 #----	LINE OBJECT (-1,1)	----#

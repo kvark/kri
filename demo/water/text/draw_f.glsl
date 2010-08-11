@@ -1,6 +1,6 @@
 #version 130
 
-uniform sampler2D unit_wave;
+uniform sampler2D unit_wave, unit_kern;
 
 uniform struct Spatial	{
 	vec4 pos,rot;
@@ -14,11 +14,16 @@ out vec4 rez_color;
 const vec4 mat_diffuse	= vec4(0.5,0.7,1.0,0.0);
 const vec4 mat_specular	= vec4(1.0);
 const float glossiness	= 150.0;
+const float z_off = 1.0, z_scale = 1.0;
 
 
 void main()	{
 	const ivec3 off = ivec3(-1,0,1);
 	float s11 = texture(unit_wave, tex_coord).x;
+
+	//rez_color = vec4(texture(unit_kern,tex_coord)); return;
+	rez_color = vec4(s11); return;
+	
 	float s01 = textureOffset(unit_wave, tex_coord, off.xy).x;
 	float s21 = textureOffset(unit_wave, tex_coord, off.zy).x;
 	float s10 = textureOffset(unit_wave, tex_coord, off.yx).x;
@@ -26,8 +31,9 @@ void main()	{
 	vec3 va = normalize(vec3(2.0,0.0,s21-s11));
 	vec3 vb = normalize(vec3(0.0,2.0,s12-s10));
 	vec4 bump = vec4( cross(va,vb), s11 );
-
-	vec3 pos = 2.0*vec3(tex_coord,0.0) - vec3(1.0);
+	
+	float z = 0.5 - z_off - z_scale*s11;
+	vec3 pos = 2.0*vec3(tex_coord,z) - vec3(1.0);
 	vec3 to_lit = normalize(s_lit.pos.xyz), to_cam = -normalize(pos);
 	vec3 reflected = reflect(-to_lit, bump.xyz);
 	float diff = max(0.0, dot(bump.xyz, to_lit ));

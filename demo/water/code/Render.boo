@@ -1,33 +1,29 @@
 ﻿namespace demo.water
 
 import System
+import OpenTK
 import OpenTK.Graphics.OpenGL
 
-private class Water( kri.rend.Basic ):
-	private final buf	= kri.frame.Buffer()
-	private final pKern	= kri.shade.par.Texture('kern')
-	private final pWave	= kri.shade.par.Texture('wave')
-	private final sh_wave	= kri.shade.Smart()
-	private final sh_draw	= kri.shade.Smart()
-	public lit	as kri.Light	= null
-	private kernel	as byte		= 0
+
+private class Context:
+	public final buf	= kri.frame.Buffer()
+	public final tKernel	= kri.Texture( TextureTarget.Texture2D )
+	public final dict		= kri.shade.rep.Dict()
 	public final calc	= Calculator(10000,0.001f,1f)
 	private final G0	as single	= calc.gen({x| return 1f})
+	private kernel		as byte		= 0
 	
 	public def constructor():
-		pKern.Value = kri.Texture( TextureTarget.Texture2D )
 		# buffer attachments
-		for i in range(2):
+		border = (of single: 0.5f,0.5f,0.5f,0.5f)
+		for i in range(3):
 			t = buf.emit(i, PixelInternalFormat.R8 )
-			t.setState(false,false,false)
-		# shaders
-		d = kri.shade.rep.Dict()
-		d.unit(pKern,pWave)
-		sh_wave.add('/copy_v','text/wave_f')
-		sh_draw.add('/copy_v','text/draw_f')
-		for sh in (sh_wave,sh_draw):
-			sh.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
-			
+			t.setState(-1,false,false)
+			GL.TexParameter( t.target, TextureParameterName.TextureBorderColor, border )
+	
+	public def isReady() as bool:
+		return kernel != 0
+	
 	public def setKernel(val as byte, bits as byte) as void:
 		ig0 = 1f / G0
 		val += 1
@@ -42,11 +38,88 @@ private class Water( kri.rend.Basic ):
 				data[y*val+x] = data[x*val+y]
 		# upload to GPU
 		kernel = val
-		pKern.Value.setState(false,false,false)
+		tKernel.setState(-1,false,false)
 		pif = (PixelInternalFormat.Alpha, PixelInternalFormat.R8,
 			PixelInternalFormat.R16)[bits>>3]
-		GL.TexImage2D( pKern.Value.target, 0, pif,
+		GL.TexImage2D( tKernel.target, 0, pif,
 			val,val,0,	PixelFormat.Red, PixelType.Float, data)
+
+
+
+private class Update( kri.ani.Delta ):
+	private final pPrev = kri.shade.par.Texture('prev')
+	private final pKern	= kri.shade.par.Texture('kern')
+	private final pWave	= kri.shade.par.Texture('wave')
+	private final sa	= kri.shade.Smart()
+	private final buf	as kri.frame.Buffer
+	private cur	as byte = 0
+	
+	public def constructor(con as Context):
+		buf = con.buf
+		pKern.Value = con.tKernel
+		assert con.isReady()
+		# shaders
+		con.dict.unit(pPrev,pKern,pWave)
+		sa.add('/copy_v','text/wave_f')
+		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
+	
+	protected override def onDelta(delta as double) as uint:
+		return 0 if	not buf.Width
+		GL.Disable( EnableCap.DepthTest )
+		if not buf.mask:
+			cur = 0
+			pPrev.Value = buf.A[1].Tex
+			pWave.Value = buf.A[2].Tex
+			buf.activate(7)
+			kri.rend.Context.ClearColor( Graphics.Color4.Gray )
+		cur = (cur+1)%3
+		# update height
+		buf.activate(1<<cur)
+		sa.use()
+		kri.Ant.Inst.quad.draw()
+		pPrev.Value = pWave.Value
+		pWave.Value = buf.A[cur].Tex
+		#buf.init(0,0)
+		return 0
+
+
+
+public class Touch( kri.ani.IBase ):
+	public final point	= kri.gen.Frame( kri.gen.Point() )
+	private	final sa	= kri.shade.Smart()
+	private final win	as kri.Window
+	private final buf	as kri.frame.Buffer
+	private final pPos	= kri.shade.par.Value[of Vector4]('mouse_pos')
+	
+	public def constructor(kw as kri.Window, con as Context):
+		win = kw
+		buf = con.buf
+		con.dict.var(pPos)
+		sa.add('text/touch_v','text/touch_f')
+		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
+	
+	def kri.ani.IBase.onFrame(time as double) as uint:
+		return 0	if not win.Mouse.Item[Input.MouseButton.Left]
+		pPos.Value.Xyz = win.PointerNdc
+		GL.Disable( EnableCap.DepthTest )
+		buf.activate()
+		sa.use()
+		using kri.Section( EnableCap.VertexProgramPointSize ):
+			using blend = kri.Blender():
+				blend.add()
+				point.draw()
+
+
+public class Draw( kri.rend.Basic ):
+	private	final sa	= kri.shade.Smart()
+	private final buf	as kri.frame.Buffer
+	public	final anim	as Update
+	public	lit			as kri.Light	= null
+	
+	public def constructor(con as Context):
+		buf = con.buf
+		sa.add('/copy_v','text/draw_f')
+		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.mask = 0
@@ -55,19 +128,7 @@ private class Water( kri.rend.Basic ):
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:
-		assert kernel
 		kri.Ant.Inst.params.activate(lit)
-		con.DepthTest = false
-		if not buf.mask:
-			buf.activate(1)
-			con.ClearColor()
-		pWave.Value = buf.A[ buf.mask-1 ].Tex
-		# update height
-		buf.mask ^= 3
-		buf.activate()
-		sh_wave.use()
-		kri.Ant.Inst.quad.draw()
-		# draw to screen
 		con.activate()
-		sh_draw.use()
+		sa.use()
 		kri.Ant.Inst.quad.draw()

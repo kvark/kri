@@ -300,7 +300,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 					continue	if not unk5
 					zone = rd.getString()
 					tex = res.load[of kri.Texture]( pathPrefix+zone )
-					tex.setState(false,true,true)
+					tex.setState(0,true,true)
 					con.setMatTexture( tm.mat, tex )
 					unk5 = rd.getLong()
 					for k in range(unk5):
