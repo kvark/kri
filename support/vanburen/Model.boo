@@ -175,10 +175,6 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 	public final con	as kri.load.Context
 	public final res	= kri.res.Manager()
 	public pathPrefix	as string	= 'res/'
-	# unknown vertex attributes
-	public final at_un1	= kri.Ant.Inst.slotAttributes.create('un1')
-	public final at_un2	= kri.Ant.Inst.slotAttributes.create('un2')
-	public final at_un3	= kri.Ant.Inst.slotAttributes.create('un3')
 
 
 	public def getMaterials(rd as Reader) as bool:

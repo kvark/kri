@@ -35,7 +35,7 @@ public class Buffer(Screen):
 		texTarget = tg
 	
 	public def constructor():
-		self(0, TextureTarget.Texture1D )
+		self(0, TextureTarget.Texture2D )
 			
 	def destructor():
 		tmp = Extract
@@ -95,6 +95,7 @@ public class Buffer(Screen):
 		for a in at:
 			continue	if not a.Tex
 			a.Tex.bind()
+			a.dFormat.clean()
 			kri.Texture.InitMulti( a.Format, samples,fixedSampleLoc, Width,Height,0 )
 	public def resizeFrames(nsam as byte) as void:
 		samples = nsam
