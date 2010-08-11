@@ -114,7 +114,7 @@ public class Texture( shade.par.INamed ):
 	public def setState(wrap as int, filt as bool, mips as bool) as void:
 		bind()
 		wm = (TextureWrapMode.MirroredRepeat, TextureWrapMode.ClampToBorder,
-			TextureWrapMode.Repeat)[wrap-1]
+			TextureWrapMode.Repeat)[wrap+1]
 		Wrap(wm,2)
 		Filter(filt,mips)
 		GenLevels()	if mips

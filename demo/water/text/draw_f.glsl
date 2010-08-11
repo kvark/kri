@@ -15,6 +15,7 @@ const vec4 mat_diffuse	= vec4(0.5,0.7,1.0,0.0);
 const vec4 mat_specular	= vec4(1.0);
 const float glossiness	= 150.0;
 const float z_off = 1.0, z_scale = 1.0;
+const vec2 size = vec2(2.0,0.0);
 
 
 void main()	{
@@ -22,14 +23,14 @@ void main()	{
 	float s11 = texture(unit_wave, tex_coord).x;
 
 	//rez_color = vec4(texture(unit_kern,tex_coord)); return;
-	rez_color = vec4(s11); return;
+	//rez_color = vec4(s11+0.5); return;
 	
 	float s01 = textureOffset(unit_wave, tex_coord, off.xy).x;
 	float s21 = textureOffset(unit_wave, tex_coord, off.zy).x;
 	float s10 = textureOffset(unit_wave, tex_coord, off.yx).x;
 	float s12 = textureOffset(unit_wave, tex_coord, off.yz).x;
-	vec3 va = normalize(vec3(2.0,0.0,s21-s11));
-	vec3 vb = normalize(vec3(0.0,2.0,s12-s10));
+	vec3 va = normalize(vec3(size.xy,s21-s11));
+	vec3 vb = normalize(vec3(size.yx,s12-s10));
 	vec4 bump = vec4( cross(va,vb), s11 );
 	
 	float z = 0.5 - z_off - z_scale*s11;

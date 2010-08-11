@@ -15,10 +15,10 @@ private class Context:
 	
 	public def constructor():
 		# buffer attachments
-		border = (of single: 0.5f,0.5f,0.5f,0.5f)
+		border = (of single: 0f,0f,0f,0f)
 		for i in range(3):
-			t = buf.emit(i, PixelInternalFormat.R8 )
-			t.setState(-1,false,false)
+			t = buf.emit(i, PixelInternalFormat.R16f )
+			t.setState(0,false,false)
 			GL.TexParameter( t.target, TextureParameterName.TextureBorderColor, border )
 	
 	public def isReady() as bool:
@@ -71,7 +71,7 @@ private class Update( kri.ani.Delta ):
 			pPrev.Value = buf.A[1].Tex
 			pWave.Value = buf.A[2].Tex
 			buf.activate(7)
-			kri.rend.Context.ClearColor( Graphics.Color4.Gray )
+			kri.rend.Context.ClearColor( Graphics.Color4.Black )
 		cur = (cur+1)%3
 		# update height
 		buf.activate(1<<cur)
@@ -104,10 +104,10 @@ public class Touch( kri.ani.IBase ):
 		GL.Disable( EnableCap.DepthTest )
 		buf.activate()
 		sa.use()
-		using kri.Section( EnableCap.VertexProgramPointSize ):
-			using blend = kri.Blender():
-				blend.add()
-				point.draw()
+		GL.PointSize(100f)
+		using blend = kri.Blender():
+			blend.add()
+			point.draw()
 
 
 public class Draw( kri.rend.Basic ):
