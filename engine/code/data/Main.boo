@@ -1,4 +1,4 @@
-﻿namespace kri.res
+﻿namespace kri.data
 
 import System
 import System.Collections.Generic

@@ -40,6 +40,7 @@
     <Compile Include="Bessel.boo" />
     <Compile Include="Main.boo" />
     <Compile Include="Render.boo" />
+    <Compile Include="Town.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\opentk\Source\OpenTK\OpenTK.csproj">

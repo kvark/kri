@@ -114,9 +114,13 @@ public class Draw( kri.rend.Basic ):
 	private	final sa	= kri.shade.Smart()
 	private final buf	as kri.frame.Buffer
 	public	final anim	as Update
+	public final pTownTex	= kri.shade.par.Texture('town')
+	public final pTownPos	= kri.shade.par.Value[of Vector4]('town_pos')
 	public	lit			as kri.Light	= null
 	
 	public def constructor(con as Context):
+		con.dict.unit(pTownTex)
+		con.dict.var(pTownPos)
 		buf = con.buf
 		sa.add('/copy_v','text/draw_f')
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )

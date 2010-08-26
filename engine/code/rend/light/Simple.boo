@@ -69,7 +69,7 @@ public class Apply( kri.rend.tech.Meta ):
 		shadow = 'variance'		if lc.type == LiType.VARIANCE
 		super('lit.apply', false, null, *kri.load.Meta.LightSet)
 		
-		sh_shadow = kri.Ant.Inst.resMan.load[of kri.shade.Object]( "/light/shadow/${shadow}_f" )
+		sh_shadow = kri.Ant.Inst.dataMan.load[of kri.shade.Object]( "/light/shadow/${shadow}_f" )
 		shobs.Add(sh_shadow)
 		shade(('/light/apply_v','/light/apply_f','/light/common_f'))
 

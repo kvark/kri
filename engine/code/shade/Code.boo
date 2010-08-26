@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 //		BASIC OBJECT LOADER			//
 //----------------------------------//
 
-public class Loader( kri.res.ILoaderGen[of Object] ):
+public class Loader( kri.data.ILoaderGen[of Object] ):
 	public def read(path as string) as Object:	#imp: kri.res.ILoaderGen
 		text = Code.Read(path)
 		type = Object.Type(path)
@@ -37,7 +37,7 @@ public class Code(ICode):
 		if name.StartsWith('/'):
 			name = Folder + name
 		name += '.glsl'
-		kri.res.Manager.Check(name)
+		kri.data.Manager.Check(name)
 		return File.OpenText(name).ReadToEnd()
 
 	[Getter(Text)]

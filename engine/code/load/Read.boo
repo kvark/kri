@@ -8,7 +8,7 @@ import OpenTK.Graphics
 public class Reader:
 	public final at		as Atom
 	public final bin	as IO.BinaryReader
-	public final res	as kri.res.Manager
+	public final data	as kri.data.Manager
 
 
 	#---------	NODE RESOLVING IN A POST-PROCESS	---------#
@@ -25,10 +25,10 @@ public class Reader:
 
 	#---------	CREATION	---------#
 	
-	public def constructor(path as string, resMan as kri.res.Manager):
+	public def constructor(path as string, dataMan as kri.data.Manager):
 		.at = Atom(path)
 		.bin = IO.BinaryReader( IO.File.OpenRead(path) )
-		.res = resMan
+		.data = dataMan
 	
 	public def finish() as Atom:
 		for nr in nodeResolve:

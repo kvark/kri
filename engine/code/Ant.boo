@@ -124,7 +124,7 @@ public class Ant(IDisposable):
 	public final extensions	= List[of IExtension]()
 	public final loaders	as load.Standard
 	# resource manager
-	public final resMan		= res.Manager()
+	public final dataMan		= data.Manager()
 	# main uniform dictionary
 	public final dict		= shade.rep.Dict()
 	# libraries
@@ -153,8 +153,8 @@ public class Ant(IDisposable):
 		quad = kri.gen.Frame( kri.gen.Quad() )
 		
 		# shader library init
-		resMan.register( shade.Loader() )
-		libShaders = List[of shade.Object]( resMan.load[of shade.Object]('/lib/'+str)
+		dataMan.register( shade.Loader() )
+		libShaders = List[of shade.Object]( dataMan.load[of shade.Object]('/lib/'+str)
 			for str in ('quat_v','tool_v','orient_v','fixed_v','math_f')).ToArray()
 		# extensions init
 		loaders = load.Standard()
@@ -162,7 +162,7 @@ public class Ant(IDisposable):
 		
 	def IDisposable.Dispose() as void:
 		inst = null
-		resMan.clear()
+		dataMan.clear()
 		extensions.Clear()
 		sw.Stop()
 

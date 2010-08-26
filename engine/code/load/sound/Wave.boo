@@ -1,8 +1,9 @@
 ﻿namespace kri.load.sound
 
 import System.IO
+import kri.data
 
-public class Wave( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.sound.Buffer]] ):
+public class Wave( ILoaderGen[of IGenerator[of kri.sound.Buffer]] ):
 	private struct Header:
 		public audioFormat	as ushort
 		public numChannels	as ushort
@@ -13,7 +14,7 @@ public class Wave( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.sound.Buffer]
 		public def check() as bool:
 			return numChannels * sampleBits * sampleRate == 8 * byteRate
 
-	public def read(path as string) as kri.res.IGenerator[of kri.sound.Buffer]:	#imp: kri.res.ILoaderGen
+	public def read(path as string) as IGenerator[of kri.sound.Buffer]:	#imp: ILoaderGen
 		using br = BinaryReader( File.OpenRead(path) ):
 			signature = string(br.ReadChars(4))
 			assert signature == 'RIFF'

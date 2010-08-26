@@ -106,8 +106,8 @@
     <Compile Include="code\rend\tech\Main.boo" />
     <Compile Include="code\rend\Tool.boo" />
     <Compile Include="code\rend\Manager.boo" />
-    <Compile Include="code\res\Main.boo" />
-    <Compile Include="code\res\Switch.boo" />
+    <Compile Include="code\data\Main.boo" />
+    <Compile Include="code\data\Switch.boo" />
     <Compile Include="code\shade\Code.boo" />
     <Compile Include="code\shade\Linker.boo" />
     <Compile Include="code\shade\Smart.boo" />

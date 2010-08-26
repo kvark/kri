@@ -4,7 +4,7 @@ import OpenTK.Graphics.OpenGL
 
 #------		BASIC RGBA IMAGE		------#
 
-public class Basic( kri.res.IGenerator[of kri.Texture] ):
+public class Basic( kri.data.IGenerator[of kri.Texture] ):
 	public final name	as string
 	public final width	as uint
 	public final height	as uint

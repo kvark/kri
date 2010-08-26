@@ -50,7 +50,7 @@ public class Bake( kri.rend.Basic ):
 		d.unit(pVert,pQuat)
 		# init shader
 		ant = kri.Ant.Inst
-		com = ant.resMan.load[of kri.shade.Object]('/part/fur/base/main_v')
+		com = ant.dataMan.load[of kri.shade.Object]('/part/fur/base/main_v')
 		s_face.add('/lib/quat_v','/part/fur/base/face_v')
 		s_vert.add('/lib/quat_v','/part/fur/base/vert_v')
 		for sa in s_face,s_vert:

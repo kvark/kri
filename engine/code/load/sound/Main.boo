@@ -4,7 +4,7 @@ import OpenTK.Audio.OpenAL
 
 #------		BASIC WAVE 		------#
 
-public class Basic( kri.res.IGenerator[of kri.sound.Buffer] ):
+public class Basic( kri.data.IGenerator[of kri.sound.Buffer] ):
 	public final channels	as int
 	public final bits		as int
 	public final rate		as int

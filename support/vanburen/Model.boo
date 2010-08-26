@@ -7,7 +7,7 @@ import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
 
-public class Model( kri.res.ILoaderGen[of kri.Entity] ):
+public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 	public class Reader:
 		public final bin	as IO.BinaryReader
 		public final head	as Header
@@ -173,7 +173,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 
 	public static final Signature	= 'B3D 1.1 '
 	public final con	as kri.load.Context
-	public final res	= kri.res.Manager()
+	public final data	= kri.data.Manager()
 	public pathPrefix	as string	= 'res/'
 
 
@@ -210,7 +210,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 		file	= rd.getString()
 		wid		= rd.getLong()
 		het		= rd.getLong()
-		res.load[of kri.Texture]( pathPrefix+file )
+		data.load[of kri.Texture]( pathPrefix+file )
 		name = null
 		wid = het
 		return true
@@ -299,7 +299,7 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 					unk5 = rd.getLong()
 					continue	if not unk5
 					zone = rd.getString()
-					tex = res.load[of kri.Texture]( pathPrefix+zone )
+					tex = data.load[of kri.Texture]( pathPrefix+zone )
 					tex.setState(0,true,true)
 					con.setMatTexture( tm.mat, tex )
 					unk5 = rd.getLong()
@@ -319,14 +319,14 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 			for i in range(nmat):
 				rd.getLong()	#mat vertex num?
 			# read indices
-			data = array[of ushort](sum)
+			dar = array[of ushort](sum)
 			for i in range(sum):
-				data[i] = rd.bin.ReadUInt16()
+				dar[i] = rd.bin.ReadUInt16()
 			mesh.nPoly = sum / 3
 			mesh.ind = kri.vb.Index()
-			mesh.ind.init(data,false)
+			mesh.ind.init(dar,false)
 			# deferred vertex push
-			vat = ProcessVertices(data,va)
+			vat = ProcessVertices(dar,va)
 			rd.ent.mesh.vbo.Add(vat)
 		else:
 			# not debugged yet
@@ -356,12 +356,12 @@ public class Model( kri.res.ILoaderGen[of kri.Entity] ):
 
 	public def constructor(lc as kri.load.Context):
 		con = lc
-		swImage	= kri.res.Switch[of kri.Texture]()
+		swImage	= kri.data.Switch[of kri.Texture]()
 		swImage.ext['.tga'] = kri.load.image.Targa()
-		res.register(swImage)
+		data.register(swImage)
 
 	public def read(path as string) as kri.Entity:	#imp: kri.res.ILoaderGen
-		kri.res.Manager.Check(path)
+		kri.data.Manager.Check(path)
 		rd = Reader(path)
 		assert rd.head.sign == Signature
 		port = Dictionary[of byte,callable(Reader) as bool]()

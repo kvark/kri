@@ -29,7 +29,7 @@ public class Object:
 		return rez
 	
 	public static def Load(path as string) as Object:
-		return kri.Ant.Inst.resMan.load[of Object](path)
+		return kri.Ant.Inst.dataMan.load[of Object](path)
 
 	# create from source
 	public def constructor(tip as ShaderType, label as string, text as string):

@@ -65,7 +65,7 @@ public static class Bessel:
 		return (p1 / q1)
 	
 	private def Asympt0(x as double, ref pzero as double, ref qzero as double) as void:
-		xsq = 64.0 / (x*x)
+		xsq = 64.0 / x / x
 		p2 = 0.0
 		p2 = 2485.271928957404011288128951	+xsq*p2
 		p2 = 153982.6532623911470917825993	+xsq*p2

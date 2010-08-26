@@ -26,13 +26,13 @@ public class Atom:
 
 #------		NATIVE LOADER		------#
 
-public class Native( kri.res.ILoaderGen[of Atom] ):
+public class Native( kri.data.ILoaderGen[of Atom] ):
 	public final readers	= Dictionary[of string,callable(Reader) as bool]()
 	public final skipped	= Dictionary[of string,uint]()
-	public final resMan		= kri.res.Manager()
+	public final resMan		= kri.data.Manager()
 	
-	public final swImage	= kri.res.Switch[of kri.Texture]()
-	public final swSound	= kri.res.Switch[of kri.sound.Buffer]()
+	public final swImage	= kri.data.Switch[of kri.Texture]()
+	public final swSound	= kri.data.Switch[of kri.sound.Buffer]()
 	
 	public def constructor():
 		swImage.ext['.tga'] = image.Targa()
@@ -46,7 +46,7 @@ public class Native( kri.res.ILoaderGen[of Atom] ):
 			ext.attach(self)
 
 	public def read(path as string) as Atom:	#imp: kri.res.ILoaderGen
-		kri.res.Manager.Check(path)
+		kri.data.Manager.Check(path)
 		rd = Reader(path,resMan)
 		bs = rd.bin.BaseStream
 		while bs.Position != bs.Length:

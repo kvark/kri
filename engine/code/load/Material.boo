@@ -201,7 +201,7 @@ public class ExMaterial( kri.IExtension ):
 		u = r.geData[of AdUnit]()
 		return false	if not u
 		path = prefix + r.getString()
-		u.Value = r.res.load[of kri.Texture](path)
+		u.Value = r.data.load[of kri.Texture](path)
 		return u.Value != null
 
 	#---	Texture: sequence	---#

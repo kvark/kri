@@ -7,6 +7,7 @@ noperspective in vec2 tex_coord;
 out float next;
 const float level = 0.0;
 
+
 vec2 delta_kern = vec2(1.0) / textureSize(unit_kern,0);
 vec2 delta_wave = vec2(1.0) / textureSize(unit_wave,0);
 
@@ -23,24 +24,62 @@ float sample(const int k, const int l)	{
 	return g*h;
 }
 
+float get_conv1(float wave)	{
+	const int P = 6;
+	float rez = wave;
+	for(int y=1; y<=P; ++y)
+		rez += 0.5 * (sample(0,y) + sample(y,0));
+	for(int x=1; x<=P; ++x)	{
+		for(int y=x+1; y<P; ++y)
+			rez += sample(x,y) + sample(y,x);
+		rez += sample(x,x);
+	}
+	return rez;
+}
 
-const float alpha = 2.0, grav = 9.81;
+float get_conv2(float wave)	{
+	const int P = 4;
+	float rez = 0.0;
+	for(int y=-P; y<=P; ++y)	{
+		for(int x=-P; x<=P; ++x)	{
+			float g = texture(unit_kern, vec2(x,y)*delta_kern ).x;
+			float h = texture(unit_wave, tex_coord + vec2(x,y)*delta_wave ).x - level;
+			rez += g*h;
+		}
+	}
+	return rez;
+}
 
-void main()	{
+float get_advanced()	{
 	float prev = texture(unit_prev, tex_coord).x - level;
 	float wave = texture(unit_wave, tex_coord).x - level;
 
-	const int P = 6;
-	float conv = wave;
-	for(int y=1; y<=P; ++y)
-		conv += 0.5 * (sample(0,y) + sample(y,0));
-	for(int x=1; x<=P; ++x)	{
-		for(int y=x+1; y<P; ++y)
-			conv += sample(x,y) + sample(y,x);
-		conv += sample(x,x);
-	}
+	//return level + 0.99*(0.29*conv - prev);
+	float conv = get_conv2(wave);
 
+	const float alpha = 0.5, grav = -0.81;
 	float dt = cur_time.y;
 	float cur = wave * (2.0-alpha*dt) - prev - grav*dt*dt*conv;
-	next = level + cur / (1.0 + alpha * dt);
+	return level + cur / (1.0 + alpha * dt);
+}
+
+float get_simple()	{
+	const float decay = 0.97;
+	return level + decay * (0.5*(
+		textureOffset(unit_wave, tex_coord, ivec2(1,0)	).x+
+		textureOffset(unit_wave, tex_coord, ivec2(-1,0)	).x+
+		textureOffset(unit_wave, tex_coord, ivec2(0,1)	).x+
+		textureOffset(unit_wave, tex_coord, ivec2(0,-1)	).x
+		)-    texture(unit_prev, tex_coord).x - level);
+}
+
+float get_simple2()	{
+	const float decay = 0.95;
+	return level + decay * (
+		0.37*(sample(0,1) + sample(1,0)) -
+		texture(unit_prev, tex_coord).x + level);
+}
+
+void main()	{
+	next = get_simple();
 }

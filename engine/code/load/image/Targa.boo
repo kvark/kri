@@ -1,8 +1,9 @@
 ﻿namespace kri.load.image
 
 import System.IO
+import kri.data
 
-public class Targa( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.Texture]] ):
+public class Targa( ILoaderGen[of IGenerator[of kri.Texture]] ):
 	private struct Header:
 		public magic	as (byte)
 		public xrig		as ushort
@@ -17,7 +18,7 @@ public class Targa( kri.res.ILoaderGen[of kri.res.IGenerator[of kri.Texture]] ):
 			return false	if descr<bits and bits != 24+descr
 			return true
 
-	public def read(path as string) as kri.res.IGenerator[of kri.Texture]:	#imp: kri.res.ILoaderGen
+	public def read(path as string) as IGenerator[of kri.Texture]:	#imp: ILoaderGen
 		br = BinaryReader( File.OpenRead(path) )	
 		hd = Header(
 			magic	: br.ReadBytes(8),
