@@ -2,7 +2,8 @@
 //Interactive Water Surfaces
 //Jerry Tessendorf – Rhythm and Hues Studios
 
-uniform sampler2D unit_prev, unit_kern, unit_wave;
+uniform sampler1D unit_kern;
+uniform sampler2D unit_prev, unit_wave;
 uniform vec4 cur_time, wave_con;	//X=alpha, Y=grav
 
 noperspective in vec2 tex_coord;
@@ -10,12 +11,24 @@ out float next;
 const float level = 0.0;
 
 
-vec2 delta_kern = vec2(1.0) / textureSize(unit_kern,0);
+//----------------------//
+//	FUTURISTIC	//
+
+float get_future()	{
+	vec2 wave = texture(unit_wave, tex_coord).xy - vec2(level);
+	return 1.0;
+}
+
+
+//----------------------//
+//	ADVANCED	//
+
+float delta_kern = 1.0 / textureSize(unit_kern,0);
 vec2 delta_wave = vec2(1.0) / textureSize(unit_wave,0);
 
 
 float sample(const int k, const int l)	{
-	vec2 ov = vec2(k+0.5,l+0.5)* delta_kern;
+	float ov = (k*k+l*l+0.5) * delta_kern;
 	vec4 off = vec4(k,l,-k,-l) * delta_wave.xyxy;
 	float g = texture(unit_kern,ov).x;
 	float h = -4.0*level +
@@ -44,7 +57,7 @@ float get_conv2(float wave)	{
 	float rez = 0.0;
 	for(int y=-P; y<=P; ++y)	{
 		for(int x=-P; x<=P; ++x)	{
-			float g = texture(unit_kern, (abs(vec2(x,y))+vec2(0.5))*delta_kern ).x;
+			float g = texture(unit_kern, (x*x+y*y+0.5)*delta_kern ).x;
 			float h = texture(unit_wave, tex_coord + vec2(x,y)*delta_wave ).x - level;
 			rez += g*h;
 		}
@@ -63,6 +76,10 @@ float get_advanced()	{
 	return level + cur / (1.0 + alpha * dt);
 }
 
+
+//----------------------//
+//	SIMPLE		//
+
 float get_simple()	{
 	const float decay = 0.97;
 	return level + decay * (0.5*(
@@ -79,6 +96,9 @@ float get_simple2()	{
 		0.37*(sample(0,1) + sample(1,0)) -
 		texture(unit_prev, tex_coord).x + level);
 }
+
+//----------------------//
+//	MAIN		//
 
 void main()	{
 	//next = level + texture(unit_kern, tex_coord).x;

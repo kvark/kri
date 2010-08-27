@@ -7,37 +7,33 @@ import OpenTK.Graphics.OpenGL
 
 private class Context:
 	public final buf	= kri.frame.Buffer()
-	public final tKernel	= kri.Texture( TextureTarget.Texture2D )
+	public final tKernel	= kri.Texture( TextureTarget.Texture1D )
 	public final dict		= kri.shade.rep.Dict()
 	public final calc	= Calculator(10000,0.001f,1f)
 	private final G0	as single	= calc.gen({x| return 1f})
-	private kernel		as byte		= 0
+	public final kernel	as byte
 	
-	public def constructor():
+	public def constructor(ord as byte):
 		# buffer attachments
 		border = (of single: 0f,0f,0f,0f)
 		for i in range(3):
 			t = buf.emit(i, PixelInternalFormat.R16f )
 			t.setState(-1,false,false)
 			GL.TexParameter( t.target, TextureParameterName.TextureBorderColor, border )
+		kernel = ord
+		setKernel(ord)
 	
-	public def isReady() as bool:
-		return kernel != 0
-	
-	public def setKernel(order as byte) as void:
+	private def setKernel(order as byte) as void:
 		ig0 = 1f / G0
-		data = array[of single](order*order)
-		for x in range(0,order):
-			for y in range(0,x+1):
-				r = Math.Sqrt( x*x+y*y )
-				val = calc.gen() do(qn as single):
-					return Bessel.J0(r*qn) * ig0
-				data[y*order+x] = data[x*order+y] = val
+		data = array[of single]( 2f*order*order+1 )
+		for r2 in range(data.Length):
+			r = Math.Sqrt(r2)
+			data[r2] = calc.gen() do(qn as single):
+				return Bessel.J0(r*qn) * ig0
 		# upload to GPU
-		kernel = order
 		tKernel.setState(-1,false,false)
-		GL.TexImage2D( tKernel.target, 0, PixelInternalFormat.R16f,
-			order,order,0,	PixelFormat.Red, PixelType.Float, data)
+		GL.TexImage1D( tKernel.target, 0, PixelInternalFormat.R16f,
+			data.Length,0,	PixelFormat.Red, PixelType.Float, data)
 
 
 
@@ -56,7 +52,6 @@ private class Update( kri.ani.Delta ):
 		kb = win.Keyboard
 		pKern.Value = con.tKernel
 		pCon.Value = Vector4( 0.3f, 9.81f, 0f,0f )
-		assert con.isReady()
 		# shaders
 		con.dict.unit(pPrev,pKern,pWave)
 		con.dict.var(pCon)
