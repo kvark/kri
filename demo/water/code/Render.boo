@@ -16,8 +16,8 @@ private class Context:
 	public def constructor(ord as byte):
 		# buffer attachments
 		border = (of single: 0f,0f,0f,0f)
-		for i in range(3):
-			t = buf.emit(i, PixelInternalFormat.R16f )
+		for i in range(2):
+			t = buf.emit(i, PixelInternalFormat.Rg16f )
 			t.setState(-1,false,false)
 			GL.TexParameter( t.target, TextureParameterName.TextureBorderColor, border )
 		kernel = ord
@@ -38,14 +38,12 @@ private class Context:
 
 
 private class Update( kri.ani.Delta ):
-	private final pPrev = kri.shade.par.Texture('prev')
 	private final pKern	= kri.shade.par.Texture('kern')
 	private final pWave	= kri.shade.par.Texture('wave')
 	private final pCon	= kri.shade.par.Value[of Vector4]('wave_con')
 	private final sa	= kri.shade.Smart()
 	private final buf	as kri.frame.Buffer
 	private final kb	as Input.KeyboardDevice
-	private cur	as byte = 0
 	
 	public def constructor(con as Context, win as kri.Window):
 		buf = con.buf
@@ -53,7 +51,7 @@ private class Update( kri.ani.Delta ):
 		pKern.Value = con.tKernel
 		pCon.Value = Vector4( 0.3f, 9.81f, 0f,0f )
 		# shaders
-		con.dict.unit(pPrev,pKern,pWave)
+		con.dict.unit(pKern,pWave)
 		con.dict.var(pCon)
 		sa.add('/copy_v','text/wave_f')
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
@@ -66,18 +64,14 @@ private class Update( kri.ani.Delta ):
 		if kb[Input.Key.S]:	pCon.Value.Y += 1.0f
 		GL.Disable( EnableCap.DepthTest )
 		if not buf.mask:
-			cur = 0
-			pPrev.Value = buf.A[1].Tex
-			pWave.Value = buf.A[2].Tex
-			buf.activate(7)
+			buf.activate(1)
 			kri.rend.Context.ClearColor( Graphics.Color4.Black )
-		cur = (cur+1)%3
 		# update height
-		buf.activate(1<<cur)
+		pWave.Value = buf.A[buf.mask-1].Tex
+		buf.mask ^= 3
+		buf.activate()
 		sa.use()
 		kri.Ant.Inst.quad.draw()
-		pPrev.Value = pWave.Value
-		pWave.Value = buf.A[cur].Tex
 		return 0
 
 

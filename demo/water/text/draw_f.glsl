@@ -21,10 +21,11 @@ const vec2 size = vec2(2.0,0.0);
 
 void main()	{
 	const ivec3 off = ivec3(-1,0,1);
-	float s11 = texture(unit_wave, tex_coord).x;
+	vec4 wave = texture(unit_wave, tex_coord);
+	float s11 = wave.x;
 
 	//rez_color = vec4(texture(unit_kern,tex_coord)); return;
-	//rez_color = vec4(s11+0.5); return;
+	rez_color = vec4(s11+0.5); return;
 	
 	float s01 = textureOffset(unit_wave, tex_coord, off.xy).x;
 	float s21 = textureOffset(unit_wave, tex_coord, off.zy).x;
