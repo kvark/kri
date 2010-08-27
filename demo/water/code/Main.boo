@@ -66,10 +66,10 @@ def Main(argv as (string)):
 			view.scene.entities.AddRange((t0,t1))
 		
 		con = Context()
-		con.setKernel(6,16)
+		con.setKernel(7)
 		win.core.anim = ac = kri.ani.Scheduler()
 		#ac.add( kri.ani.ControlMouse( win.Mouse, node, 0.01f ))
-		utouch = Update(con)
+		utouch = Update(con,win)
 		ac.add( utouch )
 		ac.add( Touch(win,con) )
 		

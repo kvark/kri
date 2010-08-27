@@ -18,31 +18,26 @@ private class Context:
 		border = (of single: 0f,0f,0f,0f)
 		for i in range(3):
 			t = buf.emit(i, PixelInternalFormat.R16f )
-			t.setState(0,false,false)
+			t.setState(-1,false,false)
 			GL.TexParameter( t.target, TextureParameterName.TextureBorderColor, border )
 	
 	public def isReady() as bool:
 		return kernel != 0
 	
-	public def setKernel(val as byte, bits as byte) as void:
+	public def setKernel(order as byte) as void:
 		ig0 = 1f / G0
-		val += 1
-		data = array[of single](val*val)
-		for x in range(0,val):
+		data = array[of single](order*order)
+		for x in range(0,order):
 			for y in range(0,x+1):
 				r = Math.Sqrt( x*x+y*y )
-				data[y*val+x] = calc.gen() do(qn as single):
+				val = calc.gen() do(qn as single):
 					return Bessel.J0(r*qn) * ig0
-		for x in range(0,val):
-			for y in range(x+1,val):
-				data[y*val+x] = data[x*val+y]
+				data[y*order+x] = data[x*order+y] = val
 		# upload to GPU
-		kernel = val
+		kernel = order
 		tKernel.setState(-1,false,false)
-		pif = (PixelInternalFormat.Alpha, PixelInternalFormat.R8,
-			PixelInternalFormat.R16)[bits>>3]
-		GL.TexImage2D( tKernel.target, 0, pif,
-			val,val,0,	PixelFormat.Red, PixelType.Float, data)
+		GL.TexImage2D( tKernel.target, 0, PixelInternalFormat.R16f,
+			order,order,0,	PixelFormat.Red, PixelType.Float, data)
 
 
 
@@ -50,21 +45,30 @@ private class Update( kri.ani.Delta ):
 	private final pPrev = kri.shade.par.Texture('prev')
 	private final pKern	= kri.shade.par.Texture('kern')
 	private final pWave	= kri.shade.par.Texture('wave')
+	private final pCon	= kri.shade.par.Value[of Vector4]('wave_con')
 	private final sa	= kri.shade.Smart()
 	private final buf	as kri.frame.Buffer
+	private final kb	as Input.KeyboardDevice
 	private cur	as byte = 0
 	
-	public def constructor(con as Context):
+	public def constructor(con as Context, win as kri.Window):
 		buf = con.buf
+		kb = win.Keyboard
 		pKern.Value = con.tKernel
+		pCon.Value = Vector4( 0.3f, 9.81f, 0f,0f )
 		assert con.isReady()
 		# shaders
 		con.dict.unit(pPrev,pKern,pWave)
+		con.dict.var(pCon)
 		sa.add('/copy_v','text/wave_f')
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
 	
 	protected override def onDelta(delta as double) as uint:
 		return 0 if	not buf.Width
+		if kb[Input.Key.Q]:	pCon.Value.X -= 0.1f
+		if kb[Input.Key.W]:	pCon.Value.X += 0.1f
+		if kb[Input.Key.A]:	pCon.Value.Y -= 1.0f
+		if kb[Input.Key.S]:	pCon.Value.Y += 1.0f
 		GL.Disable( EnableCap.DepthTest )
 		if not buf.mask:
 			cur = 0
@@ -79,7 +83,6 @@ private class Update( kri.ani.Delta ):
 		kri.Ant.Inst.quad.draw()
 		pPrev.Value = pWave.Value
 		pWave.Value = buf.A[cur].Tex
-		#buf.init(0,0)
 		return 0
 
 
