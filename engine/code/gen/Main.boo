@@ -61,7 +61,7 @@ public struct Constructor:
 		def avg(ref a as Vertex, ref b as Vertex):
 			return Vertex( Vector4.Lerp(a.pos,b.pos,0.5), a.rot )
 		for j in range(nPoly):
-			i0 = List[of int](i[j*3+k] for k in range(3)).ToArray()
+			i0 = List[of ushort](i[j*3+k] for k in range(3)).ToArray()
 			x = List[of Vertex](v[k] for k in i0).ToArray()
 			j2 = v.Length + j*3
 			List[of Vertex](avg(x[k],x[(k+1)%3]) for k in range(3)).CopyTo(v2,j2)

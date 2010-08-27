@@ -1,6 +1,4 @@
 #version 130
-//Interactive Water Surfaces
-//Jerry Tessendorf – Rhythm and Hues Studios
 
 uniform sampler1D unit_kern;
 uniform sampler2D unit_wave;
@@ -10,9 +8,9 @@ noperspective in vec2 tex_coord;
 out vec2 next;
 const vec2 level = vec2(0.0);
 
-
 float delta_kern = 1.0 / textureSize(unit_kern,0);
 vec2 delta_wave = vec2(1.0) / textureSize(unit_wave,0);
+
 
 //----------------------//
 //	FUTURISTIC	//
@@ -51,6 +49,8 @@ vec2 get_future()	{
 //----------------------//
 //	ADVANCED	//
 
+//Interactive Water Surfaces
+//Jerry Tessendorf – Rhythm and Hues Studios
 //X=current, Y=prev
 
 float sample(const int k, const int l)	{
@@ -104,6 +104,7 @@ vec2 get_advanced()	{
 //----------------------//
 //	SIMPLE		//
 
+//Unknow source
 //X=current, Y=prev
 
 vec2 get_simple()	{

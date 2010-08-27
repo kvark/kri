@@ -10,7 +10,7 @@ def Main(argv as (string)):
 		#rlis.Add( ShaderLink() )
 		#rlis.Add( PolygonOffset() )
 		#rlis.Add( TextureRead() )
-		#rlis.Add( Feedback(null) )
+		rlis.Add( Feedback(null) )
 		rlis.Add( DrawToStencil() )
 		
 		view.resize(10,10)
