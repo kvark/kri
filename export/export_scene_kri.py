@@ -242,7 +242,7 @@ def save_mat_image(mtex):
 			out.end()
 			return
 	elif it.type != 'IMAGE':
-		print("\t\t(w)",'unknown texture type',mtt)
+		print("\t\t(w)",'unknown texture type', it.type )
 		return
 	# image path
 	img = it.image

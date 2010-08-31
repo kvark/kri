@@ -24,7 +24,7 @@ public class Tag( kri.ITag ):
 			bits = (bv,bq)[i]
 			continue	if not bits
 			buf.mask |= 1<<i
-			buf.emitAuto(0,bits).bind()
+			buf.emitAuto(i,bits).bind()
 			kri.Texture.Filter(filt,false)
 
 

@@ -115,7 +115,7 @@ public class Extra( kri.IExtension ):
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
 				tag = e.seTag[of support.bake.Tag]()
-				return false	if not tag
+				return false	if not tag or not tag.Vert or not tag.Quat
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat
 				return true

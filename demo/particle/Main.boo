@@ -4,135 +4,111 @@ import System
 import OpenTK
 import OpenTK.Graphics.OpenGL
 
-
-private class BehSimple( kri.part.beh.Basic ):
-	public final tVert	= kri.shade.par.Value[of kri.Texture]('vertex')
-	public final tQuat	= kri.shade.par.Value[of kri.Texture]('/lib/quat_v')
-	public final parPlane	= kri.shade.par.Value[of Vector4]('coord_plane')
-	public final parSphere	= kri.shade.par.Value[of Vector4]('coord_sphere')
-	public final parCoef	= kri.shade.par.Value[of single]('reflect_koef')
-	
-	public def constructor(pc as kri.part.Context):
-		super('text/beh_simple')
-		kri.Help.enrich( self, 2, pc.at_sys )
-		kri.Help.enrich( self, 4, pc.at_pos, pc.at_speed)
-	
-	public override def link(d as kri.shade.rep.Dict) as void:
-		d.unit(tVert,tQuat)
-		d.var(parPlane,parSphere)
-		d.var(parCoef)
-		
-
-private def createParticle(ent as kri.Entity) as kri.part.Emitter:
-	pm = kri.part.Manager(100)
-	pe = kri.part.Emitter(pm,'test')
-	pcon = kri.part.Context()
-	#todo: just use a proper root shader
-	pm.makeStandard(pcon)
-	pm.col_update.extra.Add( kri.shade.Object.Load('/part/born/instant_v') )
-	beh = BehSimple(pcon)
-	beh.parPlane.Value	= Vector4(1f,0f,0f,1f)
-	beh.parSphere.Value	= Vector4( ent.node.local.pos, 3f )
-	beh.parCoef.Value = 0.9f
-	pm.behos.Add( beh )
-	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_plane') )
-	pm.behos.Add( kri.part.beh.Basic('/part/beh/bounce_sphere') )
-	if 'face':
-		pe.onUpdate = def(e as kri.Entity):
-			assert e
-			kri.Ant.Inst.params.modelView.activate( e.node )
-			tag = e.seTag[of kri.kit.bake.Tag]()
-			if tag:
-				beh.tVert.Value = tag.Vert
-				beh.tQuat.Value = tag.Quat
-	else: #vertex
-		a = kri.Ant.Inst.attribs
-		beh.tVert.Value = kri.Texture( TextureTarget.TextureBuffer )
-		beh.tVert.Value.bind()
-		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.store.find(a.vertex) )
-		beh.tQuat.Value = kri.Texture( TextureTarget.TextureBuffer )
-		beh.tQuat.Value.bind()
-		kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.store.find(a.quat) )
-		pe.onUpdate = def(e as kri.Entity):
-			assert e
-			kri.Ant.Inst.params.modelView.activate( e.node )
-			return true
-	pm.init(pcon)
-	pe.allocate()
-	pe.obj = ent
-	return pe
+class ProjTag( kri.ITag ):
+	public final proj	as kri.Projector
+	public final tex	= kri.Texture( TextureTarget.Texture2D )
+	public dSize		= kri.frame.DirtyHolder[of uint](0)
+	public Size as uint:
+		get: return dSize.Value
+		set: dSize.Value = value
+	public def constructor():
+		proj = kri.Projector()
+	public def constructor(pr as kri.Projector):
+		proj = pr
 
 
-private def genMap() as (single,2):
-	radius = 20
-	size = radius+radius+1
-	hm = matrix(single,size,size)
-	vc = Vector2(radius,radius)
-	het = 0.01f
-	hsin = 1f
-	
-	for i in range(size):
-		for j in range(size):
-			vij = Vector2(i,j) - vc
-			dist = vij.LengthFast
-			angle = Math.PI * Math.Min(1.5f, 2.2f*dist / radius - 0.5f)
-			kbase = het*(radius-dist)
-			kadd = hsin*( 1.0 + Math.Sin(angle) )
-			hm[i,j] = cast(single, kbase + kadd)
-	return hm
+class ProjUpdate( kri.rend.Basic ):
+	public final sa		= kri.shade.Smart()
+	public final buf	= kri.frame.Buffer()
+	public final va		= kri.vb.Array()
+	public def constructor():
+		super(false)
+		buf.A[-1].Format = PixelInternalFormat.DepthComponent
+		buf.mask = 0
+		sa.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
+		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
+	public override def process(con as kri.rend.Context) as void:
+		par = kri.Ant.Inst.params
+		par.light.data.Value = Vector4(0f,1f,0f,0f)
+		con.SetDepth(0f,true)
+		va.bind()
+		for e in kri.Scene.Current.entities:
+			tag = e.seTag[of ProjTag]()
+			continue	if not tag
+			assert tag.proj
+			buf.init( tag.Size, tag.Size )
+			buf.A[-1].Tex = tag.tex
+			if tag.dSize.Dirty:
+				buf.resizeFrames()
+				tag.dSize.clean()
+			buf.activate()
+			con.ClearDepth(1f)
+			par.pLit.activate( tag.proj )
+			par.modelView.activate( e.node )
+			sa.use()
+			e.enable(true, (kri.Ant.Inst.attribs.vertex,))
+			q = kri.Query( QueryTarget.SamplesPassed )
+			using q.catch():
+				e.mesh.draw(1)
+			r = q.result()
+			r = 0
 
+
+class Behavior( kri.part.Behavior ):
+	public final pTex	= kri.shade.par.Texture('land')
+	public final proj	= kri.lib.par.Project('land')
+	public def constructor(tag as ProjTag):
+		super('text/beh_land')
+		pTex.Value = tag.tex
+		proj.activate( tag.proj )
+	public override def link(d as kri.shade.rep.Dict) as void:	#imp: kri.meta.IBase
+		d.unit(pTex)
+		(proj as kri.meta.IBase).link(d)
 
 
 [STAThread]
 def Main(argv as (string)):
-	using ant = kri.Ant('kri.conf',0):
-		view = kri.ViewScreen(0,16,0)
+	using win = kri.Window('kri.conf',0):
+		win.core.extensions.Add( cex = support.corp.Extra() )
+		view = kri.ViewScreen()
 		rchain = kri.rend.Chain()
 		view.ren = rchain
 		rlis = rchain.renders
-		ant.views.Add( view )
-		ant.VSync = VSyncMode.On
+		win.views.Add( view )
+		win.VSync = VSyncMode.On
 		
-		view.scene = kri.Scene('main')
-		view.cam = kri.Camera()
-		view.scene.lights.Add( kri.Light() )
+		ln = kri.load.Native()
+		at = ln.read('res/test_particles.scene')
+		view.scene = at.scene
+		view.cam = at.scene.cameras[0]
 		
-		#mesh = kri.kit.gen.cube( Vector3.One )
-		mesh = kri.kit.gen.Landscape( genMap(), Vector3(1f,1f,5f) )
-		con = kri.load.Context()
-		ent = kri.kit.gen.Entity( mesh, con )
-		ent.node = kri.Node('main')
-		ent.node.local.pos.Z = -75f
-		ent.node.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,-1f)
-		view.scene.entities.Add(ent)
+		land = at.scene.entities[0]
+		land.tags.Add( pTag = ProjTag() )
+		pTag.Size = 256
+		pro = pTag.proj
+		pro.node = kri.Node('proj')
+		pro.node.local.pos.Z = 5f
+		pro.makeOrtho( 2f * land.node.local.scale )
+		pro.setRanges( 1f, 6f )
 		
-		#tag = kri.kit.bake.Tag(256,256, 16,8, true)
-		#ent.tags.Add(tag)
-		#proxy = kri.shade.par.UnitProxy({ return tag.tVert })
-		#proxy = kri.shade.par.UnitProxy({ return view.con.Depth })
-		#proxy = kri.shade.par.UnitProxy({ return view.scene.lights[0].depth })
+		man = at.scene.particles[0].owner
+		man.behos.Add( Behavior(pTag) )
+		man.col_update.extra.Add( kri.shade.Object.Load('/lib/tool_v') )
+		man.init( cex.pcon )
 		
-		#ps = createParticle(ent)
-		#view.scene.particles.Add(ps)
-		
-		#rlis.Add( kri.kit.bake.Update() )
-		#rlis.Add( kri.rend.debug.MapDepth() )
-		rem = kri.rend.Emission( fillDepth:true )
-		rlis.Add( rem )
+		rlis.Add( support.bake.Update() )
+		rlis.Add( rem = kri.rend.Emission(fillDepth:true) )
 		rem.pBase.Value = Graphics.Color4.Black
+		rlis.Add( ProjUpdate() )
 		
-		#assert not 'ready'
-		#rlis.Add( kri.rend.part.Simple(true,false) )
-		if 'Light':
-			licon = kri.rend.light.Context(2,8)
-			#licon.setExpo(120f, 0.5f)
-			rlis.Add( kri.rend.light.Fill(licon) )
-			rlis.Add( kri.rend.light.Apply(licon) )
-			rlis.Add( kri.rend.FilterCopy() )
+		rlis.Add( kri.rend.light.omni.Apply(false) )
+		rlis.Add( stand = kri.rend.part.Standard(cex.pcon) )
+		stand.bAdd = 1f
+		rlis.Add( kri.rend.FilterCopy() )
+		#pTex = kri.shade.par.UnitProxy({ return pTag.tex })
+		#rlis.Add( kri.rend.debug.Map(false,false,-1,pTex) )
 		
-		ant.anim = al = kri.ani.Scheduler()
-		al.add( kri.ani.ControlMouse(ent.node,0.003f) )
-		#if 'Part Anims':
-			#al.add( kri.ani.Particle(ps) )
-		#ant.Keyboard.KeyDown += { ps.owner.tick(ps) }
-		ant.Run(30.0,30.0)
+		win.core.anim = al = kri.ani.Scheduler()
+		#al.add( kri.ani.ControlMouse(ent.node,0.003f) )
+		al.add( kri.ani.Particle(at.scene.particles[0]) )
+		win.Run(30.0,30.0)

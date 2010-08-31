@@ -18,7 +18,7 @@ public class Update( kri.rend.Basic ):
 		for ent in kri.Scene.Current.entities:
 			tag = ent.seTag[of Tag]()
 			continue	if not tag or not tag.counter
-			kri.Ant.Inst.params.camView.activate( ent.node )
+			kri.Ant.Inst.params.pCam.spatial.activate( ent.node )
 			buf = (buPlane,buCube)[tag.cubic]
 			tag.counter -= 1
 			if not tag.pTex.Value:

@@ -7,7 +7,7 @@ import OpenTK
 import OpenTK.Graphics
 import kri.shade
 
-
+ 
 public class Base:
 	public final loc	as int
 	# uniform location
@@ -18,7 +18,8 @@ public class Base:
 		pass
 	# generate an uniform representor
 	public static def Create(iv as par.IBaseRoot, loc as int) as Base:
-		T = iv.GetType().GetGenericArguments()[0]
+		it = iv.GetType().GetInterface('IBase`1')
+		T = it.GetGenericArguments()[0]
 		assert T.IsValueType
 		if T == int:
 			return Uniform_int(loc)

@@ -27,7 +27,7 @@ public class Fill( kri.rend.tech.General ):
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 	private def setLight(l as kri.Light) as void:
-		kri.Ant.Inst.params.litView.activate( l.node )
+		kri.Ant.Inst.params.pLit.spatial.activate( l.node )
 		k = 1f / (l.rangeOut - l.rangeIn)
 		pDist.Value = Vector4(k, l.rangeIn+l.rangeOut, 0f, 0f)
 

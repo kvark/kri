@@ -33,7 +33,7 @@ public class Basic( kri.rend.Basic ):
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#
 
-public class Simple( Basic ):
+public abstract class Simple( Basic ):
 	protected final sa		= kri.shade.Smart()
 	public dTest	as bool	= true
 	protected override def prepare(pe as kri.part.Emitter) as kri.shade.Program:

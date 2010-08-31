@@ -88,5 +88,5 @@ public class Program:
 	public virtual def clear() as void:
 		linked = false
 		for sh in blocks:
-			GL.DetachShader( id, sh.id )
+			GL.DetachShader( id, sh.id )	if sh
 		blocks.Clear()

@@ -9,8 +9,10 @@ ext/interchange
 demo/test
 demo/dude
 demo/vanburen
-test_cl
+demo/particle/res
+test_attrib0
 test_bugs
+test_cl
 game_*
 sol
 

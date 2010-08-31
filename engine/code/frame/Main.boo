@@ -13,6 +13,7 @@ public class Array:
 	private het as uint = 0
 
 	public def init(x as uint, y as uint) as void:
+		assert x and y
 		dirtyPort = true
 		wid,het = x,y
 	public def init(x as uint, y as uint, lod as byte) as void:
