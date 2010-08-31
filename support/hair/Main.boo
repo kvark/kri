@@ -68,7 +68,7 @@ public class Bake( kri.rend.Basic ):
 			pInit.Value = tCur.param
 			tf.Bind( tCur.Data )
 			tCur.va.bind()
-			tBake	= e.seTag[of support.bake.Tag]()
+			tBake	= e.seTag[of support.bake.surf.Tag]()
 			if tBake:	# emit from face
 				vbo.initAll( tCur.pixels )
 				pWid.Value	= tBake.buf.Width

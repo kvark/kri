@@ -15,7 +15,7 @@ public struct SetBake:
 		assert ratio > 0f
 		side = Math.Sqrt(pixels / ratio)
 		wid,het = cast(int,side*ratio),cast(int,side)
-		return support.bake.Tag(wid,het,b_pos,b_rot,filt)
+		return support.bake.surf.Tag(wid,het,b_pos,b_rot,filt)
 
 
 public class Extra( kri.IExtension ):
@@ -83,7 +83,7 @@ public class Extra( kri.IExtension ):
 		pm = pe.owner
 		
 		ph = pm.seBeh[of support.hair.Behavior]()
-		if not ent.seTag[of support.bake.Tag]():
+		if not ent.seTag[of support.bake.surf.Tag]():
 			st = bake
 			st.pixels = pm.total	if ph
 			ent.tags.Add( st.tag() )
@@ -114,7 +114,7 @@ public class Extra( kri.IExtension ):
 			pm.dict.unit(tVert,tQuat)
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
-				tag = e.seTag[of support.bake.Tag]()
+				tag = e.seTag[of support.bake.surf.Tag]()
 				return false	if not tag or not tag.Vert or not tag.Quat
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat

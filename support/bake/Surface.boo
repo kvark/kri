@@ -1,4 +1,4 @@
-﻿namespace support.bake
+﻿namespace support.bake.surf
 
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
