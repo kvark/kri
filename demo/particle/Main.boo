@@ -68,8 +68,9 @@ def Main(argv as (string)):
 		#pTex = kri.shade.par.UnitProxy({ return pTag.tex })
 		#rlis.Add( kri.rend.debug.Map(false,false,-1,pTex) )
 		
-		win.core.anim = al = kri.ani.Scheduler()
-		al.add( at.scene.lights[0].play('LampAction') )
+		win.core.anim = ag = kri.ani.Graph()
+		wait = ag.init.append( kri.ani.Loop(lTime:3.0) )
+		wait.append( at.scene.lights[0].play('LampAction') )
 		#al.add( kri.ani.ControlMouse(ent.node,0.003f) )
-		al.add( kri.ani.Particle(at.scene.particles[0]) )
+		wait.append( kri.ani.Particle(at.scene.particles[0]) )
 		win.Run(30.0,30.0)

@@ -13,7 +13,7 @@ bool born_ready();
 
 vec4 part_time()    {
 	// frame time, life time, global time, -life ID
-	return vec4(cur_time.y, cur_time.x - to_sys.x, cur_time.x, to_sys.y);
+	return vec4(cur_time.x, cur_time.y - to_sys.x, cur_time.y, to_sys.y);
 }
 
 void main()    {
@@ -22,7 +22,7 @@ void main()    {
 	if(at_sys.x > 0.0)
 		live = update();
 	else if( born_ready() )    {
-		to_sys.x = cur_time.x;
+		to_sys.x = cur_time.y;
 		to_sys.y -= 1.0;
 		live = reset();
 	}

@@ -8,5 +8,5 @@ float part_uni();
 
 bool born_ready()	{
 	float u = part_uni();
-	return cur_time.x > limit*u;
+	return cur_time.y > limit*u;
 }

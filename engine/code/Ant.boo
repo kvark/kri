@@ -167,6 +167,6 @@ public class Ant(IDisposable):
 		sw.Stop()
 
 	public def update() as void:
-		tc = Time; old = params.parTime.Value.X
-		params.parTime.Value = Vector4(tc, tc-old, 0f,0f)
+		tc = Time; old = params.parTime.Value.Z
+		params.parTime.Value = Vector4(tc-old, tc,tc,0f)
 		anim = null	if anim and anim.onFrame(Time)

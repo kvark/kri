@@ -12,6 +12,6 @@ void part_draw(vec3,float);
 void main()	{
 	make_tex_coords();
 	gl_ClipDistance[0] = at_sys.x;
-	part_age = cur_time.x - at_sys.x;
+	part_age = cur_time.y - at_sys.x;
 	part_draw( at_pos, halo_data.x );
 }

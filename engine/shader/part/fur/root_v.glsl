@@ -17,5 +17,5 @@ void main()	{
 	if( dot(at_base,at_base) < 0.01 ) return;
 	vec3 old = at_pos;
 	update();
-	to_speed = (to_pos-old) / max(0.001,cur_time.y);
+	to_speed = (to_pos-old) / max(0.001,cur_time.x);
 }

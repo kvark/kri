@@ -30,7 +30,7 @@ vec2 get_future()	{
 	const int P = 5;
 	//get source
 	vec2 wave = texture(unit_wave, tex_coord).xy - level;
-	float dt = cur_time.y,
+	float dt = cur_time.x,
 		alpha = wave_con.x, grav = wave_con.y;
 	float kf = -0.5*dt * grav;
 	//get convoluted phi
@@ -94,7 +94,7 @@ float get_conv2()	{
 vec2 get_advanced()	{
 	vec2 wave = texture(unit_wave, tex_coord).xy - level;
 	float conv = wave.x + get_conv1();	//get_conv2();
-	float dt = min(0.1, cur_time.y),
+	float dt = min(0.1, cur_time.x),
 		alpha = wave_con.x, grav = wave_con.y;
 	float cur = wave.x * (2.0-alpha*dt) - wave.y - grav*dt*dt*conv;
 	return level + vec2(cur / (1.0 + alpha * dt), wave.x);

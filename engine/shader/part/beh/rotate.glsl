@@ -22,7 +22,7 @@ float reset_rot()	{
 }
 
 float update_rot()	{
-	float angle = cur_time.y * part_spin;
+	float angle = cur_time.x * part_spin;
 	vec4 cr = qvec( normalize(to_speed), angle );
 	to_rot = qmul( at_rot, cr );
 	return 1.0;
