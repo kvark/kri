@@ -122,10 +122,10 @@ public class ExAnim( kri.IExtension ):
 		c.lerp = def(ref a as single, ref b as single, t as single) as single:
 			return (1-t)*a + t*b
 	
-	public static def InterColor(a as Color4, b as Color4, t as single) as Color4:
-		return Color4.Gray
-	public static def InterSingle(a as single, b as single, t as single) as single:
-		return (1-t)*a + t*b
+	public static def InterColor(q as Color4, w as Color4, t as single) as Color4:
+		return Color4( q.R*(1f-t)+w.R*t, q.G*(1f-t)+w.G*t, q.B*(1f-t)+w.B*t, q.A*(1f-t)+w.A*t )
+	public static def InterSingle(q as single, w as single, t as single) as single:
+		return (1-t)*q + t*w
 	
 	private static def FixChan2[of T(struct)](c as Channel[of T]) as void:
 		if T == Quaternion:

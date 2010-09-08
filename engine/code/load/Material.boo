@@ -214,16 +214,35 @@ public class ExMaterial( kri.IExtension ):
 
 	#---	Texture: color		---#
 	public def pt_color(r as Reader) as bool:
+		r.getColor()	# factor
+		r.getReal()	# brightness
+		r.getReal()	# contrast
+		r.getReal()	# saturation
 		return false
 	
 	#---	Texture: color ramp		---#
 	public def pt_ramp(r as Reader) as bool:
-		return false
+		u = r.geData[of AdUnit]()
+		return false	if not u
+		r.getString()	# interpolator
+		num = r.getByte()
+		data = array[of kri.gen.Texture.Key](num)
+		for i in range(num):
+			data[i].pos = r.getReal()
+			data[i].col = r.getColor()
+			data[i].col.A = r.getReal()
+		u.Value = kri.gen.Texture.ofCurve(data)
+		return u.Value != null
 
 	#---	Texture: noise		---#
 	public def pt_noise(r as Reader) as bool:
-		return false
+		u = r.geData[of AdUnit]()
+		return false	if not u
+		u.Value = kri.gen.Texture.noise
+		return true
 
 	#---	Texture: blend		---#
 	public def pt_blend(r as Reader) as bool:
-		return false
+		r.getString()	# interpolator
+		r.getString()	# flip_axis
+		return true
