@@ -22,10 +22,10 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['m_diff']	= pm_diff
 		nt.readers['m_spec']	= pm_spec
 		nt.readers['unit']		= pm_unit
-		nt.readers['mt_map']	= pmt_map
-		nt.readers['mt_samp']	= pmt_samp
-		nt.readers['mt_path']	= pmt_path
-		nt.readers['mt_seq']	= pmt_seq
+		nt.readers['t_map']		= pt_map
+		nt.readers['t_samp']	= pt_samp
+		nt.readers['t_path']	= pt_path
+		nt.readers['t_seq']		= pt_seq
 	
 	
 	private def init() as void:
@@ -176,7 +176,7 @@ public class ExMaterial( kri.IExtension ):
 		return true
 
 	#---	Texture: mapping	---#
-	public def pmt_map(r as Reader) as bool:
+	public def pt_map(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		return false	if not u
 		# tex-coords
@@ -185,7 +185,7 @@ public class ExMaterial( kri.IExtension ):
 		return true
 
 	#---	Texture: sampling	---#
-	public def pmt_samp(r as Reader) as bool:
+	public def pt_samp(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		return false	if not u
 		bRepeat	= r.getByte()>0	# extend by repeat
@@ -197,7 +197,7 @@ public class ExMaterial( kri.IExtension ):
 		return true
 
 	#---	Texture: file path	---#
-	public def pmt_path(r as Reader) as bool:
+	public def pt_path(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		return false	if not u
 		path = prefix + r.getString()
@@ -205,5 +205,5 @@ public class ExMaterial( kri.IExtension ):
 		return u.Value != null
 
 	#---	Texture: sequence	---#
-	public def pmt_seq(r as Reader) as bool:
+	public def pt_seq(r as Reader) as bool:
 		return false

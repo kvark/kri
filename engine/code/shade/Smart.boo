@@ -36,9 +36,12 @@ public class Smart(Program):
 	public def attribs(sl as kri.lib.Slot) as void:
 		attribs(sl, *List[of int](range(sl.Size)).ToArray() )
 	
-	public override def use() as void:
+	public def useBare() as void:
 		activeProgram = self
-		super()
+		super.use()
+	
+	public override def use() as void:
+		useBare()
 		UpdatePar()
 	
 	# link with attributes

@@ -91,10 +91,13 @@ def save_actions(ob,sym,symInd):
 	for act in gather_anim(ob):
 		offset,nf = act.get_frame_range()
 		rnas,curves = {},set() # {elem_id}{attrib_name}[sub_id]
-		indexator = None
+		indexator,n_empty = None,0
 		# gather all
 		for f in act.fcurves:
 			bid,attrib = 0, f.data_path
+			if not len(attrib):
+				n_empty += 1
+				continue
 			# extract array name, index & target field
 			mat = re.search('([\.\w]+)\[(.+)\]\.(\w+)',attrib)
 			if mat:
@@ -128,6 +131,8 @@ def save_actions(ob,sym,symInd):
 		out.pack('f', nf * kFrameSec )
 		out.end()
 		print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+		if n_empty:
+			print("\t\t(w) %d empty curves detected" % (n_empty))
 		# write in packs
 		prefix = (sym,symInd)[indexator != None]
 		for elem,it in rnas.items():
@@ -212,17 +217,34 @@ def save_mat_unit(mtex):
 	out.end()
 
 
-###  MATERIAL:IMAGE   ###
+###  MATERIAL:TEXTURE TYPES   ###
 
 def save_mat_image(mtex):
 	it = mtex.texture
 	assert it
 	# tex mapping
-	out.begin('mt_map')
+	out.begin('t_map')
 	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
 		print("\t(w)",'tex coord swizzling not supported')
 	out.array('f', tuple(mtex.offset) + tuple(mtex.size) )
 	out.end()
+	# colors
+	out.begin('t_color')
+	out.pack('3f', it.factor_red, it.factor_green, it.factor_blue )
+	out.pack('3f', it.brightness, it.contrast, it.saturation )
+	out.end()
+	# ramp
+	if it.use_color_ramp:
+		ramp = it.color_ramp
+		num = len(ramp.elements)
+		print("\t\tramp: %d stages" % (num))
+		out.begin('t_ramp')
+		out.text( ramp.interpolation )
+		out.pack('B',num)
+		for el in ramp.elements:
+			out.pack('f', el.position)
+			out.array('f', el.color)
+		out.end()
 
 	if it.type == 'ENVIRONMENT_MAP':
 		# environment map chunk
@@ -234,20 +256,26 @@ def save_mat_image(mtex):
 			if not env.viewpoint_object:
 				print("\t\t(w)",'View point is not set')
 			else: view = env.viewpoint_object.name
-			out.begin('mt_env')
+			out.begin('t_env')
 			out.pack('2BH3f', env.source=='ANIMATED',
 				env.depth, env.resolution, env.zoom,
 				clip[0], clip[1] )
 			out.text( env.mapping, view )
 			out.end()
 			return
+	elif it.type == 'BLEND':
+		# blend chunk
+		out.begin('t_blend')
+		out.text( it.progression, it.flip_axis )
+		out.end()
+		return
 	elif it.type != 'IMAGE':
 		print("\t\t(w)",'unknown texture type', it.type )
 		return
 	# image path
 	img = it.image
 	assert img
-	out.begin('mt_path')
+	out.begin('t_path')
 	fullname = img.filepath
 	print("\t\t", img.source, ':',fullname)
 	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
@@ -257,7 +285,7 @@ def save_mat_image(mtex):
 	out.end()
 	if it.type == 'IMAGE':
 		# texture image sampling
-		out.begin('mt_samp')
+		out.begin('t_samp')
 		repeat = (it.extension == 'EXTEND')
 		out.pack( '3B', repeat,
 			it.mipmap, it.interpolation )
@@ -265,7 +293,7 @@ def save_mat_image(mtex):
 	if img.source == 'SEQUENCE':
 		# image sequence chunk
 		user = mtex.texture.image_user
-		out.begin('mt_seq')
+		out.begin('t_seq')
 		out.pack( '3H', user.frames, user.offset, user.start_frame )
 		out.end()
 	elif img.source != 'FILE':

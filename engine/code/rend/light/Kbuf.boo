@@ -105,7 +105,7 @@ public class Bake( kri.rend.Basic ):
 
 	private def drawLights(mask as byte, sx as Smart) as void:
 		buf.activate(mask)
-		sx.use()
+		sx.useBare()
 		for l in kri.Scene.current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
