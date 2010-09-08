@@ -265,7 +265,8 @@ def save_mat_image(mtex):
 			return
 	elif it.type == 'BLEND':	# blend chunk
 		out.begin('t_blend')
-		out.text( it.progression, it.flip_axis )
+		out.text( it.progression )
+		out.pack('B', it.flip_axis == 'VERTICAL')
 		out.end()
 		return
 	elif it.type == 'NOISE':	# noise chunk

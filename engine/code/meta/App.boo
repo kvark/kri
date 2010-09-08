@@ -49,6 +49,7 @@ public class Strand(Advanced):
 
 #---	halo		---#
 public class Halo(Advanced):
+	# X = size, Y = hardness, Z = add
 	private final pData	= par.Value[of Vector4]('halo_data')
 	portal Data		as Vector4	= pData.Value
 	

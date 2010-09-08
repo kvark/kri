@@ -33,7 +33,7 @@ public static class Texture:
 		assert data.Length
 		tex = kri.Texture( TextureTarget.Texture1D )
 		tex.setState(0,true,true)
-		mid = Math.Min( data[0].pos, 1f - data[-1].pos )
+		mid = 1f
 		for i in range( data.Length-1 ):
 			mid = Math.Min(mid, data[i+1].pos - data[i].pos)
 		assert mid>0f

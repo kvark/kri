@@ -80,6 +80,8 @@ public class ExAnim( kri.IExtension ):
 		# material
 		anid['m.diffuse_color']		= RacMatColor('diffuse')
 		anid['m.specular_color']	= RacMatColor('specular')
+		anid['m.halo.size']			= Rac(getReal) do(pl as IPlayer, v as single, i as byte):
+			((pl as kri.Material).Meta['halo'] as kri.meta.Halo).Data.X = v
 		# texture unit
 		anid['t.offset']		= RacTexUnit({u| return u.pOffset })
 		anid['t.scale']			= RacTexUnit({u| return u.pScale })

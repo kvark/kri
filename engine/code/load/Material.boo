@@ -244,5 +244,5 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: blend		---#
 	public def pt_blend(r as Reader) as bool:
 		r.getString()	# interpolator
-		r.getString()	# flip_axis
+		r.getByte()		# flip_axis
 		return true
