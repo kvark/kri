@@ -26,6 +26,10 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['t_samp']	= pt_samp
 		nt.readers['t_path']	= pt_path
 		nt.readers['t_seq']		= pt_seq
+		nt.readers['t_color']	= pt_color
+		nt.readers['t_ramp']	= pt_ramp
+		nt.readers['t_noise']	= pt_noise
+		nt.readers['t_blend']	= pt_blend
 	
 	
 	private def init() as void:
@@ -206,4 +210,20 @@ public class ExMaterial( kri.IExtension ):
 
 	#---	Texture: sequence	---#
 	public def pt_seq(r as Reader) as bool:
+		return false
+
+	#---	Texture: color		---#
+	public def pt_color(r as Reader) as bool:
+		return false
+	
+	#---	Texture: color ramp		---#
+	public def pt_ramp(r as Reader) as bool:
+		return false
+
+	#---	Texture: noise		---#
+	public def pt_noise(r as Reader) as bool:
+		return false
+
+	#---	Texture: blend		---#
+	public def pt_blend(r as Reader) as bool:
 		return false

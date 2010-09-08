@@ -263,12 +263,14 @@ def save_mat_image(mtex):
 			out.text( env.mapping, view )
 			out.end()
 			return
-	elif it.type == 'BLEND':
-		# blend chunk
+	elif it.type == 'BLEND':	# blend chunk
 		out.begin('t_blend')
 		out.text( it.progression, it.flip_axis )
 		out.end()
 		return
+	elif it.type == 'NOISE':	# noise chunk
+		out.begin('t_noise')
+		out.end()
 	elif it.type != 'IMAGE':
 		print("\t\t(w)",'unknown texture type', it.type )
 		return
