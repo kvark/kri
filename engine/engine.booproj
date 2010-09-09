@@ -88,6 +88,7 @@
     <Compile Include="code\part\Emitter.boo" />
     <Compile Include="code\part\Main.boo" />
     <Compile Include="code\part\Manager.boo" />
+    <Compile Include="code\rend\Gauss.boo" />
     <Compile Include="code\rend\Context.boo" />
     <Compile Include="code\rend\Debug.boo" />
     <Compile Include="code\rend\defer\Apply.boo" />
