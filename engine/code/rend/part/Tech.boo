@@ -1,6 +1,7 @@
 ﻿namespace kri.rend.part
 
 import System
+import System.Collections.Generic
 import kri.shade
 
 #---------	RENDER PARTICLES: TECHNIQUE	--------#
@@ -49,7 +50,7 @@ public class Meta( Tech ):
 	protected def shade(prefix as string) as void:
 		shade( prefix+s	for s in('_v','_f') )
 	protected def shade(slis as string*) as void:
-		shobs.Extend( Object.Load(s) for s in slis )
+		shobs.AddRange( Object.Load(s) for s in slis )
 	
 	private def setup(sa as Smart) as void:
 		sa.add( *kri.Ant.Inst.libShaders )

@@ -81,7 +81,7 @@ public class Core:
 		# prepare the camera
 		kri.Ant.Inst.params.activate( cam )
 		kri.Ant.Inst.params.activate( s.cameras[0] )
-		sa.use()
+		sa.useBare()
 		# prepare buffer
 		fbo.activate(1)
 		GL.DepthMask(true)

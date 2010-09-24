@@ -58,6 +58,7 @@
     <Compile Include="hair\Beh.boo" />
     <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\Main.boo" />
+    <Compile Include="mirror\Main.boo" />
     <Compile Include="morph\Main.boo" />
     <Compile Include="morph\App.boo" />
     <Compile Include="corp\Main.boo" />
@@ -78,7 +79,12 @@
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ext\ext.booproj">
+      <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
+      <Name>ext</Name>
+    </ProjectReference>
     <Folder Include="corp\" />
+    <Folder Include="mirror" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

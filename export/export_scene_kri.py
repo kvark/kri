@@ -181,7 +181,7 @@ def save_mat_unit(mtex):
 	# map input chunk
 	out.begin('unit')
 	colored = ('diff','emission','spec','reflection')
-	supported = ['normal'] + list('color'+x for x in colored)
+	supported = ['normal','mirror'] + list('color'+x for x in colored)
 	current = list(x for x in supported	if mtex.__getattribute__('map_'+x))
 	print("\t\t",'affect:', ','.join(current))
 	out.text( *(current+['']) )
@@ -357,6 +357,13 @@ def save_mat(mat):
 			mat.specular_intensity, mat.specular_hardness)
 		out.text( sh[1] )
 		out.end()
+		mirr = mat.raytrace_mirror
+		if mirr.enabled:
+			print("\tmirror: ", mirr.reflect_factor)
+			out.begin('m_mirr')
+			save_color( mat.mirror_color )
+			out.pack('2f', 1.0, mirr.reflect_factor)
+			out.end()
 	else: print("\t(w)",'unsupported type')
 	# texture units
 	for mt in mat.texture_slots:

@@ -10,9 +10,20 @@ public class ExMaterial( kri.IExtension ):
 	public final limDict	= Dictionary[of string,callable(Reader) as Hermit]()
 	public final con		= Context()
 	public prefix	as string	= 'res'
+	# texture target name -> (meta name, shader)
+	public final tarDict = Dictionary[of string,MapTarget]()
+
+	public struct MapTarget:
+		public final name	as string
+		public final prog	as kri.shade.Object
+		public def constructor(s as string, p as kri.shade.Object):
+			name,prog = s,p
 	
 	def kri.IExtension.attach(nt as Native) as void:
 		init()
+		# fill targets
+		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
+		tarDict['coloremission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		# material
 		nt.readers['mat']		= p_mat
 		nt.readers['m_hair']	= pm_hair
@@ -65,18 +76,10 @@ public class ExMaterial( kri.IExtension ):
 	
 
 	#---	Parse texture unit	---#
-	private struct MapTarget:
-		public final name	as string
-		public final prog	as kri.shade.Object
-		public def constructor(s as string, p as kri.shade.Object):
-			name,prog = s,p
 	
 	public def pm_unit(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
 		return false	if not m
-		tarDict = Dictionary[of string,MapTarget]()
-		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
-		tarDict['coloremission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		# map targets
 		u = AdUnit()
 		m.unit.Add(u)

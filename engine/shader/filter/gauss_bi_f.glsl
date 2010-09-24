@@ -2,7 +2,7 @@
 uniform sampler2D unit_input;	//must be linearly sampled
 uniform vec4 dir;		//blur direction
 
-//the kernel is actually 5x5
+//the kernel is actually 9x9
 const vec3 offset = vec3( 0.0, 1.3846153846, 3.2307692308 );
 const vec3 weight = vec3( 0.2255859375, 0.314208984375, 0.06982421875 );
 

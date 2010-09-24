@@ -27,12 +27,11 @@ float sample2(int x, int y, float kf)	{
 } 
 
 vec2 get_future()	{
-	const int P = 5;
+	const int P = 1;
 	//get source
 	vec2 wave = texture(unit_wave, tex_coord).xy - level;
-	float dt = cur_time.x,
-		alpha = wave_con.x, grav = wave_con.y;
-	float kf = -0.5*dt * grav;
+	float dt = cur_time.x;
+	float kf = -0.5*dt * wave_con.y;
 	//get convoluted phi
 	float dphi = 0.0;
 	for(int x=-P; x<=P; ++x)	{
