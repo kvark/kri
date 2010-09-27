@@ -4,6 +4,7 @@ __url__ = ('kvgate.com')
 __version__ = '0.5'
 __bpydoc__ = '''KRI scene exporter.
 This script exports the whole scene to the KRI binary file.
+Written against Blender v2.54
 '''
 
 ''' Math notes:
@@ -89,7 +90,7 @@ def save_actions(ob,sym,symInd):
 	import re
 	if not ob: return
 	for act in gather_anim(ob):
-		offset,nf = act.get_frame_range()
+		offset,nf = act.frame_range
 		rnas,curves = {},set() # {elem_id}{attrib_name}[sub_id]
 		indexator,n_empty = None,0
 		# gather all
@@ -164,8 +165,8 @@ def save_curve_pack(curves,offset):
 	out.pack('HB', num, (extra == 'LINEAR'))
 	for i in range(num):
 		def h0(k): return k.co
-		def h1(k): return k.handle1
-		def h2(k): return k.handle2
+		def h1(k): return k.handle_left
+		def h2(k): return k.handle_right
 		kp = tuple(c.keyframe_points[i] for c in curves)
 		x = kp[0].co[0]
 		out.pack('f', (x-offset)*kFrameSec)
@@ -180,12 +181,13 @@ def save_curve_pack(curves,offset):
 def save_mat_unit(mtex):
 	# map input chunk
 	out.begin('unit')
-	colored = ('diff','emission','spec','reflection')
-	supported = ['normal','mirror'] + list('color'+x for x in colored)
-	current = list(x for x in supported	if mtex.__getattribute__('map_'+x))
+	colored = ('diffuse','emission','spec','reflection')
+	flat = ['normal','mirror','hardness']
+	supported = flat + list('color_'+x for x in colored)
+	current = list(x for x in supported	if mtex.__getattribute__('use_map_'+x))
 	print("\t\t",'affect:', ','.join(current))
 	out.text( *(current+['']) )
-	tc,mp = mtex.texture_coordinates, mtex.mapping
+	tc,mp = mtex.texture_coords, mtex.mapping
 	print("\t\t", tc,'input,', mp,'mapping')
 	out.text(tc)
 	if tc == 'UV':	# dirty: resolving the UV layer ID
@@ -224,14 +226,14 @@ def save_mat_image(mtex):
 	assert it
 	# tex mapping
 	out.begin('t_map')
-	if mtex.x_mapping != 'X' or mtex.y_mapping != 'Y' or mtex.z_mapping != 'Z':
+	if mtex.mapping_x != 'X' or mtex.mapping_y != 'Y' or mtex.mapping_z != 'Z':
 		print("\t(w)",'tex coord swizzling not supported')
-	out.array('f', tuple(mtex.offset) + tuple(mtex.size) )
+	out.array('f', tuple(mtex.offset) + tuple(mtex.scale) )
 	out.end()
 	# colors
 	out.begin('t_color')
 	out.pack('3f', it.factor_red, it.factor_green, it.factor_blue )
-	out.pack('3f', it.brightness, it.contrast, it.saturation )
+	out.pack('3f', it.intensity, it.contrast, it.saturation )
 	out.end()
 	# ramp
 	if it.use_color_ramp:
@@ -291,7 +293,7 @@ def save_mat_image(mtex):
 		out.begin('t_samp')
 		repeat = (it.extension == 'EXTEND')
 		out.pack( '3B', repeat,
-			it.mipmap, it.interpolation )
+			it.use_mipmap, it.use_interpolation )
 		out.end()
 	if img.source == 'SEQUENCE':
 		# image sequence chunk
@@ -323,17 +325,17 @@ def save_mat(mat):
 		st = mat.strand
 		out.begin('m_hair')
 		out.pack('4fB', st.root_size, st.tip_size, st.shape,
-			st.width_fade, st.tangent_shading )
+			st.width_fade, st.use_tangent_shading )
 		out.end()
 	# particle halo material
 	if	mat.type == 'HALO':
 		out.begin('m_halo')
 		halo = mat.halo
-		if halo.ring or halo.lines or halo.star:
+		if halo.use_ring or halo.use_lines or halo.use_star:
 			print("\t(w)",'halo rights, lines & star modes are not supported')
 		data = (halo.size, halo.hardness, halo.add)
 		out.array('f', data)
-		out.pack('B', halo.texture)
+		out.pack('B', halo.use_texture)
 		print("\tsize: %.2f, hardness: %.0f, add: %.2f" % data)
 		out.end()
 		save_diffuse('')
@@ -341,7 +343,7 @@ def save_mat(mat):
 	elif	mat.type == 'SURFACE':
 		out.begin('m_surf')
 		parallax = 0.5
-		out.pack('B3f', mat.shadeless, parallax,
+		out.pack('B3f', mat.use_shadeless, parallax,
 			mat.ambient, mat.translucency )
 		out.end()
 		out.begin('m_emis')
@@ -358,7 +360,7 @@ def save_mat(mat):
 		out.text( sh[1] )
 		out.end()
 		mirr = mat.raytrace_mirror
-		if mirr.enabled:
+		if mirr.use:
 			print("\tmirror: ", mirr.reflect_factor)
 			out.begin('m_mirr')
 			save_color( mat.mirror_color )
@@ -417,10 +419,10 @@ def save_mesh(mesh,armature,groups,st):
 			# this section requires optimization!
 			# hint: try 'Recalculate Outside' if getting lighting problems
 			self.mat = face.material_index
-			self.vi = [ face.verts[i]	for i in ind   ]
-			self.v  = tuple( m.verts[x]	for x in self.vi )
+			self.vi = [ face.vertices[i]	for i in ind   ]
+			self.v  = tuple( m.vertices[x]	for x in self.vi )
 			self.no = tuple( x.normal	for x in self.v  )
-			self.normal = ( face.normal, mathutils.Vector((0,0,0)) )[face.smooth]
+			self.normal = ( face.normal, mathutils.Vector((0,0,0)) )[face.use_smooth]
 			self.uv		= tuple(tuple( layer[i]	for i in ind ) for layer in uves)
 			self.color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
 			t,b,n,hand,nv = calc_TBN(self.v, self.uv)
@@ -436,7 +438,7 @@ def save_mesh(mesh,armature,groups,st):
 			return
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
-		uves,colors,nvert = [],[],len(face.verts)
+		uves,colors,nvert = [],[],len(face.vertices)
 		for layer in ( mesh.uv_textures		if st.putUv	else [] ):
 			d = layer.data[i]
 			cur = tuple(mathutils.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
@@ -487,11 +489,11 @@ def save_mesh(mesh,armature,groups,st):
 		assert lensum > 0.0
 		avg += tan.length / lensum
 		tan.normalize() # mean tangent
-		no = v.normal
+		no = v.normal.copy()
 		no.normalize()
 		bit = no.cross(tan) * v.face.hand   # using handness
 		tan = bit.cross(no) # handness will be applied in shader
-		tbn = mathutils.Matrix(tan, bit, no) # tbn is orthonormal, right-handed
+		tbn = mathutils.Matrix(tan,bit,no) # tbn is orthonormal, right-handed
 		v.quat = tbn.to_quat().normalize()
 		ar_vert.append(v)
 	print("\t(i) %.2f avg tangent accuracy" % (avg / len(ar_vert)))
@@ -637,7 +639,8 @@ def save_mesh(mesh,armature,groups,st):
 		print("\t+shape: %.3f [%s]" % (sk.value,sk.name))
 		out.begin('v_shape')
 		out.text( sk.name )
-		out.pack('Bf', list(shapes).index(sk.relative_key), sk.value )
+		rel_id = list(shapes.keys).index(sk.relative_key)
+		out.pack('Bf', rel_id, sk.value )
 		for v in ar_vert:
 			pos = sk.data[v.vert.index].co
 			if v.vert2:
@@ -682,14 +685,14 @@ def save_lamp(lamp):
 	print("\t(i) %s type, %.1f distance" % (lamp.type, lamp.distance))
 	out.begin('lamp')
 	save_color( lamp.color )
-	if not lamp.specular or not lamp.diffuse:
+	if not lamp.use_specular or not lamp.use_diffuse:
 		print("\t(w)",'specular/diffuse cant be disabled')
 	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0
 	# attenuation
 	kd = 1.0 / lamp.distance
 	q0,q1,q2,qs = lamp.energy, kd, kd*kd, 0.0
 	if lamp.type in ('POINT','SPOT'):
-		if lamp.sphere:
+		if lamp.use_sphere:
 			print("\t(i) spherical limit")
 			clip1 = lamp.distance
 			qs = kd
@@ -736,7 +739,7 @@ def save_skeleton(skel):
 	out.pack('B', nbon)
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
-		if not (bone.inherit_scale and bone.deform):
+		if not (bone.use_inherit_scale and bone.use_deform):
 			print("\t\t(w)", 'weird bone', bone.name)
 		if par: # old variant (same result)
 			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
@@ -755,10 +758,10 @@ def save_particle(obj,part):
 	life = (st.frame_start, st.frame_end, st.lifetime)
 	mat = obj.material_slots[ st.material-1 ].material
 	matname = (mat.name if mat else '')
-	info = (part.name, matname, st.amount)
+	info = (part.name, matname, st.count)
 	print("\t+particle: %s [%s], %d num" % info )
 	out.begin('part')
-	out.pack('L', st.amount)
+	out.pack('L', st.count)
 	out.text( part.name, matname )
 	out.end()
 
@@ -778,29 +781,29 @@ def save_particle(obj,part):
 		print("\t\temitter: [%d-%d] life %d" % life)
 		out.begin('p_life')
 		out.array('f', [x*kFrameSec for x in life] )
-		out.pack('f', st.random_lifetime )
+		out.pack('f', st.lifetime_random )
 		out.end()
 	
-	if st.ren_as == 'OBJECT':
+	if st.render_type == 'OBJECT':
 		print("\t\t(i)", 'instanced', st.dupli_object )
 		out.begin('pr_inst')
 		out.text( st.dupli_object.name )
 		out.end()
-	elif st.ren_as == 'LINE':
+	elif st.render_type == 'LINE':
 		out.begin('pr_line')
 		out.pack('B2f', st.velocity_length,
 			st.line_length_tail, st.line_length_head )
 		out.end()
-	elif not st.ren_as in ('HALO','PATH'):
+	elif not st.render_type in ('HALO','PATH'):
 		print("\t\t(w)", 'render as unsupported:', st.ren_as )
 	
 	out.begin('p_vel')
-	out.array('f', st.object_aligned_factor )
+	out.array('f', st.object_align_factor )
 	out.pack('3f', st.normal_factor, st.tangent_factor, st.tangent_phase )
-	out.pack('2f', st.object_factor, st.random_factor )
+	out.pack('2f', st.object_factor, st.factor_random )
 	out.end()
 
-	if st.emit_from == 'FACE' and not obj.data.active_uv_texture:
+	if st.emit_from == 'FACE' and not len(obj.data.uv_textures):
 		print("\t\t(w)",'emitter surface does not have UV')
 	out.begin('p_dist')
 	out.text( st.emit_from, st.distribution )
@@ -811,15 +814,15 @@ def save_particle(obj,part):
 	out.pack('f', st.angular_velocity_factor )
 	out.end()
 	out.begin('p_phys')
-	out.pack('2f3f', st.particle_size, st.random_size,
-		st.brownian_factor, st.drag_factor, st.damp_factor )
+	out.pack('2f3f', st.particle_size, st.size_random,
+		st.brownian_factor, st.drag_factor, st.damping )
 	out.end()
 
 
 ###  	GAME OBJECT	###
 
 def save_game(gob):
-	flag = (gob.actor, not gob.ghost)
+	flag = (gob.use_actor, not gob.use_ghost)
 	if	gob.physics_type == 'STATIC':
 		out.begin('b_stat')
 		out.array('B',flag)
@@ -874,7 +877,7 @@ def save_scene(filename, context, st):
 		out.array('f', sc.gravity)
 		out.end()
 	
-	for mat in context.main.materials:
+	for mat in context.blend_data.materials:
 		save_mat(mat)
 		save_actions( mat, 'm','t' )
 
@@ -903,59 +906,3 @@ def save_scene(filename, context, st):
 	print('Done.')
 	out.fx.close()
 	print('Export time:', time.clock()-timeStart)
-
-
-### 	 EXPORT MODULE		###
-
-class ExportKRI( bpy.types.Operator ):
-	''' Export to KRI scene format (.scene).'''
-	from bpy.props	import StringProperty,BoolProperty
-	
-	bl_idname = 'export.kri_scene'
-	bl_label = 'Export KRI'
-	st = Settings()
-
-	filepath	= StringProperty( name='File Path',
-		description='Filepath used for exporting the KRI scene',
-		maxlen=1024, default='')
-	quat_int	= BoolProperty( name='Process quaternions',
-		description='Prepare mesh quaternions for interpolation',
-		default=st.doQuatInt )
-	put_uv		= BoolProperty( name='Put UV layers',
-		description='Export vertex UVs',	default=st.putUv )
-	put_color	= BoolProperty( name='Put color layers',
-		description='Export vertex colors',	default=st.putColor )
-	
-	def execute(self, context):
-		st = Settings()
-		st.doQuatInt	= self.properties.quat_int
-		st.putUv	= self.properties.put_uv
-		st.putColor	= self.properties.put_color
-
-		save_scene(self.properties.filepath, context, st)
-		return {'FINISHED'}
-	
-	def invoke(self, context, event):
-		context.manager.add_fileselect(self)
-		return {'RUNNING_MODAL'}
-	
-	def poll(self, context):
-		return context.active_object
-
-
-# Add to a menu
-def menu_func(self, context):
-	import os
-	default_path = os.path.splitext( bpy.data.filepath )[0] + file_ext
-	self.layout.operator(ExportKRI.bl_idname, text='Scene KRI...').filepath = default_path
-
-def register():
-    bpy.types.register(ExportKRI)
-    bpy.types.INFO_MT_file_export.append(menu_func)
-
-def unregister():
-    bpy.types.unregister(ExportKRI)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
-
-if __name__ == "__main__":
-    register()

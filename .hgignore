@@ -30,3 +30,4 @@ _obj
 *.cache
 *.orig
 *.zip
+*.pyc
