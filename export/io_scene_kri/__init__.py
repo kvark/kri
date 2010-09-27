@@ -5,9 +5,10 @@ if "bpy" in locals():
 
 
 import bpy
-from bpy.props import *
-from io_utils import ImportHelper, ExportHelper
-import io_scene_kri.export_kri
+from bpy.props	import *
+from io_utils	import ImportHelper, ExportHelper
+from io_scene_kri.export_kri	import save_scene
+from io_scene_kri.common	import Settings
 
 
 class ExportKRI(bpy.types.Operator, ExportHelper):
@@ -15,7 +16,7 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 	bl_idname = 'export_scene.kri_scene'
 	bl_label = '-= KRI =- (.scene)'
 	filename_ext = '.scene'
-	st = io_scene_kri.export_kri.Settings()
+	st = Settings()
 
 	filepath	= StringProperty( name='File Path',
 		description='Filepath used for exporting the KRI scene',
@@ -29,11 +30,11 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 		description='Export vertex colors',	default=st.putColor )
 
 	def execute(self, context):
-		st = io_scene_kri.export_kri.Settings()
+		st = Settings()
 		st.doQuatInt	= self.properties.quat_int
 		st.putUv	= self.properties.put_uv
 		st.putColor	= self.properties.put_color
-		io_scene_kri.export_kri.save_scene(self.properties.filepath, context, st)
+		save_scene(self.properties.filepath, context, st)
 		return {'FINISHED'}
 
 
