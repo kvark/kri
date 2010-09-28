@@ -6,6 +6,7 @@ class Settings:
 	putUv		= True
 	putColor	= False
 	logInfo		= True
+	cutPaths	= True
 	kFrameSec	= 1.0 / 25.0
 
 

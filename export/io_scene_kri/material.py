@@ -114,7 +114,8 @@ def save_mat_image(mtex):
 	out.begin('t_path')
 	fullname = img.filepath
 	print("\t\t", img.source, ':',fullname)
-	name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
+	if Settings.cutPaths:
+		name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
 		print("\t\t(w) path cut to:", name)
 	out.text( name)

@@ -62,7 +62,7 @@ class Face:
 
 ###  MESH   ###
 
-def save_mesh(mesh,armature,groups,st):
+def save_mesh(mesh,armature,groups):
 	out = Writer.inst
 	# 1: convert Mesh to Triangle Mesh
 	for layer in mesh.uv_textures:
@@ -72,11 +72,11 @@ def save_mesh(mesh,armature,groups,st):
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
 		uves,colors,nvert = [],[],len(face.vertices)
-		for layer in ( mesh.uv_textures		if st.putUv	else [] ):
+		for layer in ( mesh.uv_textures		if Settings.putUv	else [] ):
 			d = layer.data[i]
 			cur = tuple(mathutils.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
 			uves.append(cur)
-		for layer in ( mesh.vertex_colors	if st.putColor	else [] ):
+		for layer in ( mesh.vertex_colors	if Settings.putColor	else [] ):
 			d = layer.data[i]
 			cur = tuple(mathutils.Vector(x) for x in (d.color1,d.color2,d.color3,d.color4))
 			colors.append(cur)
@@ -140,7 +140,7 @@ def save_mesh(mesh,armature,groups,st):
 		v = ar_vert[ind]
 		if v.dual < 0: v.dual = ind
 	n_dup,ex_face = 0,[]
-	for f in (ar_face if st.doQuatInt else []):
+	for f in (ar_face if Settings.doQuatInt else []):
 		vx,cs,pos,n_neg = (1,2,0),[0,0,0],0,0
 		def isGood(j):
 			ind = f.vi[j]
@@ -202,7 +202,7 @@ def save_mesh(mesh,armature,groups,st):
 		# mark as used
 		for ind in f.vi: mark_used(ind)
 
-	if st.doQuatInt:
+	if Settings.doQuatInt:
 		print("\textra: %d vertices, %d faces" % (n_dup,len(ex_face)))
 		ar_face += ex_face
 		# run a check
@@ -229,7 +229,7 @@ def save_mesh(mesh,armature,groups,st):
 		out.pack('4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
 	out.end()
 	
-	if st.putUv:
+	if Settings.putUv:
 		all = mesh.uv_textures
 		print("\t", 'UV layers:', len(all) )
 		for i,layer in enumerate(all):
@@ -239,7 +239,7 @@ def save_mesh(mesh,armature,groups,st):
 				assert i<len(v.tex)
 				out.pack('2f', v.tex[i].x, v.tex[i].y)
 			out.end()
-	if st.putColor:
+	if Settings.putColor:
 		all = mesh.vertex_colors
 		print("\t", 'Color layers:', len(all) )
 		for i,layer in enumerate(all):

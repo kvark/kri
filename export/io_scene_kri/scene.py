@@ -1,149 +1,109 @@
+# coding: utf-8
 __author__ = ['Dzmitry Malyshau']
-__bpydoc__ = 'Light, Camera, Skeleton & Particles export for KRI.'
+__url__ = ('kvatom.com')
+__version__ = '0.6'
+__bpydoc__ = '''KRI scene exporter.
+This script exports the whole scene to the KRI binary file.
+Written against Blender v2.54
+'''
+
+''' Math notes:
+ The multiplication order is Matrix * vector
+ Matrix[3] is the translation component
+ Only right-handed matrix should be converted to quaternion
+'''
 
 from io_scene_kri.common	import *
+from io_scene_kri.object	import *
+from io_scene_kri.material	import save_mat
+from io_scene_kri.action	import save_actions
+from io_scene_kri.mesh		import save_mesh
 
 
-###  LIGHT & CAMERA   ###
+###  	GAME OBJECT	###
 
-def save_lamp(lamp):
+def save_game(gob):
 	out = Writer.inst
-	energy_threshold = 0.1
-	print("\t(i) %s type, %.1f distance" % (lamp.type, lamp.distance))
-	out.begin('lamp')
-	save_color( lamp.color )
-	if not lamp.use_specular or not lamp.use_diffuse:
-		print("\t(w)",'specular/diffuse cant be disabled')
-	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0
-	# attenuation
-	kd = 1.0 / lamp.distance
-	q0,q1,q2,qs = lamp.energy, kd, kd*kd, 0.0
-	if lamp.type in ('POINT','SPOT'):
-		if lamp.use_sphere:
-			print("\t(i) spherical limit")
-			clip1 = lamp.distance
-			qs = kd
-		ft = lamp.falloff_type
-		if ft == 'LINEAR_QUADRATIC_WEIGHTED':
-			q1 *= lamp.linear_attenuation
-			q2 *= lamp.quadratic_attenuation
-		elif ft == 'INVERSE_LINEAR': q2=0.0
-		elif ft == 'INVERSE_SQUARE': q1=0.0
-		elif ft == 'CONSTANT': q1=q2=0.0
-		else: print("\t(w) custom curve is not supported")
-		print("\tfalloff: %s, %.4f q1, %.4f q2" % (ft,q1,q2))
-	else: q1=q2=0.0
-	out.pack('4f', q0,q1,q2,qs)
-	if lamp.type == 'SPOT':
-		spotAng,spotBlend = lamp.spot_size,lamp.spot_blend
-	out.text( lamp.type )
-	out.pack('4f', clip0,clip1, spotAng,spotBlend )
-	out.end()
-
-
-def save_camera(cam, is_cur):
-	out = Writer.inst
-	if is_cur: print("\t(i) active")
-	fov = cam.angle
-	if cam.type == 'ORTHO':
-		scale = cam.ortho_scale
-		print("\t(i) ortho scale: %.2f" % (scale))
-		fov = -4.0 / scale	# will be scaled by 0.5 on reading
-	print("\t%s, dist: [%.2f-%.2f], fov: %.2f" % (
-		('A' if is_cur else '_'),
-		cam.clip_start, cam.clip_end, fov) )
-	out.begin('cam')
-	out.pack('B3f', is_cur,
-		cam.clip_start, cam.clip_end, fov)
-	out.end()
-
-
-###	SKELETON:CORE		###
-
-def save_skeleton(skel):
-	out = Writer.inst
-	out.begin('skel')
-	nbon = len(skel.bones)
-	print("\t(i)", nbon ,'bones')
-	out.pack('B', nbon)
-	for bone in skel.bones:
-		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
-		if not (bone.use_inherit_scale and bone.use_deform):
-			print("\t\t(w)", 'weird bone', bone.name)
-		if par: # old variant (same result)
-			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
-			parid = skel.bones.keys().index( par.name )
-			mx = par.matrix_local.copy().invert() * mx
-		out.text( bone.name )
-		out.pack('B', parid+1 )
-		save_matrix(mx)
-	out.end()
-
-
-###	PARTICLES	###
-
-def save_particle(obj,part):
-	out = Writer.inst
-	st = part.settings
-	life = (st.frame_start, st.frame_end, st.lifetime)
-	mat = obj.material_slots[ st.material-1 ].material
-	matname = (mat.name if mat else '')
-	info = (part.name, matname, st.count)
-	print("\t+particle: %s [%s], %d num" % info )
-	out.begin('part')
-	out.pack('L', st.count)
-	out.text( part.name, matname )
-	out.end()
-
-	if st.type == 'HAIR' and not part.cloth:
-		print("\t(w)",'hair dynamics has to be enabled')
-	elif st.type == 'HAIR' and part.cloth:
-		if not mat.strand.blender_units:
-			print("\t(w)",'material strand size in units required')
-		cset = part.cloth.settings
-		print("\t\thair: %d segments" % (st.hair_step,) )
-		out.begin('p_hair')
-		out.pack('B3f2f', st.hair_step,
-			cset.pin_stiffness, cset.mass, cset.bending_stiffness,
-			cset.spring_damping, cset.air_damping )
+	flag = (gob.use_actor, not gob.use_ghost)
+	if	gob.physics_type == 'STATIC':
+		out.begin('b_stat')
+		out.array('B',flag)
 		out.end()
-	elif st.type == 'EMITTER':
-		print("\t\temitter: [%d-%d] life %d" % life)
-		out.begin('p_life')
-		out.array('f', [x * Settings.kFrameSec for x in life] )
-		out.pack('f', st.lifetime_random )
+	elif	gob.physics_type == 'RIGID_BODY':
+		out.begin('b_rigid')
+		out.array('B',flag)
+		out.pack('3f2f', gob.mass, gob.radius, gob.form_factor,
+			gob.damping, gob.rotation_damping )
+		out.end()
+	if gob.use_collision_bounds:
+		print("\t(i)", 'collision', gob.collision_bounds)
+		out.begin('collide')
+		out.pack('f', gob.collision_margin )
+		out.text( gob.collision_bounds )
+		out.end()
+
+###  	NODE:CORE	###
+
+def save_node(ob):
+	out = Writer.inst
+	print(ob.type, ob.name, ob.parent)
+	# todo: parent types (bone,armature,node)
+	out.begin('node')
+	par_name = (ob.parent.name if ob.parent else '')
+	out.text( ob.name, par_name )
+	save_matrix( ob.matrix_local )
+	out.end()
+
+
+### 	 SCENE		###
+
+def save_scene(filename, context):
+	import time
+	global out,file_ext,bDegrees
+	timeStart = time.clock()
+	print("\nExporting...")
+	out = Writer.inst = Writer(filename)
+	out.begin('kri')
+	out.pack('B',3)
+	out.end()
+	
+	sc = context.scene
+	bDegrees = (sc.unit_settings.rotation_units == 'DEGREES')
+	if not bDegrees:
+		#it's easier to convert on loading than here
+		print("\t(w)",'Radians are not supported')
+	if sc.use_gravity:
+		print("\tgravity:", sc.gravity)
+		out.begin('grav')
+		out.array('f', sc.gravity)
 		out.end()
 	
-	if st.render_type == 'OBJECT':
-		print("\t\t(i)", 'instanced', st.dupli_object )
-		out.begin('pr_inst')
-		out.text( st.dupli_object.name )
-		out.end()
-	elif st.render_type == 'LINE':
-		out.begin('pr_line')
-		out.pack('B2f', st.velocity_length,
-			st.line_length_tail, st.line_length_head )
-		out.end()
-	elif not st.render_type in ('HALO','PATH'):
-		print("\t\t(w)", 'render as unsupported:', st.ren_as )
-	
-	out.begin('p_vel')
-	out.array('f', st.object_align_factor )
-	out.pack('3f', st.normal_factor, st.tangent_factor, st.tangent_phase )
-	out.pack('2f', st.object_factor, st.factor_random )
-	out.end()
+	for mat in context.blend_data.materials:
+		save_mat(mat)
+		save_actions( mat, 'm','t' )
 
-	if st.emit_from == 'FACE' and not len(obj.data.uv_textures):
-		print("\t\t(w)",'emitter surface does not have UV')
-	out.begin('p_dist')
-	out.text( st.emit_from, st.distribution )
-	out.pack('f', st.jitter_factor )
-	out.end()
-	out.begin('p_rot')
-	out.text( st.angular_velocity_mode )
-	out.pack('f', st.angular_velocity_factor )
-	out.end()
-	out.begin('p_phys')
-	out.pack('2f3f', st.particle_size, st.size_random,
-		st.brownian_factor, st.drag_factor, st.damping )
-	out.end()
+	for ob in sc.objects:
+		save_node( ob )
+		save_actions( ob, 'n', None )
+		save_game( ob.game )
+
+		if ob.type == 'MESH':
+			arm = None
+			if ob.parent and ob.parent.type == 'ARMATURE':
+				arm = ob.parent.data
+			save_mesh( ob.data, arm, ob.vertex_groups )
+			save_actions( ob.data.shape_keys, '','v' )
+		elif ob.type == 'ARMATURE':
+			save_skeleton( ob.data )
+			save_actions( ob.data, None, 's' )
+		elif ob.type == 'LAMP':
+			save_lamp( ob.data )
+			save_actions( ob.data, 'l','' )
+		elif ob.type == 'CAMERA':
+			save_camera( ob.data, ob == sc.camera )
+			save_actions( ob.data, 'c','' )
+		for p in ob.particle_systems:
+			save_particle(ob,p)
+	print('Done.')
+	out.fx.close()
+	print('Export time:', time.clock()-timeStart)
