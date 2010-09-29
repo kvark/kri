@@ -133,9 +133,10 @@ public class Catcher(IDisposable):
 	public final t	as QueryTarget
 	public def constructor(q as Query):
 		t = q.target
-		GL.BeginQuery( t, q.qid )
+		#GL.BeginQuery( t, q.qid )
 	public virtual def Dispose() as void:
-		GL.EndQuery(t)
+		#GL.EndQuery(t)
+		pass
 
 public class Query:
 	public final qid	as int

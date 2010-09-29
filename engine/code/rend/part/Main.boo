@@ -24,11 +24,11 @@ public class Basic( kri.rend.Basic ):
 				pe.va.bind()
 				return	if not pe.prepare()
 				sa.use()
-				q = kri.Query( QueryTarget.SamplesPassed )
-				using q.catch():
-					pe.owner.draw()
-				r = q.result()
-				r = 0
+				#q = kri.Query( QueryTarget.SamplesPassed )
+				#using q.catch():
+				pe.owner.draw()
+				#r = q.result()
+				#r = 0
 
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#

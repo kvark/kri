@@ -95,9 +95,9 @@ def save_particle(obj,part):
 	out.text( part.name, matname )
 	out.end()
 
-	if st.type == 'HAIR' and not part.cloth:
+	if st.type == 'HAIR' and not part.use_hair_dynamics:
 		print("\t(w)",'hair dynamics has to be enabled')
-	elif st.type == 'HAIR' and part.cloth:
+	elif st.type == 'HAIR' and part.use_hair_dynamics:
 		if not mat.strand.use_blender_units:
 			print("\t(w)",'material strand size in units required')
 		cset = part.cloth.settings

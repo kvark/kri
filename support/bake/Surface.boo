@@ -54,7 +54,7 @@ public class Update( kri.rend.tech.Basic ):
 			# todo: clear only on init
 			con.ClearColor( Color4(0f,0f,0f,0f) )	if tag.clear
 			sa.use()
-			q = kri.Query( QueryTarget.SamplesPassed )
-			using q.catch():
-				e.mesh.draw(1)
-			assert q.result()
+			#q = kri.Query( QueryTarget.SamplesPassed )
+			#using q.catch():
+			e.mesh.draw(1)
+			#assert q.result()

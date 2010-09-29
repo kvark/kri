@@ -65,9 +65,9 @@ public class Damp(Simple[of single]):		# speed damping
 	public def constructor(val as single):
 		super('/part/beh/damp','speed_damp',val)
 
-public class Bend(Simple[of single]):		# fur bending
+public class Stiff(Simple[of single]):		# fur stiffness
 	public def constructor(val as single):
-		super( '/part/beh/fur_bend','fur_bend',val)
+		super( '/part/beh/fur_stiff','fur_stiff',val)
 
 public class Rotate(Simple[of single]):		# particle rotation
 	public def constructor(val as single, pc as kri.part.Context):

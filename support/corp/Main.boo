@@ -46,7 +46,8 @@ public class Extra( kri.IExtension ):
 			elif ph: pm.makeHair(pcon)
 			else: return
 			pm.init(pcon)
-		pe.allocate()
+		if not pe.Data:
+			pe.allocate()
 	
 	private def upNode(e as kri.Entity):
 		assert e
@@ -68,7 +69,8 @@ public class Extra( kri.IExtension ):
 		pe.mat = kri.Ant.Inst.loaders.materials.con.mDef	if not pe.mat
 		# post-process
 		r.addPostProcess() do(n as kri.Node):
-			finish(pe)
+			for emi in r.at.scene.particles:
+				finish(emi)
 		return true
 
 
@@ -142,12 +144,12 @@ public class Extra( kri.IExtension ):
 		segs = r.getByte()
 		pm.behos.Add( support.hair.Behavior(pcon,segs) )
 		dyn = r.getVector()	# stiffness, mass, bending
-		dyn.Z *= 20f
+		dyn.X *= 250f
 		damp = r.getVec2()	# spring, air
 		damp.X *= 1.5f
 		pm.behos.Insert(0, beh.Damp( damp.X ))
 		// standard behavior appears here
-		pm.behos.Add( beh.Bend( dyn.Z ))
+		pm.behos.Add( beh.Stiff( dyn.X ))
 		pm.behos.Add( beh.Norm() )
 		return true
 	
