@@ -30,32 +30,32 @@ private class Fill( kri.rend.Basic ):
 
 
 public class Draw( kri.rend.part.Meta ):
-	public final texLit		as kri.shade.par.Texture
-	private static DoLit	= true
-	private static DoGeom	= true	#should be
+	public final texLit		as kri.shade.par.Texture	= null
+	private static doGeom	= true	#should be
 
-	public def constructor(ren as kri.rend.light.Apply, lc as kri.rend.light.Context, man as kri.part.Manager):
-		super('part.light.draw', DoGeom, 'strand','diffuse')
-		texLit = lc.texLit
+	public def constructor(lc as kri.rend.light.Context):
+		super('part.light.draw', doGeom, 'strand','diffuse')
+		bAdd = 0f
 		# drawing
-		dict.attach( man.dict )
-		dict.attach( lc.dict )
-		if DoGeom and DoLit:
-			shobs.Add( ren.sh_shadow )
+		if lc:
+			#bAdd = 1f
+			texLit = lc.texLit
+			dict.attach( lc.dict )
+			shobs.Add( lc.getShadowProg() )
 			shade( '/part/draw/fur/lit/draw_'+suf	for suf in ('v','g','f') )
-		elif DoGeom:
+		elif doGeom:
 			shade( '/part/draw/fur/draw_'+suf		for suf in ('v','g','f') )
 		else:
 			shade(( '/part/draw/fur/draw_point_v', '/part/draw/fur/draw_f' ))
-		bAdd = 0f
-
+	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true,0f,false)
-		if DoLit:
-			lit = kri.Scene.Current.lights[0]
-			kri.Ant.Inst.params.activate(lit)
-			texLit.Value = lit.depth
-		drawScene()
+		if texLit:
+			for lit in kri.Scene.Current.lights:
+				kri.Ant.Inst.params.activate(lit)
+				texLit.Value = lit.depth
+				drawScene()
+		else:	drawScene()
 	
 	public override def onManager(man as kri.part.Manager) as void:
 		pass

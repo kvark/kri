@@ -11,6 +11,6 @@ out	vec3 to_pos, to_speed;
 float update_stiff()	{
 	vec3 sof = to_pos + at_prev - 2.0*at_base;
 	float kd = 1.0 / max(0.001,cur_time.x);
-	to_speed -= min( fur_stiff*cur_time.x, kd ) * sof;
+	to_speed -= min( 1000.0*fur_stiff*cur_time.x, kd ) * sof;
 	return 1.0;
 }

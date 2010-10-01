@@ -55,7 +55,8 @@ class Face:
 		self.color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
 		t,b,n,hand,nv = calc_TBN(self.v, self.uv)
 		self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
-		assert t.dot(t) > 0.0
+		assert t.dot(t)>0.0 and
+			'Try removing duplicated vertices and recalculating normals'
 		self.ta = t.normalize()
 		self.hand = hand
 

@@ -22,8 +22,8 @@ public class ExMaterial( kri.IExtension ):
 	def kri.IExtension.attach(nt as Native) as void:
 		init()
 		# fill targets
-		tarDict['colordiff']		= MapTarget('diffuse',	con.slib.diffuse_t2 )
-		tarDict['coloremission']	= MapTarget('emissive',	con.slib.emissive_t2 )
+		tarDict['color_diffuse']	= MapTarget('diffuse',	con.slib.diffuse_t2 )
+		tarDict['color_emission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		# material
 		nt.readers['mat']		= p_mat
 		nt.readers['m_hair']	= pm_hair

@@ -106,4 +106,4 @@ def save_scene(filename, context):
 			save_particle(ob,p)
 	print('Done.')
 	out.fx.close()
-	print('Export time:', time.clock()-timeStart)
+	print('Export time:', time.clock()-timeStart, 'sec')

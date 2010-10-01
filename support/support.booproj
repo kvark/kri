@@ -55,8 +55,9 @@
     <Compile Include="bake\Surface.boo" />
     <Compile Include="corp\beh\Main.boo" />
     <Compile Include="corp\beh\Small.boo" />
-    <Compile Include="hair\App.boo" />
+    <Compile Include="hair\Draw.boo" />
     <Compile Include="hair\Beh.boo" />
+    <Compile Include="hair\Bake.boo" />
     <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\Main.boo" />
     <Compile Include="mirror\Main.boo" />

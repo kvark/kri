@@ -60,19 +60,12 @@ public class Fill( kri.rend.tech.General ):
 
 public class Apply( kri.rend.tech.Meta ):
 	private lit as kri.Light	= null
-	public final sh_shadow	as kri.shade.Object
 	private final texLit	as kri.shade.par.Texture
 
 	public def constructor(lc as Context):
-		shadow = 'simple'
-		shadow = 'exponent2'	if lc.type == LiType.EXPONENT
-		shadow = 'variance'		if lc.type == LiType.VARIANCE
 		super('lit.apply', false, null, *kri.load.Meta.LightSet)
-		
-		sh_shadow = kri.Ant.Inst.dataMan.load[of kri.shade.Object]( "/light/shadow/${shadow}_f" )
-		shobs.Add(sh_shadow)
+		shobs.Add( lc.getShadowProg() )
 		shade(('/light/apply_v','/light/apply_f','/light/common_f'))
-
 		dict.attach(lc.dict)
 		texLit = lc.texLit
 	# prepare

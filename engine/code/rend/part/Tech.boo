@@ -6,7 +6,7 @@ import kri.shade
 
 #---------	RENDER PARTICLES: TECHNIQUE	--------#
 
-public class Tech( Basic, kri.rend.tech.IConstructor ):
+public class Tech( Basic ):
 	public final tid	as int
 	public static final	Invalid	= (of int:,)
 	
@@ -14,14 +14,14 @@ public class Tech( Basic, kri.rend.tech.IConstructor ):
 		super()
 		tid = kri.Ant.Inst.slotTechniques.getForced(name)
 	
-	public abstract def construct(m as kri.Material) as Smart:
+	public abstract def construct(pe as kri.part.Emitter) as Smart:
 		pass
 	protected override def prepare(pe as kri.part.Emitter) as Program:
 		m = pe.mat
 		return null	if not m
 		sa = m.tech[tid]
 		if not sa:
-			m.tech[tid] = sa = construct(m)
+			m.tech[tid] = sa = construct(pe)
 		return null	if sa == Smart.Fixed
 		if pe.techReady[tid] == kri.part.TechState.Unknown:
 			ats = List[of int]( sa.gatherAttribs( kri.Ant.Inst.slotParticles, false )).ToArray()
@@ -56,10 +56,11 @@ public class Meta( Tech ):
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( *shobs.ToArray() )
 
-	public override def construct(mat as kri.Material) as Smart:
-		sl = mat.collect(geom,lMets)
+	public override def construct(pe as kri.part.Emitter) as Smart:
+		assert pe.mat and pe.owner
+		sl = pe.mat.collect(geom,lMets)
 		return Smart.Fixed	if not sl
-		return factory.link( sl, mat.dict )
+		return factory.link( sl, pe.owner.dict, pe.mat.dict )
 	
 	public virtual def onManager(man as kri.part.Manager) as void:
 		pass

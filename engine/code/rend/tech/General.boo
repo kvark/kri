@@ -2,9 +2,6 @@
 
 import System.Collections.Generic
 
-public interface IConstructor:
-	def construct(mat as kri.Material) as kri.shade.Smart
-
 
 #--------- Batch ---------#
 
@@ -36,7 +33,7 @@ public struct Batch:	# why struct?
 
 #---------	GENERAL TECHNIQUE	--------#
 
-public class General( IConstructor, Basic ):
+public class General( Basic ):
 	public static comparer	as IComparer[of Batch]	= null
 	protected final butch	= List[of Batch]()
 

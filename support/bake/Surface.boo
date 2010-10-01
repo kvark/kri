@@ -8,6 +8,7 @@ public class Tag( kri.ITag ):
 	public world	as bool = true	# in world space
 	public clear	as bool = true	# clear textures
 	public texid	as byte = 0		# tex-coord channel
+	public stamp	as double	= -1f	# last update
 	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
 	
 	public Size as uint:
@@ -31,10 +32,12 @@ public class Tag( kri.ITag ):
 #---------	RENDER VERTEX SPATIAL TO UV		--------#
 
 public class Update( kri.rend.tech.Basic ):
-	private final sa	= kri.shade.Smart()
+	private final sa		= kri.shade.Smart()
+	public final channel	as byte
 	
-	public def constructor():
+	public def constructor(texId as byte):
 		super('bake.mesh')
+		channel = texId
 		sa.add( '/uv/bake_v' ,'/uv/bake_f', '/lib/quat_v' )
 		sa.fragout('re_vertex','re_quat')
 		#sa.add( '/copy_v' ,'/uv/test_f' )
@@ -46,8 +49,9 @@ public class Update( kri.rend.tech.Basic ):
 			tag = e.seTag[of Tag]()
 			a = kri.Ant.Inst.attribs
 			continue if not e.visible or not tag or\
-				not attribs(true, e, a.vertex,a.quat,a.tex[0])
+				not attribs(true, e, a.vertex,a.quat,a.tex[channel])
 			assert tag.texid == 0
+			tag.stamp = kri.Ant.Inst.Time
 			n = (e.node if tag.world else null)
 			kri.Ant.Inst.params.modelView.activate(n)
 			tag.buf.activate()

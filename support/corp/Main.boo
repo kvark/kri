@@ -144,9 +144,7 @@ public class Extra( kri.IExtension ):
 		segs = r.getByte()
 		pm.behos.Add( support.hair.Behavior(pcon,segs) )
 		dyn = r.getVector()	# stiffness, mass, bending
-		dyn.X *= 250f
 		damp = r.getVec2()	# spring, air
-		damp.X *= 1.5f
 		pm.behos.Insert(0, beh.Damp( damp.X ))
 		// standard behavior appears here
 		pm.behos.Add( beh.Stiff( dyn.X ))

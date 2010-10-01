@@ -38,7 +38,7 @@ public class Behavior( kri.part.Behavior ):
 		def genFunc(id as int):
 			return do(e as kri.Entity) as bool:
 				pSegment.Value.Y = 1f*id
-				return tag.ready
+				return tag.stamp>0f
 		for i in range(lar.Length):
 			pe = lar[i]
 			pe.obj = em.obj
