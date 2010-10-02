@@ -9,6 +9,8 @@ import OpenTK
 public class Behavior( kri.part.Behavior ):
 	# Y = cur seg ID, Z = 1 / segments
 	public final pSegment	= kri.shade.par.Value[of Vector4]('fur_segment')
+	# X = 1 / avg_len
+	public final pSystem	= kri.shade.par.Value[of Vector4]('fur_system')
 	# number of layers
 	public final layers		as byte
 	private final posId		as int
@@ -20,8 +22,9 @@ public class Behavior( kri.part.Behavior ):
 		posId = pc.at_pos
 		kd = 1f / segs
 		pSegment.Value	= Vector4( 0f, 0f, kd, 0f )
+		pSystem.Value	= Vector4.Zero
 	public override def link(d as kri.shade.rep.Dict) as void:
-		d.var(pSegment)
+		d.var(pSegment,pSystem)
 
 	# generate fur layers
 	public def genLayers(em as kri.part.Emitter, init as Vector4) as (kri.part.Emitter):

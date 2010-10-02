@@ -20,7 +20,7 @@ public struct SetBake:
 
 public class Extra( kri.IExtension ):
 	public final pcon	= kri.part.Context()
-	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:false )
+	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:true )
 	public bLoop		= false
 	
 	def kri.IExtension.attach(nt as kri.load.Native) as void:
@@ -168,6 +168,7 @@ public class Extra( kri.IExtension ):
 			ps.parVelKeep.Value = Vector4.Zero
 		elif ph:	# hair
 			magic = 5f / ph.layers	# todo: find out Blender scale source
+			ph.pSystem.Value.X = 10f*magic / (tan.LengthFast + objFactor.LengthFast + 0.001f)
 			lays = ph.genLayers( pe, magic * Vector4(tan,add.Y) )
 			r.at.scene.particles.Remove(pe)
 			r.at.scene.particles.AddRange(lays)

@@ -5,11 +5,12 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Tag( kri.ITag ):
-	public world	as bool = true	# in world space
-	public clear	as bool = true	# clear textures
-	public texid	as byte = 0		# tex-coord channel
-	public stamp	as double	= -1f	# last update
+	public worldSpace	as bool = true		# in world space
+	public clearTarget	as bool = true		# clear textures
+	public uvChannel	as byte = 0			# tex-coord channel
+	public stamp		as double	= -1f	# last update
 	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
+	public final allowFilter	as bool		# allow results filtering
 	
 	public Size as uint:
 		get: return buf.Width * buf.Height * sizeof(single) *4
@@ -19,6 +20,7 @@ public class Tag( kri.ITag ):
 		get: return buf.A[1].Tex
 	
 	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
+		allowFilter = filt
 		buf.init(w,h)
 		buf.mask = 0
 		for i in range(2):
@@ -26,22 +28,30 @@ public class Tag( kri.ITag ):
 			continue	if not bits
 			buf.mask |= 1<<i
 			buf.emitAuto(i,bits).bind()
-			kri.Texture.Filter(filt,false)
+			ft = (allowFilter and not i)
+			kri.Texture.Filter(ft,false)
 
 
 #---------	RENDER VERTEX SPATIAL TO UV		--------#
 
 public class Update( kri.rend.tech.Basic ):
 	private final sa		= kri.shade.Smart()
+	private final sb		= kri.shade.Smart()
+	private final pScale	= kri.shade.par.Value[of single]('quat_scale')
 	public final channel	as byte
 	
 	public def constructor(texId as byte):
 		super('bake.mesh')
 		channel = texId
-		sa.add( '/uv/bake_v' ,'/uv/bake_f', '/lib/quat_v' )
+		# surface shader
+		dict = kri.shade.rep.Dict()
+		dict.var(pScale)
+		sa.add( '/uv/bake_v', '/lib/quat_v', '/uv/bake_f' )
 		sa.fragout('re_vertex','re_quat')
-		#sa.add( '/copy_v' ,'/uv/test_f' )
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+		# edge shader
+		sb.add( '/uv/bake_v', '/lib/quat_v', '/black_f' )
+		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
 	public override def process(con as kri.rend.Context) as void:
 		con.DepthTest = false
@@ -50,15 +60,23 @@ public class Update( kri.rend.tech.Basic ):
 			a = kri.Ant.Inst.attribs
 			continue if not e.visible or not tag or\
 				not attribs(true, e, a.vertex,a.quat,a.tex[channel])
-			assert tag.texid == 0
+			assert tag.uvChannel == 0
 			tag.stamp = kri.Ant.Inst.Time
-			n = (e.node if tag.world else null)
+			n = (null,e.node)[tag.worldSpace]
 			kri.Ant.Inst.params.modelView.activate(n)
-			tag.buf.activate()
-			# todo: clear only on init
-			con.ClearColor( Color4(0f,0f,0f,0f) )	if tag.clear
+			tag.buf.activate(3)
+			if tag.clearTarget:
+				con.ClearColor( Color4(0f,0f,0f,0f) )
+				tag.clearTarget = false
+			pScale.Value = 1f
 			sa.use()
-			#q = kri.Query( QueryTarget.SamplesPassed )
-			#using q.catch():
 			e.mesh.draw(1)
-			#assert q.result()
+			continue if not tag.allowFilter
+			# second pass - init border quaternions
+			#tag.buf.activate(2)
+			#sb.use()
+			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
+			pScale.Value = 0f
+			sa.use()
+			e.mesh.draw(1)
+			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )

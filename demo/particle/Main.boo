@@ -54,7 +54,7 @@ def Main(argv as (string)):
 		man.col_update.extra.Add( kri.shade.Object.Load('/lib/tool_v') )
 		man.init( cex.pcon )
 		
-		rlis.Add( surf.Update() )
+		rlis.Add( surf.Update(0) )
 		rlis.Add( depth.Update() )
 		rlis.Add( rem = kri.rend.Emission(fillDepth:true) )
 		rem.pBase.Value = Graphics.Color4.Black
