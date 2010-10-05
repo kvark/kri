@@ -157,8 +157,12 @@ def save_mat(mat):
 	if mat.strand:	# hair strand
 		st = mat.strand
 		out.begin('m_hair')
-		out.pack('4fB', st.root_size, st.tip_size, st.shape,
-			st.width_fade, st.use_tangent_shading )
+		dist = -1.0
+		if st.use_surface_diffuse:
+			dist = st.blend_distance
+		out.pack('4fBf', st.root_size, st.tip_size, st.shape,
+			st.width_fade, st.use_tangent_shading, dist )
+		out.text( st.uv_layer )
 		out.end()
 	# particle halo material
 	if	mat.type == 'HALO':

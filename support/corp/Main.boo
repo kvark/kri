@@ -25,13 +25,15 @@ public class Extra( kri.IExtension ):
 	
 	def kri.IExtension.attach(nt as kri.load.Native) as void:
 		# particles
-		nt.readers['part']		= p_part
-		nt.readers['p_dist']	= pp_dist
-		nt.readers['p_life']	= pp_life
-		nt.readers['p_hair']	= pp_hair
-		nt.readers['p_vel']		= pp_vel
-		nt.readers['p_rot']		= pp_rot
-		nt.readers['p_phys']	= pp_phys
+		nt.readers['part']		= f_part
+		nt.readers['p_dist']	= fp_dist
+		nt.readers['p_life']	= fp_life
+		nt.readers['p_hair']	= fp_hair
+		nt.readers['p_vel']		= fp_vel
+		nt.readers['p_rot']		= fp_rot
+		nt.readers['p_phys']	= fp_phys
+		nt.readers['p_child']	= fp_child
+		nt.readers['pr_inst']	= fpr_inst
 
 	public def finish(pe as kri.part.Emitter) as void:
 		pm = pe.owner
@@ -56,7 +58,7 @@ public class Extra( kri.IExtension ):
 
 
 	#---	Parse emitter object	---#
-	public def p_part(r as kri.load.Reader) as bool:
+	public def f_part(r as kri.load.Reader) as bool:
 		pm = kri.part.Manager( r.bin.ReadUInt32() )
 		r.puData(pm)
 		# create emitter
@@ -75,7 +77,7 @@ public class Extra( kri.IExtension ):
 
 
 	#---	Parse distribution		---#
-	public def pp_dist(r as kri.load.Reader) as bool:
+	public def fp_dist(r as kri.load.Reader) as bool:
 		source = r.getString()
 		r.getString()	# type
 		r.getReal()		# jitter factor
@@ -128,7 +130,7 @@ public class Extra( kri.IExtension ):
 
 
 	#---	Parse life data	(emitter)	---#
-	public def pp_life(r as kri.load.Reader) as bool:
+	public def fp_life(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		bh = beh.Standard(pcon)
@@ -138,7 +140,7 @@ public class Extra( kri.IExtension ):
 		return true
 	
 	#---	Parse hair dynamics data	---#
-	public def pp_hair(r as kri.load.Reader) as bool:
+	public def fp_hair(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		segs = r.getByte()
@@ -152,7 +154,7 @@ public class Extra( kri.IExtension ):
 		return true
 	
 	#---	Parse velocity setup		---#
-	public def pp_vel(r as kri.load.Reader) as bool:
+	public def fp_vel(r as kri.load.Reader) as bool:
 		pe = r.geData[of kri.part.Emitter]()
 		return false	if not pe or not pe.owner
 		objFactor	= r.getVector()	# object-aligned factor
@@ -175,7 +177,7 @@ public class Extra( kri.IExtension ):
 		else: return false
 		return true
 	
-	public def pp_rot(r as kri.load.Reader) as bool:
+	public def fp_rot(r as kri.load.Reader) as bool:
 		mode = r.getString()
 		factor = r.getReal()
 		if mode == 'SPIN':
@@ -184,7 +186,7 @@ public class Extra( kri.IExtension ):
 			pm.behos.Add( beh.Rotate(factor,pcon) )
 		return true
 	
-	public def pp_phys(r as kri.load.Reader) as bool:
+	public def fp_phys(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		pg = r.at.scene.pGravity
@@ -199,8 +201,16 @@ public class Extra( kri.IExtension ):
 		biz.pForce.Value = Vector4( r.getVector() )
 		pm.behos.Add(biz)
 		return true
+
+	public def fp_child(r as kri.load.Reader) as bool:
+		r.bin.ReadUInt16()	# number
+		r.getReal()	# radius
+		r.getReal()	# roundness
+		r.getReal()	# size
+		r.getReal()	# size random
+		return true
 	
-	public def ppr_inst(r as kri.load.Reader) as bool:
+	public def fpr_inst(r as kri.load.Reader) as bool:
 		pe = r.geData[of kri.part.Emitter]()
 		return false	if not pe or not pe.mat or\
 			pe.mat == kri.Ant.Inst.loaders.materials.con.mDef

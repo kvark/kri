@@ -147,3 +147,12 @@ def save_particle(obj,part):
 	out.pack('2f3f', st.particle_size, st.size_random,
 		st.brownian_factor, st.drag_factor, st.damping )
 	out.end()
+
+	if st.child_type == 'PARTICLES':
+		num = st.rendered_child_count
+		print("\t\tchildren: %d" %(num,) )
+		out.begin('p_child')
+		out.pack('H2f2f', num,
+			st.child_radius, st.child_roundness,
+			st.child_size, st.child_size_random);
+		out.end()

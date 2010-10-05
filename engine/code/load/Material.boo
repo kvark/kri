@@ -115,6 +115,8 @@ public class ExMaterial( kri.IExtension ):
 		return false	if not m
 		ms = Strand( Name:'strand', Data:r.getVec4() )
 		r.getByte()	# tangent shading
+		r.getReal()	# surface diffuse distance
+		r.getString()	# UV layer to override
 		ms.Shader = con.slib.strand_u
 		m.metaList.Add(ms)
 		return true
