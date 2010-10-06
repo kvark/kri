@@ -17,7 +17,7 @@ public class Meta( kri.meta.Advanced ):
 public class Rend( kri.rend.part.Meta ):
 	public def constructor(pc as kri.part.Context):
 		super('part.child', false, 'halo','diffuse','child')
-		shobs.AddRange(( pc.sh_draw, pc.sh_tool ))
+		shobs.AddRange(( pc.sh_draw, pc.sh_tool, pc.sh_child ))
 		shade(( '/part/draw/load_child_v', '/part/draw/load_f' ))
 
 	protected override def update(pe as kri.part.Emitter) as uint:

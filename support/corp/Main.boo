@@ -20,7 +20,7 @@ public struct SetBake:
 
 public class Extra( kri.IExtension ):
 	public final con	= kri.part.Context()
-	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:true )
+	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:false )
 	public bLoop		= false
 	
 	def kri.IExtension.attach(nt as kri.load.Native) as void:

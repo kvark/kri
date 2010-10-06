@@ -61,3 +61,14 @@ public class Behavior( kri.part.Behavior ):
 					ex0.vat = lar[i-2]
 			pe.extList.AddRange((ex0,ex1))
 		return lar
+	
+	# add children dependencies
+	public static def prepareChildren(scene as kri.Scene, man as kri.part.Manager) as void:
+		root as (kri.part.ExtAttrib) = null
+		for pe in scene.particles:
+			continue	if pe.owner != man
+			assert pe.obj
+			tag = pe.obj.seTag[of Tag]()
+			assert tag
+			root = tag.makeRoot()	if not root
+			pe.extList.AddRange(root)

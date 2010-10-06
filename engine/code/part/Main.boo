@@ -50,10 +50,11 @@ public class Context:
 	public final	ghost_sys	= kri.Ant.Inst.slotAttributes.getForced('@sys')
 	public final	ghost_sub	= kri.Ant.Inst.slotAttributes.getForced('@sub')
 	# root shaders
-	public final	sh_init	= Object.Load('/part/init_v')
-	public final	sh_draw	= Object.Load('/part/draw/main_v')
-	public final	sh_root	= Object.Load('/part/root_v')
-	public final	sh_tool	= Object.Load('/part/tool_v')
+	public final	sh_init		= Object.Load('/part/init_v')
+	public final	sh_draw		= Object.Load('/part/draw/main_v')
+	public final	sh_root		= Object.Load('/part/root_v')
+	public final	sh_tool		= Object.Load('/part/tool_v')
+	public final	sh_child	= Object.Load('/part/child_v')
 	# fur shaders
 	public final	sh_fur_init	= Object.Load('/part/fur/init_v')
 	public final	sh_fur_root	= Object.Load('/part/fur/root_v')

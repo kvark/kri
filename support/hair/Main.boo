@@ -11,6 +11,9 @@ public class Tag( kri.ITag, kri.vb.ISource ):
 	public final at_prev	= kri.Ant.Inst.slotParticles.getForced('prev')
 	public final at_base	= kri.Ant.Inst.slotParticles.getForced('base')
 	public final ghost_tex	= kri.Ant.inst.slotAttributes.getForced('@tex')
+	public final at_root_prev	= kri.Ant.Inst.slotParticles.getForced('root_prev')
+	public final at_root_base	= kri.Ant.Inst.slotParticles.getForced('root_base')
+
 	[Getter(Data)]
 	private final aBase	as kri.vb.Attrib	= kri.vb.Attrib()
 	# XYZ: tangent space direction, W: randomness
@@ -24,3 +27,8 @@ public class Tag( kri.ITag, kri.vb.ISource ):
 		for i in range(2):
 			kri.Help.enrich( aBase, 3, (at_prev,at_base)[i] )
 		aBase.initAll(size)
+
+	public def makeRoot() as (kri.part.ExtAttrib):
+		return (
+			kri.part.ExtAttrib( vat:self, dest:at_root_prev, source:at_prev ),
+			kri.part.ExtAttrib( vat:self, dest:at_root_base, source:at_base ))

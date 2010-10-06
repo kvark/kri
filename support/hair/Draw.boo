@@ -61,3 +61,39 @@ public class Draw( kri.rend.part.Meta ):
 		pass
 		#beh = man.seBeh[of support.hair.Behavior]()
 		#pSegment.Value = beh.pSegment.Value
+
+
+public class DrawChild( kri.rend.part.Meta ):
+	public final texLit		as kri.shade.par.Texture	= null
+	private static doGeom	= true	#should be
+
+	public def constructor(pc as kri.part.Context, lc as kri.rend.light.Context):
+		super('part.child.light.draw', doGeom, 'strand','diffuse','child')
+		bAdd = 0f
+		# drawing
+		if lc:
+			#bAdd = 1f
+			texLit = lc.texLit
+			dict.attach( lc.dict )
+			shobs.AddRange(( pc.sh_tool, pc.sh_child, lc.getShadowProg() ))
+			shade( '/part/draw/fur/lit/draw_'+suf	for suf in ('child_v','g','f') )
+		elif doGeom:
+			shade( '/part/draw/fur/draw_'+suf		for suf in ('v','g','f') )
+		else:
+			shade(( '/part/draw/fur/draw_point_v', '/part/draw/fur/draw_f' ))
+
+	protected override def update(pe as kri.part.Emitter) as uint:
+		mat = pe.mat
+		assert mat
+		me = mat.Meta['child'] as support.corp.child.Meta
+		assert me
+		return me.num
+
+	public override def process(con as kri.rend.Context) as void:
+		con.activate(true,0f,false)
+		if texLit:
+			for lit in kri.Scene.Current.lights:
+				kri.Ant.Inst.params.activate(lit)
+				texLit.Value = lit.depth
+				drawScene()
+		else:	drawScene()
