@@ -71,14 +71,16 @@ public class DrawChild( kri.rend.part.Meta ):
 		super('part.child.light.draw', doGeom, 'strand','diffuse','child')
 		bAdd = 0f
 		# drawing
+		shobs.AddRange(( pc.sh_tool, pc.sh_child ))
+		suffixes = ('child_v','g','f')
 		if lc:
 			#bAdd = 1f
 			texLit = lc.texLit
 			dict.attach( lc.dict )
-			shobs.AddRange(( pc.sh_tool, pc.sh_child, lc.getShadowProg() ))
-			shade( '/part/draw/fur/lit/draw_'+suf	for suf in ('child_v','g','f') )
+			shobs.Add( lc.getShadowProg() )
+			shade( '/part/draw/fur/lit/draw_'+suf	for suf in suffixes )
 		elif doGeom:
-			shade( '/part/draw/fur/draw_'+suf		for suf in ('v','g','f') )
+			shade( '/part/draw/fur/draw_'+suf		for suf in suffixes )
 		else:
 			shade(( '/part/draw/fur/draw_point_v', '/part/draw/fur/draw_f' ))
 
