@@ -69,8 +69,11 @@ public class Manager(DataHolder):
 		for col in (col_init,col_update):
 			col.compose( sem, kri.Ant.Inst.slotParticles, dict, kri.Ant.Inst.dict )
 	
-	public def draw() as void:
-		GL.DrawArrays( BeginMode.Points, 0, total )
+	public def draw(nin as uint) as void:
+		if nin:
+			GL.DrawArraysInstanced( BeginMode.Points, 0, total, nin )
+		else:
+			GL.DrawArrays( BeginMode.Points, 0, total )
 	
 	protected def process(pe as Emitter, col as kri.shade.Collector) as bool:
 		assert pe.data
@@ -80,7 +83,7 @@ public class Manager(DataHolder):
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
 		col.prog.use()
 		using kri.Discarder(true), tf.catch():
-			draw()
+			draw(0)
 		if not 'Debug':
 			assert tf.result() == total
 			ar = array[of single]( total * data.unitSize() >>2 )

@@ -16,7 +16,10 @@ public class Tech( Basic ):
 	
 	public abstract def construct(pe as kri.part.Emitter) as Smart:
 		pass
-	protected override def prepare(pe as kri.part.Emitter) as Program:
+	protected virtual def update(pe as kri.part.Emitter) as uint:
+		return 0
+	
+	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as Program:
 		m = pe.mat
 		return null	if not m
 		sa = m.tech[tid]
@@ -29,6 +32,7 @@ public class Tech( Basic ):
 			ok = Array.TrueForAll(ats, {a| return a in pat })
 			pe.techReady[tid] = (kri.part.TechState.Invalid, kri.part.TechState.Ready)[ok]
 		return null	if pe.techReady[tid] == kri.part.TechState.Invalid
+		nin = update(pe)
 		return sa
 
 

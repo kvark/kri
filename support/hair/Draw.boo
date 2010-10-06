@@ -26,7 +26,7 @@ private class Fill( kri.rend.Basic ):
 				kri.Ant.Inst.params.activate(lit)
 				buf.activate()
 				kri.shade.Smart.UpdatePar()
-				pe.owner.draw()
+				pe.owner.draw(0)
 
 
 public class Draw( kri.rend.part.Meta ):

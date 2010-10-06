@@ -29,7 +29,8 @@ public class Rend( kri.rend.tech.Meta ):
 		dict.var(pBase)
 		shade(( '/part/draw/obj_v', '/mat_base_f' ))
 
-	/*protected override def getUpdate(mat as kri.Material) as callable() as int:
+	/*# blocked by BOO-963
+	protected override def getUpdate(mat as kri.Material) as callable() as int:
 		pe = cur
 		return def() as int:
 			for at in trans.Values:

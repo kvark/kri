@@ -19,7 +19,7 @@ public struct SetBake:
 
 
 public class Extra( kri.IExtension ):
-	public final pcon	= kri.part.Context()
+	public final con	= kri.part.Context()
 	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:true )
 	public bLoop		= false
 	
@@ -41,13 +41,13 @@ public class Extra( kri.IExtension ):
 			ps = pm.seBeh[of beh.Standard]()
 			ph = pm.seBeh[of support.hair.Behavior]()
 			if ps:
-				pm.behos.Add( beh.Sys(pcon) )
-				pm.makeStandard(pcon)
-				born = (pcon.sh_born_time, pcon.sh_born_loop)[ bLoop ]
+				pm.behos.Add( beh.Sys(con) )
+				pm.makeStandard(con)
+				born = (con.sh_born_time, con.sh_born_loop)[ bLoop ]
 				pm.col_update.extra.Add(born)
-			elif ph: pm.makeHair(pcon)
+			elif ph: pm.makeHair(con)
 			else: return
-			pm.init(pcon)
+			pm.init(con)
 		if not pe.Data:
 			pe.allocate()
 	
@@ -97,7 +97,7 @@ public class Extra( kri.IExtension ):
 
 		sh as kri.shade.Object	= null
 		if source == '':
-			sh = pcon.sh_surf_node
+			sh = con.sh_surf_node
 			pe.onUpdate = upNode
 		elif source == 'VERT':
 			for i in range(2):
@@ -111,7 +111,7 @@ public class Extra( kri.IExtension ):
 			parNumber = kri.shade.par.Value[of single]('num_vertices')
 			parNumber.Value = 1f * ent.mesh.nVert
 			pm.dict.var(parNumber)
-			sh = pcon.sh_surf_vertex
+			sh = con.sh_surf_vertex
 		elif source == 'FACE':
 			tVert = kri.shade.par.Value[of kri.Texture]('vertex')
 			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
@@ -123,7 +123,7 @@ public class Extra( kri.IExtension ):
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat
 				return true
-			sh = pcon.sh_surf_face
+			sh = con.sh_surf_face
 		else: assert not 'supported :('
 		pm.col_update.extra.Add(sh)
 		return true
@@ -133,7 +133,7 @@ public class Extra( kri.IExtension ):
 	public def fp_life(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
-		bh = beh.Standard(pcon)
+		bh = beh.Standard(con)
 		pm.behos.Add( bh )
 		data = r.getVec4()	# start,end, life time, random
 		bh.parLife.Value = Vector4( data.Z, data.W, data.Y-data.X, 1f )
@@ -144,7 +144,7 @@ public class Extra( kri.IExtension ):
 		pm = r.geData[of kri.part.Manager]()
 		return false	if not pm
 		segs = r.getByte()
-		pm.behos.Add( support.hair.Behavior(pcon,segs) )
+		pm.behos.Add( support.hair.Behavior(con,segs) )
 		dyn = r.getVector()	# stiffness, mass, bending
 		damp = r.getVec2()	# spring, air
 		pm.behos.Insert(0, beh.Damp( damp.X ))
@@ -183,7 +183,7 @@ public class Extra( kri.IExtension ):
 		if mode == 'SPIN':
 			pm = r.geData[of kri.part.Manager]()
 			return false	if not pm
-			pm.behos.Add( beh.Rotate(factor,pcon) )
+			pm.behos.Add( beh.Rotate(factor,con) )
 		return true
 	
 	public def fp_phys(r as kri.load.Reader) as bool:

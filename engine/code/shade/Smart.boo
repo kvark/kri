@@ -77,6 +77,7 @@ public class Smart(Program):
 		for i in range(num):
 			GL.GetActiveAttrib(id,i, aux0,aux1,size,type, name)
 			str = name.ToString()
+			continue	if str.StartsWith('gl_')	#workaround
 			pre,ps = '',''
 			for ps in (prefixAttrib,prefixGhost,''):
 				break	if str.StartsWith(ps)
