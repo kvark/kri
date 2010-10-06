@@ -74,6 +74,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 				x.b1 = One(rd)	if n>1
 				x.b2 = One(rd)	if n>2
 				x.b3 = One(rd)	if n>3
+				return x
 	
 	public static def LoadArray[of T(struct)](rd as Reader, 
 			ref ai as kri.vb.Info, fun as callable) as bool:

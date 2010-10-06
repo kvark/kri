@@ -12,7 +12,7 @@
     <NoStdLib>False</NoStdLib>
     <Ducky>False</Ducky>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <Strict>False</Strict>
+    <Strict>True</Strict>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -55,6 +55,8 @@
     <Compile Include="bake\Surface.boo" />
     <Compile Include="corp\beh\Main.boo" />
     <Compile Include="corp\beh\Small.boo" />
+    <Compile Include="corp\Child.boo" />
+    <Compile Include="corp\Inst.boo" />
     <Compile Include="hair\Draw.boo" />
     <Compile Include="hair\Beh.boo" />
     <Compile Include="hair\Bake.boo" />

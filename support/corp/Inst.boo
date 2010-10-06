@@ -1,12 +1,18 @@
-﻿namespace kri.rend.part
+﻿namespace support.corp.inst
 
-import System
 import System.Collections.Generic
 import OpenTK
-import OpenTK.Graphics.OpenGL
 
 
-public class Inst( kri.rend.tech.Meta ):
+public class Meta( kri.meta.Advanced ):
+	public ent	as kri.Entity	= null
+	def System.ICloneable.Clone() as object:
+		return copyTo( Meta( ent:ent ))
+	def kri.meta.IBase.link(d as kri.shade.rep.Dict) as void:
+		pass
+
+
+public class Rend( kri.rend.tech.Meta ):
 	private final trans		= Dictionary[of int,int]()
 	private cur	as kri.part.Emitter	= null
 	private final pBase		= kri.shade.par.Value[of Vector4]('base_color')
@@ -23,20 +29,20 @@ public class Inst( kri.rend.tech.Meta ):
 		dict.var(pBase)
 		shade(( '/part/draw/obj_v', '/mat_base_f' ))
 
-	protected override def getUpdate(mat as kri.Material) as callable() as int:
+	/*protected override def getUpdate(mat as kri.Material) as callable() as int:
 		pe = cur
 		return def() as int:
 			for at in trans.Values:
 				GL.Arb.VertexAttribDivisor(at,1)
 			pe.data.attribTrans(trans)
-			return pe.owner.total
+			return pe.owner.total*/
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true,0f,true)
 		butch.Clear()
 		for pe in kri.Scene.Current.particles:
 			continue	if not pe.mat
-			inst = pe.mat.Meta['inst'] as kri.meta.Inst
+			inst = pe.mat.Meta['inst'] as Meta
 			continue	if not inst
 			ent = inst.ent
 			continue	if not ent

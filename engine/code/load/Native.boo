@@ -54,10 +54,6 @@ public class Native( kri.data.ILoaderGen[of Atom] ):
 			size = rd.bin.ReadUInt32()
 			size += bs.Position
 			assert size <= bs.Length
-			#todo!
-			#if name in sets.skipChunks:
-			#	bs.Seek(size, IO.SeekOrigin.Begin)
-			#	continue
 			p as callable(Reader) as bool = null
 			if readers.TryGetValue(name,p) and p(rd):
 				assert bs.Position == size

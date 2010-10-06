@@ -201,21 +201,28 @@ public class Extra( kri.IExtension ):
 		biz.pForce.Value = Vector4( r.getVector() )
 		pm.behos.Add(biz)
 		return true
-
+	
+	public def getMaterial(r as kri.load.Reader) as kri.Material:
+		pe = r.geData[of kri.part.Emitter]()
+		return null	if not pe or not pe.mat
+		return null	if pe.mat == kri.Ant.Inst.loaders.materials.con.mDef
+		return pe.mat
+	
 	public def fp_child(r as kri.load.Reader) as bool:
-		r.bin.ReadUInt16()	# number
-		r.getReal()	# radius
-		r.getReal()	# roundness
-		r.getReal()	# size
-		r.getReal()	# size random
+		mat = getMaterial(r)
+		return false	if not mat
+		meta = child.Meta( Name:'child' )
+		mat.metaList.Add(meta)
+		meta.num	= r.bin.ReadUInt16()
+		# X=radius, Y=roundness, Z=size, W=random
+		meta.Data	= r.getVec4()
 		return true
 	
 	public def fpr_inst(r as kri.load.Reader) as bool:
-		pe = r.geData[of kri.part.Emitter]()
-		return false	if not pe or not pe.mat or\
-			pe.mat == kri.Ant.Inst.loaders.materials.con.mDef
-		inst = kri.meta.Inst( Name:'inst' )
-		pe.mat.metaList.Add(inst)
+		mat = getMaterial(r)
+		return false	if not mat
+		meta = inst.Meta( Name:'inst' )
+		mat.metaList.Add(meta)
 		r.addResolve() do(n as kri.Node):
-			inst.ent = r.at.scene.entities.Find({e| return e.node==n })
+			meta.ent = r.at.scene.entities.Find({e| return e.node==n })
 		return true

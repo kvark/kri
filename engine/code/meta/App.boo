@@ -57,12 +57,3 @@ public class Halo(Advanced):
 		return copyTo( Halo( Data:Data ))
 	def IBase.link(d as rep.Dict) as void:
 		d.var(pData)
-
-
-#---	instance	---#
-public class Inst(Advanced):
-	public ent	as kri.Entity	= null
-	def ICloneable.Clone() as object:
-		return copyTo( Inst( ent:ent ))
-	def IBase.link(d as rep.Dict) as void:
-		pass

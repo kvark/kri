@@ -100,7 +100,6 @@
     <Compile Include="code\rend\light\Simple.boo" />
     <Compile Include="code\rend\Main.boo" />
     <Compile Include="code\rend\part\Defer.boo" />
-    <Compile Include="code\rend\part\Inst.boo" />
     <Compile Include="code\rend\part\Main.boo" />
     <Compile Include="code\rend\part\Tech.boo" />
     <Compile Include="code\rend\part\Tool.boo" />
