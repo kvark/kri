@@ -36,22 +36,18 @@ public class Tag( kri.ITag ):
 
 public class Update( kri.rend.tech.Basic ):
 	private final sa		= kri.shade.Smart()
-	private final sb		= kri.shade.Smart()
-	private final pScale	= kri.shade.par.Value[of single]('quat_scale')
 	public final channel	as byte
 	
-	public def constructor(texId as byte):
+	public def constructor(texId as byte, putId as bool):
 		super('bake.mesh')
 		channel = texId
 		# surface shader
-		dict = kri.shade.rep.Dict()
-		dict.var(pScale)
 		sa.add( '/uv/bake_v', '/lib/quat_v', '/uv/bake_f' )
+		if putId:
+			sa.add( '/uv/set/geom_v', '/uv/bake_g' )
+		else:	sa.add('/uv/set/norm_v')
 		sa.fragout('re_vertex','re_quat')
-		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
-		# edge shader
-		sb.add( '/uv/bake_v', '/lib/quat_v', '/black_f' )
-		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
 	public override def process(con as kri.rend.Context) as void:
 		con.DepthTest = false
@@ -68,15 +64,5 @@ public class Update( kri.rend.tech.Basic ):
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )
 				tag.clearTarget = false
-			pScale.Value = 1f
 			sa.use()
 			e.mesh.draw(1)
-			continue if not tag.allowFilter
-			# second pass - init border quaternions
-			#tag.buf.activate(2)
-			#sb.use()
-			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
-			pScale.Value = 0f
-			sa.use()
-			e.mesh.draw(1)
-			GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill )
