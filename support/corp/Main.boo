@@ -147,10 +147,10 @@ public class Extra( kri.IExtension ):
 		pm.behos.Add( support.hair.Behavior(con,segs) )
 		dyn = r.getVector()	# stiffness, mass, bending
 		damp = r.getVec2()	# spring, air
-		pm.behos.Insert(0, beh.Damp( damp.X ))
-		// standard behavior appears here
-		pm.behos.Add( beh.Stiff( dyn.X ))
-		pm.behos.Add( beh.Norm() )
+		pm.behos.Insert(0, beh.Stiff( dyn.X ))
+		pm.behos.Insert(1, beh.Damp( damp.X ))
+		# standard behavior on this line
+		pm.behos.Add( beh.Norm() )	# should be the last
 		return true
 	
 	#---	Parse velocity setup		---#
@@ -192,9 +192,7 @@ public class Extra( kri.IExtension ):
 		pg = r.at.scene.pGravity
 		if pg:
 			bgav = beh.Gravity(pg)
-			if pm.seBeh[of support.hair.Behavior]():
-				pm.behos.Insert(0,bgav)
-			else: pm.behos.Add(bgav)
+			pm.behos.Insert(0,bgav)	//supposed to be first
 		biz = beh.Physics()
 		biz.pSize.Value = Vector4( r.getVec2() )
 		# forces: brownian, drag, damp
