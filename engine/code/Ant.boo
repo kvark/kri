@@ -168,5 +168,6 @@ public class Ant(IDisposable):
 
 	public def update() as void:
 		tc = Time; old = params.parTime.Value.Z
-		params.parTime.Value = Vector4(tc-old, tc,tc,0f)
+		dt = 1f / Math.Max(0.001f, tc-old)
+		params.parTime.Value = Vector4(tc-old, tc,tc,dt)
 		anim = null	if anim and anim.onFrame(Time)

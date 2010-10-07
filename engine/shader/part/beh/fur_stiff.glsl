@@ -1,5 +1,5 @@
 #version 130
-//#define LIMIT
+#define LIMIT
 //todo: use physically correct stiffness
 
 uniform vec4 cur_time, fur_system;
@@ -12,10 +12,10 @@ out	vec3 to_pos, to_speed;
 float update_stiff()	{
 	vec3 newpos = to_pos;// + 0.5*cur_time.x * to_speed;
 	vec3 sof = 2.0*at_base - newpos - at_prev;
-	float kt = fur_system.x*fur_stiff*cur_time.x;
+	float kt = fur_system.x * fur_stiff * cur_time.x;
 	#ifdef LIMIT
-	float kd = 1.0 / max(0.001,cur_time.x);
-	float kmax = kd - dot(to_speed,sof) / dot(sof,sof);
+	float dlen = 1.0 / max(0.001,length(sof));
+	float kmax = dlen - cur_time.x * dot(to_speed,sof)*dlen*dlen;
 	kt = min(kmax,kt);
 	#endif
 	to_speed += kt * sof;
