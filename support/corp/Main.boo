@@ -87,7 +87,7 @@ public class Extra( kri.IExtension ):
 		pm = pe.owner
 		
 		ph = pm.seBeh[of support.hair.Behavior]()
-		if not ent.seTag[of support.bake.surf.Tag]():
+		if source=='FACE' and not ent.seTag[of support.bake.surf.Tag]():
 			st = bake
 			st.pixels = pm.total	if ph
 			ent.tags.Add( st.tag() )
