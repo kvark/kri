@@ -8,7 +8,7 @@ vec3 qrot(vec4 q, vec3 v)	{
 }
 
 //rotate vector (alternative)
-vec3 qrot_2(vec4 q, vec3 v)	{
+vec3 qrot_alt(vec4 q, vec3 v)	{
 	return v*(q.w*q.w - dot(q.xyz,q.xyz)) + 2.0*q.xyz*dot(q.xyz,v) + 2.0*q.w*cross(q.xyz,v);
 }
 

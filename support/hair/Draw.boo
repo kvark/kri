@@ -1,32 +1,37 @@
 ﻿namespace support.hair
 
-private class Fill( kri.rend.Basic ):
+
+public class Fill( kri.rend.Basic ):
 	public final sa			= kri.shade.Smart()
-	public final buf		as kri.frame.Buffer
-	public final targets	as (kri.part.Emitter)
-	public def constructor(ren as kri.rend.light.Fill, dict as kri.shade.rep.Dict, tList as (kri.part.Emitter)):
+	private final buf		as kri.frame.Buffer	= null
+	private static doGeom	= true	#should be
+	
+	public def constructor(licon as kri.rend.light.Context, buffer as kri.frame.Buffer):
+		assert licon
+		buf = buffer
 		sa.add( '/lib/quat_v','/lib/tool_v' )
-		sa.add( ren.sh_bake )
-		if 'GS':
-			sa.add( 'text/fill_v','text/fill_g' )
+		sa.add( licon.getFillShader() )
+		if doGeom:
+			pref =  '/part/draw/fur/fill_'
+			sa.add( pref+'v', pref+'g' )
 		else:
 			sa.add( 'text/fill_point_v' )
-		sa.link( kri.Ant.Inst.slotParticles, dict, kri.Ant.Inst.dict )
-		buf = ren.buf
-		targets = tList
+		sa.link( kri.Ant.Inst.slotParticles, licon.dict, kri.Ant.Inst.dict )
 	
 	public override def process(con as kri.rend.Context) as void:
+		con.SetDepth(1f,true)
 		sa.use()
-		for pe in targets:
+		for pe in kri.Scene.Current.particles:
 			pe.va.bind()
 			continue	if not pe.prepare()
 			for lit in kri.Scene.Current.lights:
 				continue	if not lit.depth
 				buf.A[ buf.mask-1 ].Tex = lit.depth
-				kri.Ant.Inst.params.activate(lit)
 				buf.activate()
+				kri.Ant.Inst.params.activate(lit)
 				kri.shade.Smart.UpdatePar()
 				pe.owner.draw(0)
+
 
 
 public class Draw( kri.rend.part.Meta ):
@@ -41,7 +46,8 @@ public class Draw( kri.rend.part.Meta ):
 			#bAdd = 1f
 			texLit = lc.texLit
 			dict.attach( lc.dict )
-			shobs.Add( lc.getShadowProg() )
+			shobs.Add( lc.getApplyShader() )
+			shade(( '/lib/math_g','/lib/math_f' ))
 			shade( '/part/draw/fur/lit/draw_'+suf	for suf in ('v','g','f') )
 		elif doGeom:
 			shade( '/part/draw/fur/draw_'+suf		for suf in ('v','g','f') )
@@ -63,6 +69,7 @@ public class Draw( kri.rend.part.Meta ):
 		#pSegment.Value = beh.pSegment.Value
 
 
+
 public class DrawChild( kri.rend.part.Meta ):
 	public final texLit		as kri.shade.par.Texture	= null
 	private static doGeom	= true	#should be
@@ -77,7 +84,7 @@ public class DrawChild( kri.rend.part.Meta ):
 			#bAdd = 1f
 			texLit = lc.texLit
 			dict.attach( lc.dict )
-			shobs.Add( lc.getShadowProg() )
+			shobs.Add( lc.getApplyShader() )
 			shade( '/part/draw/fur/lit/draw_'+suf	for suf in suffixes )
 		elif doGeom:
 			shade( '/part/draw/fur/draw_'+suf		for suf in suffixes )

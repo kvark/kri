@@ -40,8 +40,13 @@ public class Context:
 	public def setVariance() as void:
 		type = LiType.VARIANCE
 		bits = 0
-	# shadow shader
-	public def getShadowProg() as Object:
+	# shadow shaders
+	public def getFillShader() as Object:
+		name = '/empty_f'
+		name = '/light/bake_exp_f'	if type == LiType.EXPONENT
+		name = '/light/bake_var_f'	if type == LiType.VARIANCE
+		return Object.Load(name)
+	public def getApplyShader() as Object:
 		name = 'simple'
 		name = 'exponent2'	if type == LiType.EXPONENT
 		name = 'variance'	if type == LiType.VARIANCE

@@ -8,7 +8,6 @@ import OpenTK.Graphics.OpenGL
 
 public class Fill( kri.rend.tech.General ):
 	public final buf		= kri.frame.Buffer()
-	public final sh_bake	as kri.shade.Object
 	protected final sa		= kri.shade.Smart()
 	protected final licon	as Context
 
@@ -23,12 +22,8 @@ public class Fill( kri.rend.tech.General ):
 			buf.emit(1, PixelInternalFormat.Rg16 )
 		else: buf.mask = 0
 		# spot shader
-		baker = '/empty_f'
-		baker = '/light/bake_exp_f'	if lc.type == LiType.EXPONENT
-		baker = '/light/bake_var_f'	if lc.type == LiType.VARIANCE
-		sh_bake = kri.shade.Object.Load(baker)
 		sa.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
-		sa.add( sh_bake )
+		sa.add( lc.getFillShader() )
 		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
 
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
@@ -64,7 +59,7 @@ public class Apply( kri.rend.tech.Meta ):
 
 	public def constructor(lc as Context):
 		super('lit.apply', false, null, *kri.load.Meta.LightSet)
-		shobs.Add( lc.getShadowProg() )
+		shobs.Add( lc.getApplyShader() )
 		shade(('/light/apply_v','/light/apply_f','/light/common_f'))
 		dict.attach(lc.dict)
 		texLit = lc.texLit

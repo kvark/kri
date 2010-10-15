@@ -5,9 +5,6 @@
 //---	TRANSFORMATIONS		--//
 struct Spatial	{ vec4 pos,rot; };
 
-vec3 qrot2(vec4 q, vec3 v)	{
-	return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
-}
 vec3 trans_for2(vec3 v, Spatial s)	{
 	return qrot2(s.rot, v*s.pos.w) + s.pos.xyz;
 }
