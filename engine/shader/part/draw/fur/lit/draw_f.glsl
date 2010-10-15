@@ -1,14 +1,11 @@
 #version 130
 
-const vec4 mat_diffuse = vec4(0.8,0.8,0.4,1.0);
-const vec4 mat_specular = vec4(0.5);
-const float mat_glossiness = 80.0;
-
 uniform vec4 lit_color, lit_data;
 
 float get_shadow(vec4);
 vec4 get_diffuse();
-
+vec4 get_specular();
+float get_glossiness();
 
 in vec3 fur_tan, surf_norm, dir_light, dir_view;
 in vec4 color, v_shadow;
@@ -34,10 +31,10 @@ void main()	{
 	float diffuse = max( 0.0, dot(L,n_lit) );
 	float sq = dot(n_view,n_view) * dot(n_lit,n_lit);
 	float pr_spec = sqrt(sq) - t_lit*t_view;
-	float specular = pow( max(0.01,pr_spec), mat_glossiness );
+	float specular = pow( max(0.01,pr_spec), get_glossiness() );
 
 	//rez_color = vec4( normalize(fur_tan), color.w );
-	rez_color = diffuse * get_diffuse() + specular * mat_specular;
+	rez_color = diffuse * get_diffuse() + specular * get_specular();
 	rez_color.w = color.w;
 	apply_shadow();
 }

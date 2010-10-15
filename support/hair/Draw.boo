@@ -34,7 +34,7 @@ public class Draw( kri.rend.part.Meta ):
 	private static doGeom	= true	#should be
 
 	public def constructor(lc as kri.rend.light.Context):
-		super('part.light.draw', doGeom, 'strand','diffuse')
+		super('part.light.draw', doGeom, 'strand','diffuse','specular','glossiness')
 		bAdd = 0f
 		# drawing
 		if lc:

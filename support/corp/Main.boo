@@ -171,7 +171,7 @@ public class Extra( kri.IExtension ):
 		elif ph:	# hair
 			magic = 5f / ph.layers	# todo: find out Blender scale source
 			avgLen = tan.LengthFast + objFactor.LengthFast + 0.001f
-			ph.pSystem.Value.X = 3f*magic / avgLen
+			ph.pSystem.Value.X = ph.layers / avgLen
 			lays = ph.genLayers( pe, magic * Vector4(tan,add.Y) )
 			r.at.scene.particles.Remove(pe)
 			r.at.scene.particles.AddRange(lays)
