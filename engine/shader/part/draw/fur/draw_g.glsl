@@ -22,7 +22,7 @@ in vec4 va[],vb[],vc[];
 
 out gl_PerVertex	{
 	vec4 gl_Position;
-	float gl_ClipDistance[];
+	float gl_ClipDistance[1];
 };
 out vec4 color;
 
@@ -43,7 +43,7 @@ const vec4 c1 = vec4(1.0,1.0,1.0,0.0);
 
 void main()	{
 	if(gl_in[0].gl_ClipDistance[0] < 0.0) return;
-	//gl_ClipDistance[0] = gl_in[0].gl_ClipDistance[0];
+	gl_ClipDistance[0] = gl_in[0].gl_ClipDistance[0];
 	vec3 seg = vec3( get_fur_segment(), 0.0 );
 	vec4 ca = mix( c0,c1, seg.x );
 	vec4 cb = mix( c0,c1, seg.y );

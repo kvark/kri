@@ -11,18 +11,17 @@ vec4 get_projection(vec3,vec4);
 
 in	vec3 at_base, at_pos;
 out	vec4 vb,vc;
-out	vec2 dep2;
+out	vec3 dep;
 
 
 void main()	{ vec3 p;
-	float live = dot(at_base,at_base);
-	gl_ClipDistance[0] = step(0.01,live)-0.5;
+	dep.z = dot(at_base,at_base);
 
-	p = trans_inv(at_base,	s_lit);
-	dep2.x = (p.z + range_lit.x) * range_lit.z;
+	p = trans_inv(at_base,s_lit);
+	dep.x = (p.z + range_lit.x) * range_lit.z;
 	vb = get_projection(p,proj_lit);
 
-	p = trans_inv(at_pos,	s_lit);
-	dep2.y = (p.z + range_lit.x) * range_lit.z;
+	p = trans_inv(at_pos,s_lit);
+	dep.y = (p.z + range_lit.x) * range_lit.z;
 	vc = get_projection(p,proj_lit);
 }
