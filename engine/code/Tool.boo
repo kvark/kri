@@ -101,8 +101,8 @@ public class FpsCounter:
 	public final title		as string
 	private kNext 	= 0.0
 	private kPrev	= 0.0
-	private fMean	= 0.0
-	private fDisp	= 0.0
+	private fSum	= 0.0
+	private fMax	= 0.0
 	private nFrames	= 0.0
 	# interface
 	public def constructor(per as double, name as string):
@@ -112,15 +112,16 @@ public class FpsCounter:
 		return false	if kPeriod<=0.0
 		t = moment - kPrev
 		kPrev += t
-		fMean += t
-		fDisp += t*t
+		fSum += t
+		fMax = Math.Max(fMax,t)
 		nFrames += 1.0
 		return moment > kNext
 	public def gen() as string:
-		fMean /= nFrames
-		fDisp = Math.Sqrt(fDisp / nFrames - fMean*fMean)
-		rez = "${title}: {0,6:f4} mean, {1,6:f3} disp" % (fMean,fDisp)
-		fMean = fDisp = nFrames = 0.0
+		avg = fSum / nFrames
+		fps = nFrames / kPeriod
+		stats = '{0,4} fps, {1,6:f4} avg, {2,6:f4} max'
+		rez = "${title}: ${stats}" % (fps,avg,fMax)
+		fSum = fMax = nFrames = 0.0
 		kNext += kPeriod
 		return rez
 

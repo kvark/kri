@@ -4,9 +4,22 @@ import System
 import System.Collections.Generic
 import Boo.Lang.Compiler
 
-
+private class NodeGrab[of T(Ast.Node)]( Ast.NodeCollection[of Ast.Node] ):
+	public def constructor(obj as T):
+		Add( obj.Clone() as T )
+		ClearTypeSystemBindings()
+	
 public abstract class Simple(AbstractAstAttribute):
 	protected final tips	= List[of Ast.SimpleTypeReference]()
+	
+	protected static def cleanClone[of T(Ast.Node)](obj as T) as T:
+		return NodeGrab[of T](obj).First as T
+		#return obj.CleanClone()
+		#nc = Ast.NodeCollection[of T]()
+		#nc.Add( obj.Clone() as T )
+		#nc.ClearTypeSystemBindings()
+		#return nc
+
 	
 	public def constructor(typar as Ast.ArrayLiteralExpression):
 		for t in typar.Items:
@@ -27,6 +40,7 @@ public class Class(Simple):
 		if len( c.GenericParameters ) != 1:
 			raise 'target has to be generic with one param'
 		klass = c.DeclaringType
+		return	if not klass
 		gename = c.GenericParameters[0].Name
 		pred = getPredicate(gename)
 		# generic predicate, used for constructors
@@ -42,7 +56,7 @@ public class Class(Simple):
 		#printXml(m,	'class-gen')
 		
 		for t in tips:
-			sc = c.CleanClone()
+			sc = cleanClone(c)
 			pred = getPredicate( gename, fullpar )
 			sc.GenericParameters = null
 			sc.Name += '_' + t.Name.Split( char('.') )[-1]
@@ -76,7 +90,7 @@ public class Method(Simple):
 		#printXml(m,	'method-gen')
 		
 		for t in tips:
-			sm = m.CleanClone()
+			sm = cleanClone(m)
 			pred = getPredicate( sm.GenericParameters[0].Name )
 			sm.GenericParameters = null
 			# rename if the target generic is not in the parameter list

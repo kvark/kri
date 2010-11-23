@@ -3,7 +3,7 @@
 import OpenTK.Graphics.OpenGL
 
 #--------- Simple dirty value holder	---------#
-public struct DirtyHolder[of T]:
+public class DirtyHolder[of T]:
 	[getter(Dirty)]
 	private dirty	as bool
 	private val		as T

@@ -11,9 +11,6 @@ demo/dude
 demo/vanburen
 demo/particle/res
 tools/viewer
-test_attrib0
-test_bugs
-test_cl
 game_*
 sol
 
