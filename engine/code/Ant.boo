@@ -31,6 +31,7 @@ public class Config:
 
 public class Window( GameWindow ):
 	public final views	= List[of View]()	# *View
+	public final ticks	as uint				# Ticks per frame
 	public final core	as Ant				# KRI Core
 	private final fps	as FpsCounter		# FPS counter
 	
@@ -65,6 +66,7 @@ public class Window( GameWindow ):
 
 		# start
 		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
+		ticks = uint.Parse( conf.ask('FrameTicks','0') )
 		core = Ant(conf,bug)
 		fps = FpsCounter(period,title)
 		
@@ -82,10 +84,12 @@ public class Window( GameWindow ):
 			raise 'View resize fail!'
 	
 	public override def OnUpdateFrame(e as FrameEventArgs) as void:
-		core.update()
+		core.update( (1,0)[ticks] )
 
 	public override def OnRenderFrame(e as FrameEventArgs) as void:
 		SwapBuffers()
+		# update animations
+		core.update(ticks)
 		# update counter
 		if fps.update(core.Time):
 			Title = fps.gen()
@@ -166,8 +170,13 @@ public class Ant(IDisposable):
 		extensions.Clear()
 		sw.Stop()
 
-	public def update() as void:
-		tc = Time; old = params.parTime.Value.Z
-		dt = 1f / Math.Max(0.001f, tc-old)
-		params.parTime.Value = Vector4(tc-old, tc,tc,dt)
-		anim = null	if anim and anim.onFrame(Time)
+	public def update(ticks as uint) as void:
+		cur = params.parTime.Value.Z
+		tc = Time
+		for i in range(ticks):
+			add = ((tc-cur)/ ticks, tc-cur)[i+1==ticks]
+			dt = 1f / Math.Max(0.001f, add)
+			params.parTime.Value = Vector4(add,cur,cur,dt)
+			if anim and anim.onFrame(Time):
+				anim = null
+			cur += add
