@@ -52,16 +52,16 @@ def Main(argv as (string)):
 		man = at.scene.particles[0].owner
 		man.behos.Add( depth.Behavior(pTag) )
 		man.col_update.extra.Add( kri.shade.Object.Load('/lib/tool_v') )
-		man.init( cex.pcon )
+		man.init( cex.con )
 		
-		rlis.Add( surf.Update(0) )
+		rlis.Add( surf.Update(0,true) )
 		rlis.Add( depth.Update() )
 		rlis.Add( rem = kri.rend.Emission(fillDepth:true) )
 		rem.pBase.Value = Graphics.Color4.Black
 		
 		rlis.Add( kri.rend.light.omni.Apply(false) )
 		#rlis.Add( stand = kri.rend.part.Standard(cex.pcon) )
-		rlis.Add( stand = Render(cex.pcon) )
+		rlis.Add( stand = Render(cex.con) )
 		stand.bAdd = 1f
 		#rlis.Add( support.hdr.Render( support.hdr.Context() ))
 		rlis.Add( kri.rend.FilterCopy() )
