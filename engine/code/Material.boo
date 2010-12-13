@@ -11,6 +11,8 @@ public class Material( ani.data.Player ):
 	public final metaList = List[of meta.Advanced]()
 	public Meta[str as string] as meta.Advanced:
 		get: return metaList.Find({m| return m.Name == str})
+	public def getData[of T(struct)](str as string) as meta.Data[of T]:
+		return Meta[str] as meta.Data[of T]
 	
 	public def constructor(str as string):
 		name = str

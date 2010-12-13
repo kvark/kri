@@ -104,6 +104,9 @@ public class Node( kri.ani.data.Player, IComparable[of Node] ):
 	public def touch() as void:	#imp: IPlayer
 		dirty = true
 	
+	public static def SafeWorld(n as Node) as Spatial:
+		return (n.World	if n else	Spatial.Identity)
+	
 	public Parent as Node:
 		get: return parent
 		set:

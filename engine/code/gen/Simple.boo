@@ -17,9 +17,24 @@ public class Frame:
 
 
 
+#---------	Wrap	---------#
+
+public class Mesh( kri.Mesh ):
+	public def constructor(mode as BeginMode):
+		super(mode)
+	public def constructor(mode as BeginMode, con as Constructor):
+		super(mode)
+		con.apply(self)
+	public def wrap(mat as kri.Material) as kri.Entity:
+		ent = kri.Entity(mesh:self)
+		tm = kri.TagMat( num:nPoly, mat:mat )
+		ent.tags.Add(tm)
+		return ent
+
+
 #---------	POINT	---------#
 
-public class Point( kri.Mesh ):
+public class Point( Mesh ):
 	public def constructor():
 		super( BeginMode.Points )
 		.nVert = .nPoly = 1
@@ -33,7 +48,7 @@ public class Point( kri.Mesh ):
 
 #---------	QUAD	---------#
 
-public class Quad( kri.Mesh ):
+public class Quad( Mesh ):
 	public def constructor():
 		super( BeginMode.TriangleStrip )
 		self.nVert = 4
@@ -51,7 +66,7 @@ public class Quad( kri.Mesh ):
 
 #----	LINE OBJECT (-1,1)	----#
 
-public class Line( kri.Mesh ):
+public class Line( Mesh ):
 	public def constructor():
 		super( BeginMode.Lines )
 		self.nVert = 2
@@ -67,17 +82,16 @@ public class Line( kri.Mesh ):
 #----	PLANE OBJECT	----#
 # param: half-size of sides
 
-public class Plane( kri.Mesh ):
+public class Plane( Mesh ):
 	public def constructor(scale as Vector2):
 		con = Constructor( v:array[of Vertex](4) )
 		sar = (-1f,1f)
 		for i in range(4):
 			con.v[i].pos = Vector4( scale.X * sar[i&1], scale.Y * sar[i>>1], 0f,1f)
 			con.v[i].rot = Quaternion.Identity
-		super( BeginMode.TriangleStrip )
-		con.apply(self)
+		super( BeginMode.TriangleStrip, con )
 
-public class PlaneTex( kri.Mesh ):
+public class PlaneTex( Mesh ):
 	public def constructor(scale as Vector2):
 		v = array[of VertexUV](4)
 		sar,str = (-1f,1f),(0f,1f)

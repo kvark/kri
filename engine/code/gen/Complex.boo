@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 #----	CUBE OBJECT	----#
 # param: half-size of sides
 
-public class Cube( kri.Mesh ):
+public class Cube(Mesh):
 	public def constructor(scale as Vector3):
 		con = Constructor()
 		sar = (-1f,1f)
@@ -30,15 +30,14 @@ public class Cube( kri.Mesh ):
 		con.v = List[of Vertex]( Vertex(verts[vi[i]], quats[i>>2]) for i in range(24)).ToArray()
 		offsets = (of ushort: 0,3,2,0,2,1)
 		con.i = List[of ushort]( cast(ushort, (i / 6)*4 + offsets[i%6]) for i in range(36)).ToArray()
-		super( BeginMode.Triangles )
-		con.apply(self)
+		super( BeginMode.Triangles, con )
 
 
 
 #----	SPHERE OBJECT	----#
 # param: radius
 
-public class Sphere( kri.Mesh ):	
+public class Sphere(Mesh):	
 	private static def Octahedron(scale as Vector3) as Constructor:
 		ar = (of Vector3:
 			-Vector3.UnitZ, Vector3.UnitX,
@@ -75,15 +74,14 @@ public class Sphere( kri.Mesh ):
 				Quaternion.FromAxisAngle( Vector3.UnitZ, beta )*\
 				Quaternion.FromAxisAngle( Vector3.UnitY, alpha )	
 		# finish
-		super( BeginMode.Triangles )
-		con.apply(self)
+		super( BeginMode.Triangles, con )
 
 
 
 #----	LANDSCAPE	----#
 # param: height map
 
-public class Landscape( kri.Mesh ):
+public class Landscape(Mesh):
 	public def constructor(hm as (single,2), scale as Vector3):
 		con = Constructor()
 		con.v = array[of Vertex]( len(hm) )
@@ -123,5 +121,4 @@ public class Landscape( kri.Mesh ):
 			id += 2*dx
 			con.i[id] = con.i[id-1]
 		
-		super( BeginMode.TriangleStrip )
-		con.apply(self)
+		super( BeginMode.TriangleStrip, con )

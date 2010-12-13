@@ -21,7 +21,7 @@ public class Shared(IBase):
 		position.Value = kri.Spatial.GetPos(sp)
 		rotation.Value = kri.Spatial.GetRot(sp)
 	public def activate(n as kri.Node) as void:
-		sp = (n.World if n else kri.Spatial.Identity)
+		sp = kri.Node.SafeWorld(n)
 		activate(sp)
 	
 	def ICloneable.Clone() as object:
@@ -39,10 +39,10 @@ public class TransVal( par.IBase[of Vector4] ):
 	public final fun	as callable(ref kri.Spatial) as Vector4
 	public override Value	as Vector4:
 		get:
-			assert node and fun
-			s = node.World
-			return fun(s)
+			sp = kri.Node.SafeWorld(node)
+			return fun(sp)
 	public def constructor(f as callable(ref kri.Spatial) as Vector4):
+		assert f
 		fun = f
 
 

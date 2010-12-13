@@ -20,15 +20,6 @@ public struct VertexUV:
 	public uv	as Vector2
 
 
-
-public class Entity( kri.Entity ):
-	public def constructor( m as kri.Mesh, lc as kri.load.Context ):
-		super()
-		self.mesh = m
-		tm = kri.TagMat( num:m.nPoly, mat:lc.mDef )
-		tags.Add(tm)
-
-
 #----	RAW MESH DATA	----#
 
 public struct Constructor:
@@ -71,4 +62,3 @@ public struct Constructor:
 			(of ushort: j2+0,i0[1],j2+1).CopyTo(i2,j3+6)
 			(of ushort: j2+2,j2+1,i0[2]).CopyTo(i2,j3+9)
 		i,v = i2,v2
-
