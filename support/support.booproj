@@ -62,6 +62,7 @@
     <Compile Include="hair\Bake.boo" />
     <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\Main.boo" />
+    <Compile Include="motion\Main.boo" />
     <Compile Include="mirror\Main.boo" />
     <Compile Include="morph\Main.boo" />
     <Compile Include="morph\App.boo" />
@@ -89,6 +90,7 @@
     </ProjectReference>
     <Folder Include="corp\" />
     <Folder Include="mirror" />
+    <Folder Include="motion" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

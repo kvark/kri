@@ -62,7 +62,6 @@ public class Filter(Basic):
 
 public class FilterCopy(Filter):
 	public def constructor():
-		super()
 		sa.add('/copy_v','/copy_f')
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 

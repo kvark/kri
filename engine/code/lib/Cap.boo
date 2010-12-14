@@ -20,6 +20,7 @@ public final class Capabilities:
 	public final elemVertices	as uint
 	public final contextVersion	as string
 	public final shadingVersion	as string
+	public final bones			= 80
 	
 	public static def Var(pn as GetPName) as int:
 		val as int = -1

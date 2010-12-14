@@ -6,7 +6,7 @@ public class Update( kri.rend.tech.Basic ):
 	private final tf	= kri.TransFeedback(1)
 	private final sa	= kri.shade.Smart()
 	private final par	= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
-		for i in range(80) ).ToArray()
+		for i in range(kri.Ant.Inst.caps.bones) ).ToArray()
 	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
 	public final at_all	as (int)
 
