@@ -1,4 +1,4 @@
-﻿namespace kri.rend.light.kbuf
+﻿namespace support.light.kbuf
 
 import OpenTK.Graphics.OpenGL
 import kri.shade
@@ -75,7 +75,7 @@ public class Init( kri.rend.Basic ):
 public class Bake( kri.rend.Basic ):
 	protected final sa		= Smart()
 	protected final sb		= Smart()
-	protected final context	as kri.rend.light.Context
+	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
 	private final buf		as kri.frame.Buffer
 	private final texDep	= par.Value[of kri.Texture]('depth')
@@ -83,7 +83,7 @@ public class Bake( kri.rend.Basic ):
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba
 
-	public def constructor(init as Init, lc as kri.rend.light.Context):
+	public def constructor(init as Init, lc as support.light.Context):
 		super(false)
 		buf = init.buf
 		context = lc
@@ -106,7 +106,7 @@ public class Bake( kri.rend.Basic ):
 	private def drawLights(mask as byte, sx as Smart) as void:
 		buf.activate(mask)
 		sx.useBare()
-		for l in kri.Scene.current.lights:
+		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
 			Smart.UpdatePar()

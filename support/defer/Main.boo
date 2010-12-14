@@ -1,4 +1,4 @@
-﻿namespace kri.rend.defer
+﻿namespace support.defer
 
 import OpenTK.Graphics.OpenGL
 import kri.shade

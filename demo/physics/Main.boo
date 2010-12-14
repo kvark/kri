@@ -58,23 +58,21 @@ def Main(argv as (string)):
 			view.scene.entities.Add(e)
 			
 			al.add( kri.ani.ControlMouse( win.Mouse,n,0.01f ))
-			lic = kri.rend.light.Context(2,2)
-			rlis.Add( kri.rend.light.Fill(lic) )
-			rlis.Add( kri.rend.light.Apply(lic) )
+			lic = support.light.Context(2,2)
+			rlis.Add( support.light.Fill(lic) )
+			rlis.Add( support.light.Apply(lic) )
 			view.scene.lights.Add( kri.Light() )
 		
 		size = Vector3(1f,1f,1f)
 		
-		mesh = kri.gen.Cube( size )
-		ent = kri.gen.Entity( mesh, con )
+		ent = kri.gen.Cube( size ).wrap(con.mDef)
 		n = ent.node = kri.Node('cube')
 		n.local.pos.Z = -10f
 		n.local.pos.Y = 1f
 		n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,1f)
 		view.scene.entities.Add(ent)
 		
-		mesh = kri.gen.Sphere( 1, size )
-		e2 = kri.gen.Entity( mesh, con )
+		e2 = kri.gen.Sphere(1,size).wrap(con.mDef)
 		n = e2.node = kri.Node('sphere')
 		n.local = ent.node.local
 		n.local.pos.Y = -1f

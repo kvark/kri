@@ -1,4 +1,4 @@
-﻿namespace kri.rend.light.omni
+﻿namespace support.light.omni
 
 import System
 import OpenTK
@@ -10,10 +10,10 @@ import OpenTK.Graphics.OpenGL
 public class Fill( kri.rend.tech.General ):
 	protected final buf		= kri.frame.Buffer(0, TextureTarget.TextureCubeMap )
 	protected final sa		= kri.shade.Smart()
-	protected final context	as kri.rend.light.Context
+	protected final context	as support.light.Context
 	protected final pDist	= kri.shade.par.Value[of Vector4]('uni_dist')
 
-	public def constructor(lc as kri.rend.light.Context):
+	public def constructor(lc as support.light.Context):
 		super('lit.omni.bake')
 		buf.mask = 0
 		context = lc
@@ -33,7 +33,7 @@ public class Fill( kri.rend.tech.General ):
 
 	public override def process(con as kri.rend.Context) as void:
 		con.SetDepth(1f, true)	# offset for HW filtering
-		for l in kri.Scene.current.lights:
+		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			setLight(l)
 			buf.init( context.size, context.size )
@@ -55,17 +55,17 @@ public class Apply( kri.rend.tech.Meta ):
 		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
 		shade(('/light/omni/apply_v','/light/omni/apply_f','/light/common_f'))
 		smooth = bSmooth
-	protected override def getUpdate(mat as kri.Material) as callable() as int:
-		metaFun = super(mat)
+	protected override def getUpdater(mat as kri.Material) as Updater:
+		metaFun = super(mat).fun
 		curLight = lit
-		return def() as int:
+		return Updater() do() as int:
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true, 0f, false)
 		butch.Clear()
 		#Texture.Slot(8)
-		for l in kri.Scene.current.lights:
+		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			lit = l
 			#if l.depth:

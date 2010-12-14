@@ -36,13 +36,19 @@ public struct Batch:	# why struct?
 public class General( Basic ):
 	public static comparer	as IComparer[of Batch]	= null
 	protected final butch	= List[of Batch]()
+	
+	public struct Updater:
+		public final fun	as callable() as int
+		public def constructor(f as callable() as int):
+			fun = f
 
 	protected def constructor(name as string):
 		super(name)
 	public abstract def construct(mat as kri.Material) as kri.shade.Smart:
 		pass
-	protected virtual def getUpdate(mat as kri.Material) as callable() as int:
-		return def() as int: return 1
+	protected virtual def getUpdater(mat as kri.Material) as Updater:
+		return Updater() do() as int:
+			return 1
 
 	protected def addObject(e as kri.Entity) as void:
 		return	if not e.visible
@@ -65,7 +71,7 @@ public class General( Basic ):
 				ids = prog.gatherAttribs( kri.Ant.Inst.slotAttributes, false )
 				alist.AddRange(a	for a in ids	if not a in alist)
 			b.sa = prog
-			b.up = getUpdate(m)
+			b.up = getUpdater(m).fun
 			tempList.Add(b)
 		if alist and not e.enable(true,alist):
 			e.va[tid] = kri.vb.Array.Default

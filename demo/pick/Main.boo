@@ -130,14 +130,14 @@ def Main(argv as (string)):
 		rem = kri.rend.Emission( fillDepth:true )
 		rem.backColor = Graphics.Color4(0f,0.3f,0.5f,1)
 		#rem.pBase.Value = Graphics.Color4(1,0,0,1)
-		licon = kri.rend.light.Context(2,8)
+		licon = support.light.Context(2,8)
 		
 		view.ren = rm = kri.rend.Manager(false)
 		#rm.add('skin',	1,	kri.kit.skin.Update(true) )
 		rm.add('emi',	3,	rem)
 		rm.add('pick',	3,	support.pick.Render(win,2,8), 'emi')
-		rm.add('fill',	2,	kri.rend.light.Fill(licon) )
-		rm.add('app',	4,	kri.rend.light.Apply(licon), 'emi','fill')
+		rm.add('fill',	2,	support.light.Fill(licon) )
+		rm.add('app',	4,	support.light.Apply(licon), 'emi','fill')
 		
 		win.core.anim = al = kri.ani.Scheduler()
 		Task( view.scene.entities, al )

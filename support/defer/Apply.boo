@@ -1,4 +1,4 @@
-﻿namespace kri.rend.defer
+﻿namespace support.defer
 
 import OpenTK.Graphics.OpenGL
 import kri.shade
@@ -52,9 +52,9 @@ public class ApplyBase( kri.rend.Basic ):
 public class Apply( ApplyBase ):
 	private final s0		= Smart()
 	private final texLit	= par.Value[of kri.Texture]('light')
-	private final context	as kri.rend.light.Context
+	private final context	as support.light.Context
 	# init
-	public def constructor(con as Context, lc as kri.rend.light.Context, qord as byte):
+	public def constructor(con as Context, lc as support.light.Context, qord as byte):
 		super(qord)
 		context = lc
 		sa.add('/g/apply_v')
@@ -76,7 +76,7 @@ public class Apply( ApplyBase ):
 		s0.use()
 		kri.Ant.Inst.quad.draw()
 	private override def onDraw() as void:
-		for l in kri.Scene.current.lights:
+		for l in kri.Scene.Current.lights:
 			bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
 			sa.use()

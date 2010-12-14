@@ -57,11 +57,19 @@
     <Compile Include="corp\beh\Small.boo" />
     <Compile Include="corp\Child.boo" />
     <Compile Include="corp\Inst.boo" />
+    <Compile Include="defer\Apply.boo" />
+    <Compile Include="defer\Particle.boo" />
+    <Compile Include="defer\Main.boo" />
     <Compile Include="hair\Draw.boo" />
     <Compile Include="hair\Beh.boo" />
     <Compile Include="hair\Bake.boo" />
     <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\Main.boo" />
+    <Compile Include="light\Context.boo" />
+    <Compile Include="light\Defer.boo" />
+    <Compile Include="light\Kbuf.boo" />
+    <Compile Include="light\Omni.boo" />
+    <Compile Include="light\Simple.boo" />
     <Compile Include="motion\Main.boo" />
     <Compile Include="mirror\Main.boo" />
     <Compile Include="morph\Main.boo" />
@@ -89,6 +97,8 @@
       <Name>ext</Name>
     </ProjectReference>
     <Folder Include="corp\" />
+    <Folder Include="defer" />
+    <Folder Include="light" />
     <Folder Include="mirror" />
     <Folder Include="motion" />
   </ItemGroup>

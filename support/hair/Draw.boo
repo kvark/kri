@@ -6,7 +6,7 @@ public class Fill( kri.rend.Basic ):
 	private final buf		as kri.frame.Buffer	= null
 	private static doGeom	= true	#should be
 	
-	public def constructor(licon as kri.rend.light.Context, buffer as kri.frame.Buffer):
+	public def constructor(licon as support.light.Context, buffer as kri.frame.Buffer):
 		assert licon
 		buf = buffer
 		sa.add( '/lib/quat_v','/lib/tool_v' )
@@ -38,7 +38,7 @@ public class Draw( kri.rend.part.Meta ):
 	public final texLit		as kri.shade.par.Texture	= null
 	private static doGeom	= true	#should be
 
-	public def constructor(lc as kri.rend.light.Context):
+	public def constructor(lc as support.light.Context):
 		super('part.light.draw', doGeom, 'strand','diffuse','specular','glossiness')
 		bAdd = 0f
 		# drawing
@@ -74,7 +74,7 @@ public class DrawChild( kri.rend.part.Meta ):
 	public final texLit		as kri.shade.par.Texture	= null
 	private static doGeom	= true	#should be
 
-	public def constructor(pc as kri.part.Context, lc as kri.rend.light.Context):
+	public def constructor(pc as kri.part.Context, lc as support.light.Context):
 		super('part.child.light.draw', doGeom, 'strand','diffuse','child')
 		bAdd = 0f
 		# drawing

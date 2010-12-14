@@ -1,15 +1,15 @@
-﻿namespace kri.rend.part
+﻿namespace support.defer
 
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
 
-public class Defer( kri.rend.defer.ApplyBase ):
+public class Particle(ApplyBase):
 	private final pHalo		= kri.shade.par.Value[of OpenTK.Vector4]('halo_data')
 	private final light		= kri.Light( energy:1f, quad1:0f, quad2:0f )
 	private final trans		= Dictionary[of int,int]()
 	# init
-	public def constructor(pc as kri.part.Context, con as kri.rend.defer.Context, qord as byte):
+	public def constructor(pc as kri.part.Context, con as Context, qord as byte):
 		super(qord)
 		# attributes
 		trans[ pc.at_sys ] = pc.ghost_sys

@@ -29,7 +29,7 @@ private def genTown(size as uint, amp as single) as kri.Entity:
 			grid[i,j] = cast(single,val)
 	ds = 1f / size
 	mesh = kri.gen.Landscape(grid, Vector3(ds,ds,ds*amp))
-	return kri.gen.Entity(mesh,con)
+	return mesh.wrap( con.mDef )
 
 
 [STAThread]
@@ -57,8 +57,8 @@ def Main(argv as (string)):
 			view.scene.entities.Add(town)
 		elif mod == 'Primitives':
 			lcon = kri.load.Context()
-			t0 = kri.gen.Entity( kri.gen.Plane(Vector2.One), lcon )
-			t1 = kri.gen.Entity( kri.gen.Cube(0.2*Vector3.One), lcon )
+			t0 = kri.gen.Plane(Vector2.One)		.wrap( lcon.mDef )
+			t1 = kri.gen.Cube(0.2*Vector3.One)	.wrap( lcon.mDef )
 			t0.node = kri.Node('plane')
 			t0.node.local.pos.Z = -10f
 			t1.node = node
@@ -76,7 +76,7 @@ def Main(argv as (string)):
 		rlis = rc.renders
 		rlis.Add( rt = Town() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		rlis.Add( kri.rend.light.omni.Apply(false) )
+		rlis.Add( support.light.omni.Apply(false) )
 		rlis.Add( wat = Draw(con) )
 		wat.pTownTex.Value = rt.Result
 		wat.pTownPos.Value = Vector4(1f,1f,0f,0f)

@@ -1,4 +1,4 @@
-﻿namespace kri.rend.light
+﻿namespace support.light
 
 import System
 import OpenTK.Graphics.OpenGL
@@ -31,7 +31,7 @@ public class Fill( kri.rend.tech.General ):
 
 	public override def process(con as kri.rend.Context) as void:
 		con.SetDepth(1f, true)
-		for l in kri.Scene.current.lights:
+		for l in kri.Scene.Current.lights:
 			continue if l.fov == 0f
 			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.type == LiType.VARIANCE]
@@ -64,17 +64,17 @@ public class Apply( kri.rend.tech.Meta ):
 		dict.attach(lc.dict)
 		texLit = lc.texLit
 	# prepare
-	protected override def getUpdate(mat as kri.Material) as callable() as int:
-		metaFun = super(mat)
+	protected override def getUpdater(mat as kri.Material) as Updater:
+		metaFun = super(mat).fun
 		curLight = lit	# need current light only
-		return def() as int:
+		return Updater() do() as int:
 			texLit.Value = curLight.depth
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	# work
 	public override def process(con as kri.rend.Context) as void:
 		butch.Clear()
-		for l in kri.Scene.current.lights:
+		for l in kri.Scene.Current.lights:
 			continue if l.fov == 0f
 			lit = l
 			texLit.Value = l.depth

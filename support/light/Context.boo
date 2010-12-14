@@ -1,4 +1,4 @@
-﻿namespace kri.rend.light
+﻿namespace support.light
 
 import kri.shade
 
