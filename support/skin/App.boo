@@ -16,7 +16,7 @@ public class Update( kri.rend.tech.Basic ):
 		for p as kri.meta.IBase in par:
 			p.link(dict)
 		# prepare shader
-		sa.add( '/lib/quat_v', '/skin/main_v' )
+		sa.add( '/lib/quat_v', '/skin/skin_v', '/skin/main_v' )
 		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
 		#old: sa.add( '/skin/zcull_v', '/lib/tool_v', '/empty_f' )
 		sa.add( '/skin/empty_v' )
