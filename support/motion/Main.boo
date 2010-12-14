@@ -13,22 +13,34 @@ public class Context:
 
 public class Bake( kri.rend.tech.Basic ):
 	private final sa		= kri.shade.Smart()
-	private final buf	as kri.frame.Buffer
+	private final sb		= kri.shade.Smart()
+	private final buf		as kri.frame.Buffer
 	private final diModel	= Dictionary[of kri.Entity,kri.Spatial]()
 	private final diCamera	= Dictionary[of kri.Camera,kri.Spatial]()
 	private final pModel	= kri.lib.par.spa.Shared('s_old_mod')
 	private final pCamera	= kri.lib.par.spa.Shared('s_old_cam')
+	private final pOffset	= kri.lib.par.spa.Shared('s_offset')
+	private final bones		= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
+		for i in range(kri.Ant.Inst.caps.bones) ).ToArray()
 	
 	public def constructor(con as Context):
-		super('mblur')
+		super('motion')
 		buf = con.buf
-		# prepare shader
+		# parameters
+		d = kri.shade.rep.Dict()
+		for par as kri.meta.IBase in (pModel,pCamera,pOffset):
+			par.link(d)
+		for par as kri.meta.IBase in bones:
+			par.link(d)
+		# simple shader
 		sa.add( '/lib/quat_v', '/lib/tool_v' )
 		sa.add( '/motion/bake_v', '/motion/bake_f' )
-		d = kri.shade.rep.Dict()
-		for par as kri.meta.IBase in (pModel,pCamera):
-			par.link(d)
 		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		# skin shader
+		sb.add( '/lib/quat_v', '/lib/tool_v' )
+		sb.add( '/skin/skin_v', '/skin/dual_v' )
+		sb.add( '/motion/skin_v', '/motion/bake_f' )
+		sb.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.init( far.Width, far.Height )
@@ -47,19 +59,29 @@ public class Bake( kri.rend.tech.Basic ):
 		con.ClearColor()
 		# set camera
 		cam = kri.Camera.Current
-		sp = kri.Spatial.Identity
-		diCamera.TryGetValue(cam,sp)
-		pCamera.activate(sp)
-		diCamera[cam] = kri.Node.SafeWorld(cam.node)
+		s_old = kri.Spatial.Identity
+		diCamera.TryGetValue(cam,s_old)
+		pCamera.activate(s_old)
+		s_old.inverse()
+		s_new = kri.Node.SafeWorld(cam.node)
+		diCamera[cam] = s_new
+		sc = kri.Spatial.Combine(s_old,s_new)	# cam offset
 		# iterate meshes
 		for e in kri.Scene.Current.entities:
 			continue	if not e.visible
 			# find previous transform
-			sp = kri.Spatial.Identity
-			diModel.TryGetValue(e,sp)
-			pModel.activate(sp)
-			diModel[e] = kri.Node.SafeWorld( e.node )
-			kri.Ant.Inst.params.modelView.activate( e.node )
+			s_old = kri.Spatial.Identity
+			diModel.TryGetValue(e,s_old)
+			pModel.activate(s_old)
+			s_new = kri.Node.SafeWorld( e.node )
+			diModel[e] = s_new
+			s_old.inverse()
+			se = kri.Spatial.Combine(s_old,s_new)	# entity offset
+			# final steps
+			sc.inverse()
+			sp = kri.Spatial.Combine(se,sc)
+			pOffset.activate(sp)
+			kri.Ant.Inst.params.modelView.activate(s_new)
 			#draw
 			e.mesh.draw(1)
 

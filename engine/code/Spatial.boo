@@ -44,6 +44,10 @@ public struct Spatial:
 		return Vector4(s.rot.Xyz, s.rot.W)
 
 	#---	Helper static methods		---#
+	public static def Combine(ref a as Spatial, ref b as Spatial) as Spatial:
+		sp as Spatial
+		sp.combine(a,b)
+		return sp
 	public static def Qrot(ref v as Vector3, ref q as Quaternion) as Vector3:
 		return (q * Quaternion(Xyz:v,W:0f) * Quaternion.Invert(q)).Xyz
 	public static def Lerp(ref a as Spatial, ref b as Spatial, t as single) as Spatial:

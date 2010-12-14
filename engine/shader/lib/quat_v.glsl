@@ -35,6 +35,11 @@ mat3 qmatrix(vec4 q)	{
 		vec3(q.x, q.y, q.w*q.w) );
 }	
 
+//combine transformations
+Spatial trans_combine(Spatial sa, Spatial sb)	{
+	vec4 pos = vec4( qrot(sb.rot,sa.pos.xyz), sb.pos.w*sa.pos.w );
+	return Spatial( pos, qmul(sb.rot,sa.rot) );
+}
 
 //transform by Spatial forward
 vec3 trans_for(vec3 v, Spatial s)	{
