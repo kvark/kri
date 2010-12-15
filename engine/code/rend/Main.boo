@@ -51,11 +51,14 @@ public class Filter(Basic):
 	protected final sa		= kri.shade.Smart()
 	protected final texIn	= kri.shade.par.Value[of kri.Texture]('input')
 	protected final dict	= kri.shade.rep.Dict()
+	protected linear		= false
 	public def constructor():
 		super(true)
 		dict.unit(texIn)
 	public override def process(con as Context) as void:
 		texIn.Value = con.Input
+		con.Input.bind()
+		kri.Texture.Filter(linear,false)
 		con.activate()
 		sa.use()
 		kri.Ant.inst.quad.draw()

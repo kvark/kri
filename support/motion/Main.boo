@@ -88,7 +88,8 @@ public class Bake( kri.rend.tech.Basic ):
 
 public class Apply( kri.rend.Filter ):
 	public def constructor(con as Context):
-		sa.add('/copy_v','/motion/apply_f')
+		linear = true
+		sa.add( '/copy_v', '/filter/blur_vector_f', '/motion/apply_f' )
 		pTex = kri.shade.par.Texture('velocity')
 		pTex.Value = con.buf.A[0].Tex
 		dict.var(con.pRadius)

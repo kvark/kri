@@ -16,17 +16,11 @@ Spatial trans_combine(Spatial,Spatial);
 vec4 get_projection(vec3,vec4);
 
 
-vec4 result(Spatial sm, Spatial sc)	{
-	vec3 w = trans_for(at_vertex.xyz, sm);
-	vec3 c = trans_inv(w, sc);
-	return get_projection(c,proj_cam);
-}
-
-Spatial append_all();
+Spatial skin_append_all();
 
 
 void main()	{
-	Spatial sof = trans_combine( s_offset, append_all() );
+	Spatial sof = trans_combine( s_offset, skin_append_all() );
 	
 	vec3 v1 = trans_for( at_vertex.xyz, s_model );
 	vec3 vn = trans_inv( v1, s_cam );

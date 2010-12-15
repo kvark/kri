@@ -17,7 +17,7 @@ vec4 qmul(vec4,vec4);
 vec3 trans_for(vec3,Spatial);
 
 
-void append(float w, Spatial s)	{
+void skin_append(float w, Spatial s)	{
 	vec4 pos = vec4(0.5 * s.pos.xyz, 0.0);
 	dq.re += w * s.rot;
 	dq.im += w * qmul(pos,s.rot);
@@ -31,7 +31,7 @@ Spatial normDq()	{
 	return Spatial( tmp, k * dq.re );
 }
 
-Spatial result()	{
+Spatial skin_result()	{
 	Spatial sp = normDq();
 	vec3 v = trans_for( at_vertex.xyz, sp );
 	vec4 v4 = vec4( v, at_vertex.w);

@@ -6,13 +6,13 @@ struct Spatial	{
 	vec4 pos,rot;
 };
 
-Spatial append_all();
-void finish(vec3);
+Spatial skin_append_all();
+void skin_finish(vec3);
 
 void main()	{
 	//to_vertex = at_vertex; to_quat = at_quat; return;
-	Spatial sp = append_all();
+	Spatial sp = skin_append_all();
 	to_vertex = sp.pos;
 	to_quat = sp.rot;
-	finish( to_vertex.xyz );
+	skin_finish( to_vertex.xyz );
 }
