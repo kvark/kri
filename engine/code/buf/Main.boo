@@ -1,33 +1,22 @@
 ﻿namespace kri.buf
 
-import System
 import OpenTK.Graphics.OpenGL
 
 
 public class Surface:
-	public wid		as uint
-	public het		as uint
-	public samples	as byte
-	public active	as bool
-	public abstract def bindTo(fa as FramebufferAttachment) as void:
+	public wid		as uint	= 0
+	public het		as uint	= 0
+	public samples	as byte	= 0
+	public active	as bool	= true
+	# attache to a framebuffer
+	public abstract def attachTo(fa as FramebufferAttachment) as void:
 		pass
-
-
-public class Render(Surface):
-	private final hardId	as uint
-	public def constructor():
-		hardId = 0
-	public override def bindTo(fa as FramebufferAttachment) as void:
-		GL.FramebufferRenderbuffer( FramebufferTarget.Framebuffer, fa, RenderbufferTarget.Renderbuffer, hardId )
-
-
-public class Texture(Surface):
-	private final hardId	as uint
-	public def constructor():
-		hardId = 0
-	public override def bindTo(fa as FramebufferAttachment) as void:
-		GL.FramebufferTexture2D( FramebufferTarget.Framebuffer, fa, TextureTarget.Texture2D, hardId, 0 )
-
+	# bind on its own
+	public abstract def bind() as void:
+		pass
+	# retrieve GL state
+	public abstract def syncBack() as void:
+		pass
 
 
 public class Frame:
@@ -51,10 +40,7 @@ public class Target(Frame):
 	
 	private def addSurface(fa as FramebufferAttachment, ref cur as Surface, nex as Surface) as void:
 		return	if cur==nex
-		if nex and nex.active:
-			nex.bindTo(fa)
-		else:
-			GL.FramebufferRenderbuffer( FramebufferTarget.Framebuffer, fa, RenderbufferTarget.Renderbuffer, 0 )
+		(Render.Zero,nex)[nex and nex.active].attachTo(fa)
 		cur = nex
 	
 	private final static Colors = (of FramebufferAttachment:

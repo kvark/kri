@@ -57,6 +57,8 @@
     <Compile Include="code\ani\Main.boo" />
     <Compile Include="code\Ant.boo" />
     <Compile Include="code\buf\Main.boo" />
+    <Compile Include="code\buf\Render.boo" />
+    <Compile Include="code\buf\Texture.boo" />
     <Compile Include="code\Entity.boo" />
     <Compile Include="code\frame\Buffer.boo" />
     <Compile Include="code\frame\Main.boo" />

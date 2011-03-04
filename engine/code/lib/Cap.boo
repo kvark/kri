@@ -13,6 +13,8 @@ public final class Capabilities:
 	public final colorAttaches	as byte
 	public final textureUnits	as byte
 	public final textureLayers	as ushort
+	public final textureSize	as uint
+	public final renderBufSize	as uint
 	public final samplesColor	as ushort
 	public final samplesInt		as ushort
 	public final samplesDepth	as ushort
@@ -36,6 +38,8 @@ public final class Capabilities:
 		colorAttaches	= Var( GetPName.MaxColorAttachments )
 		textureUnits	= Var( GetPName.MaxCombinedTextureImageUnits )
 		textureLayers	= Var( GetPName.MaxArrayTextureLayers )
+		textureSize		= Var( GetPName.MaxTextureSize )
+		renderBufSize	= Var( GetPName.MaxRenderbufferSize )
 		samplesColor	= Var( GetPName.MaxColorTextureSamples )
 		samplesInt		= Var( GetPName.MaxIntegerSamples )
 		samplesDepth	= Var( GetPName.MaxDepthTextureSamples )
