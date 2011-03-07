@@ -14,6 +14,7 @@ public class Texture(Surface):
 	public			pixFormat	= PixelFormat.Rgba
 	public			dep		as uint	= 0
 	public			level	as byte = 0
+	public 			layer	as int	= -1
 	public			target	= TextureTarget.Texture2D
 	
 	public def constructor():
@@ -37,7 +38,10 @@ public class Texture(Surface):
 	public override def attachTo(fa as FramebufferAttachment) as void:
 		init()	if not ready
 		assert ready
-		GL.FramebufferTexture2D( FramebufferTarget.Framebuffer, fa, target, hardId, level )
+		if layer>=0:
+			GL.FramebufferTextureLayer(	FramebufferTarget.Framebuffer, fa, hardId, level, layer)
+		else:	# let GL decide
+			GL.FramebufferTexture(		FramebufferTarget.Framebuffer, fa, hardId, level )
 
 	public override def bind() as void:
 		# can't use cache as we have different bounds

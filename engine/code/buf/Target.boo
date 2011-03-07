@@ -13,6 +13,10 @@ public struct Container:
 		get: return (s	for s in ((stencil,depth) + color)	if s)
 	public def constructor(num as byte):
 		color = array[of Surface](num)
+	public def clear() as void:
+		stencil = depth = null
+		for i in range(color.Length):
+			color[i] = null
 
 
 public class Target(Frame):
@@ -63,3 +67,6 @@ public class Target(Frame):
 	public def resize(wid as uint, het as uint) as void:
 		for sf in at.All:
 			sf.init(wid,het)
+	
+	public def markDirty() as void:
+		old.clear()
