@@ -9,7 +9,7 @@ import kri.shade
 public class Simple( kri.rend.Basic ):
 	protected final sa		= Smart()
 	protected final sb		= Smart()
-	protected final texIn	= par.Value[of kri.Texture]('input')
+	protected final texIn	= par.Texture('input')
 	public	buf		as kri.frame.Buffer	= null
 
 	public def constructor():
@@ -32,7 +32,7 @@ public class Simple( kri.rend.Basic ):
 
 public class Advanced( kri.rend.Basic ):
 	public final sa		= Smart()
-	public final pTex	= par.Value[of kri.Texture]('input')
+	public final pTex	= par.Texture('input')
 	public final pDir	= par.Value[of Vector4]('dir')
 	public	buf		as kri.frame.Buffer	= null
 	

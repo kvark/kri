@@ -4,7 +4,7 @@ import OpenTK.Graphics.OpenGL
 
 #------		BASIC RGBA IMAGE		------#
 
-public class Basic( kri.data.IGenerator[of kri.Texture] ):
+public class Basic( kri.data.IGenerator[of kri.buf.Texture] ):
 	public final name	as string
 	public final width	as uint
 	public final height	as uint
@@ -27,11 +27,8 @@ public class Basic( kri.data.IGenerator[of kri.Texture] ):
 		pa = PixelFormat.Alpha
 		return (pa,pa,pa, PixelFormat.Bgr, PixelFormat.Bgra)[bits>>3]
 	
-	public def generate() as kri.Texture:	#imp: kri.res.IGenerator
-		tex = kri.Texture( TextureTarget.Texture2D )
-		tex.Name = name
-		tex.bind()
-		GL.TexImage2D( tex.target,0, PixelInternalFormat.Rgba8, width,height,0,
-			getFormat(), PixelType.UnsignedByte, scan )
-		#kri.Texture.Init(width,height, pif, scan)
+	public def generate() as kri.buf.Texture:	#imp: kri.res.IGenerator
+		tex = kri.buf.Texture( wid:width, het:height,
+			name:name, pixFormat:getFormat() )
+		tex.init(scan)
 		return tex

@@ -6,7 +6,7 @@ import kri.shade
 
 public class Context:
 	public final buf		= kri.frame.Buffer()
-	public final gbuf		= par.Value[of kri.Texture]('gbuf')
+	public final gbuf		= par.Value[of kri.buf.Texture]('gbuf')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
@@ -28,11 +28,13 @@ public class Fill( kri.rend.tech.Meta ):
 	# resize
 	public override def setup(far as kri.frame.Array) as bool:
 		buf.init( far.Width, far.Height )
-		buf.A[0].Tex.bind()
-		fm = kri.Texture.AskFormat( kri.Texture.Class.Color, 8 )
+		t = buf.A[0].Tex
+		fm = kri.frame.Buffer.AskFormat( kri.frame.Buffer.Class.Color, 8 )
 		fm = PixelInternalFormat.Rgb10A2
-		kri.Texture.Init( fm, far.Width, far.Height, 3 )
-		kri.Texture.Filter(false,false)
+		t.intFormat = fm
+		t.samples = 3
+		t.init(far.Width,far.Height)
+		t.filt(false,false)
 		return true
 	# work	
 	public override def process(con as kri.rend.Context) as void:

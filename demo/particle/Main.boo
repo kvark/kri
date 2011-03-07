@@ -13,12 +13,10 @@ public class Render( kri.rend.part.Meta ):
 		dict.unit(pColor)
 		shobs.Add( pc.sh_draw )
 		shade(('/part/draw/load_v','text/draw_f'))
-		pColor.Value = t = kri.Texture(TextureTarget.Texture1D)
-		t.bind()
-		t.setState(0,true,false)
 		data = (of Color4: Color4.Red, Color4.Yellow, Color4.Violet, Color4.RosyBrown, Color4.Black)
-		GL.TexImage1D( t.target, 0, PixelInternalFormat.Rgba8, data.Length, 0,
-			PixelFormat.Rgba, PixelType.Float, data)
+		pColor.Value = t = kri.buf.Texture( target:TextureTarget.Texture1D, wid:data.Length, het:0 )
+		t.setState(0,true,false)
+		t.init(data)
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(true,0f,false)
 		drawScene()

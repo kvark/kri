@@ -12,27 +12,25 @@ public static class Texture:
 	
 	public final border = Color4.Black
 	
-	private def make() as kri.Texture:
-		tex = kri.Texture( TextureTarget.Texture2D )
+	private def make() as kri.buf.Texture:
+		tex = kri.buf.Texture()
 		tex.setState(0,false,false)
 		return tex
 	
-	public def ofColor(*data as (byte)) as kri.Texture:
-		tex = make()
-		GL.TexImage2D( tex.target, 0, PixelInternalFormat.Rgba8, 1,1,0,\
-			PixelFormat.Rgba, PixelType.UnsignedByte, data )
+	public def ofColor(*data as (byte)) as kri.buf.Texture:
+		tex = kri.buf.Texture( wid:1, het:1 )
+		tex.init(data)
 		return tex
-	public def ofDepth(val as single) as kri.Texture:
-		tex = make()
-		GL.TexImage2D( tex.target, 0, PixelInternalFormat.DepthComponent, 1,1,0,\
-			PixelFormat.DepthComponent, PixelType.Float, (val,) )
+	public def ofDepth(val as single) as kri.buf.Texture:
+		tex = kri.buf.Texture( wid:1, het:1,
+			intFormat:PixelInternalFormat.DepthComponent,
+			pixFormat:PixelFormat.DepthComponent )
+		tex.init((val,))
 		return tex
 
 	
-	public def ofCurve(data as (Key)) as kri.Texture:
+	public def ofCurve(data as (Key)) as kri.buf.Texture:
 		assert data.Length
-		tex = kri.Texture( TextureTarget.Texture1D )
-		tex.setState(0,true,true)
 		mid = 1f
 		for i in range( data.Length-1 ):
 			mid = Math.Min(mid, data[i+1].pos - data[i].pos)
@@ -54,8 +52,9 @@ public static class Texture:
 				d2[i] = kri.load.ExAnim.InterColor(
 					data[j-1].col, data[j].col,
 					(t-data[j-1].pos) / (data[j].pos - data[j-1].pos))
-		GL.TexImage1D( tex.target, 0, PixelInternalFormat.Rgba, d2.Length, 0,
-			PixelFormat.Rgba, PixelType.Float, d2)
+		tex = kri.buf.Texture( target:TextureTarget.Texture1D, wid:d2.Length )
+		tex.setState(0,true,true)
+		tex.init(d2)
 		return tex
 
 	

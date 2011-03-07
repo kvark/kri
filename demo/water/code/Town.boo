@@ -17,7 +17,7 @@ private class Town( kri.rend.Basic ):
 		sa.add( con.sh_simplex, con.sh_turbo )
 		sa.add( '/copy_v', 'text/town_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
-		buf.emit(0, kri.Texture.Class.Color, 8)
+		buf.emit(0, kri.frame.Buffer.Class.Color, 8)
 	
 	public override def setup(far as kri.frame.Array) as bool:
 		active = true

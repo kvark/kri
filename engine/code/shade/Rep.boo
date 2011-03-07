@@ -55,14 +55,10 @@ public class Unit(Base):
 		Program.Param(lid,tid)
 		tun = tid
 	public override def upload(iv as par.IBaseRoot) as void:
-		if iv as par.IBase[of kri.Texture]:
-			tex = (iv as par.IBase[of kri.Texture]).Value
-			tex.bind(tun)	if tex
-		else:
-			t2 = (iv as par.IBase[of kri.buf.Texture]).Value
-			if t2:
-				kri.buf.Texture.Slot(tun)
-				t2.bind()
+		tex = (iv as par.IBase[of kri.buf.Texture]).Value
+		assert tex
+		kri.buf.Texture.Slot(tun)
+		tex.bind()
 
 
 # Standard uniform dictionary
@@ -76,12 +72,9 @@ public class Dict( SortedDictionary[of string,par.IBaseRoot] ):
 		for v in var:
 			Item[v.Name] = v
 	# add custom unit
-	public def unit(name as string, v as par.IBase[of kri.Texture]) as void:
+	public def unit(name as string, v as par.IBase[of kri.buf.Texture]) as void:
 		Item[Smart.prefixUnit + name] = v
 	# add texture unit representor
-	public def unit(*vat as (par.Value[of kri.Texture])) as void:
+	public def unit(*vat as (par.Value[of kri.buf.Texture])) as void:
 		for v in vat:
 			unit(v.Name,v)
-	public def unitNew(*vat as (par.Value[of kri.buf.Texture])) as void:
-		for v in vat:
-			Item[Smart.prefixUnit + v.Name] = v

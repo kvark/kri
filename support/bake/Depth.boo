@@ -9,7 +9,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Tag( kri.ITag ):
 	public final proj	as kri.Projector
-	public final tex	= kri.Texture( TextureTarget.Texture2D )
+	public final tex	= kri.buf.Texture()
 	public dSize		= kri.frame.DirtyHolder[of uint](0)
 	public Size as uint:
 		get: return dSize.Value

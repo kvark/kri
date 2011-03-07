@@ -3,7 +3,7 @@
 import System.IO
 import kri.data
 
-public class Targa( ILoaderGen[of IGenerator[of kri.Texture]] ):
+public class Targa( ILoaderGen[of IGenerator[of kri.buf.Texture]] ):
 	private struct Header:
 		public idSize	as byte
 		public cmType	as byte
@@ -23,7 +23,7 @@ public class Targa( ILoaderGen[of IGenerator[of kri.Texture]] ):
 			return false	if descr<bits and bits != 24+descr
 			return true
 
-	public def read(path as string) as IGenerator[of kri.Texture]:	#imp: ILoaderGen
+	public def read(path as string) as IGenerator[of kri.buf.Texture]:	#imp: ILoaderGen
 		br = BinaryReader( File.OpenRead(path) )	
 		hd = Header(
 			idSize	: br.ReadByte(),

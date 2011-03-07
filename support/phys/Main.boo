@@ -27,9 +27,9 @@ public class Core:
 	private final pId	= kri.shade.par.Value[of single]('object_id')
 	private final big	as bool
 	
-	public Color	as kri.Texture:
+	public Color	as kri.buf.Texture:
 		get: return fbo.A[-0].Tex
-	public Stencil	as kri.Texture:
+	public Stencil	as kri.buf.Texture:
 		get: return fbo.A[-2].Tex
 	
 	public def constructor( ord as byte, large as bool, techId as int ):
@@ -37,14 +37,14 @@ public class Core:
 		# init FBO
 		fbo.init(1<<ord,1<<ord)
 		tSten = fbo.emitAuto(-2,0)
+		tSten.pixFormat = PixelFormat.DepthStencil
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
 		tColor = fbo.emit(0,pif)
 		# setup target parameters
 		fbo.activate(1)
 		for tex in (tSten,tColor):
-			tex.bind()
-			kri.Texture.Filter(false,false)
-			kri.Texture.GenLevels()
+			tex.filt(false,false)
+			tex.genLevels()
 		# 8 bit stencil + 2*[8,16] bit color
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader
@@ -127,12 +127,11 @@ public class Core:
 		ts = fbo.A[-2].Tex
 		for i in range(3):
 			for tex in (tc,ts):
-				tex.bind()
-				kri.Texture.SetLevels(i,i+1)
+				tex.setLevels(i,i+1)
 			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
-				FramebufferAttachment.ColorAttachment0, tc.target, tc.id, i+1)
+				FramebufferAttachment.ColorAttachment0, tc.target, tc.HardId, i+1)
 			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
-				FramebufferAttachment.ColorAttachment1, ts.target, ts.id, i+1)
+				FramebufferAttachment.ColorAttachment1, ts.target, ts.HardId, i+1)
 			
 		# read back result
 		pbo.bind()

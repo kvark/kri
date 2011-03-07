@@ -16,10 +16,8 @@ public class Noise:
 		dict.unit(tPerm,tGrad)
 		# create textures
 		for pt in (tPerm,tGrad):
-			pt.Value = kri.Texture(targ)
-			pt.Value.bind()
-			kri.Texture.Wrap( TextureWrapMode.Repeat, 1 )
-			kri.Texture.Filter( false, false )
+			pt.Value = kri.buf.Texture( target:targ )
+			pt.Value.setState(1,false,false)
 		# init permutations
 		generate(order)	if order
 		# init gradient

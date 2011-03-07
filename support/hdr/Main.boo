@@ -47,17 +47,17 @@ public class Render( kri.rend.Basic ):
 		assert not con.BufSamples
 		con.DepthTest = false
 		w = buf.Width; h = buf.Height
-		tInput.Value = con.Input
-		buf.A[0].Tex = con.Input
-		b2.A[0].Tex = con.Input
-		con.Input.bind()
-		scale = kri.Texture.GenLevels()	# to be sure
-		kri.Texture.Filter(true,false)
+		t = con.Input
+		tInput.Value = t
+		buf.A[0].Tex = t
+		b2.A[0].Tex = t
+		scale = t.genLevels()	# to be sure
+		t.filt(true,false)
 		scale = 8
 		# bright filter
 		b2.init(w>>1,h>>1)
 		b2.A[0].Level = 1
-		kri.Texture.SetLevels(0,0)
+		t.setLevels(0,0)
 		sa_bright.use()
 		buf.mask = b2.mask = 1
 		b2.activate(true)
@@ -65,7 +65,7 @@ public class Render( kri.rend.Basic ):
 		# down-sample
 		for i in range(1,scale):
 			buf.init(w,h,i)
-			kri.Texture.SetLevels(i,i)
+			t.setLevels(i,i)
 			b2.init(w,h,i+1)
 			b2.A[0].Level = i+1
 			buf.blit(b2)
@@ -82,12 +82,12 @@ public class Render( kri.rend.Basic ):
 				buf.init(w,h,i-1)
 				buf.A[0].Level = i-1
 				buf.activate()
-				kri.Texture.SetLevels(i,i)
+				t.setLevels(i,i)
 				kri.Ant.Inst.quad.draw()
 		# tone filter
 		buf.init(w,h)
-		kri.Texture.SetLevels(0,10)
-		kri.Texture.Filter(false,false)
+		t.setLevels(0,10)
+		t.filt(false,false)
 		sa_tone.use()
 		con.activate()
 		kri.Ant.Inst.quad.draw()

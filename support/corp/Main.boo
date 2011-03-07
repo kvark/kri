@@ -101,20 +101,19 @@ public class Extra( kri.IExtension ):
 			pe.onUpdate = upNode
 		elif source == 'VERT':
 			for i in range(2):
-				t = kri.shade.par.Value[of kri.Texture]( ('vertex','quat')[i] )
+				t = kri.shade.par.Value[of kri.buf.Texture]( ('vertex','quat')[i] )
 				pm.dict.unit(t.Name,t)
-				t.Value = kri.Texture( TextureTarget.TextureBuffer )
-				t.Value.bind()
+				t.Value = kri.buf.Texture()
 				ats = (kri.Ant.Inst.attribs.vertex, kri.Ant.inst.attribs.quat)
-				kri.Texture.Init( SizedInternalFormat.Rgba32f, ent.findAny(ats[i]) )
+				t.Value.init( SizedInternalFormat.Rgba32f, ent.findAny(ats[i]) )
 				pe.onUpdate = upNode
 			parNumber = kri.shade.par.Value[of single]('num_vertices')
 			parNumber.Value = 1f * ent.mesh.nVert
 			pm.dict.var(parNumber)
 			sh = con.sh_surf_vertex
 		elif source == 'FACE':
-			tVert = kri.shade.par.Value[of kri.Texture]('vertex')
-			tQuat = kri.shade.par.Value[of kri.Texture]('quat')
+			tVert = kri.shade.par.Value[of kri.buf.Texture]('vertex')
+			tQuat = kri.shade.par.Value[of kri.buf.Texture]('quat')
 			pm.dict.unit(tVert,tQuat)
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)

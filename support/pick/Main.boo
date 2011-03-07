@@ -17,7 +17,7 @@ public class Render( kri.rend.Basic ):
 	private coord	=	(of uint: 0,0)
 	#debug data
 	private final sb	= kri.shade.Smart()
-	private final pTex	= kri.shade.par.Value[of kri.Texture]('input')
+	private final pTex	= kri.shade.par.Value[of kri.buf.Texture]('input')
 
 	public def constructor(win as kri.Window, reduct as uint, numorder as uint):
 		super(false)
@@ -27,8 +27,9 @@ public class Render( kri.rend.Basic ):
 		mouse.ButtonDown += ev
 		# make buffer
 		assert numorder<=16
-		buf.emitAuto(-1,0)
-		buf.emit(0, kri.Texture.Class.Index, 16)
+		t = buf.emitAuto(-1,0)
+		t.pixFormat = PixelFormat.DepthComponent
+		buf.emit(0, kri.frame.Buffer.Class.Index, 16)
 		# make shader
 		sa.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
 		d = kri.shade.rep.Dict()

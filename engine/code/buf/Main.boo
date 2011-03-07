@@ -4,6 +4,7 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Surface:
+	public name		as string	= ''
 	public wid		as uint	= 0
 	public het		as uint	= 0
 	public samples	as byte	= 0

@@ -10,7 +10,7 @@ public class ApplyBase( kri.rend.Basic ):
 	protected final sphere	as kri.Mesh
 	protected final dict	= rep.Dict()
 	private final va		= kri.vb.Array()
-	private final texDep	= par.Value[of kri.Texture]('depth')
+	private final texDep	= par.Value[of kri.buf.Texture]('depth')
 	# custom activation
 	private virtual def onInit() as void:
 		pass
@@ -51,7 +51,7 @@ public class ApplyBase( kri.rend.Basic ):
 
 public class Apply( ApplyBase ):
 	private final s0		= Smart()
-	private final texLit	= par.Value[of kri.Texture]('light')
+	private final texLit	= par.Value[of kri.buf.Texture]('light')
 	private final context	as support.light.Context
 	# init
 	public def constructor(con as Context, lc as support.light.Context, qord as byte):
@@ -63,12 +63,11 @@ public class Apply( ApplyBase ):
 		s0.add( '/copy_v', '/g/init_f' )
 		s0.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	# shadow
-	private def bindShadow(t as kri.Texture) as void:
+	private def bindShadow(t as kri.buf.Texture) as void:
 		if t:
 			texLit.Value = t
-			t.bind()
-			kri.Texture.Filter(false,false)
-			kri.Texture.Shadow(false)
+			t.filt(false,false)
+			t.shadow(false)
 		else:
 			texLit.Value = context.defShadow
 	# work

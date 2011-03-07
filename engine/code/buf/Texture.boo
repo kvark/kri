@@ -6,10 +6,11 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Texture(Surface):
+	[Getter(HardId)]
 	private final	hardId	as uint
 	private static	boundId	as uint	= 0
 	private			ready	= false
-	public			intFormat	as PixelInternalFormat
+	public			intFormat	= PixelInternalFormat.Rgba
 	public			pixFormat	= PixelFormat.Rgba
 	public			dep		as uint	= 0
 	public			level	as byte = 0
@@ -66,11 +67,13 @@ public class Texture(Surface):
 		bind()
 		ready = true
 		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.Extract )
-		syncBack()
+		#syncBack()	# produces InvalidEnum when asking for width
 	
 	public override def init() as void:
 		if samples:
 			initMulti()
+		elif pixFormat == PixelFormat.DepthStencil:
+			init[of double](null)
 		else:
 			init[of byte](null)
 	
@@ -98,6 +101,7 @@ public class Texture(Surface):
 		return PixelType.UnsignedInt	if t==uint
 		return PixelType.HalfFloat		if t in (Vector2h,Vector3h,Vector4h)
 		return PixelType.Float			if t in (single,Vector2,Vector3,Vector4)
+		return PixelType.UnsignedInt248	if t==double	# depth_stencil
 		assert not 'good type'
 		return PixelType.Bitmap
 	

@@ -52,7 +52,7 @@ public class Light(Projector,IColored):
 	public quad1	= 0f	# linear factor
 	public quad2	= 0f	# quadratic factor
 	public sphere	= 0f	# spherical bound
-	public depth	as Texture	= null
+	public depth	as buf.Texture	= null
 	# parallel projection
 	public def setLimit(radius as single) as void:
 		rangeIn = 0

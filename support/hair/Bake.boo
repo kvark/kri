@@ -22,8 +22,8 @@ public class Bake( kri.rend.Basic ):
 	public final s_vert	= Smart()
 	private final pStretch	= par.Value[of single]('vertex_ratio')
 	private final tbuf = (
-		kri.Texture(TextureTarget.TextureBuffer),
-		kri.Texture(TextureTarget.TextureBuffer))
+		kri.buf.Texture(),
+		kri.buf.Texture())
 
 	public def constructor(pc as kri.part.Context):
 		super(false)
@@ -66,10 +66,8 @@ public class Bake( kri.rend.Basic ):
 			else:		# from vertices
 				pStretch.Value = e.mesh.nVert * 1f / tCur.pixels
 				ats = kri.Ant.Inst.attribs
-				(pVert.Value = tbuf[0]).bind()
-				kri.Texture.Init( SizedInternalFormat.Rgba32f,	e.findAny(ats.vertex) )
-				(pQuat.Value = tbuf[1]).bind()
-				kri.Texture.Init( SizedInternalFormat.Rgba32f,	e.findAny(ats.quat) )
+				(pVert.Value = tbuf[0]).init( SizedInternalFormat.Rgba32f,	e.findAny(ats.vertex) )
+				(pQuat.Value = tbuf[1]).init( SizedInternalFormat.Rgba32f,	e.findAny(ats.quat) )
 				s_vert.use()
 			using kri.Discarder(true), tf.catch():
 				GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )

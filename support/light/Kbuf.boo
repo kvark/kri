@@ -78,7 +78,7 @@ public class Bake( kri.rend.Basic ):
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
 	private final buf		as kri.frame.Buffer
-	private final texDep	= par.Value[of kri.Texture]('depth')
+	private final texDep	= par.Value[of kri.buf.Texture]('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba

@@ -36,19 +36,20 @@ public class Fill( kri.rend.tech.General ):
 			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.type == LiType.VARIANCE]
 			if not l.depth:
-				ask = kri.Texture.AskFormat( kri.Texture.Class.Depth, licon.bits )
+				ask = kri.frame.Buffer.AskFormat( kri.frame.Buffer.Class.Depth, licon.bits )
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
 				l.depth = buf.emit(index,pif)
+				l.depth.pixFormat = PixelFormat.DepthComponent
 			else:	buf.A[index].Tex = l.depth
 			buf.activate()
 			con.ClearColor( OpenTK.Graphics.Color4.White )	if not index
 			con.ClearDepth( 1f )
 			drawScene()
 			# post-prepare texture
-			l.depth.bind(8)
-			kri.Texture.GenLevels()	if licon.mipmap
-			kri.Texture.Filter( licon.smooth, licon.mipmap )
-			kri.Texture.Shadow( licon.type == LiType.SIMPLE )
+			kri.buf.Texture.Slot(8)
+			l.depth.genLevels()	if licon.mipmap
+			l.depth.filt( licon.smooth, licon.mipmap )
+			l.depth.shadow( licon.type == LiType.SIMPLE )
 
 
 #---------	LIGHT MAP APPLY	--------#

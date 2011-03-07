@@ -7,7 +7,7 @@ import kri.shade
 #	Reflection data, stored as an entity tag
 
 public class Tag( kri.ITag ):
-	public final pTex	as par.ValuePure[of kri.Texture]
+	public final pTex	as par.ValuePure[of kri.buf.Texture]
 	public counter	as int		= 0
 	public depth	as byte		= 0
 	public size		as ushort	= 256
@@ -15,7 +15,7 @@ public class Tag( kri.ITag ):
 	public rangeIn	as single	= 1f
 	public rangeOut	as single	= 100f
 	public cubic	as bool		= true
-	public def constructor(pt as par.ValuePure[of kri.Texture]):
+	public def constructor(pt as par.ValuePure[of kri.buf.Texture]):
 		pTex = pt
 
 

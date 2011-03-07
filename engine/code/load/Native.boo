@@ -31,7 +31,7 @@ public class Native( kri.data.ILoaderGen[of Atom] ):
 	public final skipped	= Dictionary[of string,uint]()
 	public final resMan		= kri.data.Manager()
 	
-	public final swImage	= kri.data.Switch[of kri.Texture]()
+	public final swImage	= kri.data.Switch[of kri.buf.Texture]()
 	public final swSound	= kri.data.Switch[of kri.sound.Buffer]()
 	
 	public def constructor():

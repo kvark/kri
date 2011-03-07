@@ -10,7 +10,7 @@ public class Map( kri.rend.Basic ):
 	private final sa	= Smart()
 	public final layer	= par.Value[of single]('layer')
 	
-	public def constructor(depth as bool, cube as bool, id as int, t as par.IBase[of kri.Texture]):
+	public def constructor(depth as bool, cube as bool, id as int, t as par.IBase[of kri.buf.Texture]):
 		name = ''
 		if depth:
 			name = ('show_depth','copy_cube')[cube]

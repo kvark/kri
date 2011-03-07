@@ -37,11 +37,7 @@ public class Value[of T](IBase[of T],INamed):
 		name = s
 
 
-public class Texture(Value[of kri.Texture]):
-	public def constructor(s as string):
-		super(s)
-
-public class TextureNew(Value[of kri.buf.Texture]):
+public class Texture(Value[of kri.buf.Texture]):
 	public def constructor(s as string):
 		super(s)
 
@@ -53,9 +49,9 @@ public class Value2[of T](ValueBase[of T]):
 		super(s)
 */
 
-public class UnitProxy( IBase[of kri.Texture] ):
-	private final fun as callable() as kri.Texture
-	public def constructor(f as callable() as kri.Texture):
+public class UnitProxy( IBase[of kri.buf.Texture] ):
+	private final fun as callable() as kri.buf.Texture
+	public def constructor(f as callable() as kri.buf.Texture):
 		fun = f
-	public override Value as kri.Texture:
+	public override Value as kri.buf.Texture:
 		get: return fun()

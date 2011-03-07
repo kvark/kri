@@ -27,9 +27,9 @@ public class Context:
 	private final iDep	as int						# depth attachment id
 
 	[getter(Input)]
-	private tInput	as kri.Texture	= null
+	private tInput	as kri.buf.Texture	= null
 	[getter(Depth)]
-	private tDepth	as kri.Texture	= null
+	private tDepth	as kri.buf.Texture	= null
 	public Aspect	as single:
 		get: return buf.Width * 1f / buf.Height
 	
@@ -82,10 +82,13 @@ public class Context:
 		swapUnit(iDep,tDepth)	if Depth
 		buf.init(w,h)
 		buf.resizeFrames()
-		Input.InitMulti( buf.A[0].Format, buf.Samples, false, w,h,0 )	if Input
+		if Input:
+			Input.samples = buf.Samples
+			Input.intFormat = buf.A[0].Format
+			Input.init(w,h)
 		return buf
 	
-	private def swapUnit(slot as int, ref tex as kri.Texture):
+	private def swapUnit(slot as int, ref tex as kri.buf.Texture):
 		t = buf.A[slot].Tex
 		buf.A[slot].Tex = tex
 		tex = t
@@ -98,7 +101,9 @@ public class Context:
 			if tDepth:
 				at.Tex = tDepth
 				tDepth = null
-			else: buf.emitAuto(iDep,bitDepth)
+			else:
+				t = buf.emitAuto(iDep,bitDepth)
+				t.pixFormat = (PixelFormat.DepthComponent,PixelFormat.DepthStencil)[iDep==-2]
 		if not dep and at.Tex:
 			# don't need it but it's there
 			tDepth = at.Tex

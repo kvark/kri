@@ -20,7 +20,7 @@ public class Bake( kri.rend.Basic ):
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
 	private final buf		as kri.frame.Buffer
-	private final texDep	= par.Value[of kri.Texture]('depth')
+	private final texDep	= par.Value[of kri.buf.Texture]('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba16f
@@ -46,8 +46,8 @@ public class Bake( kri.rend.Basic ):
 		wid = far.Width
 		het = far.Height
 		buf.init(wid,het)
-		buf.A[0].Tex.bind()
-		kri.Texture.Init( pif, wid,het,3 )
+		buf.A[0].Tex.samples = 3
+		buf.A[0].Tex.init(wid,het)
 		return true
 		
 	public override def process(con as kri.rend.Context) as void:

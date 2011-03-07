@@ -38,7 +38,7 @@ internal static class Fm:
 
 #---	General Texture class	---#
 
-public class Texture( shade.par.INamed ):
+public class Texture2( shade.par.INamed ):
 	public enum Class:
 		Color
 		Depth

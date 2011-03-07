@@ -48,7 +48,7 @@ public class Advanced(IUnited,Hermit):
 	
 
 #---	Unit Slave meta data	---#
-public class AdUnit( ISlave, par.ValuePure[of kri.Texture] ):
+public class AdUnit( ISlave, par.ValuePure[of kri.buf.Texture] ):
 	public input	as Hermit	= null
 	public final pOffset	= par.ValuePure[of Vector4]()
 	public final pScale		= par.ValuePure[of Vector4]()

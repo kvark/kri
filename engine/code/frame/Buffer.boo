@@ -2,9 +2,71 @@ namespace kri.frame
 
 import OpenTK.Graphics.OpenGL
 
+
+internal static class Fm:
+	public final bad		= PixelInternalFormat.Alpha
+	public final stencil	= PixelInternalFormat.Depth24Stencil8
+	public final depth	= (of PixelInternalFormat:
+		PixelInternalFormat.DepthComponent,
+		PixelInternalFormat.Depth24Stencil8,
+		PixelInternalFormat.DepthComponent16,
+		PixelInternalFormat.DepthComponent24,
+		PixelInternalFormat.DepthComponent32
+	)
+	public final color	= (of PixelInternalFormat:
+		PixelInternalFormat.Rgba,
+		PixelInternalFormat.Rgba8,
+		PixelInternalFormat.Rgba16f,
+		bad,
+		PixelInternalFormat.Rgba32f
+	)
+	public final index	= (of PixelInternalFormat:
+		bad,
+		PixelInternalFormat.R8,
+		PixelInternalFormat.R16,
+		bad,bad
+	)
+	public final index2	= (of PixelInternalFormat:
+		bad,
+		PixelInternalFormat.Rg8,
+		PixelInternalFormat.Rg16,
+		bad,bad
+	)
+
+
 #---------	FB lazy attachment management	---------#
 
 public class Buffer(Screen):
+	public enum Class:
+		Color
+		Depth
+		Stencil
+		Index
+		Index2
+		Other
+		# auxilary methods for init
+	private static def Fi2format(fi as PixelInternalFormat) as PixelFormat:
+		return PixelFormat.DepthStencil		if fi == Fm.stencil
+		return PixelFormat.DepthComponent	if fi in Fm.depth
+		return PixelFormat.Red				if fi in Fm.index
+		return PixelFormat.Rg				if fi in Fm.index2
+		return PixelFormat.Rgba
+	private static def Fi2type(fi as PixelInternalFormat) as PixelType:
+		return PixelType.UnsignedInt248	if fi == Fm.stencil
+		return PixelType.UnsignedByte	if fi in (Fm.color[:2] + Fm.index[:2] + Fm.index2[:2])
+		return PixelType.UnsignedShort	if fi in ( Fm.index[2], Fm.index2[2] )
+		return PixelType.UnsignedInt	if fi in ( Fm.index[4], Fm.index2[4] )
+		return PixelType.Float
+	
+	public static def AskFormat(cl as Class, bits as uint) as PixelInternalFormat:
+		d = bits>>3
+		return Fm.color[d]	if cl == Class.Color
+		return Fm.depth[d]	if cl == Class.Depth
+		return Fm.stencil	if cl == Class.Stencil
+		return Fm.index[d]	if cl == Class.Index
+		return Fm.index2[d]	if cl == Class.Index2
+		return Fm.bad
+	
 	public mask		as uint = 1		# desired draw mask
 	private oldMask	as uint = 0		# active mask
 	private static final badMask	as uint = 100	# bad mask
@@ -48,28 +110,27 @@ public class Buffer(Screen):
 	
 	# -------- CREATION ROUTINES ---------- #
 	
-	public def emit(id as int, pif as PixelInternalFormat) as kri.Texture:
-		t = A[id].Tex = kri.Texture(texTarget)
+	public def emit(id as int, pif as PixelInternalFormat) as kri.buf.Texture:
+		t = A[id].Tex = kri.buf.Texture( target:texTarget )
 		A[id].dFormat.Value = pif
 		return t
 	
-	public def emit(id as int, cl as kri.Texture.Class, bits as byte) as kri.Texture:
-		return emit( id, kri.Texture.AskFormat(cl,bits) )
+	public def emit(id as int, cl as Class, bits as byte) as kri.buf.Texture:
+		return emit( id, AskFormat(cl,bits) )
 	
-	public def emitAuto(id as int, bits as byte) as kri.Texture:
-		cl = kri.Texture.Class.Color
-		if id==-2:	cl = kri.Texture.Class.Stencil
-		if id==-1:	cl = kri.Texture.Class.Depth
+	public def emitAuto(id as int, bits as byte) as kri.buf.Texture:
+		cl = Class.Color
+		if id==-2:	cl = Class.Stencil
+		if id==-1:	cl = Class.Depth
 		return emit( id, cl, bits )
 	
-	public def emitArray(num as int) as kri.Texture:
-		tex = kri.Texture( TextureTarget.Texture2DArray )
+	public def emitArray(num as int) as kri.buf.Texture:
+		tex = kri.buf.Texture( target:TextureTarget.Texture2DArray )
 		for i in range(num):
 			A[i].Tex = tex
 			A[i].Layer = i
 		mask = (1<<num) - 1
-		return tex
-	
+		return tex	
 
 	# -------- AUXILARY ROUTINES ---------- #
 	
@@ -94,9 +155,10 @@ public class Buffer(Screen):
 	public def resizeFrames() as void:
 		for a in at:
 			continue	if not a.Tex
-			a.Tex.bind()
+			a.Tex.intFormat = a.Format
+			a.Tex.samples = samples
+			a.Tex.init(Width,Height)
 			a.dFormat.clean()
-			kri.Texture.InitMulti( a.Format, samples,fixedSampleLoc, Width,Height,0 )
 	public def resizeFrames(nsam as byte) as void:
 		samples = nsam
 		resizeFrames()
@@ -131,21 +193,24 @@ public class Buffer(Screen):
 			t = a.Tex
 			if t and a.dFormat.Dirty:	#change attachment texture format
 				a.dFormat.clean()
-				t.bind()
+				t.intFormat = a.Format
+				t.samples = samples
+				t.wid = Width
+				t.het = Height
 				if t.target != TextureTarget.TextureCubeMap:
-					kri.Texture.InitMulti( a.Format, samples,fixedSampleLoc, Width,Height,0 )
-				else:	kri.Texture.InitCube( a.Format, Width )
+					t.init()
+				else:	t.initCube()
 			if t and a.dLayer.Dirty:	#attach a layer of a 3D texture
 				a.dLayer.clean()
 				a.dLevel.clean()
-				GL.FramebufferTextureLayer(	target,	a.slot, t.id, a.Level, a.Layer )
+				GL.FramebufferTextureLayer(	target,	a.slot, t.HardId, a.Level, a.Layer )
 			elif a.dTex.Dirty or a.dLevel.Dirty:		#update texture attachment
 				a.dTex.clean()
 				a.dLevel.clean()
 				if t and t.target in ( TextureTarget.TextureCubeMap, TextureTarget.Texture2DArray ):
-					GL.FramebufferTexture(	target, a.slot, t.id, a.Level)
+					GL.FramebufferTexture(	target, a.slot, t.HardId, a.Level)
 				elif t:
-					GL.FramebufferTexture2D(target, a.slot, t.target, t.id, a.Level)
+					GL.FramebufferTexture2D(target, a.slot, t.target, t.HardId, a.Level)
 				else:
 					GL.FramebufferTexture2D(target, a.slot, TextureTarget.Texture2D, 0, 0)
 		Check(target)

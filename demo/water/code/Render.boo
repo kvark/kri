@@ -44,8 +44,8 @@ private class Context:
 
 
 private class Update( kri.ani.Delta ):
-	private final pKern	= kri.shade.par.TextureNew('kern')
-	private final pWave	= kri.shade.par.TextureNew('wave')
+	private final pKern	= kri.shade.par.Texture('kern')
+	private final pWave	= kri.shade.par.Texture('wave')
 	private final pCon	= kri.shade.par.Value[of Vector4]('wave_con')
 	private final sa	= kri.shade.Smart()
 	private final ct	as Context
@@ -57,7 +57,7 @@ private class Update( kri.ani.Delta ):
 		pKern.Value = con.tKernel
 		pCon.Value = Vector4( 0.3f, 9.81f, 0f,0f )
 		# shaders
-		con.dict.unitNew(pKern,pWave)
+		con.dict.unit(pKern,pWave)
 		con.dict.var(pCon)
 		sa.add('/copy_v','text/wave_f')
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )

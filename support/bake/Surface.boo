@@ -14,9 +14,9 @@ public class Tag( kri.ITag ):
 	
 	public Size as uint:
 		get: return buf.Width * buf.Height * sizeof(single) *4
-	public Vert as kri.Texture:
+	public Vert as kri.buf.Texture:
 		get: return buf.A[0].Tex
-	public Quat as kri.Texture:
+	public Quat as kri.buf.Texture:
 		get: return buf.A[1].Tex
 	
 	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
@@ -29,7 +29,7 @@ public class Tag( kri.ITag ):
 			buf.mask |= 1<<i
 			buf.emitAuto(i,bits).bind()
 			ft = (allowFilter and not i)
-			kri.Texture.Filter(ft,false)
+			buf.A[i].Tex.filt(ft,false)
 
 
 #---------	RENDER VERTEX SPATIAL TO UV		--------#

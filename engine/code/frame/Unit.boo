@@ -21,12 +21,12 @@ public class DirtyHolder[of T]:
 
 public class Unit:
 	public final slot	as FramebufferAttachment				# fbo slot
-	internal dTex		= DirtyHolder[of kri.Texture](null)		# texture
+	internal dTex		= DirtyHolder[of kri.buf.Texture](null)		# texture
 	internal dLayer		= DirtyHolder[of byte](0)				# layer id
 	internal dLevel		= DirtyHolder[of byte](0)				# LOD level
 	internal dFormat	= DirtyHolder[of PixelInternalFormat]( kri.Fm.bad )	# pixel format
 	
-	portal Tex		as kri.Texture	= dTex.Value
+	portal Tex		as kri.buf.Texture	= dTex.Value
 	portal Layer	as int			= dLayer.Value
 	portal Level	as int			= dLevel.Value
 	portal Format	as PixelInternalFormat	= dFormat.Value

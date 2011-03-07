@@ -211,7 +211,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 		file	= rd.getString()
 		wid		= rd.getLong()
 		het		= rd.getLong()
-		data.load[of kri.Texture]( pathPrefix+file )
+		data.load[of kri.buf.Texture]( pathPrefix+file )
 		name = null
 		wid = het
 		return true
@@ -300,7 +300,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 					unk5 = rd.getLong()
 					continue	if not unk5
 					zone = rd.getString()
-					tex = data.load[of kri.Texture]( pathPrefix+zone )
+					tex = data.load[of kri.buf.Texture]( pathPrefix+zone )
 					tex.setState(0,true,true)
 					con.setMatTexture( tm.mat, tex )
 					unk5 = rd.getLong()
@@ -357,7 +357,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 
 	public def constructor(lc as kri.load.Context):
 		con = lc
-		swImage	= kri.data.Switch[of kri.Texture]()
+		swImage	= kri.data.Switch[of kri.buf.Texture]()
 		swImage.ext['.tga'] = kri.load.image.Targa()
 		data.register(swImage)
 

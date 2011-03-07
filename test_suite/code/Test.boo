@@ -50,11 +50,12 @@ private class PolygonOffset( kri.rend.Basic ):
 		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
 		fbo.init(3,3)
-		t = kri.Texture( fbo.texTarget )
-		t.bind()
-		kri.Texture.InitDepthArray(3,3,1)
-		fbo.A[-1].Tex = t
-		fbo.A[-1].Layer = 0
+		t = kri.buf.Texture( target:fbo.texTarget,
+			intFormat:PixelInternalFormat.DepthComponent,
+			pixFormat:PixelFormat.DepthComponent,
+			wid:3, het:3, dep:1)
+		t.init()
+		t.shadow(true)
 		fbo.mask = 0
 		
 	public override def process(con as kri.rend.Context) as void:
@@ -73,8 +74,8 @@ private class PolygonOffset( kri.rend.Basic ):
 		tm1 = array[of single](1)
 		t = fbo.A[-1].Tex
 		t.bind()
-		kri.Texture.Shadow(false)
-		kri.Texture.GenLevels()
+		t.shadow(false)
+		t.genLevels()
 		GL.GetTexImage(t.target, 1, PixelFormat.DepthComponent, PixelType.Float, tm1)
 		GL.GetTexImage(t.target, 0, PixelFormat.DepthComponent, PixelType.Float, tmp)
 		print tmp[0]
@@ -85,7 +86,7 @@ private class TextureRead( kri.rend.Basic ):
 	public def constructor():
 		super(false)
 		buf.init(2,2)
-		buf.A[0].Tex = tex = kri.Texture( buf.texTarget )
+		buf.A[0].Tex = tex = kri.buf.Texture( target:buf.texTarget )
 		tex.bind()
 		data = (of short: 1,2,3,4)
 		GL.TexImage2D( TextureTarget.Texture2D, 0, PixelInternalFormat.R16i, 2,2,0, PixelFormat.RedInteger, PixelType.Short, data)
