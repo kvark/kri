@@ -24,7 +24,7 @@ public class Unit:
 	internal dTex		= DirtyHolder[of kri.buf.Texture](null)		# texture
 	internal dLayer		= DirtyHolder[of byte](0)				# layer id
 	internal dLevel		= DirtyHolder[of byte](0)				# LOD level
-	internal dFormat	= DirtyHolder[of PixelInternalFormat]( kri.Fm.bad )	# pixel format
+	internal dFormat	= DirtyHolder[of PixelInternalFormat]( Fm.bad )	# pixel format
 	
 	portal Tex		as kri.buf.Texture	= dTex.Value
 	portal Layer	as int			= dLayer.Value

@@ -40,7 +40,7 @@ public class Frame:
 	
 	private def constructor(manId as uint):
 		hardId = manId
-	public static final	Zero	= Frame(0)
+	public static final	Default	= Frame(0)
 
 	def destructor():
 		return	if not hardId
