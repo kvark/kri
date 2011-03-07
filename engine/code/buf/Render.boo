@@ -15,7 +15,9 @@ public class Render(Surface):
 	private def constructor(manId as uint):
 		hardId = manId
 	public static final	Zero	= Render(0)
+
 	def destructor():
+		return	if not hardId
 		kri.Help.safeKill() do:
 			tmp as int = hardId
 			GL.DeleteRenderbuffers(1,tmp)

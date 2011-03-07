@@ -20,6 +20,8 @@ public class Texture(Surface):
 		hardId = manId
 	public static final	Zero	= Texture(0)
 	def destructor():
+		return	if not hardId
+		ResetCache()	if hardId==boundId
 		kri.Help.safeKill() do():
 			GL.DeleteTexture(hardId)
 	
@@ -36,7 +38,9 @@ public class Texture(Surface):
 		GL.FramebufferTexture2D( FramebufferTarget.Framebuffer, fa, TextureTarget.Texture2D, hardId, 0 )
 
 	public override def bind() as void:
-		return	if boundId == hardId
+		# can't use cache as we have different bounds
+		# per texture slots and targets
+		#return	if boundId == hardId
 		boundId = hardId
 		GL.BindTexture( target, hardId )
 	
