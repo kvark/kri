@@ -29,7 +29,7 @@ public class Render(Surface):
 	public override def bind() as void:
 		GL.BindRenderbuffer( RenderbufferTarget.Renderbuffer, hardId )
 	
-	public def init() as void:
+	public override def init() as void:
 		bind()
 		caps = kri.Ant.Inst.caps
 		assert wid <= caps.renderBufSize

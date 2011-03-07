@@ -10,8 +10,9 @@ public class Texture(Surface):
 	private static	boundId	as uint	= 0
 	private			ready	= false
 	public			intFormat	as PixelInternalFormat
-	public			pixFormat	as PixelFormat
+	public			pixFormat	= PixelFormat.Rgba
 	public			dep		as uint	= 0
+	public			level	as byte = 0
 	public			target	= TextureTarget.Texture2D
 	
 	public def constructor():
@@ -33,9 +34,9 @@ public class Texture(Surface):
 	# virtual routines
 
 	public override def attachTo(fa as FramebufferAttachment) as void:
-		init(0)	if not ready
+		init()	if not ready
 		assert ready
-		GL.FramebufferTexture2D( FramebufferTarget.Framebuffer, fa, TextureTarget.Texture2D, hardId, 0 )
+		GL.FramebufferTexture2D( FramebufferTarget.Framebuffer, fa, target, hardId, level )
 
 	public override def bind() as void:
 		# can't use cache as we have different bounds
@@ -60,21 +61,24 @@ public class Texture(Surface):
 	# initialization routines
 	
 	public def init(sif as SizedInternalFormat, buf as kri.vb.Object) as void:
+		assert not level
 		target = TextureTarget.TextureBuffer
 		bind()
 		ready = true
 		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.Extract )
 		syncBack()
 	
-	public def init(level as byte) as void:
+	public override def init() as void:
 		if samples:
-			initMulti( level>0 )
+			initMulti()
 		else:
-			init[of byte]( level, null )
+			init[of byte](null)
 	
-	public def initMulti(fixedLoc as bool) as void:
+	public def initMulti() as void:
+		fixedLoc = level>0
 		bind()
 		caps = kri.Ant.Inst.caps
+		assert not level
 		assert samples and samples <= caps.multiSamples
 		assert wid <= caps.textureSize
 		assert het <= caps.textureSize
@@ -97,7 +101,7 @@ public class Texture(Surface):
 		assert not 'good type'
 		return PixelType.Bitmap
 	
-	private def setImage[of T(struct)](tg as TextureTarget, level as byte, data as (T)) as void:
+	private def setImage[of T(struct)](tg as TextureTarget, data as (T)) as void:
 		assert not samples
 		caps = kri.Ant.Inst.caps
 		assert wid <= caps.textureSize
@@ -112,18 +116,18 @@ public class Texture(Surface):
 		else:
 			GL.TexImage1D( tg, level, intFormat, wid, 	 		0, pixFormat, pt, data )
 	
-	public def init[of T(struct)](level as byte, data as (T)) as void:
+	public def init[of T(struct)](data as (T)) as void:
 		bind()
-		setImage(target,level,data)
+		setImage(target,data)
 	
-	public def initCube[of T(struct)](side as int, level as byte, data as (T)) as void:
+	public def initCube[of T(struct)](side as int, data as (T)) as void:
 		bind()
 		tArray = (
 			TextureTarget.TextureCubeMapNegativeX, TextureTarget.TextureCubeMapNegativeY, TextureTarget.TextureCubeMapNegativeZ,
 			TextureTarget.Texture1D,	# dummy corresponding side==0
 			TextureTarget.TextureCubeMapPositiveX, TextureTarget.TextureCubeMapPositiveY, TextureTarget.TextureCubeMapPositiveZ)
 		assert side and side>=-3 and side<=3
-		setImage( tArray[side+3], level, data )
+		setImage( tArray[side+3], data )
 	
 	public def initCube() as void:
 		bind()
@@ -131,7 +135,7 @@ public class Texture(Surface):
 			TextureTarget.TextureCubeMapNegativeX,	TextureTarget.TextureCubeMapPositiveX,
 			TextureTarget.TextureCubeMapNegativeY,	TextureTarget.TextureCubeMapPositiveY,
 			TextureTarget.TextureCubeMapNegativeZ,	TextureTarget.TextureCubeMapPositiveZ):
-			setImage[of byte]( t, 0, null )
+			setImage[of byte]( t, null )
 
 	# state routines
 	
@@ -191,3 +195,8 @@ public class Texture(Surface):
 		bind()
 		GL.TexParameterI( target, TextureParameterName.TextureBaseLevel, a )	if a>=0
 		GL.TexParameterI( target, TextureParameterName.TextureMaxLevel, b )		if b>=0
+	
+	# set border color
+	public def setBorder(v as Graphics.Color4) as void:
+		bind()
+		GL.TexParameter( target, TextureParameterName.TextureBorderColor, (v.R,v.G,v.B,v.A) )

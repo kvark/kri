@@ -7,13 +7,18 @@ public class Surface:
 	public wid		as uint	= 0
 	public het		as uint	= 0
 	public samples	as byte	= 0
-	public active	as bool	= true
 	# attache to a framebuffer
 	public abstract def attachTo(fa as FramebufferAttachment) as void:
 		pass
 	# bind on its own
 	public abstract def bind() as void:
 		pass
+	# allocate contents
+	public abstract def init() as void:
+		pass
+	public def init(w as uint, h as uint) as void:
+		wid,het = w,h
+		init()
 	# retrieve GL state
 	public abstract def syncBack() as void:
 		pass
