@@ -8,14 +8,13 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT OMNI FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	protected final buf		= kri.frame.Buffer(0, TextureTarget.TextureCubeMap )
+	protected final buf		= kri.buf.Target(mask:0)
 	protected final sa		= kri.shade.Smart()
 	protected final context	as support.light.Context
 	protected final pDist	= kri.shade.par.Value[of Vector4]('uni_dist')
 
 	public def constructor(lc as support.light.Context):
 		super('lit.omni.bake')
-		buf.mask = 0
 		context = lc
 		# omni shader
 		sa.add( '/light/omni/bake_v', '/light/omni/bake_g', '/empty_f' )
@@ -36,11 +35,12 @@ public class Fill( kri.rend.tech.General ):
 		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			setLight(l)
-			buf.init( context.size, context.size )
 			if not l.depth:
-				l.depth = buf.emitAuto(-1,0)
-			else:	buf.A[-1].Tex = l.depth
-			buf.activate()
+				l.depth = t = kri.buf.Texture.Depth(0)
+				t.target = TextureTarget.TextureCubeMap
+				t.wid = t.het = context.size
+			buf.at.depth = l.depth
+			buf.bind()
 			GL.ClearDepth( 1f )
 			GL.Clear( ClearBufferMask.DepthBufferBit )
 			drawScene()

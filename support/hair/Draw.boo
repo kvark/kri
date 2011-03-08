@@ -1,12 +1,13 @@
 ﻿namespace support.hair
 
+import kri.buf
 
 public class Fill( kri.rend.Basic ):
 	public final sa			= kri.shade.Smart()
-	private final buf		as kri.frame.Buffer	= null
+	private final buf		as Target	= null
 	private static doGeom	= true	#should be
 	
-	public def constructor(licon as support.light.Context, buffer as kri.frame.Buffer):
+	public def constructor(licon as support.light.Context, buffer as Target):
 		assert licon
 		buf = buffer
 		sa.add( '/lib/quat_v','/lib/tool_v' )
@@ -26,8 +27,11 @@ public class Fill( kri.rend.Basic ):
 			continue	if not pe.prepare()
 			for lit in kri.Scene.Current.lights:
 				continue	if not lit.depth
-				buf.A[ buf.mask-1 ].Tex = lit.depth
-				buf.activate()
+				if buf.mask:
+					buf.at.color[0] = lit.depth
+				else:
+					buf.at.depth = lit.depth
+				buf.bind()
 				kri.Ant.Inst.params.activate(lit)
 				kri.shade.Smart.UpdatePar()
 				pe.owner.draw(0)

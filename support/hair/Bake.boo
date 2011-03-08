@@ -59,7 +59,7 @@ public class Bake( kri.rend.Basic ):
 			tBake	= e.seTag[of support.bake.surf.Tag]()
 			if tBake:	# emit from face
 				continue	if tBake.stamp<0f
-				pWid.Value	= tBake.buf.Width
+				pWid.Value	= tBake.buf.getInfo().wid
 				pVert.Value	= tBake.Vert
 				pQuat.Value	= tBake.Quat
 				s_face.use()

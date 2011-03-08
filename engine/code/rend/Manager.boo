@@ -27,9 +27,9 @@ public class Manager(Basic):
 		for d in deps:
 			j.deps.Add( jall[d] )
 	
-	public override def setup(far as kri.frame.Array) as bool:
+	public override def setup(pl as kri.buf.Plane) as bool:
 		return List[of Job](jall.Values).TrueForAll() do(j as Job):
-			return j.rend.setup(far)
+			return j.rend.setup(pl)
 	
 	public override def process(con as Context) as void:
 		jord = List[of Job]( j for j in jall.Values if j.rend.active ).ToArray()

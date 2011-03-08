@@ -12,7 +12,6 @@ private class Context:
 	public final calc	= Calculator(10000,0.001f,1f)
 	private final G0	as single	= calc.gen({x| return 1f})
 	public final kernel	as byte
-	public mask		= 0
 	
 	public def constructor(order as byte):
 		# buffer attachments
@@ -40,7 +39,8 @@ private class Context:
 		return t
 	
 	public def bind(xor as byte) as void:
-		buf.activate( mask^=xor )
+		buf.mask ^= xor
+		buf.bind()
 
 
 private class Update( kri.ani.Delta ):
@@ -69,11 +69,11 @@ private class Update( kri.ani.Delta ):
 		if kb[Input.Key.A]:	pCon.Value.Y -= 1.0f
 		if kb[Input.Key.S]:	pCon.Value.Y += 1.0f
 		GL.Disable( EnableCap.DepthTest )
-		if not ct.mask:
+		if not ct.buf.mask:
 			ct.bind(1)
 			kri.rend.Context.ClearColor( Graphics.Color4.Black )
 		# update height
-		pWave.Value = ct.buf.at.color[ct.mask-1]
+		pWave.Value = ct.buf.at.color[ct.buf.mask-1]
 		ct.bind(3)
 		sa.use()
 		kri.Ant.Inst.quad.draw()
@@ -122,9 +122,9 @@ public class Draw( kri.rend.Basic ):
 		sa.add('/copy_v','text/draw_f')
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
 	
-	public override def setup(far as kri.frame.Array) as bool:
-		ct.buf.resize( far.Width, far.Height )
-		ct.mask = 0
+	public override def setup(pl as kri.buf.Plane) as bool:
+		ct.buf.resize( pl.wid, pl.het )
+		ct.buf.mask = 0
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:

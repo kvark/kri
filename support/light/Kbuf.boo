@@ -2,41 +2,43 @@
 
 import OpenTK.Graphics.OpenGL
 import kri.shade
+import kri.buf
 
 
 #---------	LIGHT INIT	--------#
 
 public class Init( kri.rend.Basic ):
-	public final buf	as kri.frame.Buffer
+	public final buf	as Target
 	private final sa	= kri.shade.Smart()
 
 	public def constructor(nlay as byte):
-		assert nlay <= kri.Ant.Inst.caps.multiSamples
 		# init buffer
-		buf = kri.frame.Buffer(nlay, TextureTarget.Texture2DMultisample )
-		buf.mask = 3
-		buf.emit(-2,	PixelInternalFormat.Depth24Stencil8 )
-		buf.emit(0,		PixelInternalFormat.Rgb16f )	# R11fG11fB10f
-		buf.emit(1,		PixelInternalFormat.Rgb10A2 )
+		tt = TextureTarget.Texture2DMultisample
+		buf = Target( mask:3 )
+		buf.at.stencil	= Texture.Stencil(nlay)
+		buf.at.color[0]	= Texture( target:tt, samples:nlay,
+			intFormat:PixelInternalFormat.Rgb16f )	# R11fG11fB10f
+		buf.at.color[1]	= Texture( target:tt, samples:nlay,
+			intFormat:PixelInternalFormat.Rgb10A2 )
 		# init shader
 		sa.add('/copy_v','/white_f') # temp
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	
-	public override def setup(far as kri.frame.Array) as bool:
-		buf.init( far.Width, far.Height )
+	public override def setup(pl as kri.buf.Plane) as bool:
+		buf.resize( pl.wid, pl.het )
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:
 		con.activate(false,0f,true)
 		con.Multisample = false
 		# depth copy
-		buf.activate(0)		# bind as draw
-		con.activeRead()	# bind as read
-		buf.blit( ClearBufferMask.DepthBufferBit )
+		buf.mask = 0
+		con.blitTo( buf, ClearBufferMask.DepthBufferBit )
 		# stencil init
 		GL.StencilMask(-1)
-		if 'RectangleFill':
-			assert buf.Samples > 0
+		sm = buf.at.stencil.samples
+		if 'RectangleFill':	
+			assert sm > 0
 			con.DepthTest = false
 			con.ClearStencil(1)
 			sa.use()
@@ -46,22 +48,24 @@ public class Init( kri.rend.Basic ):
 			using kri.Section( EnableCap.SampleMask ), kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Always, 0,0 )
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
-				for i in range(1, buf.Samples ):
+				for i in range(1,sm):
 					GL.SampleMask( 0, -1<<i )
 					kri.Ant.Inst.quad.draw()
 		else:
 			using kri.Section( EnableCap.SampleMask ):
-				for i in range( buf.Samples ):
+				for i in range( sm ):
 					GL.SampleMask(0,1<<i)
 					con.ClearStencil(i+1)
 		GL.SampleMask(0,-1)
 		# color clear
-		buf.activate(3)
+		buf.mask = 3
+		buf.bind()
 		GL.ColorMask(true,true,true,true)
 		con.ClearColor()
 		if not 'DebugColor':
 			debugLayer = 1
-			buf.activate(2)
+			buf.mask = 2
+			buf.bind()
 			sa.use()
 			using kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Equal, debugLayer,-1 )
@@ -77,8 +81,8 @@ public class Bake( kri.rend.Basic ):
 	protected final sb		= Smart()
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
-	private final buf		as kri.frame.Buffer
-	private final texDep	= par.Value[of kri.buf.Texture]('depth')
+	private final buf		as Target
+	private final texDep	= par.Texture('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba
@@ -104,7 +108,8 @@ public class Bake( kri.rend.Basic ):
 		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
 	private def drawLights(mask as byte, sx as Smart) as void:
-		buf.activate(mask)
+		buf.mask = mask
+		buf.bind()
 		sx.useBare()
 		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
@@ -140,16 +145,16 @@ public class Bake( kri.rend.Basic ):
 #---------	LIGHT APPLICATION	--------#
 
 public class Apply( kri.rend.tech.Meta ):
-	private final buf	as kri.frame.Buffer
-	private final pDir	= kri.shade.par.Texture('dir')
-	private final pCol	= kri.shade.par.Texture('color')
+	private final buf	as kri.buf.Target
+	private final pDir	= par.Texture('dir')
+	private final pCol	= par.Texture('color')
 	# init
 	public def constructor(init as Init):
 		super('lit.kbuf', false, null,
 			'bump','emissive','diffuse','specular','glossiness')
 		buf = init.buf
-		pDir.Value = buf.A[0].Tex
-		pCol.Value = buf.A[1].Tex
+		pDir.Value = buf.at.color[0] as kri.buf.Texture
+		pCol.Value = buf.at.color[1] as kri.buf.Texture
 		dict.unit( pDir, pCol )
 		shade('/light/kbuf/apply')
 	# work

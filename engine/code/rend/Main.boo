@@ -12,7 +12,7 @@ public class Basic:
 		bInput = inp
 	public def constructor():
 		bInput = false
-	public virtual def setup(far as kri.frame.Array) as bool:
+	public virtual def setup(pl as kri.buf.Plane) as bool:
 		return true
 	public virtual def process(con as Context) as void:
 		pass
@@ -30,8 +30,9 @@ public class Chain(Basic):
 	public def constructor():
 		toScreen = true
 	
-	public override def setup(far as kri.frame.Array) as bool:
-		return renders.TrueForAll({r| r.setup(far) })
+	public override def setup(pl as kri.buf.Plane) as bool:
+		return renders.TrueForAll() do(r as Basic):
+			return r.setup(pl)
 		
 	public override def process(con as Context) as void:
 		rout = renders.FindLast() do(r as Basic):	# first render to out

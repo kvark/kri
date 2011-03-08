@@ -10,15 +10,34 @@ public class Texture(Surface):
 	private final	hardId	as uint
 	private static	boundId	as uint	= 0
 	private			ready	= false
+	public			target		= TextureTarget.Texture2D
 	public			intFormat	= PixelInternalFormat.Rgba
 	public			pixFormat	= PixelFormat.Rgba
-	public			dep		as uint	= 0
-	public			level	as byte = 0
-	public 			layer	as int	= -1
-	public			target	= TextureTarget.Texture2D
+	public			dep		as uint	= 0		# depth (z-dimension)
+	public			level	as byte = 0		# active mip level
+	public 			layer	as int	= -1	# active layer for Cube/Array textures
 	
+	public override Width as uint:
+		get: return ((wid-1)>>level)+1
+	public override Height as uint:
+		get: return ((het-1)>>level)+1
+
 	public def constructor():
-		hardId = GL.GenTexture()
+		hardId = GL.GenTexture()	
+	public def constructor(sm as byte, ifm as PixelInternalFormat, pf as PixelFormat):
+		self()
+		target = (TextureTarget.Texture2D,TextureTarget.Texture2DMultisample)[sm>0]
+		samples = sm
+		intFormat = ifm
+		pixFormat = pf
+	
+	public static def Color(sm as byte) as Texture:
+		return Texture( sm, PixelInternalFormat.Rgba,			PixelFormat.Rgba )
+	public static def Depth(sm as byte) as Texture:
+		return Texture( sm, PixelInternalFormat.DepthComponent,	PixelFormat.DepthComponent )
+	public static def Stencil(sm as byte) as Texture:
+		return Texture( sm, PixelInternalFormat.DepthStencil,	PixelFormat.DepthStencil )
+
 	private def constructor(manId as uint):
 		hardId = manId
 	public static final	Zero	= Texture(0)
@@ -134,7 +153,7 @@ public class Texture(Surface):
 			TextureTarget.TextureCubeMapNegativeX, TextureTarget.TextureCubeMapNegativeY, TextureTarget.TextureCubeMapNegativeZ,
 			TextureTarget.Texture1D,	# dummy corresponding side==0
 			TextureTarget.TextureCubeMapPositiveX, TextureTarget.TextureCubeMapPositiveY, TextureTarget.TextureCubeMapPositiveZ)
-		assert side and side>=-3 and side<=3
+		assert side in (-3,-2,-1,1,2,3)
 		setImage( tArray[side+3], data )
 	
 	public def initCube() as void:

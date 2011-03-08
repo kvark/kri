@@ -40,7 +40,7 @@ def Main(argv as (string)):
 		
 		land = at.scene.entities[0]
 		land.tags.Add( pTag = depth.Tag() )
-		pTag.Size = 256
+		pTag.tex.wid = pTag.tex.het = 256
 		pro = pTag.proj
 		pro.node = kri.Node('proj')
 		pro.node.local.pos.Z = 5f

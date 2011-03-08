@@ -10,7 +10,7 @@ public class ApplyBase( kri.rend.Basic ):
 	protected final sphere	as kri.Mesh
 	protected final dict	= rep.Dict()
 	private final va		= kri.vb.Array()
-	private final texDep	= par.Value[of kri.buf.Texture]('depth')
+	private texDepth			as par.Texture	= null
 	# custom activation
 	private virtual def onInit() as void:
 		pass
@@ -25,14 +25,14 @@ public class ApplyBase( kri.rend.Basic ):
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 	# link
 	protected def relink(con as Context) as void:
-		dict.unit( texDep, con.gbuf )
+		texDepth = con.texDepth
 		sa.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f' )
 		sa.add( con.sh_apply, con.sh_diff, con.sh_spec )
-		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
 	# work
 	public override def process(con as kri.rend.Context) as void:
 		con.activate()
-		texDep.Value = con.Depth
+		texDepth.Value = con.Depth
 		onInit()
 		# enable depth check
 		con.activate(true,0f,false)

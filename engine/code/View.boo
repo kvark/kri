@@ -111,8 +111,8 @@ public class View:
 	public cam		as Camera	= null
 	public scene	as Scene	= null
 
-	public def constructor(buffer as frame.Screen, ns as byte, bc as byte, bd as byte):
-		con = rend.Context(buffer, ns,bc,bd )
+	public def constructor(out as buf.Frame, ns as byte, bc as byte, bd as byte):
+		con = rend.Context(out, ns,bc,bd )
 	public virtual def resize(wid as int, het as int) as bool:
 		return ren.setup( con.resize(wid,het) )
 	public def update() as void:
@@ -128,15 +128,18 @@ public class View:
 # View for rendering to screen
 public class ViewScreen(View):
 	public final area	= Box2(0f,0f,1f,1f)
-	public final out	as frame.Screen
+	public final screen	as buf.Screen
 	public final tune	as int
 	public def constructor():
-		self(0,0,8,8)
+		self( 0,0,8,8 )
 	public def constructor(sizeTune as int, ns as byte, bc as byte, bd as byte):
-		out = frame.Screen()
+		screen = buf.Screen()
 		tune = sizeTune
-		super( out, ns,bc,bd )
+		super( screen, ns,bc,bd )
 	public override def resize(wid as int, het as int) as bool:
-		out.init	( cast(int, wid*area.Width),	cast(int, het*area.Height) )
-		out.offset	( cast(int, wid*area.Left),		cast(int, het*area.Top) )
+		plane = screen.plane
+		plane.wid	= cast(int, wid*area.Width)
+		plane.het	= cast(int, het*area.Height)
+		screen.ofx	= cast(int, wid*area.Left)
+		screen.ofy	= cast(int, het*area.Top)
 		return super( Help.shiftInt(wid,tune), Help.shiftInt(het,tune) )

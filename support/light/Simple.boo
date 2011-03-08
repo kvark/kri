@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT MAP FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	public final buf		= kri.frame.Buffer()
+	public final buf		= kri.buf.Target()
 	protected final sa		= kri.shade.Smart()
 	protected final licon	as Context
 
@@ -15,11 +15,12 @@ public class Fill( kri.rend.tech.General ):
 		super('lit.bake')
 		licon = lc
 		# buffer init
-		buf.init(lc.size, lc.size)
 		if lc.type == LiType.VARIANCE:
 			buf.mask = 1
-			buf.emitAuto(-1,0)
-			buf.emit(1, PixelInternalFormat.Rg16 )
+			buf.at.depth = kri.buf.Texture.Depth(0)
+			buf.at.color[1] = kri.buf.Texture(
+				intFormat:PixelInternalFormat.Rg16 )
+			buf.resize( lc.size,lc.size )
 		else: buf.mask = 0
 		# spot shader
 		sa.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
@@ -36,12 +37,17 @@ public class Fill( kri.rend.tech.General ):
 			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.type == LiType.VARIANCE]
 			if not l.depth:
-				ask = kri.frame.Buffer.AskFormat( kri.frame.Buffer.Class.Depth, licon.bits )
+				ask = kri.rend.Context.FmDepth[licon.bits>>3]
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
-				l.depth = buf.emit(index,pif)
-				l.depth.pixFormat = PixelFormat.DepthComponent
-			else:	buf.A[index].Tex = l.depth
-			buf.activate()
+				pix = (PixelFormat.DepthComponent, PixelFormat.Rgba)[index+1]
+				l.depth = kri.buf.Texture( intFormat:pif, pixFormat:pix,
+					wid:licon.size, het:licon.size )
+			if index<0:
+				buf.at.depth = l.depth
+			else:
+				buf.at.color[0] = l.depth
+			buf.mask = index+1
+			buf.bind()
 			con.ClearColor( OpenTK.Graphics.Color4.White )	if not index
 			con.ClearDepth( 1f )
 			drawScene()

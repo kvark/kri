@@ -10,10 +10,6 @@ import OpenTK.Graphics.OpenGL
 public class Tag( kri.ITag ):
 	public final proj	as kri.Projector
 	public final tex	= kri.buf.Texture()
-	public dSize		= kri.frame.DirtyHolder[of uint](0)
-	public Size as uint:
-		get: return dSize.Value
-		set: dSize.Value = value
 	public def constructor():
 		proj = kri.Projector()
 	public def constructor(pr as kri.Projector):
@@ -25,13 +21,12 @@ public class Tag( kri.ITag ):
 
 public class Update( kri.rend.Basic ):
 	public final sa		= kri.shade.Smart()
-	public final buf	= kri.frame.Buffer()
+	public final buf	= kri.buf.Target(mask:0)
 	public final va		= kri.vb.Array()
 
 	public def constructor():
 		super(false)
-		buf.A[-1].Format = PixelInternalFormat.DepthComponent
-		buf.mask = 0
+		buf.at.depth = kri.buf.Texture.Depth(0)
 		sa.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
 		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
 
@@ -44,12 +39,8 @@ public class Update( kri.rend.Basic ):
 			tag = e.seTag[of Tag]()
 			continue	if not tag
 			assert tag.proj
-			buf.init( tag.Size, tag.Size )
-			buf.A[-1].Tex = tag.tex
-			if tag.dSize.Dirty:
-				buf.resizeFrames()
-				tag.dSize.clean()
-			buf.activate()
+			buf.at.depth = tag.tex
+			buf.bind()
 			con.ClearDepth(1f)
 			par.pLit.activate( tag.proj )
 			par.modelView.activate( e.node )

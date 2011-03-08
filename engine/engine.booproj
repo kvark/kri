@@ -61,9 +61,6 @@
     <Compile Include="code\buf\Target.boo" />
     <Compile Include="code\buf\Texture.boo" />
     <Compile Include="code\Entity.boo" />
-    <Compile Include="code\frame\Buffer.boo" />
-    <Compile Include="code\frame\Main.boo" />
-    <Compile Include="code\frame\Unit.boo" />
     <Compile Include="code\gen\Complex.boo" />
     <Compile Include="code\gen\Main.boo" />
     <Compile Include="code\gen\Noise.boo" />

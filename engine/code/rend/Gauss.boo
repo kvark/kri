@@ -1,16 +1,16 @@
 ﻿namespace kri.rend.gauss
 
 import OpenTK
+import kri.buf
 import kri.shade
-
 
 #---------	GAUSS FILTER	--------#
 
 public class Simple( kri.rend.Basic ):
-	protected final sa		= Smart()
-	protected final sb		= Smart()
-	protected final texIn	= par.Texture('input')
-	public	buf		as kri.frame.Buffer	= null
+	protected	final sa	= Smart()
+	protected	final sb	= Smart()
+	protected	final texIn	= par.Texture('input')
+	public		buf		as Target	= null
 
 	public def constructor():
 		dict = rep.Dict()
@@ -22,19 +22,20 @@ public class Simple( kri.rend.Basic ):
 
 	public override def process(con as kri.rend.Context) as void:
 		return	if not buf
-		assert buf.A[0].Tex and buf.A[1].Tex
+		assert buf.at.color[0] and buf.at.color[1]
 		for i in range(2):
-			texIn.Value = buf.A[i].Tex
-			buf.activate(3 ^ (1<<i))
+			texIn.Value = buf.at.color[i] as Texture
+			buf.mask = 3 ^ (1<<i)
+			buf.bind()
 			(sa,sb)[i].use()
 			kri.Ant.inst.quad.draw()
 
 
 public class Advanced( kri.rend.Basic ):
-	public final sa		= Smart()
-	public final pTex	= par.Texture('input')
-	public final pDir	= par.Value[of Vector4]('dir')
-	public	buf		as kri.frame.Buffer	= null
+	public	final	sa		= Smart()
+	public	final	pTex	= par.Texture('input')
+	public	final	pDir	= par.Value[of Vector4]('dir')
+	public	buf		as Target = null
 	
 	public def constructor():
 		dict = rep.Dict()
@@ -48,12 +49,13 @@ public class Advanced( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.Context) as void:
 		return	if not buf
-		assert buf.A[0].Tex and buf.A[1].Tex
+		assert buf.at.color[0] and buf.at.color[1]
 		sa.useBare()
 		for i in range(2):
-			pTex.Value = buf.A[i].Tex
+			pTex.Value = buf.at.color[i] as Texture
 			pDir.Value = (Vector4.UnitX,Vector4.UnitY)[i]
-			buf.activate(3 ^ (1<<i))
+			buf.mask = 3 ^ (1<<i)
+			buf.bind()
 			Smart.UpdatePar()
 			kri.Ant.inst.quad.draw()
 

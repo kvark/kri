@@ -1,15 +1,16 @@
 ﻿namespace support.reflect
 
 import OpenTK.Graphics.OpenGL
-
+import kri.buf
 
 public class Update( kri.rend.Basic ):
-	private final buPlane	= kri.frame.Buffer(0, TextureTarget.Texture2D )
-	private final buCube	= kri.frame.Buffer(0, TextureTarget.TextureCubeMap )
+	private final buPlane	= Target()
+	private final buCube	= Target()
 	
 	public def constructor():
-		buPlane	.emitAuto(-1,0)
-		buCube	.emitAuto(-1,0)
+		buPlane.at.depth	= Texture.Depth(0)
+		buCube.at.depth	= t	= Texture.Depth(0)
+		t.target = TextureTarget.TextureCubeMap
 	
 	private def drawScene() as void:
 		pass	# draw everything!
@@ -22,9 +23,10 @@ public class Update( kri.rend.Basic ):
 			buf = (buPlane,buCube)[tag.cubic]
 			tag.counter -= 1
 			if not tag.pTex.Value:
-				tag.pTex.Value = buf.emitAuto(0,8)
-			else: buf.A[0].Tex = tag.pTex.Value
-			buf.activate()
+				tag.pTex.Value = Texture()
+			buf.mask = 1
+			buf.at.color[0] = tag.pTex.Value
+			buf.bind()
 			con.ClearDepth(1f)
 			con.ClearColor()
 			drawScene()

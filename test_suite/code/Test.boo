@@ -2,6 +2,7 @@
 
 import OpenTK.Graphics.OpenGL
 
+
 private class ShaderLink( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
 	
@@ -33,7 +34,7 @@ private class ShaderLink( kri.rend.Basic ):
 
 private class PolygonOffset( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
-	final fbo	= kri.frame.Buffer(0, TextureTarget.Texture2DArray )
+	final fbo	= kri.buf.Target(mask:0)
 	final vbo	= kri.vb.Attrib()
 
 	public def constructor():
@@ -49,17 +50,15 @@ private class PolygonOffset( kri.rend.Basic ):
 		sa.add( '/empty_f' )
 		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
-		fbo.init(3,3)
-		t = kri.buf.Texture( target:fbo.texTarget,
+		t = kri.buf.Texture( dep:1,
+			target:TextureTarget.Texture2DArray,
 			intFormat:PixelInternalFormat.DepthComponent,
-			pixFormat:PixelFormat.DepthComponent,
-			wid:3, het:3, dep:1)
-		t.init()
+			pixFormat:PixelFormat.DepthComponent )
+		fbo.resize(3,3)
 		t.shadow(true)
-		fbo.mask = 0
 		
 	public override def process(con as kri.rend.Context) as void:
-		fbo.activate()
+		fbo.bind()
 		GL.Enable( EnableCap.DepthTest )
 		GL.DepthMask(true)
 		GL.ClearDepth( 1.0f );
@@ -72,8 +71,7 @@ private class PolygonOffset( kri.rend.Basic ):
 		
 		tmp = array[of single](9)
 		tm1 = array[of single](1)
-		t = fbo.A[-1].Tex
-		t.bind()
+		t = fbo.at.depth as kri.buf.Texture
 		t.shadow(false)
 		t.genLevels()
 		GL.GetTexImage(t.target, 1, PixelFormat.DepthComponent, PixelType.Float, tm1)
@@ -82,16 +80,17 @@ private class PolygonOffset( kri.rend.Basic ):
 
 
 private class TextureRead( kri.rend.Basic ):
-	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
+	public final buf	= kri.buf.Target( mask:1 )
 	public def constructor():
 		super(false)
-		buf.init(2,2)
-		buf.A[0].Tex = tex = kri.buf.Texture( target:buf.texTarget )
-		tex.bind()
 		data = (of short: 1,2,3,4)
-		GL.TexImage2D( TextureTarget.Texture2D, 0, PixelInternalFormat.R16i, 2,2,0, PixelFormat.RedInteger, PixelType.Short, data)
+		buf.at.color[0] = tex = kri.buf.Texture(
+			wid:2, het:2,
+			intFormat:PixelInternalFormat.R16i,
+			pixFormat:PixelFormat.RedInteger )
+		tex.init(data)
 	public override def process(con as kri.rend.Context) as void:
-		buf.activate()
+		buf.bind()
 		#GL.ClearBuffer( ClearBuffer.Color, 0, (of int:5,5,5,5) )
 		kri.rend.Context.ClearColor()
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
@@ -100,7 +99,7 @@ private class TextureRead( kri.rend.Basic ):
 		GL.ReadPixels(0,0,2,2, PixelFormat.RedInteger, PixelType.Short, p1)
 		#pix = (of ushort: 0,0,0,0)
 		#GL.ReadPixels(0,0,2,2, PixelFormat.RedInteger, PixelType.UnsignedShort, pix)
-		buf.A[0].Tex.bind()
+		buf.at.color[0].bind()
 		GL.GetTexImage( TextureTarget.Texture2D, 0, PixelFormat.RedInteger, PixelType.Short, p2)
 		assert p1[0] == 0 and p2[0] == 0
 
@@ -172,14 +171,16 @@ private class DrawToStencil( kri.rend.Basic ):
 		prog.add(pob)
 		prog.link( kri.Ant.Inst.slotAttributes )
 		#make data
-		fbo = kri.frame.Buffer(0, TextureTarget.Texture2D )
-		fbo.init(10,10)
-		t = fbo.emitAuto(-2,0)
+		fbo = kri.buf.Target()
+		fbo.at.stencil = t = kri.buf.Texture.Stencil(0)
+		fbo.resize(10,10)
 		con.DepthTest = false
 		GL.Disable( EnableCap.StencilTest )
-		fbo.activate(0)
-		fbo.A[0].Tex = t
-		fbo.activate(1)
+		fbo.mask = 0
+		fbo.bind()
+		fbo.at.color[0] = t
+		fbo.mask = 1
+		fbo.bind()
 		#run!
 		prog.use()
 		kri.Ant.Inst.quad.draw()

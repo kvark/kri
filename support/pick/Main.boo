@@ -8,7 +8,7 @@ public class Tag( kri.ITag ):
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
+	private final buf	= kri.buf.Target( mask:1 )
 	private final va	= kri.vb.Array()
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint
@@ -27,9 +27,9 @@ public class Render( kri.rend.Basic ):
 		mouse.ButtonDown += ev
 		# make buffer
 		assert numorder<=16
-		t = buf.emitAuto(-1,0)
-		t.pixFormat = PixelFormat.DepthComponent
-		buf.emit(0, kri.frame.Buffer.Class.Index, 16)
+		buf.at.depth = kri.buf.Texture.Depth(0)
+		buf.at.color[0] = kri.buf.Texture(
+			intFormat:PixelInternalFormat.Rgba16 )
 		# make shader
 		sa.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
 		d = kri.shade.rep.Dict()
@@ -42,12 +42,12 @@ public class Render( kri.rend.Basic ):
 	def destructor():
 		mouse.ButtonDown -= ev
 
-	public override def setup(far as kri.frame.Array) as bool:
-		buf.init(far.Width>>qlog, far.Height>>qlog)
+	public override def setup(pl as kri.buf.Plane) as bool:
+		buf.resize( pl.wid>>qlog, pl.het>>qlog)
 		return true
 
 	public override def process(con as kri.rend.Context) as void:
-		buf.activate(1)
+		buf.bind()
 		con.SetDepth(0f, true)
 		con.ClearDepth( 1f )
 		con.ClearColor()
@@ -64,12 +64,12 @@ public class Render( kri.rend.Basic ):
 			e.mesh.draw(1)
 		if not 'Debug':
 			con.activate(true,0f,false)
-			pTex.Value = buf.A[0].Tex
+			pTex.Value = buf.at.color[0] as kri.buf.Texture
 			sb.use()
 			kri.Ant.Inst.quad.draw()
 			return
 		# react, todo: use PBO and actually read on demand
-		buf.activate(false)
+		buf.bind()
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
 		index = (of ushort: ushort.MaxValue )
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
@@ -79,7 +79,8 @@ public class Render( kri.rend.Basic ):
 		GL.ReadBuffer( cast(ReadBufferMode,0) )
 		val = (of single: single.NaN )
 		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.DepthComponent, PixelType.Float, val)
-		vin = OpenTK.Vector3(coord[0]*1f / buf.Width, coord[1]*1f / buf.Height, val[0])
+		pl = buf.at.color[0]
+		vin = OpenTK.Vector3(coord[0]*1f / pl.wid, coord[1]*1f / pl.het, val[0])
 		point = kri.Camera.Current.toWorld(vin)
 		# call the react method
 		e = ents[ index[0]-1 ]
@@ -91,4 +92,4 @@ public class Render( kri.rend.Basic ):
 	public def ev(ob as object, arg as OpenTK.Input.MouseButtonEventArgs) as void:
 		active = true
 		coord[0] = (mouse.X >> qlog)
-		coord[1] = buf.Height - (mouse.Y >> qlog)
+		coord[1] = buf.at.color[0].het - (mouse.Y >> qlog)

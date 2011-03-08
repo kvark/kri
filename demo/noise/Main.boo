@@ -23,9 +23,9 @@ public class Simplex( kri.rend.Basic ):
 		win.Mouse.Move += def():
 			pMouse.Value.Xyz = win.PointerNdc
 	
-	public override def setup(far as kri.frame.Array) as bool:
-		kwid = 1f / far.Width
-		khet = 1f / far.Height
+	public override def setup(pl as kri.buf.Plane) as bool:
+		kwid = 1f / pl.wid
+		khet = 1f / pl.het
 		return true
 
 	public override def process(con as kri.rend.Context) as void:

@@ -1,7 +1,6 @@
 ﻿namespace support.bake.surf
 
 import OpenTK.Graphics
-import OpenTK.Graphics.OpenGL
 
 
 public class Tag( kri.ITag ):
@@ -9,27 +8,26 @@ public class Tag( kri.ITag ):
 	public clearTarget	as bool = true		# clear textures
 	public uvChannel	as byte = 0			# tex-coord channel
 	public stamp		as double	= -1f	# last update
-	public final buf	= kri.frame.Buffer(0, TextureTarget.Texture2D )
+	public final buf	= kri.buf.Target( mask:0 )
 	public final allowFilter	as bool		# allow results filtering
 	
 	public Size as uint:
-		get: return buf.Width * buf.Height * sizeof(single) *4
+		get: return buf.getInfo().Size * sizeof(single)*4
 	public Vert as kri.buf.Texture:
-		get: return buf.A[0].Tex
+		get: return buf.at.color[0] as kri.buf.Texture
 	public Quat as kri.buf.Texture:
-		get: return buf.A[1].Tex
+		get: return buf.at.color[1] as kri.buf.Texture
 	
 	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
 		allowFilter = filt
-		buf.init(w,h)
-		buf.mask = 0
 		for i in range(2):
 			bits = (bv,bq)[i]
 			continue	if not bits
 			buf.mask |= 1<<i
-			buf.emitAuto(i,bits).bind()
-			ft = (allowFilter and not i)
-			buf.A[i].Tex.filt(ft,false)
+			pf = kri.rend.Context.FmColor[bits>>3]
+			buf.at.color[i] = t = kri.buf.Texture( intFormat:pf )
+			t.filt( allowFilter and not i, false )
+		buf.resize(w,h)
 
 
 #---------	RENDER VERTEX SPATIAL TO UV		--------#
@@ -60,7 +58,7 @@ public class Update( kri.rend.tech.Basic ):
 			tag.stamp = kri.Ant.Inst.Time
 			n = (null,e.node)[tag.worldSpace]
 			kri.Ant.Inst.params.modelView.activate(n)
-			tag.buf.activate(3)
+			tag.buf.bind()
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )
 				tag.clearTarget = false

@@ -9,7 +9,7 @@ public struct Container:
 	public stencil	as Surface
 	public depth	as Surface
 	public color	as (Surface)
-	public All	as Surface*:
+	public All		as Surface*:
 		get: return (s	for s in ((stencil,depth) + color)	if s)
 	public def constructor(num as byte):
 		color = array[of Surface](num)
@@ -20,8 +20,13 @@ public struct Container:
 
 
 public class Target(Frame):
-	private	old	= Container(4)
-	public	at	= Container(4)
+	private	old		= Container(4)
+	public	at		= Container(4)
+	private oldMask	= -1
+	public	mask	= 0
+	
+	public def dropMask() as void:
+		oldMask = -1
 	
 	private def addSurface(fa as FramebufferAttachment, ref cur as Surface, nex as Surface) as void:
 		return	if cur==nex
@@ -38,17 +43,18 @@ public class Target(Frame):
 				return -1
 		return sm
 	
-	public def getDimensions() as Drawing.Size:
-		v = Drawing.Size(1<<30,1<<30)
+	public override def getInfo() as Plane:
+		sm = getSamples()
+		return null	if sm<0
+		pl = Plane( samples:sm, wid:1<<30, het:1<<30 )
 		for sf in at.All:
-			v.Width		= Math.Min( v.Width,	cast(int,sf.wid) )
-			v.Height	= Math.Min( v.Height,	cast(int,sf.het) )
-		return v
+			pl.wid	= Math.Min( pl.wid,	sf.Width )
+			pl.het	= Math.Min( pl.het,	sf.Height )
+		return pl
 	
-	public def activate(mask as byte) as void:
+	public override def bind() as void:
 		# bind with viewport
-		bind()
-		GL.Viewport( getDimensions() )
+		super()
 		assert getSamples()>=0
 		# update surfaces
 		if 'ds':
@@ -59,11 +65,17 @@ public class Target(Frame):
 		# check
 		CheckStatus()
 		# set mask
-		drawList = List[of DrawBuffersEnum](
-			DrawBuffersEnum.ColorAttachment0+i
-			for i in range(4)	if (mask>>i)&1)
-		GL.DrawBuffers( drawList.Count, drawList.ToArray() )
+		if mask != oldMask:
+			assert mask>=0
+			drawList = List[of DrawBuffersEnum](
+				DrawBuffersEnum.ColorAttachment0+i
+				for i in range(4)	if (mask>>i)&1)
+			GL.DrawBuffers( drawList.Count, drawList.ToArray() )
+			oldMask = mask
 	
+	private override def getReadMode() as ReadBufferMode:
+		return ReadBufferMode.ColorAttachment0
+
 	public def resize(wid as uint, het as uint) as void:
 		for sf in at.All:
 			sf.init(wid,het)

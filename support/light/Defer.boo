@@ -3,14 +3,17 @@
 import OpenTK
 import OpenTK.Graphics.OpenGL
 import kri.shade
+import kri.buf
 
 
 public class Context:
-	public final buf		= kri.frame.Buffer()
+	public final buf		= Target()
 	public final tool		= kri.shade.Object.Load('/light/defer/sh_f')
 
 	public def constructor():
-		buf.emitArray(3)
+		#buf.emitArray(3)
+		for i in range(3):
+			buf.at.color[i] = Texture()
 
 
 #---------	LIGHT PRE-PASS	--------#
@@ -19,7 +22,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sa		= Smart()
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
-	private final buf		as kri.frame.Buffer
+	private final buf		as Target
 	private final texDep	= par.Value[of kri.buf.Texture]('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
@@ -42,18 +45,15 @@ public class Bake( kri.rend.Basic ):
 		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 
-	public override def setup(far as kri.frame.Array) as bool:
-		wid = far.Width
-		het = far.Height
-		buf.init(wid,het)
-		buf.A[0].Tex.samples = 3
-		buf.A[0].Tex.init(wid,het)
+	public override def setup(pl as kri.buf.Plane) as bool:
+		buf.at.color[0].samples = 3
+		buf.resize( pl.wid, pl.het )
 		return true
 		
 	public override def process(con as kri.rend.Context) as void:
 		con.activate()
-		texDep.Value = buf.A[-1].Tex = con.Depth
-		buf.activate()
+		buf.at.depth = texDep.Value = con.Depth
+		buf.bind()
 		con.SetDepth(0f,false)
 		con.ClearColor( Graphics.Color4(0f,0f,0f,0f) )
 		GL.CullFace( CullFaceMode.Front )
@@ -73,14 +73,14 @@ public class Bake( kri.rend.Basic ):
 #---------	LIGHT APPLICATION	--------#
 
 public class Apply( kri.rend.tech.Meta ):
-	private final buf	as kri.frame.Buffer
-	private final pTex	= kri.shade.par.Texture('light')
+	private final buf	as Target
+	private final pTex	= par.Texture('light')
 	# init
 	public def constructor(dc as Context):
 		super('lit.defer', false, null,
 			'bump','emissive','diffuse','specular','glossiness')
 		buf = dc.buf
-		pTex.Value = buf.A[0].Tex
+		pTex.Value = buf.at.color[0] as Texture
 		dict.unit( pTex )
 		shobs.Add( dc.tool )
 		shade('/light/defer/apply')

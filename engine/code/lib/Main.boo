@@ -18,8 +18,8 @@ public final class Param:
 	public def activate(l as kri.Light) as void:
 		light.activate(l)
 		pLit.activate(l)
-	public def activate(fs as kri.frame.Screen) as void:
-		parSize.Value = Vector4( 1f*fs.Width, 1f*fs.Height, 0.5f*(fs.Width+fs.Height), 0f)
+	public def activate(pl as kri.buf.Plane) as void:
+		parSize.Value = Vector4( 1f*pl.wid, 1f*pl.het, 0.5f*(pl.wid+pl.het), 0f)
 		
 	public def constructor(d as rep.Dict):
 		for me in (of kri.meta.IBase: modelView,light,pLit,pCam):

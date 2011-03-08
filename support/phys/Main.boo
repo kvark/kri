@@ -18,7 +18,7 @@ public class Simulator( kri.ani.sim.Native ):
 #---------	RENDER PHYSICS		--------#
 
 public class Core:
-	private final fbo	= kri.frame.Buffer(0, TextureTarget.Texture2D )
+	private final fbo	= kri.buf.Target(mask:1)
 	private final cam	= kri.Camera()
 	private final sa	= kri.shade.Smart()
 	private final sb	= kri.shade.Smart()
@@ -28,20 +28,19 @@ public class Core:
 	private final big	as bool
 	
 	public Color	as kri.buf.Texture:
-		get: return fbo.A[-0].Tex
+		get: return fbo.at.color[0] as kri.buf.Texture
 	public Stencil	as kri.buf.Texture:
-		get: return fbo.A[-2].Tex
+		get: return fbo.at.stencil	as kri.buf.Texture
 	
 	public def constructor( ord as byte, large as bool, techId as int ):
 		big = large
 		# init FBO
-		fbo.init(1<<ord,1<<ord)
-		tSten = fbo.emitAuto(-2,0)
-		tSten.pixFormat = PixelFormat.DepthStencil
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
-		tColor = fbo.emit(0,pif)
+		fbo.at.stencil = tSten		= kri.buf.Texture.Stencil(0)
+		fbo.at.color[0] = tColor	= kri.buf.Texture( intFormat:pif )
+		fbo.resize(1<<ord,1<<ord)
 		# setup target parameters
-		fbo.activate(1)
+		fbo.bind()
 		for tex in (tSten,tColor):
 			tex.filt(false,false)
 			tex.genLevels()
@@ -83,7 +82,7 @@ public class Core:
 		kri.Ant.Inst.params.activate( s.cameras[0] )
 		sa.useBare()
 		# prepare buffer
-		fbo.activate(1)
+		fbo.bind()
 		GL.DepthMask(true)
 		GL.StencilMask(-1)
 		GL.ClearColor(0f,0f,0f,1f)
@@ -123,8 +122,8 @@ public class Core:
 		
 		GL.Disable( EnableCap.DepthTest )
 		sb.use()
-		tc = fbo.A[0].Tex
-		ts = fbo.A[-2].Tex
+		tc = fbo.at.color[0]	as kri.buf.Texture
+		ts = fbo.at.stencil		as kri.buf.Texture
 		for i in range(3):
 			for tex in (tc,ts):
 				tex.setLevels(i,i+1)
@@ -135,13 +134,13 @@ public class Core:
 			
 		# read back result
 		pbo.bind()
-		fbo.activate(false)
-		size = fbo.Width * fbo.Height
-		GL.ReadBuffer( cast(ReadBufferMode,0) )
-		GL.ReadPixels(0,0, fbo.Width, fbo.Height, PixelFormat.StencilIndex, PixelType.Byte, IntPtr.Zero )
-		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
+		fbo.bindRead(false)
+		pl = fbo.at.color[0]
+		size = pl.Size
+		GL.ReadPixels(0,0, pl.wid, pl.het, PixelFormat.StencilIndex, PixelType.Byte, IntPtr.Zero )
+		fbo.bindRead(true)
 		pt = (PixelType.UnsignedByte, PixelType.UnsignedShort)[big]
-		GL.ReadPixels(0,0, fbo.Width, fbo.Height, PixelFormat.Rg, pt, IntPtr(size) )
+		GL.ReadPixels(0,0, pl.wid, pl.het, PixelFormat.Rg, pt, IntPtr(size) )
 		# debug: extract result
 		es = (1,2)[big]
 		dar = array[of byte]( size*(1+2*es) )

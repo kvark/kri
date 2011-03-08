@@ -5,16 +5,17 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Context:
-	public final buf		= kri.frame.Buffer()
+	public final buf		= kri.buf.Target()
 	public final pRadius	= kri.shade.par.Value[of single]('radius')
 	public def constructor():
-		buf.emit(0, PixelInternalFormat.Rg16f)
+		buf.at.color[0] = kri.buf.Texture(
+			intFormat:PixelInternalFormat.Rg16f )
 
 
 public class Bake( kri.rend.tech.Basic ):
 	private final sa		= kri.shade.Smart()
 	private final sb		= kri.shade.Smart()
-	private final buf		as kri.frame.Buffer
+	private final buf		as kri.buf.Target
 	private final diModel	= Dictionary[of kri.Entity,kri.Spatial]()
 	private final diCamera	= Dictionary[of kri.Camera,kri.Spatial]()
 	private final pModel	= kri.lib.par.spa.Shared('s_old_mod')
@@ -42,20 +43,20 @@ public class Bake( kri.rend.tech.Basic ):
 		sb.add( '/motion/skin_v', '/motion/bake_f' )
 		sb.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
 	
-	public override def setup(far as kri.frame.Array) as bool:
-		buf.init( far.Width, far.Height )
-		buf.A[-2].Tex = null
-		buf.resizeFrames()
+	public override def setup(pl as kri.buf.Plane) as bool:
+		buf.at.stencil = null
+		buf.resize( pl.wid, pl.het )
 		return true
 
 	public override def process(con as kri.rend.Context) as void:
 		sa.use()
 		#todo: check samples?
 		con.needDepth(false)
-		buf.A[-2].Tex = con.Depth
+		buf.at.stencil = con.Depth
 		assert con.Depth and not con.Screen
 		con.SetDepth(-1f,false)
-		buf.activate(1)
+		buf.mask = 1
+		buf.bind()
 		con.ClearColor()
 		# set camera
 		cam = kri.Camera.Current
@@ -91,7 +92,7 @@ public class Apply( kri.rend.Filter ):
 		linear = true
 		sa.add( '/copy_v', '/filter/blur_vector_f', '/motion/apply_f' )
 		pTex = kri.shade.par.Texture('velocity')
-		pTex.Value = con.buf.A[0].Tex
+		pTex.Value = con.buf.at.color[0] as kri.buf.Texture
 		dict.var(con.pRadius)
 		dict.unit(pTex)
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
