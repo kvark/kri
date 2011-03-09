@@ -8,13 +8,13 @@ import kri.buf
 #---------	LIGHT INIT	--------#
 
 public class Init( kri.rend.Basic ):
-	public final buf	as Target
+	public final buf	as Holder
 	private final sa	= kri.shade.Smart()
 
 	public def constructor(nlay as byte):
 		# init buffer
 		tt = TextureTarget.Texture2DMultisample
-		buf = Target( mask:3 )
+		buf = Holder( mask:3 )
 		buf.at.stencil	= Texture.Stencil(nlay)
 		buf.at.color[0]	= Texture( target:tt, samples:nlay,
 			intFormat:PixelInternalFormat.Rgb16f )	# R11fG11fB10f
@@ -81,7 +81,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sb		= Smart()
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
-	private final buf		as Target
+	private final buf		as Holder
 	private final texDep	= par.Texture('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
@@ -145,7 +145,7 @@ public class Bake( kri.rend.Basic ):
 #---------	LIGHT APPLICATION	--------#
 
 public class Apply( kri.rend.tech.Meta ):
-	private final buf	as kri.buf.Target
+	private final buf	as kri.buf.Holder
 	private final pDir	= par.Texture('dir')
 	private final pCol	= par.Texture('color')
 	# init

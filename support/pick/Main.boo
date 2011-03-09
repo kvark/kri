@@ -8,7 +8,7 @@ public class Tag( kri.ITag ):
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.buf.Target( mask:1 )
+	private final buf	= kri.buf.Holder( mask:1 )
 	private final va	= kri.vb.Array()
 	private final sa	= kri.shade.Smart()
 	private final qlog	as uint

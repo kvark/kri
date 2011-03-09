@@ -10,7 +10,7 @@ public class Simple( kri.rend.Basic ):
 	protected	final sa	= Smart()
 	protected	final sb	= Smart()
 	protected	final texIn	= par.Texture('input')
-	public		buf		as Target	= null
+	public		buf		as Holder	= null
 
 	public def constructor():
 		dict = rep.Dict()
@@ -35,7 +35,7 @@ public class Advanced( kri.rend.Basic ):
 	public	final	sa		= Smart()
 	public	final	pTex	= par.Texture('input')
 	public	final	pDir	= par.Value[of Vector4]('dir')
-	public	buf		as Target = null
+	public	buf		as Holder = null
 	
 	public def constructor():
 		dict = rep.Dict()

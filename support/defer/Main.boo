@@ -5,7 +5,7 @@ import kri.buf
 import kri.shade
 
 public class Context:
-	public final buf		= Target()
+	public final buf		= Holder()
 	public final dict		= rep.Dict()
 	public final texDepth	= par.Texture('depth')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
@@ -26,7 +26,7 @@ public class Context:
 #---------	RENDER TO G-BUFFER	--------#
 
 public class Fill( kri.rend.tech.Meta ):
-	private final buf	as Target
+	private final buf	as Holder
 	# init
 	public def constructor(con as Context):
 		super('g.make', false, ('c_diffuse','c_specular','c_normal'), *kri.load.Meta.LightSet)

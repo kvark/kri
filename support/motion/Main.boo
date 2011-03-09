@@ -5,7 +5,7 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Context:
-	public final buf		= kri.buf.Target()
+	public final buf		= kri.buf.Holder()
 	public final pRadius	= kri.shade.par.Value[of single]('radius')
 	public def constructor():
 		buf.at.color[0] = kri.buf.Texture(
@@ -15,7 +15,7 @@ public class Context:
 public class Bake( kri.rend.tech.Basic ):
 	private final sa		= kri.shade.Smart()
 	private final sb		= kri.shade.Smart()
-	private final buf		as kri.buf.Target
+	private final buf		as kri.buf.Holder
 	private final diModel	= Dictionary[of kri.Entity,kri.Spatial]()
 	private final diCamera	= Dictionary[of kri.Camera,kri.Spatial]()
 	private final pModel	= kri.lib.par.spa.Shared('s_old_mod')

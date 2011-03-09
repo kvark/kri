@@ -4,8 +4,8 @@ import OpenTK.Graphics.OpenGL
 import kri.buf
 
 public class Update( kri.rend.Basic ):
-	private final buPlane	= Target()
-	private final buCube	= Target()
+	private final buPlane	= Holder()
+	private final buCube	= Holder()
 	
 	public def constructor():
 		buPlane.at.depth	= Texture.Depth(0)

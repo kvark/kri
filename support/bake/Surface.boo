@@ -8,7 +8,7 @@ public class Tag( kri.ITag ):
 	public clearTarget	as bool = true		# clear textures
 	public uvChannel	as byte = 0			# tex-coord channel
 	public stamp		as double	= -1f	# last update
-	public final buf	= kri.buf.Target( mask:0 )
+	public final buf	= kri.buf.Holder( mask:0 )
 	public final allowFilter	as bool		# allow results filtering
 	
 	public Size as uint:

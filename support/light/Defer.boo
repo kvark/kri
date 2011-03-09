@@ -7,7 +7,7 @@ import kri.buf
 
 
 public class Context:
-	public final buf		= Target()
+	public final buf		= Holder()
 	public final tool		= kri.shade.Object.Load('/light/defer/sh_f')
 
 	public def constructor():
@@ -22,7 +22,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sa		= Smart()
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
-	private final buf		as Target
+	private final buf		as Holder
 	private final texDep	= par.Value[of kri.buf.Texture]('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
@@ -73,7 +73,7 @@ public class Bake( kri.rend.Basic ):
 #---------	LIGHT APPLICATION	--------#
 
 public class Apply( kri.rend.tech.Meta ):
-	private final buf	as Target
+	private final buf	as Holder
 	private final pTex	= par.Texture('light')
 	# init
 	public def constructor(dc as Context):

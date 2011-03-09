@@ -20,7 +20,7 @@ internal enum DirtyLevel:
 public class Context:
 	public	final	bitColor	as byte			# color storage
 	public	final	bitDepth	as byte			# depth storage
-	private	final	buf			= Target()		# intermediate FBO
+	private	final	buf			= Holder()		# intermediate FBO
 	private	final	last		as Frame		# final result
 	private	target	as Frame = null			# current result
 	private	dirty	= DirtyLevel.None		# dirty level

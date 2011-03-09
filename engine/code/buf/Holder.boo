@@ -19,7 +19,7 @@ public struct Container:
 			color[i] = null
 
 
-public class Target(Frame):
+public class Holder(Frame):
 	private	old		= Container(4)
 	public	at		= Container(4)
 	private oldMask	= -1

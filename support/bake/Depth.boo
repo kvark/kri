@@ -21,7 +21,7 @@ public class Tag( kri.ITag ):
 
 public class Update( kri.rend.Basic ):
 	public final sa		= kri.shade.Smart()
-	public final buf	= kri.buf.Target(mask:0)
+	public final buf	= kri.buf.Holder(mask:0)
 	public final va		= kri.vb.Array()
 
 	public def constructor():

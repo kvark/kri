@@ -7,8 +7,8 @@ public class Context:
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.buf.Target()
-	private final b2	= kri.buf.Target()
+	private final buf	= kri.buf.Holder()
+	private final b2	= kri.buf.Holder()
 	private final pbo	= kri.vb.Pack()
 	private final context	as Context
 	private final sa_bright	= kri.shade.Smart()

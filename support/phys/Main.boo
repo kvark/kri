@@ -18,7 +18,7 @@ public class Simulator( kri.ani.sim.Native ):
 #---------	RENDER PHYSICS		--------#
 
 public class Core:
-	private final fbo	= kri.buf.Target(mask:1)
+	private final fbo	= kri.buf.Holder(mask:1)
 	private final cam	= kri.Camera()
 	private final sa	= kri.shade.Smart()
 	private final sb	= kri.shade.Smart()

@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT OMNI FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	protected final buf		= kri.buf.Target(mask:0)
+	protected final buf		= kri.buf.Holder(mask:0)
 	protected final sa		= kri.shade.Smart()
 	protected final context	as support.light.Context
 	protected final pDist	= kri.shade.par.Value[of Vector4]('uni_dist')

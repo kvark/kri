@@ -34,7 +34,7 @@ private class ShaderLink( kri.rend.Basic ):
 
 private class PolygonOffset( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
-	final fbo	= kri.buf.Target(mask:0)
+	final fbo	= kri.buf.Holder(mask:0)
 	final vbo	= kri.vb.Attrib()
 
 	public def constructor():
@@ -80,7 +80,7 @@ private class PolygonOffset( kri.rend.Basic ):
 
 
 private class TextureRead( kri.rend.Basic ):
-	public final buf	= kri.buf.Target( mask:1 )
+	public final buf	= kri.buf.Holder( mask:1 )
 	public def constructor():
 		super(false)
 		data = (of short: 1,2,3,4)
@@ -171,7 +171,7 @@ private class DrawToStencil( kri.rend.Basic ):
 		prog.add(pob)
 		prog.link( kri.Ant.Inst.slotAttributes )
 		#make data
-		fbo = kri.buf.Target()
+		fbo = kri.buf.Holder()
 		fbo.at.stencil = t = kri.buf.Texture.Stencil(0)
 		fbo.resize(10,10)
 		con.DepthTest = false

@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT MAP FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	public final buf		= kri.buf.Target()
+	public final buf		= kri.buf.Holder()
 	protected final sa		= kri.shade.Smart()
 	protected final licon	as Context
 

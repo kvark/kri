@@ -4,10 +4,10 @@ import kri.buf
 
 public class Fill( kri.rend.Basic ):
 	public final sa			= kri.shade.Smart()
-	private final buf		as Target	= null
+	private final buf		as Holder	= null
 	private static doGeom	= true	#should be
 	
-	public def constructor(licon as support.light.Context, buffer as Target):
+	public def constructor(licon as support.light.Context, buffer as Holder):
 		assert licon
 		buf = buffer
 		sa.add( '/lib/quat_v','/lib/tool_v' )

@@ -4,7 +4,7 @@ import System
 import kri.buf
 
 private class Town( kri.rend.Basic ):
-	private final buf	= Target( mask:1 )
+	private final buf	= Holder( mask:1 )
 	private final sa	= kri.shade.Smart()
 	public final con	= kri.gen.Noise(8)
 	
