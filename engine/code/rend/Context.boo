@@ -10,11 +10,6 @@ public enum ActiveDepth:
 	With
 	Only
 
-internal enum DirtyLevel:
-	None
-	Target
-	Depth
-
 
 # Context passed to renders
 public class Context:
@@ -22,8 +17,8 @@ public class Context:
 	public	final	bitDepth	as byte			# depth storage
 	private	final	buf			= Holder()		# intermediate FBO
 	private	final	last		as Frame		# final result
-	private	target	as Frame = null			# current result
-	private	dirty	= DirtyLevel.None		# dirty level
+	private	target		as Frame	= null		# current result
+	private	lockInput	as bool		= false		# lock input texture
 	private	final	texTarget	as TextureTarget
 	private final	nSamples	as byte
 
@@ -31,8 +26,18 @@ public class Context:
 	private tInput	as kri.buf.Texture	= null
 	[getter(Depth)]
 	private tDepth	as kri.buf.Texture	= null
+	public LockIn	as bool:
+		set:
+			if value:
+				lockInput = false
+				swapInput()
+				needColor(false)
+			lockInput = value
+		get: return lockInput
 	public Aspect	as single:
-		get: return buf.getInfo().Aspect
+		get: # make sure FBO has color plane
+			needColor(true)
+			return buf.getInfo().Aspect
 	public Info		as kri.buf.Plane:
 		get: return target.getInfo()
 	
@@ -85,20 +90,22 @@ public class Context:
 		assert b<=48 and not (b&0x7)
 	
 	public def swapInput() as void:
+		return	if lockInput
 		s = buf.at.color[0]
 		buf.at.color[0] = tInput
 		tInput = s as Texture
 	
 	public def resize(w as int, h as int) as Plane:
+		# make sure color is here
+		lockInput = false
 		needColor(true)
-		# make sure depth is in
-		if Depth:
-			if Depth.pixFormat == PixelFormat.DepthStencil		and not buf.at.stencil:
-				buf.at.stencil = Depth
-				tDepth = null
-			if Depth.pixFormat == PixelFormat.DepthComponent	and not buf.at.depth:
-				buf.at.depth = Depth
-				tDepth = null
+		# make sure depth is here
+		if Depth and Depth.pixFormat == PixelFormat.DepthStencil	and not buf.at.stencil:
+			buf.at.stencil	= Depth
+			tDepth = null
+		if Depth and Depth.pixFormat == PixelFormat.DepthComponent	and not buf.at.depth:
+			buf.at.depth	= Depth
+			tDepth = null
 		# do it
 		buf.resize(w,h)
 		# don't forget about second texture
@@ -145,9 +152,11 @@ public class Context:
 		if (col and not buf.at.color[0]) or not (col or Input):
 			swapInput()
 		if (col and not buf.at.color[0]):
-			buf.at.color[0] = Texture(
+			buf.at.color[0] = t = Texture(
 				target:texTarget, samples:nSamples,
 				intFormat:FmColor[bitColor>>3] )
+			if Input:
+				t.init( Input.wid, Input.het )
 	
 	public static def SetDepth(offset as single, write as bool) as void:
 		DepthTest = on = (not Single.IsNaN(offset))
@@ -169,7 +178,6 @@ public class Context:
 			needColor(toColor)
 		target.bind()
 		SetDepth(offset,toDepth)
-		dirty = (DirtyLevel.Depth, DirtyLevel.Target)[toColor]
 
 	public def activate() as void:
 		activate(true, Single.NaN, true)
@@ -181,14 +189,3 @@ public class Context:
 	
 	public def copy() as void:
 		blitTo( target, ClearBufferMask.ColorBufferBit )
-	
-	public def apply(r as Basic) as void:
-		# target always contains result
-		swapInput()	if r.bInput
-		dirty = DirtyLevel.None
-		r.process(self)	# action here!
-		if dirty == DirtyLevel.Depth:	# restore mask
-			if target == buf: buf.dropMask()
-			else: GL.DrawBuffer( DrawBufferMode.Back )
-		if dirty == DirtyLevel.None and r.bInput:
-			swapInput()

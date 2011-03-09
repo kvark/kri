@@ -31,8 +31,7 @@ public class Holder(Frame):
 	private def addSurface(fa as FramebufferAttachment, ref cur as Surface, nex as Surface) as void:
 		return	if cur==nex
 		cur = nex
-		nex = Render.Zero	if not nex
-		nex.attachTo(fa)
+		(Render.Zero,nex)[nex!=null].attachTo(fa)
 	
 	public def getSamples() as int:
 		sm = -1
@@ -58,10 +57,12 @@ public class Holder(Frame):
 		assert getSamples()>=0
 		# update surfaces
 		if 'ds':
-			addSurface( FramebufferAttachment.StencilAttachment,	old.stencil,	at.stencil )
-			addSurface( FramebufferAttachment.DepthAttachment,		old.depth,		at.depth )
+			addSurface( FramebufferAttachment.DepthStencilAttachment,	old.stencil,	at.stencil )
+			addSurface( FramebufferAttachment.DepthAttachment,			old.depth,		at.depth )
 		for i in range( old.color.Length ):
-			addSurface( FramebufferAttachment.ColorAttachment0+i,	old.color[i],	at.color[i] )
+			surface = old.color[i]	# Boo bug workaround
+			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,	at.color[i] )
+			old.color[i] = surface
 		# check
 		CheckStatus()
 		# set mask

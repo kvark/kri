@@ -36,14 +36,18 @@ public class Chain(Basic):
 		
 	public override def process(con as Context) as void:
 		rout = renders.FindLast() do(r as Basic):	# first render to out
-			return r.bInput
+			return r.active and r.bInput
 		con.Screen = not rout
 		for r in renders:
 			continue	if not r.active
 			if r is rout:
 				rout = null
 				con.Screen = toScreen
-			con.apply(r)
+			con.LockIn = r.bInput
+			r.process(con)
+			if con.LockIn:
+				con.LockIn = false
+				con.swapInput()
 
 
 #---------	GENERAL FILTER	--------#

@@ -39,6 +39,7 @@ public class Texture(Surface):
 		return Texture( sm, PixelInternalFormat.DepthStencil,	PixelFormat.DepthStencil )
 
 	private def constructor(manId as uint):
+		ready = true
 		hardId = manId
 	public static final	Zero	= Texture(0)
 	def destructor():

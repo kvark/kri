@@ -13,6 +13,7 @@ public class Render(Surface):
 		GL.GenRenderbuffers(1,id)
 		hardId = id
 	private def constructor(manId as uint):
+		ready = true
 		hardId = manId
 	public static final	Zero	= Render(0)
 
