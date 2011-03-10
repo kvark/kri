@@ -50,7 +50,7 @@ public class Bake( kri.rend.Basic ):
 		buf.resize( pl.wid, pl.het )
 		return true
 		
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		buf.at.depth = texDep.Value = con.Depth
 		buf.bind()
 		con.SetDepth(0f,false)
@@ -84,6 +84,6 @@ public class Apply( kri.rend.tech.Meta ):
 		shobs.Add( dc.tool )
 		shade('/light/defer/apply')
 	# work
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		drawScene()

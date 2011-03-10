@@ -24,7 +24,7 @@ public class Tag( kri.ITag ):
 			bits = (bv,bq)[i]
 			continue	if not bits
 			buf.mask |= 1<<i
-			pf = kri.rend.Context.FmColor[bits>>3]
+			pf = kri.rend.link.Buffer.FmColor[bits>>3]
 			buf.at.color[i] = t = kri.buf.Texture( intFormat:pf )
 			t.filt( allowFilter and not i, false )
 		buf.resize(w,h)
@@ -47,7 +47,7 @@ public class Update( kri.rend.tech.Basic ):
 		sa.fragout('re_vertex','re_quat')
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		con.DepthTest = false
 		for e in kri.Scene.Current.entities:
 			tag = e.seTag[of Tag]()

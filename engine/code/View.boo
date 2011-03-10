@@ -105,22 +105,21 @@ public class Scene:
 # Renders a scene with camera to some buffer
 public class View:
 	# rendering
-	public final con	as rend.Context	# context
-	public ren			as rend.Basic	# root render
+	public virtual Link as kri.rend.link.Basic:
+		get: return null
+	public ren		as rend.Basic	# root render
 	# view
 	public cam		as Camera	= null
 	public scene	as Scene	= null
 
-	public def constructor(out as buf.Frame, ns as byte, bc as byte, bd as byte):
-		con = rend.Context(out, ns,bc,bd )
 	public virtual def resize(wid as int, het as int) as bool:
-		return ren.setup( con.resize(wid,het) )
+		return ren.setup( kri.buf.Plane(wid:wid,het:het) )
 	public def update() as void:
 		Scene.current = scene
 		if cam:
-			cam.aspect = con.Aspect
+			cam.aspect = Link.Frame.getInfo().Aspect
 			Ant.Inst.params.activate(cam)
-		ren.process(con)
+		ren.process(Link)	if ren.active
 		vb.Array.unbind()
 		Scene.current = null
 
@@ -128,18 +127,14 @@ public class View:
 # View for rendering to screen
 public class ViewScreen(View):
 	public final area	= Box2(0f,0f,1f,1f)
-	public final screen	as buf.Screen
-	public final tune	as int
-	public def constructor():
-		self( 0,0,8,8 )
-	public def constructor(sizeTune as int, ns as byte, bc as byte, bd as byte):
-		screen = buf.Screen()
-		tune = sizeTune
-		super( screen, ns,bc,bd )
+	public final link	= kri.rend.link.Screen()
+	public override Link as kri.rend.link.Basic:
+		get: return link
 	public override def resize(wid as int, het as int) as bool:
-		plane = screen.plane
-		plane.wid	= cast(int, wid*area.Width)
-		plane.het	= cast(int, het*area.Height)
-		screen.ofx	= cast(int, wid*area.Left)
-		screen.ofy	= cast(int, het*area.Top)
-		return super( Help.shiftInt(wid,tune), Help.shiftInt(het,tune) )
+		sc = link.screen
+		pl = sc.plane
+		pl.wid	= cast(int, wid*area.Width)
+		pl.het	= cast(int, het*area.Height)
+		sc.ofx	= cast(int, wid*area.Left)
+		sc.ofy	= cast(int, het*area.Top)
+		return super(wid,het)

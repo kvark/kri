@@ -37,7 +37,7 @@ public class Render( kri.rend.Basic ):
 		pbo.init( sizeof(single) )
 		return true
 	
-	public virtual def process(con as kri.rend.Context) as void:
+	public virtual def process(con as kri.rend.link.Basic) as void:
 		# update context
 		data = (of single:-1f,)
 		pbo.read(data)

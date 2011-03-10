@@ -48,12 +48,11 @@ public class Bake( kri.rend.tech.Basic ):
 		buf.resize( pl.wid, pl.het )
 		return true
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		sa.use()
 		#todo: check samples?
-		con.needDepth(false)
 		buf.at.stencil = con.Depth
-		assert con.Depth and not con.Screen
+		assert con.Depth
 		con.SetDepth(-1f,false)
 		buf.mask = 1
 		buf.bind()

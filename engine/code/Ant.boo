@@ -148,7 +148,7 @@ public class Ant(IDisposable):
 				raise 'Unknown config parameter: ' + unused[0]
 		
 		# context init
-		kri.rend.Context.Init()
+		kri.rend.link.Basic.Init()
 		shade.Code.Folder = defPath
 
 		inst = self

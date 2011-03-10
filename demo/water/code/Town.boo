@@ -25,7 +25,7 @@ private class Town( kri.rend.Basic ):
 		buf.resize( pl.wid, pl.het )
 		return true
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		active = false
 		con.DepthTest = false
 		buf.bind()

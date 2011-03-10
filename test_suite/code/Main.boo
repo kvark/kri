@@ -3,7 +3,7 @@
 [System.STAThread]
 def Main(argv as (string)):
 	using kri.Window('kri.conf',0):
-		view = kri.View(null,0,8,8)
+		view = kri.View()
 		view.ren = rchain = kri.rend.Chain()
 		rlis = rchain.renders
 		

@@ -57,7 +57,7 @@ private class PolygonOffset( kri.rend.Basic ):
 		fbo.resize(3,3)
 		t.shadow(true)
 		
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		fbo.bind()
 		GL.Enable( EnableCap.DepthTest )
 		GL.DepthMask(true)
@@ -89,10 +89,10 @@ private class TextureRead( kri.rend.Basic ):
 			intFormat:PixelInternalFormat.R16i,
 			pixFormat:PixelFormat.RedInteger )
 		tex.init(data)
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		buf.bind()
 		#GL.ClearBuffer( ClearBuffer.Color, 0, (of int:5,5,5,5) )
-		kri.rend.Context.ClearColor()
+		kri.rend.link.Basic.ClearColor()
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
 		p1 = p2 = (of short: 6,6,6,6)
@@ -125,7 +125,7 @@ private class Feedback( kri.rend.Basic ):
 			type:VertexAttribPointerType.Float )
 		vin.Semant.Add(ai)
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		#make program
 		text = """
 		#version 130
@@ -157,7 +157,7 @@ private class Feedback( kri.rend.Basic ):
 
 
 private class DrawToStencil( kri.rend.Basic ):
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		prog	= kri.shade.Smart()
 		#make program
 		text = """

@@ -46,8 +46,8 @@ public class Render( kri.rend.tech.Meta ):
 	public def constructor():
 		super('mirror', false, null, 'mirror')
 		shade(('/mat_base_v','/mirror_f'))
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		using blend = kri.Blender():
 			blend.add()
 			drawScene()

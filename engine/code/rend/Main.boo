@@ -8,17 +8,13 @@ import System.Collections.Generic
 public class Basic:
 	public			active	as bool = true
 	public final	bInput	as bool
-	public enum ColorTarget:
-		None
-		Same
-		New
 	public def constructor(inp as bool):
 		bInput = inp
 	public def constructor():
 		bInput = false
 	public virtual def setup(pl as kri.buf.Plane) as bool:
 		return true
-	public virtual def process(con as Context) as void:
+	public virtual def process(con as link.Basic) as void:
 		pass
 
 
@@ -26,28 +22,22 @@ public class Basic:
 
 public class Chain(Basic):
 	public final	renders	= List[of Basic]()		# *Render
-	public final	toScreen	as bool
+	public final	ln		as link.Buffer
 	
-	public def constructor(inp as bool, out as bool):
-		super(inp)
-		toScreen = out
 	public def constructor():
-		toScreen = true
+		ln = link.Buffer(0,0,0)
+	public def constructor(ns as byte, bc as byte, bd as byte):
+		ln = link.Buffer(ns,bc,bd)
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
+		ln.resize(pl)
 		return renders.TrueForAll() do(r as Basic):
 			return r.setup(pl)
 		
-	public override def process(con as Context) as void:
-		rout = renders.FindLast() do(r as Basic):	# first render to out
-			return r.active and r.bInput
-		con.Screen = not rout
+	public override def process(con as link.Basic) as void:
 		for r in renders:
-			continue	if not r.active
-			if r is rout:
-				rout = null
-				con.Screen = toScreen
-			r.process(con)
+			r.process(ln)	if r.active
+		ln.blitTo(con)
 
 
 #---------	GENERAL FILTER	--------#
@@ -60,7 +50,7 @@ public class Filter(Basic):
 	public def constructor():
 		super(true)
 		dict.unit(texIn)
-	public override def process(con as Context) as void:
+	public override def process(con as link.Basic) as void:
 		texIn.Value = con.Input
 		con.Input.filt(linear,false)
 		con.activate(true)
@@ -71,12 +61,3 @@ public class FilterCopy(Filter):
 	public def constructor():
 		sa.add('/copy_v','/copy_f')
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
-
-
-#---------	BLIT BUFFER	--------#
-
-public class Blit( Basic ):
-	public def constructor():
-		super(true)
-	public override def process(con as Context) as void:
-		con.copy()

@@ -30,14 +30,14 @@ public class Fill( kri.rend.tech.General ):
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f, true)
 		for l in kri.Scene.Current.lights:
 			continue if l.fov == 0f
 			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.type == LiType.VARIANCE]
 			if not l.depth:
-				ask = kri.rend.Context.FmDepth[licon.bits>>3]
+				ask = kri.rend.link.Buffer.FmDepth[licon.bits>>3]
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
 				pix = (PixelFormat.DepthComponent, PixelFormat.Rgba)[index+1]
 				l.depth = kri.buf.Texture( intFormat:pif, pixFormat:pix,
@@ -79,7 +79,7 @@ public class Apply( kri.rend.tech.Meta ):
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	# work
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		butch.Clear()
 		for l in kri.Scene.Current.lights:
 			continue if l.fov == 0f
@@ -90,7 +90,7 @@ public class Apply( kri.rend.tech.Meta ):
 				addObject(e)
 		butch.Sort( kri.rend.tech.Batch.cMat )
 		# draw
-		con.activate( ColorTarget.Same, 0f, false )
+		con.activate( con.Target.Same, 0f, false )
 		using blend = kri.Blender():
 			blend.add()
 			for b in butch:

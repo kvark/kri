@@ -30,7 +30,7 @@ public class Update( kri.rend.Basic ):
 		sa.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
 		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		par = kri.Ant.Inst.params
 		par.light.data.Value = Vector4(0f,1f,0f,0f)
 		con.SetDepth(0f,true)

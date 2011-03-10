@@ -17,15 +17,15 @@ public class Render( kri.rend.part.Meta ):
 		pColor.Value = t = kri.buf.Texture( target:TextureTarget.Texture1D, wid:data.Length, het:0 )
 		t.setState(0,true,false)
 		t.init(data)
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		drawScene()
 
 
 [STAThread]
 def Main(argv as (string)):
 	using win = kri.Window('kri.conf',0):
-		win.core.extensions.Add( cex = support.corp.Extra() )
+		win.core.extensions.Add( cex = support.part.Extra() )
 		view = kri.ViewScreen()
 		rchain = kri.rend.Chain()
 		view.ren = rchain

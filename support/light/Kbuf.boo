@@ -28,7 +28,7 @@ public class Init( kri.rend.Basic ):
 		buf.resize( pl.wid, pl.het )
 		return true
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		# depth copy
 		con.Multisample = false
 		buf.mask = 0
@@ -117,7 +117,7 @@ public class Bake( kri.rend.Basic ):
 			sphere.draw(1)
 			#break	# !debug!
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		#return	# !debug!
 		con.Multisample = false
 		texDep.Value = con.Depth
@@ -156,7 +156,7 @@ public class Apply( kri.rend.tech.Meta ):
 		dict.unit( pDir, pCol )
 		shade('/light/kbuf/apply')
 	# work
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		con.ClearColor()
 		drawScene()

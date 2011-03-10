@@ -27,6 +27,6 @@ public class Rend( kri.rend.part.Meta ):
 		assert me
 		return me.num
 
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		drawScene()

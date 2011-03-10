@@ -71,7 +71,7 @@ private class Update( kri.ani.Delta ):
 		GL.Disable( EnableCap.DepthTest )
 		if not ct.buf.mask:
 			ct.bind(1)
-			kri.rend.Context.ClearColor( Graphics.Color4.Black )
+			kri.rend.link.Basic.ClearColor( Graphics.Color4.Black )
 		# update height
 		pWave.Value = ct.buf.at.color[ct.buf.mask-1]
 		ct.bind(3)
@@ -127,7 +127,7 @@ public class Draw( kri.rend.Basic ):
 		ct.buf.mask = 0
 		return true
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		kri.Ant.Inst.params.activate(lit)
 		con.activate(false)
 		sa.use()

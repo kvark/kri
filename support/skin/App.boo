@@ -28,7 +28,7 @@ public class Update( kri.rend.tech.Basic ):
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		sa.use()
 		using kri.Discarder(true):
 			for e in kri.Scene.Current.entities:

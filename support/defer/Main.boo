@@ -37,8 +37,7 @@ public class Fill( kri.rend.tech.Meta ):
 		buf.resize( pl.wid, pl.het )
 		return true
 	# work	
-	public override def process(con as kri.rend.Context) as void:
-		con.needDepth(false)
+	public override def process(con as kri.rend.link.Basic) as void:
 		buf.at.depth = con.Depth
 		buf.bind()
 		con.SetDepth(0f, false)

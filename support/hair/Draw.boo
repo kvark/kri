@@ -19,7 +19,7 @@ public class Fill( kri.rend.Basic ):
 			sa.add( 'text/fill_point_v' )
 		sa.link( kri.Ant.Inst.slotParticles, licon.dict, kri.Ant.Inst.dict )
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f,true)
 		sa.use()
 		for pe in kri.Scene.Current.particles:
@@ -58,8 +58,8 @@ public class Draw( kri.rend.part.Meta ):
 		else:
 			shade(( '/part/draw/fur/draw_point_v', '/part/draw/fur/draw_f' ))
 	
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		if texLit:
 			for lit in kri.Scene.Current.lights:
 				kri.Ant.Inst.params.activate(lit)
@@ -102,8 +102,8 @@ public class DrawChild( kri.rend.part.Meta ):
 		assert me
 		return me.num
 
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		if texLit:
 			for lit in kri.Scene.Current.lights:
 				kri.Ant.Inst.params.activate(lit)

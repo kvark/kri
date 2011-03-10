@@ -20,7 +20,7 @@ public class Simple( kri.rend.Basic ):
 		sb.add('/copy_v','/filter/gauss_ver_f')
 		sb.link( kri.Ant.Inst.slotAttributes, dict )
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		return	if not buf
 		assert buf.at.color[0] and buf.at.color[1]
 		for i in range(2):
@@ -47,7 +47,7 @@ public class Advanced( kri.rend.Basic ):
 	public def spawn() as (kri.rend.Basic):
 		return ( Axis(self,Vector4.UnitX), Axis(self,Vector4.UnitY) )
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		return	if not buf
 		assert buf.at.color[0] and buf.at.color[1]
 		sa.useBare()
@@ -69,7 +69,7 @@ public class Axis( kri.rend.Basic ):
 		parent = par
 		dir = axis
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		parent.pTex.Value = con.Input
 		parent.pDir.Value = dir
 		con.activate(true)

@@ -13,9 +13,10 @@ private class Job:
 
 
 public class Manager(Basic):
-	private	final jall	= Dictionary[of string,Job]()
-	private	final reverse		= false
-	private final static MAX	= 100
+	private	final	jall	= Dictionary[of string,Job]()
+	private final	ln		= link.Buffer(0,0,0)
+	private	final	reverse		= false
+	private final	static MAX	= 100
 	
 	public def constructor(rev as bool):
 		super(false)
@@ -28,10 +29,11 @@ public class Manager(Basic):
 			j.deps.Add( jall[d] )
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
+		ln.resize(pl)
 		return List[of Job](jall.Values).TrueForAll() do(j as Job):
 			return j.rend.setup(pl)
 	
-	public override def process(con as Context) as void:
+	public override def process(con as link.Basic) as void:
 		jord = List[of Job]( j for j in jall.Values if j.rend.active ).ToArray()
 		total = 0
 		for j in jord:
@@ -75,5 +77,5 @@ public class Manager(Basic):
 		# run
 		Array.Reverse(jord)	if reverse
 		for j in jord:
-			con.Screen = j.toScreen
-			j.rend.process(con)
+			j.rend.process(ln)
+		ln.blitTo(con)

@@ -15,7 +15,7 @@ public class Update( kri.rend.Basic ):
 	private def drawScene() as void:
 		pass	# draw everything!
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		for ent in kri.Scene.Current.entities:
 			tag = ent.seTag[of Tag]()
 			continue	if not tag or not tag.counter

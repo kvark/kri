@@ -23,7 +23,7 @@ public class Map( kri.rend.Basic ):
 		dict.var(layer)
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
 		sa.use()
 		kri.Ant.inst.quad.draw()
@@ -35,8 +35,7 @@ public class MapDepth( Map ):
 		p2 = par.Texture(null)
 		super(true,false,-1,p2)
 		pt = p2
-	public override def process(con as kri.rend.Context) as void:
-		con.needDepth(false)
+	public override def process(con as kri.rend.link.Basic) as void:
 		pt.Value = con.Depth
 		super(con)
 
@@ -50,8 +49,8 @@ public class Attrib( kri.rend.Basic ):
 		sa.add( '/attrib_v', '/attrib_f' )
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, true )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, true )
 		con.ClearColor()
 		con.ClearDepth(1f)
 		va.bind()

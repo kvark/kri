@@ -7,19 +7,10 @@ import OpenTK.Graphics
 
 public class Clear( Basic ):
 	public backColor	= Color4.Black
-	public override def process(con as Context) as void:
+	public override def process(con as link.Basic) as void:
 		con.activate(false)
 		con.ClearColor( backColor )
 
-
-#---------	COPY	--------#
-
-public class Copy( Basic ):
-	public def constructor():
-		super(true)
-	public override def process(con as Context) as void:
-		con.copy()
-		
 
 #---------	EARLY Z FILL	--------#
 
@@ -32,8 +23,8 @@ public class EarlyZ( tech.General ):
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
-	public override def process(con as Context) as void:
-		con.activate( ColorTarget.None, 1f, true )
+	public override def process(con as link.Basic) as void:
+		con.activate( con.Target.None, 1f, true )
 		con.ClearDepth(1f)
 		drawScene()
 
@@ -50,11 +41,11 @@ public class Emission( tech.Meta ):
 		shade('/mat_base')
 		dict.var(pBase)
 		pBase.Value = Color4.Black
-	public override def process(con as Context) as void:
+	public override def process(con as link.Basic) as void:
 		if fillDepth:
-			con.activate( ColorTarget.Same, 1f, true )
+			con.activate( con.Target.Same, 1f, true )
 			con.ClearDepth(1f)
-		else: con.activate( ColorTarget.Same, 0f, false )
+		else: con.activate( con.Target.Same, 0f, false )
 		con.ClearColor( backColor )
 		drawScene()
 
@@ -71,8 +62,8 @@ public class Color( tech.General ):
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
-	public override def process(con as Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		if add:
 			using blend = kri.Blender():
 				blend.add()
@@ -94,8 +85,8 @@ public class All( tech.General ):
 		sa = kri.shade.Smart()
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 		return sa
-	public override def process(con as Context) as void:
-		con.activate( ColorTarget.Same, 0f, true )
+	public override def process(con as link.Basic) as void:
+		con.activate( con.Target.Same, 0f, true )
 		con.ClearDepth(1f)
 		con.ClearColor()
 		drawScene()

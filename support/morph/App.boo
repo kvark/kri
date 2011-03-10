@@ -42,7 +42,7 @@ public class Update( kri.rend.Basic ):
 		sa.feedback(true,'to_pos')
 		sa.link( slot, d, kri.Ant.Inst.dict )
 	
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		trans = Dictionary[of int,int]()
 		sa.use()
 		va.bind()

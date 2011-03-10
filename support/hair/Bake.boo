@@ -45,7 +45,7 @@ public class Bake( kri.rend.Basic ):
 		vbo.Semant.Add( kri.vb.Info(
 			size:1, slot:0, type:VertexAttribPointerType.UnsignedByte ))
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		for e in kri.Scene.Current.entities:
 			tCur	= e.seTag[of Tag]()
 			continue	if not tCur

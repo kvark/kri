@@ -46,7 +46,7 @@ public class Render( kri.rend.Basic ):
 		buf.resize( pl.wid>>qlog, pl.het>>qlog)
 		return true
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		buf.bind()
 		con.SetDepth(0f, true)
 		con.ClearDepth( 1f )
@@ -63,7 +63,7 @@ public class Render( kri.rend.Basic ):
 			sa.use()
 			e.mesh.draw(1)
 		if not 'Debug':
-			con.activate( ColorTarget.Same, 0f, false )
+			con.activate( con.Target.Same, 0f, false )
 			pTex.Value = buf.at.color[0] as kri.buf.Texture
 			sb.use()
 			kri.Ant.Inst.quad.draw()

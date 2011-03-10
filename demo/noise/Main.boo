@@ -28,7 +28,7 @@ public class Simplex( kri.rend.Basic ):
 		khet = 1f / pl.het
 		return true
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
 		sa.use()
 		kri.Ant.Inst.quad.draw()

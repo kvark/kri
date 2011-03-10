@@ -35,7 +35,7 @@ public abstract class Simple( Basic ):
 	public dTest	as bool	= true
 	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Program:
 		return sa
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		off = (Single.NaN,0f)[dTest]
-		con.activate( ColorTarget.Same, off, false )
+		con.activate( con.Target.Same, off, false )
 		drawScene()

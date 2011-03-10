@@ -30,7 +30,7 @@ public class Fill( kri.rend.tech.General ):
 		k = 1f / (l.rangeOut - l.rangeIn)
 		pDist.Value = Vector4(k, l.rangeIn+l.rangeOut, 0f, 0f)
 
-	public override def process(con as kri.rend.Context) as void:
+	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f, true)	# offset for HW filtering
 		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
@@ -61,8 +61,8 @@ public class Apply( kri.rend.tech.Meta ):
 		return Updater() do() as int:
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
-	public override def process(con as kri.rend.Context) as void:
-		con.activate( ColorTarget.Same, 0f, false )
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate( con.Target.Same, 0f, false )
 		butch.Clear()
 		#Texture.Slot(8)
 		for l in kri.Scene.Current.lights:
