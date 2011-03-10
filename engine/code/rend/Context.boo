@@ -4,13 +4,6 @@ import System
 import OpenTK.Graphics.OpenGL
 import kri.buf
 
-# Rendering context class
-public enum ActiveDepth:
-	None
-	With
-	Only
-
-
 # Context passed to renders
 public class Context:
 	public	final	bitColor	as byte			# color storage
@@ -18,29 +11,29 @@ public class Context:
 	private	final	buf			= Holder()		# intermediate FBO
 	private	final	last		as Frame		# final result
 	private	target		as Frame	= null		# current result
-	private	lockInput	as bool		= false		# lock input texture
 	private	final	texTarget	as TextureTarget
 	private final	nSamples	as byte
 
-	[getter(Input)]
-	private tInput	as kri.buf.Texture	= null
-	[getter(Depth)]
-	private tDepth	as kri.buf.Texture	= null
-	public LockIn	as bool:
+	public Input as Texture:
+		get: return buf.at.color[0] as Texture
+	public Depth as Texture:
+		get:
+			st = buf.at.stencil as Texture
+			return st	if st and st.pixFormat == PixelFormat.DepthStencil
+			return buf.at.depth as Texture
 		set:
-			if value:
-				lockInput = false
-				swapInput()
-				needColor(false)
-			lockInput = value
-		get: return lockInput
+			if not value:
+				buf.at.depth = buf.at.stencil = null
+			elif value.pixFormat == PixelFormat.DepthStencil:
+				buf.at.stencil = value
+			else:
+				buf.at.depth = value
+		
 	public Aspect	as single:
 		get: # make sure FBO has color plane
-			needColor(true)
 			return buf.getInfo().Aspect
 	public Info		as kri.buf.Plane:
 		get: return target.getInfo()
-	
 	public Screen	as bool:
 		get: return target == last
 		set: target = (last if value else buf)
@@ -89,75 +82,28 @@ public class Context:
 		b = bc | bd
 		assert b<=48 and not (b&0x7)
 	
-	public def swapInput() as void:
-		return	if lockInput
-		s = buf.at.color[0]
-		buf.at.color[0] = tInput
-		tInput = s as Texture
-	
 	public def resize(w as int, h as int) as Plane:
-		# make sure color is here
-		lockInput = false
-		needColor(true)
-		# make sure depth is here
-		if Depth and Depth.pixFormat == PixelFormat.DepthStencil	and not buf.at.stencil:
-			buf.at.stencil	= Depth
-			tDepth = null
-		if Depth and Depth.pixFormat == PixelFormat.DepthComponent	and not buf.at.depth:
-			buf.at.depth	= Depth
-			tDepth = null
-		# do it
+		if not Input:
+			buf.at.color[0] = makeSurface()
 		buf.resize(w,h)
-		# don't forget about second texture
-		if Input:
-			t = buf.at.color[0] as Texture
-			Input.samples = nSamples
-			Input.intFormat = t.intFormat
-			Input.init(w,h)
 		return buf.getInfo()
-	
-	private BufDepth as Texture:
-		get:
-			st = buf.at.stencil as Texture
-			return st	if st and st.pixFormat == PixelFormat.DepthStencil
-			return buf.at.depth as Texture
-		set:
-			if not value:
-				buf.at.depth = buf.at.stencil = null
-			elif value.pixFormat == PixelFormat.DepthStencil:
-				buf.at.stencil = value
-			else:
-				buf.at.depth = value
+
+	public def makeSurface() as Texture:
+		return Texture(
+			target:texTarget, samples:nSamples,
+			intFormat:FmColor[bitColor>>3] )
+
 	
 	public def needDepth(dep as bool) as void:
-		bd = BufDepth
-		assert not bd or not Depth
-		if dep and not bd:
-			# need depth but don't have one
-			if tDepth:
-				BufDepth = tDepth
-				tDepth = null
-			else:
-				pf = (PixelFormat.DepthComponent,PixelFormat.DepthStencil)[bitDepth==8]
-				BufDepth = t = Texture( target:texTarget, samples:nSamples,
-					intFormat:FmDepth[bitDepth>>3], pixFormat:pf )
-				tor = (of Surface: buf.at.color[0],tInput)[tInput!=null]
-				t.init( tor.wid, tor.het )
-		if not dep and bd:
-			# don't need it but it's there
-			tDepth = bd
-			BufDepth = null
+		return	if Depth or not dep
+		# need depth but don't have one
+		pf = (PixelFormat.DepthComponent,PixelFormat.DepthStencil)[bitDepth==8]
+		Depth = t = makeSurface()
+		t.pixFormat = pf
+		t.intFormat = FmDepth[bitDepth>>3]
+		tor = buf.at.color[0]
+		t.init( tor.wid, tor.het )
 
-	public def needColor(col as bool) as void:
-		if (col and not buf.at.color[0]) or not (col or Input):
-			swapInput()
-		if (col and not buf.at.color[0]):
-			buf.at.color[0] = t = Texture(
-				target:texTarget, samples:nSamples,
-				intFormat:FmColor[bitColor>>3] )
-			if Input:
-				t.init( Input.wid, Input.het )
-	
 	public static def SetDepth(offset as single, write as bool) as void:
 		DepthTest = on = (not Single.IsNaN(offset))
 		# set polygon offset
@@ -169,22 +115,27 @@ public class Context:
 			GL.Enable(cap)
 		else:	GL.Disable(cap)
 	
-	public def activate(toColor as bool, offset as single, toDepth as bool) as void:
+	public def activate(ct as Basic.ColorTarget, offset as single, toDepth as bool) as void:
 		assert target
 		kri.Ant.Inst.params.activate( target.getInfo() )
 		if target == buf:
-			buf.mask = (0,1)[toColor]
 			needDepth( not Single.IsNaN(offset) )
-			needColor(toColor)
+			buf.mask = (0,1)[ ct!=Basic.ColorTarget.None ]
+			if ct == Basic.ColorTarget.New:
+				t = buf.at.color[1]
+				buf.at.color[1] = Input
+				if not t:
+					t = makeSurface()
+					t.init( Input.wid, Input.het )
+				buf.at.color[0] = t
 		target.bind()
 		SetDepth(offset,toDepth)
-
-	public def activate() as void:
-		activate(true, Single.NaN, true)
+	
+	public def activate(toNew as bool) as void:
+		ct = (Basic.ColorTarget.Same,Basic.ColorTarget.New)[toNew]
+		activate( ct, Single.NaN, true )
 
 	public def blitTo(dest as Frame, what as ClearBufferMask) as void:
-		needColor(true)	if what & ClearBufferMask.ColorBufferBit
-		needDepth(true)	if what & ClearBufferMask.DepthBufferBit
 		buf.copyTo(dest,what)
 	
 	public def copy() as void:

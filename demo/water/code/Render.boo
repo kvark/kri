@@ -129,6 +129,6 @@ public class Draw( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.Context) as void:
 		kri.Ant.Inst.params.activate(lit)
-		con.activate()
+		con.activate(false)
 		sa.use()
 		kri.Ant.Inst.quad.draw()

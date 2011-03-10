@@ -76,5 +76,4 @@ public class Manager(Basic):
 		Array.Reverse(jord)	if reverse
 		for j in jord:
 			con.Screen = j.toScreen
-			con.LockIn = j.rend.bInput
 			j.rend.process(con)

@@ -90,5 +90,5 @@ public class Render( kri.rend.Basic ):
 		t.setLevels(0,10)
 		t.filt(false,false)
 		sa_tone.use()
-		con.activate()
+		con.activate(true)
 		kri.Ant.Inst.quad.draw()

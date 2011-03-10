@@ -51,7 +51,6 @@ public class Bake( kri.rend.Basic ):
 		return true
 		
 	public override def process(con as kri.rend.Context) as void:
-		con.activate()
 		buf.at.depth = texDep.Value = con.Depth
 		buf.bind()
 		con.SetDepth(0f,false)
@@ -86,5 +85,5 @@ public class Apply( kri.rend.tech.Meta ):
 		shade('/light/defer/apply')
 	# work
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true, 0f, false)
+		con.activate( ColorTarget.Same, 0f, false )
 		drawScene()

@@ -24,7 +24,7 @@ public class Map( kri.rend.Basic ):
 		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
 	
 	public override def process(con as kri.rend.Context) as void:
-		con.activate()
+		con.activate(false)
 		sa.use()
 		kri.Ant.inst.quad.draw()
 
@@ -51,7 +51,7 @@ public class Attrib( kri.rend.Basic ):
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true, 0f, true)
+		con.activate( ColorTarget.Same, 0f, true )
 		con.ClearColor()
 		con.ClearDepth(1f)
 		va.bind()

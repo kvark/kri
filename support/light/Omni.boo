@@ -62,7 +62,7 @@ public class Apply( kri.rend.tech.Meta ):
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true, 0f, false)
+		con.activate( ColorTarget.Same, 0f, false )
 		butch.Clear()
 		#Texture.Slot(8)
 		for l in kri.Scene.Current.lights:

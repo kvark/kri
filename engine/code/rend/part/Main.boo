@@ -36,6 +36,6 @@ public abstract class Simple( Basic ):
 	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Program:
 		return sa
 	public override def process(con as kri.rend.Context) as void:
-		if dTest: con.activate(true, 0f, false)
-		else: con.activate()
+		off = (Single.NaN,0f)[dTest]
+		con.activate( ColorTarget.Same, off, false )
 		drawScene()

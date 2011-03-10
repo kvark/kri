@@ -63,7 +63,7 @@ public class Render( kri.rend.Basic ):
 			sa.use()
 			e.mesh.draw(1)
 		if not 'Debug':
-			con.activate(true,0f,false)
+			con.activate( ColorTarget.Same, 0f, false )
 			pTex.Value = buf.at.color[0] as kri.buf.Texture
 			sb.use()
 			kri.Ant.Inst.quad.draw()

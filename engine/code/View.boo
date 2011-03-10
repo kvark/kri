@@ -120,7 +120,6 @@ public class View:
 		if cam:
 			cam.aspect = con.Aspect
 			Ant.Inst.params.activate(cam)
-		con.LockIn = false
 		ren.process(con)
 		vb.Array.unbind()
 		Scene.current = null

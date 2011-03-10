@@ -31,11 +31,11 @@ public class ApplyBase( kri.rend.Basic ):
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
 	# work
 	public override def process(con as kri.rend.Context) as void:
-		con.activate()
 		texDepth.Value = con.Depth
+		con.activate(false)
 		onInit()
 		# enable depth check
-		con.activate(true,0f,false)
+		con.activate( ColorTarget.Same, 0f, false )
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
 		va.bind()

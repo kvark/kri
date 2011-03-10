@@ -18,7 +18,7 @@ public class Render( kri.rend.part.Meta ):
 		t.setState(0,true,false)
 		t.init(data)
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true,0f,false)
+		con.activate( ColorTarget.Same, 0f, false )
 		drawScene()
 
 

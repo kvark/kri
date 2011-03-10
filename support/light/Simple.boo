@@ -90,7 +90,7 @@ public class Apply( kri.rend.tech.Meta ):
 				addObject(e)
 		butch.Sort( kri.rend.tech.Batch.cMat )
 		# draw
-		con.activate(true, 0f, false)
+		con.activate( ColorTarget.Same, 0f, false )
 		using blend = kri.Blender():
 			blend.add()
 			for b in butch:

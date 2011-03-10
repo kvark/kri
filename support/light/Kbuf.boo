@@ -29,9 +29,8 @@ public class Init( kri.rend.Basic ):
 		return true
 	
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(false,0f,true)
-		con.Multisample = false
 		# depth copy
+		con.Multisample = false
 		buf.mask = 0
 		con.blitTo( buf, ClearBufferMask.DepthBufferBit )
 		# stencil init
@@ -120,7 +119,6 @@ public class Bake( kri.rend.Basic ):
 
 	public override def process(con as kri.rend.Context) as void:
 		#return	# !debug!
-		con.activate()
 		con.Multisample = false
 		texDep.Value = con.Depth
 		con.SetDepth(0f,false)
@@ -159,6 +157,6 @@ public class Apply( kri.rend.tech.Meta ):
 		shade('/light/kbuf/apply')
 	# work
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true, 0f, false)
+		con.activate( ColorTarget.Same, 0f, false )
 		con.ClearColor()
 		drawScene()

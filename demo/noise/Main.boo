@@ -29,7 +29,7 @@ public class Simplex( kri.rend.Basic ):
 		return true
 
 	public override def process(con as kri.rend.Context) as void:
-		con.activate()
+		con.activate(false)
 		sa.use()
 		kri.Ant.Inst.quad.draw()
 

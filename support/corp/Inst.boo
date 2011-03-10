@@ -39,7 +39,7 @@ public class Rend( kri.rend.tech.Meta ):
 			return pe.owner.total*/
 	
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true,0f,true)
+		con.activate( ColorTarget.Same, 0f, true )
 		butch.Clear()
 		for pe in kri.Scene.Current.particles:
 			continue	if not pe.mat

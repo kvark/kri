@@ -8,7 +8,7 @@ import OpenTK.Graphics
 public class Clear( Basic ):
 	public backColor	= Color4.Black
 	public override def process(con as Context) as void:
-		con.activate()
+		con.activate(false)
 		con.ClearColor( backColor )
 
 
@@ -33,7 +33,7 @@ public class EarlyZ( tech.General ):
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 	public override def process(con as Context) as void:
-		con.activate(false, 1f, true)
+		con.activate( ColorTarget.None, 1f, true )
 		con.ClearDepth(1f)
 		drawScene()
 
@@ -52,9 +52,9 @@ public class Emission( tech.Meta ):
 		pBase.Value = Color4.Black
 	public override def process(con as Context) as void:
 		if fillDepth:
-			con.activate(true, 1f, true)
+			con.activate( ColorTarget.Same, 1f, true )
 			con.ClearDepth(1f)
-		else: con.activate(true, 0f, false)
+		else: con.activate( ColorTarget.Same, 0f, false )
 		con.ClearColor( backColor )
 		drawScene()
 
@@ -72,7 +72,7 @@ public class Color( tech.General ):
 	public override def construct(mat as kri.Material) as kri.shade.Smart:
 		return sa
 	public override def process(con as Context) as void:
-		con.activate(true, 0f, false)
+		con.activate( ColorTarget.Same, 0f, false )
 		if add:
 			using blend = kri.Blender():
 				blend.add()
@@ -95,7 +95,7 @@ public class All( tech.General ):
 		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
 		return sa
 	public override def process(con as Context) as void:
-		con.activate(true, 0f, true)
+		con.activate( ColorTarget.Same, 0f, true )
 		con.ClearDepth(1f)
 		con.ClearColor()
 		drawScene()

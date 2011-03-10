@@ -8,6 +8,10 @@ import System.Collections.Generic
 public class Basic:
 	public			active	as bool = true
 	public final	bInput	as bool
+	public enum ColorTarget:
+		None
+		Same
+		New
 	public def constructor(inp as bool):
 		bInput = inp
 	public def constructor():
@@ -43,11 +47,7 @@ public class Chain(Basic):
 			if r is rout:
 				rout = null
 				con.Screen = toScreen
-			con.LockIn = r.bInput
 			r.process(con)
-			if con.LockIn:
-				con.LockIn = false
-				con.swapInput()
 
 
 #---------	GENERAL FILTER	--------#
@@ -63,7 +63,7 @@ public class Filter(Basic):
 	public override def process(con as Context) as void:
 		texIn.Value = con.Input
 		con.Input.filt(linear,false)
-		con.activate()
+		con.activate(true)
 		sa.use()
 		kri.Ant.inst.quad.draw()
 

@@ -59,7 +59,7 @@ public class Draw( kri.rend.part.Meta ):
 			shade(( '/part/draw/fur/draw_point_v', '/part/draw/fur/draw_f' ))
 	
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true,0f,false)
+		con.activate( ColorTarget.Same, 0f, false )
 		if texLit:
 			for lit in kri.Scene.Current.lights:
 				kri.Ant.Inst.params.activate(lit)
@@ -103,7 +103,7 @@ public class DrawChild( kri.rend.part.Meta ):
 		return me.num
 
 	public override def process(con as kri.rend.Context) as void:
-		con.activate(true,0f,false)
+		con.activate( ColorTarget.Same, 0f, false )
 		if texLit:
 			for lit in kri.Scene.Current.lights:
 				kri.Ant.Inst.params.activate(lit)

@@ -72,6 +72,6 @@ public class Axis( kri.rend.Basic ):
 	public override def process(con as kri.rend.Context) as void:
 		parent.pTex.Value = con.Input
 		parent.pDir.Value = dir
-		con.activate()
+		con.activate(true)
 		parent.sa.use()
 		kri.Ant.inst.quad.draw()
