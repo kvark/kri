@@ -39,7 +39,7 @@ public class Attrib( ISemanted, Object ):
 			Push(at, off, total)
 			off += at.fullSize()
 
-	private static def Push(ref at as Info, off as int, total as int) as void:
+	public static def Push(ref at as Info, off as int, total as int) as void:
 		GL.EnableVertexAttribArray( at.slot )
 		if at.integer: #TODO: use proper enum
 			GL.VertexAttribIPointer( at.slot, at.size,

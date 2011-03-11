@@ -11,26 +11,30 @@ import OpenTK.Graphics.OpenGL
 #-------------------------------#
 
 public class Program:
-	public final id as int
+	public final	handle	as int
 	[Getter(Ready)]
-	private linked as bool = false
-	private blocks	= List[of Object]()	# for debug
+	private linked	as bool = false
+	private static	Current	as Program	= null
 	[Getter(Log)]
-	private log	as string = ''
+	private log		as string = ''
+	private final	blocks	= List[of Object]()	# for debug
 
 	public def constructor():
-		id = GL.CreateProgram()
-	protected def constructor(xid as int):
-		id = xid
+		handle = GL.CreateProgram()
+	private def constructor(xid as int):
+		handle = xid
 		linked = true
 	def destructor():
-		kri.Help.safeKill({ GL.DeleteProgram(id) })
+		kri.Help.safeKill({ GL.DeleteProgram(handle) })
+	
+	public static Zero	= Program(0)
+	
 	public def check(pp as ProgramParameter) as void:
-		GL.GetProgramInfoLog(id,log)
+		GL.GetProgramInfoLog(handle,log)
 		result as int
-		GL.GetProgram(id, pp, result)
+		GL.GetProgram(handle, pp, result)
 		return	if result
-		print "Check ${pp} failed for program ${id}:\n${log}"
+		print "Check ${pp} failed for program ${handle}:\n${log}"
 		raise log
 	
 	# add specific objects
@@ -38,43 +42,45 @@ public class Program:
 		assert not linked
 		blocks.Extend(shads)
 		for sh in shads:
-			GL.AttachShader(id, sh.id)	if sh
+			GL.AttachShader(handle, sh.handle)	if sh
 	# add object from library
 	public def add(*names as (string)) as void:
 		for s in names:
 			add( Object.Load(s) )
 	# link program
-	public def link() as void:
+	public virtual def link() as void:
 		#assert not linked
 		linked = true
-		GL.LinkProgram(id)
+		GL.LinkProgram(handle)
 		check( ProgramParameter.LinkStatus )
 	# activate program
-	public virtual def use() as void:
+	public def bind() as void:
 		assert linked
 		if kri.Ant.Inst.debug:
-			GL.ValidateProgram(id)
+			GL.ValidateProgram(handle)
 			check( ProgramParameter.ValidateStatus )
-		GL.UseProgram(id)
+		return if Current == self
+		GL.UseProgram(handle)
+		Current = self
 
 	# assign vertex attribute slot
-	public def attrib(index as int, name as string) as void:
+	public def attrib(index as byte, name as string) as void:
 		assert index < kri.Ant.Inst.caps.vertexAttribs
-		GL.BindAttribLocation(id, index, name)
+		GL.BindAttribLocation(handle, index, name)
 	# assign fragment output slot
 	public def fragout(*names as (string)) as void:
 		assert names.Length <= kri.Ant.Inst.caps.drawBuffers
 		for i in range(names.Length):
-			GL.BindFragDataLocation(id, i, names[i])
+			GL.BindFragDataLocation( handle, i, names[i] )
 	# assign transform feedback
 	public def feedback(sep as bool, *names as (string)) as void:
-		GL.TransformFeedbackVaryings( id, names.Length, names,
-		(TransformFeedbackMode.InterleavedAttribs,TransformFeedbackMode.SeparateAttribs)[sep] )
+		tm = (TransformFeedbackMode.InterleavedAttribs,TransformFeedbackMode.SeparateAttribs)[sep]
+		GL.TransformFeedbackVaryings( handle, names.Length, names, tm )
 
 	# get uniform location by name
-	public def getVar(name as string) as int:
+	public def getLocation(name as string) as int:
 		assert linked
-		return GL.GetUniformLocation(id,name)
+		return GL.GetUniformLocation(handle,name)
 	# set uniform parameter value
 	[ext.spec.ForkMethod(fun, GL.Uniform1, (int,single))]
 	[ext.spec.ForkMethod(fun, GL.Uniform4, (Color4,Vector4,Quaternion))]
@@ -88,5 +94,5 @@ public class Program:
 	public virtual def clear() as void:
 		linked = false
 		for sh in blocks:
-			GL.DetachShader( id, sh.id )	if sh
+			GL.DetachShader( handle, sh.handle )	if sh
 		blocks.Clear()

@@ -19,13 +19,13 @@ public class Tech( Basic ):
 	protected virtual def update(pe as kri.part.Emitter) as uint:
 		return 0
 	
-	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as Program:
+	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as Smart:
 		m = pe.mat
 		return null	if not m
 		sa = m.tech[tid]
 		if not sa:
 			m.tech[tid] = sa = construct(pe)
-		return null	if sa == Smart.Fixed
+		return null		if not sa.handle
 		if pe.techReady[tid] == kri.part.TechState.Unknown:
 			ats = List[of int]( sa.gatherAttribs( kri.Ant.Inst.slotParticles, false )).ToArray()
 			pat = pe.listAttribs()

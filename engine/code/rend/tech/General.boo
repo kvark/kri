@@ -23,7 +23,7 @@ public struct Batch:	# why struct?
 	#public static cMat	= CompMat()
 	public class CompMat( IComparer[of Batch] ):
 		public def Compare(a as Batch, b as Batch) as int:
-			r = a.sa.id - b.sa.id
+			r = a.sa.handle - b.sa.handle
 			return r	if r
 			r = a.va.id - b.va.id
 			return r

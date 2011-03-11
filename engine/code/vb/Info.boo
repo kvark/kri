@@ -13,7 +13,7 @@ public interface ISource:
 
 public struct Info:
 	public slot	as int	# from slotAttributes
-	public name	as string
+	public name	as int
 	public size	as int	# in units
 	public type	as VertexAttribPointerType
 	public integer	as bool

@@ -17,7 +17,7 @@ public class Linker:
 		condict = cad
 	
 	public def link(sl as Object*, *dc as (rep.Dict)) as Smart:
-		key = join( (x.id.ToString() for x in sl), ',' )
+		key = join( (x.handle.ToString() for x in sl), ',' )
 		sa as Smart = null
 		if samap.TryGetValue(key,sa):
 			sa = Smart(sa)

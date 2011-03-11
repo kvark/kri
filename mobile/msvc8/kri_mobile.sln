@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "app", "app.vcproj", "{A422F
 		{2FCCE609-DEB0-40D3-8112-E167020BBFD8} = {2FCCE609-DEB0-40D3-8112-E167020BBFD8}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib3ds", "..\..\lib3ds-20080909\src\lib3ds.vcproj", "{9CF2B398-9087-4D33-90EB-0320F42C78F4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib3ds", "..\..\..\lib3ds-20080909\src\lib3ds.vcproj", "{9CF2B398-9087-4D33-90EB-0320F42C78F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

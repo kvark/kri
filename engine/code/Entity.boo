@@ -74,6 +74,12 @@ public class Entity( kri.ani.data.Player ):
 	public final va		= array[of vb.Array]	( kri.Ant.Inst.slotTechniques.Size )
 	public final tags	= List[of ITag]()
 	
+	public CombinedAttribs as vb.Attrib*:
+		get:
+			return store.vbo	if not mesh
+			return mesh.vbo.ToArray() + store.vbo.ToArray()
+
+	
 	public def constructor():
 		pass
 	public def constructor(e as Entity):
@@ -124,5 +130,5 @@ public class Entity( kri.ani.data.Player ):
 			tm = t as TagMat
 			continue if not tm
 			m = tm.mat
-			ml.Add(m)	if m.tech[tid] == shade.Smart.Fixed
+			ml.Add(m)	if not m.tech[tid].handle
 		return ml

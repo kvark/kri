@@ -19,6 +19,7 @@ obj
 _bin
 _obj
 
+*.user
 *.xml
 *.mdb
 *.pdb
@@ -29,3 +30,5 @@ _obj
 *.orig
 *.zip
 *.pyc
+*.ncb
+*.suo

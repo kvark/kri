@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Basic( kri.rend.Basic ):
 	public bAdd		as single = 0f
-	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Program:
+	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Smart:
 		pass
 	public def drawScene() as void:
 		using blend = kri.Blender(),\
@@ -31,7 +31,7 @@ public class Basic( kri.rend.Basic ):
 public abstract class Simple( Basic ):
 	protected final sa		= kri.shade.Smart()
 	public dTest	as bool	= true
-	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Program:
+	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Smart:
 		return sa
 	public override def process(con as kri.rend.link.Basic) as void:
 		off = (Single.NaN,0f)[dTest]
