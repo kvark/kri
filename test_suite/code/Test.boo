@@ -7,7 +7,6 @@ private class ShaderLink( kri.rend.Basic ):
 	final sa	= kri.shade.Program()
 	
 	public def constructor():
-		super(false)
 		text1 = """
 		#version 130
 		uniform struct Spatial	{
@@ -38,7 +37,6 @@ private class PolygonOffset( kri.rend.Basic ):
 	final vbo	= kri.vb.Attrib()
 
 	public def constructor():
-		super(false)
 		text = """
 		#version 130
 		in vec4 at_vertex;
@@ -82,7 +80,6 @@ private class PolygonOffset( kri.rend.Basic ):
 private class TextureRead( kri.rend.Basic ):
 	public final buf	= kri.buf.Holder( mask:1 )
 	public def constructor():
-		super(false)
 		data = (of short: 1,2,3,4)
 		buf.at.color[0] = tex = kri.buf.Texture(
 			wid:2, het:2,
@@ -111,7 +108,6 @@ private class Feedback( kri.rend.Basic ):
 	private final	sl		as kri.lib.Slot
 	
 	public def constructor(pc as kri.part.Context):
-		super(false)
 		if pc:
 			sl = kri.Ant.Inst.slotParticles
 			atId = pc.at_pos

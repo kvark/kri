@@ -25,7 +25,6 @@ public class Update( kri.rend.Basic ):
 	public final va		= kri.vb.Array()
 
 	public def constructor():
-		super(false)
 		buf.at.depth = kri.buf.Texture.Depth(0)
 		sa.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
 		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)

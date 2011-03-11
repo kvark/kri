@@ -8,8 +8,6 @@ import OpenTK.Graphics.OpenGL
 
 public class Basic( kri.rend.Basic ):
 	public bAdd		as single = 0f
-	protected def constructor():
-		super(false)
 	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Program:
 		pass
 	public def drawScene() as void:

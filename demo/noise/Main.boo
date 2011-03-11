@@ -10,7 +10,6 @@ public class Simplex( kri.rend.Basic ):
 	private khet	as single	= 1f
 
 	public def constructor(win as kri.Window, noise as kri.gen.Noise):
-		super(false)
 		# init textures
 		if noise:	noise.generate(8)
 		else:	noise = kri.gen.Noise(8)

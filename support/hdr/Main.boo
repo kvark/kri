@@ -18,7 +18,6 @@ public class Render( kri.rend.Basic ):
 	private final pExpo		= kri.shade.par.Value[of single]('exposure')
 	
 	public def constructor(ctx as Context):
-		super(true)
 		context = ctx
 		sl = kri.Ant.Inst.slotAttributes
 		pExpo.Value = 1f

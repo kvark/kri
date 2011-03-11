@@ -26,7 +26,6 @@ public class Bake( kri.rend.Basic ):
 		kri.buf.Texture())
 
 	public def constructor(pc as kri.part.Context):
-		super(false)
 		# init dictionary
 		d = rep.Dict()
 		d.var(pWid)

@@ -65,7 +65,6 @@ public class Axis( kri.rend.Basic ):
 	public final dir	as Vector4
 	
 	public def constructor(par as Advanced, axis as Vector4):
-		super(true)
 		parent = par
 		dir = axis
 	

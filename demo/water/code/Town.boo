@@ -14,7 +14,6 @@ private class Town( kri.rend.Basic ):
 			return buf.at.color[0]
 	
 	public def constructor():
-		super(false)
 		sa.add( con.sh_simplex, con.sh_turbo )
 		sa.add( '/copy_v', 'text/town_f' )
 		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )

@@ -29,7 +29,6 @@ public class Bake( kri.rend.Basic ):
 	private final static	pif = PixelInternalFormat.Rgba16f
 
 	public def constructor(dc as Context, lc as support.light.Context):
-		super(false)
 		buf = dc.buf
 		context = lc
 		# baking shader

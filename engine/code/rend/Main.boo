@@ -6,12 +6,7 @@ import System.Collections.Generic
 #---------	BASIC RENDER	--------#
 
 public class Basic:
-	public			active	as bool = true
-	public final	bInput	as bool
-	public def constructor(inp as bool):
-		bInput = inp
-	public def constructor():
-		bInput = false
+	public	active	as bool = true
 	public virtual def setup(pl as kri.buf.Plane) as bool:
 		return true
 	public virtual def process(con as link.Basic) as void:
@@ -48,7 +43,6 @@ public class Filter(Basic):
 	protected final dict	= kri.shade.rep.Dict()
 	protected linear		= false
 	public def constructor():
-		super(true)
 		dict.unit(texIn)
 	public override def process(con as link.Basic) as void:
 		texIn.Value = con.Input

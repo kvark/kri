@@ -25,7 +25,7 @@ public class Render( kri.rend.part.Meta ):
 [STAThread]
 def Main(argv as (string)):
 	using win = kri.Window('kri.conf',0):
-		win.core.extensions.Add( cex = support.part.Extra() )
+		win.core.extensions.Add( cex = support.corp.Extra() )
 		view = kri.ViewScreen()
 		rchain = kri.rend.Chain()
 		view.ren = rchain

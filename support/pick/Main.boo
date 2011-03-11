@@ -20,7 +20,6 @@ public class Render( kri.rend.Basic ):
 	private final pTex	= kri.shade.par.Value[of kri.buf.Texture]('input')
 
 	public def constructor(win as kri.Window, reduct as uint, numorder as uint):
-		super(false)
 		active = false
 		qlog = reduct
 		mouse = win.Mouse

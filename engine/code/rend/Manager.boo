@@ -19,7 +19,6 @@ public class Manager(Basic):
 	private final	static MAX	= 100
 	
 	public def constructor(rev as bool):
-		super(false)
 		reverse = rev
 	
 	public def add(name as string, dif as int, r as Basic, *deps as (string)) as void:

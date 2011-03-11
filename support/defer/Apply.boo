@@ -18,7 +18,6 @@ public class ApplyBase( kri.rend.Basic ):
 		pass
 	# init
 	public def constructor(qord as byte):
-		super(false)
 		# bake sphere attribs
 		va.bind()	# the buffer objects are bound in creation
 		sphere = kri.gen.Sphere( qord, OpenTK.Vector3.One )

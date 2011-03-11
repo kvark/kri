@@ -32,7 +32,6 @@ public class Update( kri.rend.Basic ):
 	private final slot	= kri.lib.Slot(4)
 	private final eps	= 1.0e-7
 	public def constructor():
-		super(false)
 		slot.create('pos')
 		for i in range(4):
 			slot.create('pos'+(i+1))
