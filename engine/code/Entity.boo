@@ -67,8 +67,8 @@ public class TagMat(ITag):
 #--------- Entity ---------#
 
 public class Entity( kri.ani.data.Player ):
-	public node	as Node		= null
-	public mesh	as Mesh		= null
+	public node		as Node	= null
+	public mesh		as Mesh	= null
 	public visible	as bool	= true
 	public final store	= vb.Storage()
 	public final va		= array[of vb.Array]	( kri.Ant.Inst.slotTechniques.Size )
@@ -77,7 +77,6 @@ public class Entity( kri.ani.data.Player ):
 	public def constructor():
 		pass
 	public def constructor(e as Entity):
-		# leaving unique buffers & textures
 		mesh = e.mesh
 		visible = e.visible
 		tags.AddRange( e.tags )

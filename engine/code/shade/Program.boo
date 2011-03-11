@@ -14,7 +14,7 @@ public class Program:
 	public final id as int
 	[Getter(Ready)]
 	private linked as bool = false
-	private blocks	= List[of Object]()
+	private blocks	= List[of Object]()	# for debug
 	[Getter(Log)]
 	private log	as string = ''
 

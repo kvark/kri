@@ -105,13 +105,14 @@
     <Compile Include="code\rend\Manager.boo" />
     <Compile Include="code\data\Main.boo" />
     <Compile Include="code\data\Switch.boo" />
+    <Compile Include="code\shade\Bundle.boo" />
     <Compile Include="code\shade\Code.boo" />
     <Compile Include="code\shade\Linker.boo" />
+    <Compile Include="code\shade\par\Main.boo" />
+    <Compile Include="code\shade\rep\Main.boo" />
     <Compile Include="code\shade\Smart.boo" />
     <Compile Include="code\shade\Object.boo" />
-    <Compile Include="code\shade\Param.boo" />
     <Compile Include="code\shade\Program.boo" />
-    <Compile Include="code\shade\Rep.boo" />
     <Compile Include="code\sound\Main.boo" />
     <Compile Include="code\Spatial.boo" />
     <Compile Include="code\Tool.boo" />
@@ -186,6 +187,8 @@
     <Folder Include="code\" />
     <Folder Include="code\rend\" />
     <Folder Include="code\rend\link" />
+    <Folder Include="code\shade\rep" />
+    <Folder Include="code\shade\par" />
     <Folder Include="shader\" />
     <Folder Include="shader\" />
     <Folder Include="shader\" />
