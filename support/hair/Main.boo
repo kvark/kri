@@ -25,7 +25,7 @@ public class Tag( kri.ITag, kri.vb.ISource ):
 		pixels = size
 		va.bind()
 		for i in range(2):
-			kri.Help.enrich( aBase, 3, (at_prev,at_base)[i] )
+			kri.Help.enrich( aBase, 3, ((at_prev,at_base)[i],), (('prev','base')[i],) )
 		aBase.initAll(size)
 
 	public def makeRoot() as (kri.part.ExtAttrib):

@@ -21,7 +21,7 @@ public class Program:
 
 	public def constructor():
 		handle = GL.CreateProgram()
-	private def constructor(xid as int):
+	protected def constructor(xid as int):
 		handle = xid
 		linked = true
 	def destructor():

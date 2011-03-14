@@ -33,7 +33,7 @@ public struct Constructor:
 			m.nPoly = m.nVert / m.polySize
 			vbo = kri.vb.Attrib()
 			vbo.init( v, false )
-			kri.Help.enrich( vbo, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
+			kri.Help.enrich( vbo, 4, (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat), ('vertex','quat') )
 			m.vbo.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize

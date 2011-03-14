@@ -17,7 +17,7 @@ public class Behavior( kri.part.Behavior ):
 	# fun
 	public def constructor(pc as kri.part.Context, segs as byte):
 		super('/part/beh/fur_main')
-		kri.Help.enrich( self, 3, pc.at_pos, pc.at_speed )
+		kri.Help.enrich( self, 3, (pc.at_pos, pc.at_speed), ('pos','speed') )
 		layers = segs
 		posId = pc.at_pos
 		kd = 1f / segs

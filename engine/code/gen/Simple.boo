@@ -40,7 +40,8 @@ public class Point( Mesh ):
 		.nVert = .nPoly = 1
 		vat = kri.vb.Attrib()
 		vat.init(1)
-		ai = kri.vb.Info( slot:kri.Ant.Inst.attribs.vertex,
+		ai = kri.vb.Info(
+			slot:kri.Ant.Inst.attribs.vertex, name:'vertex',
 			size:1, type:VertexAttribPointerType.UnsignedByte )
 		vat.Semant.Add(ai)
 		vbo.Add(vat)
@@ -58,7 +59,8 @@ public class Quad( Mesh ):
 			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
 			Vector2h(-1f,1f),	Vector2h(1f,1f),
 			), false)
-		ai = kri.vb.Info( slot:kri.Ant.Inst.attribs.vertex,
+		ai = kri.vb.Info(
+			slot:kri.Ant.Inst.attribs.vertex, name:'vertex',
 			size:2, type:VertexAttribPointerType.HalfFloat )
 		vat.Semant.Add(ai)
 		vbo.Add(vat)
@@ -74,7 +76,7 @@ public class Line( Mesh ):
 		data = (of Vector4: Vector4(-1f,0f,0f,1f), Vector4(1f,0f,0f,1f))
 		vat = kri.vb.Attrib()
 		vat.init( data, false )
-		kri.Help.enrich( vat, 4, kri.Ant.Inst.attribs.vertex )
+		kri.Help.enrich( vat, 4, (kri.Ant.Inst.attribs.vertex,), ('vertex',) )
 		vbo.Add(vat)
 
 
@@ -107,7 +109,7 @@ public class PlaneTex( Mesh ):
 		vat = kri.vb.Attrib()
 		vat.init( v, false )
 		# fill semantics
-		kri.Help.enrich( vat, 4, kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat )
-		kri.Help.enrich( vat, 2, kri.Ant.Inst.attribs.tex[0] )
+		kri.Help.enrich( vat, 4, (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat), ('vertex','quat') )
+		kri.Help.enrich( vat, 2, (kri.Ant.Inst.attribs.tex[0],), ('tex0',) )
 		# return
 		vbo.Add(vat)

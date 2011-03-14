@@ -43,7 +43,7 @@ public class Manager(DataHolder):
 		col_update.root	= pc.sh_fur_root
 		if not 'Attrib zero bug workaround':
 			b2 = Behavior('/part/fur/dummy')
-			kri.Help.enrich( b2, 2, kri.Ant.Inst.slotParticles.getForced('sys') )
+			kri.Help.enrich( b2, 2, (kri.Ant.Inst.slotParticles.getForced('sys'),), ('sys',) )
 			behos.Add(b2)
 	
 	public def seBeh[of T(Behavior)]() as T:

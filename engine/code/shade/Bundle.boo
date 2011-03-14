@@ -66,6 +66,7 @@ public struct Uniform:
 			assert type == ActiveUniformType.FloatVec4
 			return ParUni_Color4(loc,iv)
 		elif T == kri.buf.Texture:
+			assert name.StartsWith( Smart.prefixUnit )
 			tn = tun++
 			return ParTexture(loc,iv,tn)
 		return null
@@ -118,7 +119,9 @@ public class Mega(Program):
 		GL.GetProgram( handle, ProgramParameter.ActiveAttributes, num )
 		attribs = array[of Attrib](num)
 		for i in range(num):
-			attribs[i].name = GL.GetActiveAttrib( handle, i, size, attribs[i].type )
+			str = GL.GetActiveAttrib( handle, i, size, attribs[i].type )
+			assert str.StartsWith( Smart.prefixAttrib )
+			attribs[i].name = str.Substring( Smart.prefixAttrib.Length )
 			attribs[i].size = size
 		# read uniforms
 		uniforms.Clear()
@@ -182,8 +185,6 @@ public class Bundle:
 					total += sem.fullSize()
 				break	if target.size
 			return false	if not cur.matches(target)
-			GL.EnableVertexAttribArray(i)
 			target.slot = i
 			kri.vb.Attrib.Push(target,off,total)
-		activate()
 		return true

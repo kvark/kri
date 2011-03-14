@@ -42,7 +42,7 @@ public class ExMesh( kri.IExtension ):
 		ai = kri.vb.Info(
 			slot: kri.Ant.Inst.attribs.vertex, size:4,
 			type: VertexAttribPointerType.Float,
-			integer:false )
+			integer:false,	name:'vertex' )
 		return LoadArray[of Vector4]( r,1,ai, r.getVec4 )
 	
 	#---	Parse mesh quaternions 	---#
@@ -50,7 +50,7 @@ public class ExMesh( kri.IExtension ):
 		ai = kri.vb.Info(
 			slot: kri.Ant.Inst.attribs.quat, size:4,
 			type: VertexAttribPointerType.Float,
-			integer:false )
+			integer:false,	name:'quat' )
 		return LoadArray[of Quaternion]( r,1,ai, r.getQuat )
 	
 	#---	Parse mesh texture coordinates (UV)	---#
@@ -64,7 +64,7 @@ public class ExMesh( kri.IExtension ):
 		ai = kri.vb.Info(
 			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
 			type:VertexAttribPointerType.Float,
-			integer:false )
+			integer:false,	name:'tex'+slot )
 		return LoadArray[of Vector2]( r,1,ai, r.getVec2 )
 	
 	#---	Parse mesh vertex colors	---#
@@ -78,7 +78,7 @@ public class ExMesh( kri.IExtension ):
 		ai = kri.vb.Info(
 			slot:kri.Ant.Inst.attribs.color[slot], size:3,
 			type:VertexAttribPointerType.UnsignedByte,
-			integer:false )
+			integer:false,	name:'color')
 		return LoadArray[of ColorRaw]( r,1,ai, r.getColorRaw )
 	
 	#---	Parse mesh indexes	---#

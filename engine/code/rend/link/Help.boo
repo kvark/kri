@@ -10,8 +10,8 @@ public class Help:
 	public static def Init() as void:
 		GL.Enable( EnableCap.CullFace )
 		GL.CullFace( CullFaceMode.Back )
-		GL.ClearDepth(1f)
-		GL.DepthRange(0f,1f)
+		GL.ClearDepth(1.0)
+		GL.DepthRange(0.0,1.0)
 		GL.DepthFunc( DepthFunction.Lequal )
 	
 	public static def SetDepth(offset as single, write as bool) as bool:
@@ -26,7 +26,7 @@ public class Help:
 		else:	GL.Disable(cap)
 		return true
 	
-	public static def ClearDepth(val as single) as void:
+	public static def ClearDepth(val as double) as void:
 		GL.ClearDepth(val)
 		GL.Clear( ClearBufferMask.DepthBufferBit )
 	public static def ClearStencil(val as int) as void:

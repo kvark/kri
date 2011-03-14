@@ -61,7 +61,7 @@ private class PolygonOffset( kri.rend.Basic ):
 		GL.DepthMask(true)
 		GL.ClearDepth( 1.0f );
 		GL.Clear( ClearBufferMask.DepthBufferBit )
-		sa.use()
+		sa.bind()
 		
 		GL.Enable( EnableCap.PolygonOffsetFill )
 		GL.PolygonOffset( 0.0f, 2.0f )

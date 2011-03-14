@@ -46,6 +46,6 @@ public class Extra( kri.IExtension ):
 		tag.Value = r.getReal()
 		ar = kri.load.ExMesh.GetArray[of Vector3]( e.mesh.nVert, r.getVector )
 		tag.data.init(ar,false)
-		kri.Help.enrich( tag.data, 3, kri.Ant.Inst.attribs.vertex )
+		kri.Help.enrich( tag.data, 3, (kri.Ant.Inst.attribs.vertex,), ('vertex',) )
 		e.tags.Add(tag)
 		return true

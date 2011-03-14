@@ -13,8 +13,8 @@ public class Context:
 
 
 public class Bake( kri.rend.tech.Basic ):
-	private final sa		= kri.shade.Smart()
-	private final sb		= kri.shade.Smart()
+	private final pu		= kri.shade.Bundle()
+	private final pv		= kri.shade.Bundle()
 	private final buf		as kri.buf.Holder
 	private final diModel	= Dictionary[of kri.Entity,kri.Spatial]()
 	private final diCamera	= Dictionary[of kri.Camera,kri.Spatial]()
@@ -34,14 +34,18 @@ public class Bake( kri.rend.tech.Basic ):
 		for par as kri.meta.IBase in bones:
 			par.link(d)
 		# simple shader
+		sa = pu.shader
 		sa.add( '/lib/quat_v', '/lib/tool_v' )
 		sa.add( '/motion/bake_v', '/motion/bake_f' )
-		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		pu.dicts.Add(d)
+		pu.link()
 		# skin shader
-		sb.add( '/lib/quat_v', '/lib/tool_v' )
-		sb.add( '/skin/skin_v', '/skin/dual_v' )
-		sb.add( '/motion/skin_v', '/motion/bake_f' )
-		sb.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		sa = pv.shader
+		sa.add( '/lib/quat_v', '/lib/tool_v' )
+		sa.add( '/skin/skin_v', '/skin/dual_v' )
+		sa.add( '/motion/skin_v', '/motion/bake_f' )
+		pv.dicts.Add(d)
+		pv.link()
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		buf.at.stencil = null
@@ -49,7 +53,6 @@ public class Bake( kri.rend.tech.Basic ):
 		return true
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		sa.use()
 		#todo: check samples?
 		buf.at.stencil = con.Depth
 		assert con.Depth
@@ -83,6 +86,8 @@ public class Bake( kri.rend.tech.Basic ):
 			pOffset.activate(sp)
 			kri.Ant.Inst.params.modelView.activate(s_new)
 			#draw
+			pu.apply( e.CombinedAttribs )
+			pu.activate()
 			e.mesh.draw(1)
 
 
