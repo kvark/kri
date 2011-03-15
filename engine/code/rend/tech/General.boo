@@ -8,7 +8,7 @@ import System.Collections.Generic
 public struct Batch:	# why struct?
 	public e	as kri.Entity
 	public va	as kri.vb.Array
-	public sa	as kri.shade.Smart
+	public bu	as kri.shade.Bundle
 	public up	as callable() as int
 	public off	as int
 	public num	as int
@@ -17,13 +17,13 @@ public struct Batch:	# why struct?
 		va.bind()
 		nob = up()
 		kri.Ant.Inst.params.modelView.activate( e.node )
-		sa.use()
+		bu.activate()
 		e.mesh.draw(off,num,nob)
 		
 	#public static cMat	= CompMat()
 	public class CompMat( IComparer[of Batch] ):
 		public def Compare(a as Batch, b as Batch) as int:
-			r = a.sa.handle - b.sa.handle
+			r = a.bu.shader.handle - b.bu.shader.handle
 			return r	if r
 			r = a.va.id - b.va.id
 			return r
@@ -44,7 +44,7 @@ public class General( Basic ):
 
 	protected def constructor(name as string):
 		super(name)
-	public abstract def construct(mat as kri.Material) as kri.shade.Smart:
+	public abstract def construct(mat as kri.Material) as kri.shade.Bundle:
 		pass
 	protected virtual def getUpdater(mat as kri.Material) as Updater:
 		return Updater() do() as int:
@@ -53,12 +53,16 @@ public class General( Basic ):
 	protected def addObject(e as kri.Entity) as void:
 		return	if not e.visible
 		#alist as List[of int] = null
-		if e.va[tid] == kri.vb.Array.Default: return
+		tempList = List[of Batch]()
+		atList	as List[of kri.shade.Attrib]	= null
+		if e.va[tid] == kri.vb.Array.Default:
+			return
 		elif not e.va[tid]:
 			(e.va[tid] = kri.vb.Array()).bind()
-			alist = List[of int]()
+			atList = List[of kri.shade.Attrib]()
+			if e.mesh:
+				e.mesh.ind.bind()
 		b = Batch(e:e, va:e.va[tid], off:0)
-		tempList = List[of Batch]()
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
 			b.num = tag.num
@@ -66,22 +70,24 @@ public class General( Basic ):
 			prog = m.tech[tid]
 			if not prog:
 				m.tech[tid] = prog = construct(m)
-			continue	if prog == kri.shade.Smart.Fixed
-			if alist:
-				ids = prog.gatherAttribs( kri.Ant.Inst.slotAttributes, false )
-				alist.AddRange(a	for a in ids	if not a in alist)
-			b.sa = prog
+			if prog == kri.shade.Bundle.Empty:
+				continue
+			if atList:
+				atList.AddRange( prog.shader.Attributes )
+			b.bu = prog
 			b.up = getUpdater(m).fun
 			tempList.Add(b)
-		if alist and not e.enable(true,alist):
+		if atList and 0 > kri.shade.Bundle.PushAttribs( atList.ToArray(), e.CombinedAttribs ):
 			e.va[tid] = kri.vb.Array.Default
-		else:	butch.AddRange(tempList)
+		else: butch.AddRange(tempList)
+
 
 	# shouldn't be used as some objects have to be excluded
 	protected def drawScene() as void:
 		butch.Clear()
 		for e in kri.Scene.Current.entities:
 			addObject(e)
-		butch.Sort(comparer)	if comparer
+		if comparer:
+			butch.Sort(comparer)
 		for b in butch:
 			b.draw()

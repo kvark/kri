@@ -14,26 +14,31 @@ public class Tech( Basic ):
 		super()
 		tid = kri.Ant.Inst.slotTechniques.getForced(name)
 	
-	public abstract def construct(pe as kri.part.Emitter) as Smart:
+	public abstract def construct(pe as kri.part.Emitter) as Bundle:
 		pass
 	protected virtual def update(pe as kri.part.Emitter) as uint:
 		return 0
 	
-	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as Smart:
+	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as Bundle:
 		m = pe.mat
-		return null	if not m
-		sa = m.tech[tid]
-		if not sa:
-			m.tech[tid] = sa = construct(pe)
-		return null		if not sa.handle
+		if not m:
+			return null
+		bu = m.tech[tid]
+		if not bu:
+			m.tech[tid] = bu = construct(pe)
+		if bu == Bundle.Empty:
+			return null
 		if pe.techReady[tid] == kri.part.TechState.Unknown:
-			ats = List[of int]( sa.gatherAttribs( kri.Ant.Inst.slotParticles, false )).ToArray()
-			pat = pe.listAttribs()
-			ok = Array.TrueForAll(ats, {a| return a in pat })
+			assert not 'implemented'
+			#ats = List[of int]( bu.shader.gatherAttribs( kri.Ant.Inst.slotParticles, false )).ToArray()
+			#pat = pe.listAttribs()
+			#ok = Array.TrueForAll(ats, {a| return a in pat })
+			ok = true
 			pe.techReady[tid] = (kri.part.TechState.Invalid, kri.part.TechState.Ready)[ok]
-		return null	if pe.techReady[tid] == kri.part.TechState.Invalid
+		if pe.techReady[tid] == kri.part.TechState.Invalid:
+			return null
 		nin = update(pe)
-		return sa
+		return bu
 
 
 #---------	RENDER PARTICLES: META TECH	--------#
@@ -56,14 +61,14 @@ public class Meta( Tech ):
 	protected def shade(slis as string*) as void:
 		shobs.AddRange( Object.Load(s) for s in slis )
 	
-	private def setup(sa as Smart) as void:
+	private def setup(sa as Mega) as void:
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( *shobs.ToArray() )
 
-	public override def construct(pe as kri.part.Emitter) as Smart:
+	public override def construct(pe as kri.part.Emitter) as Bundle:
 		assert pe.mat and pe.owner
 		sl = pe.mat.collect(geom,lMets)
-		return Smart.Fixed	if not sl
+		return Bundle.Empty	if not sl
 		return factory.link( sl, pe.owner.dict, pe.mat.dict )
 	
 	public virtual def onManager(man as kri.part.Manager) as void:

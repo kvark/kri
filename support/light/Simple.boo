@@ -7,8 +7,8 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT MAP FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	public final buf		= kri.buf.Holder()
-	protected final sa		= kri.shade.Smart()
+	public final fbo		= kri.buf.Holder()
+	protected final bu		= kri.shade.Bundle()
 	protected final licon	as Context
 
 	public def constructor(lc as Context):
@@ -16,19 +16,20 @@ public class Fill( kri.rend.tech.General ):
 		licon = lc
 		# buffer init
 		if lc.type == LiType.VARIANCE:
-			buf.mask = 1
-			buf.at.depth = kri.buf.Texture.Depth(0)
-			buf.at.color[1] = kri.buf.Texture(
+			fbo.mask = 1
+			fbo.at.depth = kri.buf.Texture.Depth(0)
+			fbo.at.color[1] = kri.buf.Texture(
 				intFormat:PixelInternalFormat.Rg16 )
-			buf.resize( lc.size,lc.size )
-		else: buf.mask = 0
+			fbo.resize( lc.size,lc.size )
+		else: fbo.mask = 0
 		# spot shader
-		sa.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
-		sa.add( lc.getFillShader() )
-		sa.link( kri.Ant.Inst.slotAttributes, lc.dict, kri.Ant.Inst.dict )
+		bu.dicts.Add( lc.dict )
+		bu.shader.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
+		bu.shader.add( lc.getFillShader() )
+		bu.link()
 
-	public override def construct(mat as kri.Material) as kri.shade.Smart:
-		return sa
+	public override def construct(mat as kri.Material) as kri.shade.Bundle:
+		return bu
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f, true)
@@ -43,11 +44,11 @@ public class Fill( kri.rend.tech.General ):
 				l.depth = kri.buf.Texture( intFormat:pif, pixFormat:pix,
 					wid:licon.size, het:licon.size )
 			if index<0:
-				buf.at.depth = l.depth
+				fbo.at.depth = l.depth
 			else:
-				buf.at.color[0] = l.depth
-			buf.mask = index+1
-			buf.bind()
+				fbo.at.color[0] = l.depth
+			fbo.mask = index+1
+			fbo.bind()
 			con.ClearColor( OpenTK.Graphics.Color4.White )	if not index
 			con.ClearDepth( 1f )
 			drawScene()

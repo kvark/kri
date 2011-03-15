@@ -15,14 +15,14 @@ public class Clear( Basic ):
 #---------	EARLY Z FILL	--------#
 
 public class EarlyZ( tech.General ):
-	public final sa	= kri.shade.Smart()
+	public final bu	= kri.shade.Bundle()
 	public def constructor():
 		super('zcull')
 		# make shader
-		sa.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-	public override def construct(mat as kri.Material) as kri.shade.Smart:
-		return sa
+		bu.shader.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
+		bu.link()
+	public override def construct(mat as kri.Material) as kri.shade.Bundle:
+		return bu
 	public override def process(con as link.Basic) as void:
 		con.activate( con.Target.None, 1f, true )
 		con.ClearDepth(1f)
@@ -53,15 +53,15 @@ public class Emission( tech.Meta ):
 #---------	ADD COLOR	--------#
 
 public class Color( tech.General ):
-	private final sa	= kri.shade.Smart()
+	private final bu	= kri.shade.Bundle()
 	private final add	as bool
 	public def constructor(doAdd as bool):
 		super('color')
 		add = doAdd
-		sa.add( '/color_v','/color_f', '/lib/quat_v','/lib/tool_v','/lib/fixed_v' )
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-	public override def construct(mat as kri.Material) as kri.shade.Smart:
-		return sa
+		bu.shader.add( '/color_v','/color_f', '/lib/quat_v','/lib/tool_v','/lib/fixed_v' )
+		bu.link()
+	public override def construct(mat as kri.Material) as kri.shade.Bundle:
+		return bu
 	public override def process(con as link.Basic) as void:
 		con.activate( con.Target.Same, 0f, false )
 		if add:
@@ -81,10 +81,10 @@ public class Color( tech.General ):
 public class All( tech.General ):
 	public def constructor():
 		super('all')
-	public override def construct(mat as kri.Material) as kri.shade.Smart:
-		sa = kri.shade.Smart()
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
-		return sa
+	public override def construct(mat as kri.Material) as kri.shade.Bundle:
+		bu = kri.shade.Bundle()
+		bu.link()
+		return bu
 	public override def process(con as link.Basic) as void:
 		con.activate( con.Target.Same, 0f, true )
 		con.ClearDepth(1f)

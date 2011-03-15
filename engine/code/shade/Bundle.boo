@@ -1,6 +1,6 @@
 ﻿namespace kri.shade
 
-import System.Collections
+import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics.OpenGL
 
@@ -79,12 +79,13 @@ public struct Attrib:
 	public size	as byte
 
 	public def matches(ref at as kri.vb.Info) as bool:
-		nc = 0	# number of components
+		nc = -1	# number of components
 		if at.integer:
-			return false	if not at.type in (
+			if not at.type in (
 				VertexAttribPointerType.Byte,	VertexAttribPointerType.UnsignedByte,
 				VertexAttribPointerType.Short,	VertexAttribPointerType.UnsignedShort,
-				VertexAttribPointerType.Int,	VertexAttribPointerType.UnsignedInt)
+				VertexAttribPointerType.Int,	VertexAttribPointerType.UnsignedInt):
+				return false
 			nc=1	if type in (ActiveAttribType.Int	,ActiveAttribType.UnsignedInt)
 			nc=2	if type in (ActiveAttribType.IntVec2,ActiveAttribType.UnsignedIntVec2)
 			nc=3	if type in (ActiveAttribType.IntVec3,ActiveAttribType.UnsignedIntVec3)
@@ -104,10 +105,10 @@ public struct Attrib:
 
 public class Mega(Program):
 	private attribs	as (Attrib) = null
-	private final uniforms	= Generic.List[of Uniform]()
+	private final uniforms	= List[of Uniform]()
 	
-	public Attributes as ObjectModel.ReadOnlyCollection[of Attrib]:
-		get: return System.Array.AsReadOnly(attribs)
+	public Attributes as (Attrib):
+		get: return attribs
 	public Uniforms as Uniform*:
 		get: return uniforms
 	
@@ -140,51 +141,67 @@ public class Mega(Program):
 #---------
 
 public class Bundle:
-	public final shader	as Mega
-	public final dicts		= List[of rep.Dict]()
-	private final params	= List[of Parameter]()
+	public	final shader	as Mega
+	public	final dicts		= List[of rep.Dict]((kri.Ant.Inst.dict,))
+	private	final params	= List[of Parameter]()
+	
+	public	final static Empty	= Bundle(null as Mega)
 	
 	public def constructor():
 		shader = Mega()
-		dicts.Add( kri.Ant.Inst.dict )
 	public def constructor(sh as Mega):
 		shader = sh
 	public def constructor(bu as Bundle):
 		shader = bu.shader
-
-	public def link() as void:
-		shader.link()
+	
+	public def fillParams() as void:
+		assert shader.Ready
 		params.Clear()
 		tun = 0
 		for uni in shader.Uniforms:
 			iv	as par.IBaseRoot = null
 			for d in dicts:
 				d.TryGetValue( uni.name, iv )
-				break	if iv
-			loc = shader.getLocation(uni.name)
+				if iv: break
+			assert iv
+			loc = shader.getLocation( uni.name )
 			p = uni.genParam(loc,iv,tun)
 			assert p
 			params.Add(p)
+
+	public def link() as void:
+		shader.link()
+		fillParams()
 
 	public def activate() as void:
 		shader.bind()
 		for p in params:
 			p.upload()
-
-	public def apply(combined as kri.vb.Attrib*) as bool:
-		assert shader.Ready
-		for i in range(shader.Attributes.Count):
-			cur = shader.Attributes[i]
+	
+	public static def PushAttribs(sat as (Attrib), vat as kri.vb.Attrib*) as int:
+		names = List[of string]()
+		for cur in sat:
+			assert cur.name and cur.size
+			if cur.name in names:
+				continue
 			target as kri.vb.Info
-			for at in combined:
+			for at in vat:
 				off = total = 0
 				for sem in at.Semant:
 					if sem.name == cur.name:
 						target = sem
 						off = total
 					total += sem.fullSize()
-				break	if target.size
-			return false	if not cur.matches(target)
-			target.slot = i
+				if target.size:
+					at.bind()
+					break
+			if not cur.matches(target):
+				return -1
+			target.slot = names.Count
+			names.Add( cur.name )
 			kri.vb.Attrib.Push(target,off,total)
-		return true
+		return names.Count
+
+	public def pushAttribs(combined as kri.vb.Attrib*) as int:
+		assert shader.Ready
+		return PushAttribs( shader.Attributes, combined )

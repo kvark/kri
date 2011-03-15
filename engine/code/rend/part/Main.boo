@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Basic( kri.rend.Basic ):
 	public bAdd		as single = 0f
-	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Smart:
+	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Bundle:
 		pass
 	public def drawScene() as void:
 		using blend = kri.Blender(),\
@@ -18,21 +18,23 @@ public class Basic( kri.rend.Basic ):
 			else:		blend.alpha()
 			for pe in kri.Scene.Current.particles:
 				nInst as uint = 0
-				sa = prepare(pe,nInst)
-				continue	if not sa
+				bu = prepare(pe,nInst)
+				if not bu:
+					continue
 				pe.va.bind()
-				return	if not pe.prepare()
-				sa.use()
+				if not pe.prepare():
+					return	
+				bu.activate()
 				pe.owner.draw(nInst)
 
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#
 
 public abstract class Simple( Basic ):
-	protected final sa		= kri.shade.Smart()
+	protected final bu		= kri.shade.Bundle()
 	public dTest	as bool	= true
-	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Smart:
-		return sa
+	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Bundle:
+		return bu
 	public override def process(con as kri.rend.link.Basic) as void:
 		off = (Single.NaN,0f)[dTest]
 		con.activate( con.Target.Same, off, false )

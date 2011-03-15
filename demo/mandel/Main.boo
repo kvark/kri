@@ -11,8 +11,8 @@ private def createParticle(pc as kri.part.Context) as kri.part.Emitter:
 	pm.col_update.root = Object.Load('text/root_v')
 	pm.col_update.extra.Add( Object.Load('text/born_v') )
 	beh = kri.part.Behavior('text/beh')
-	kri.Help.enrich( beh, 4, pc.at_pos )
-	kri.Help.enrich( beh, 1, pc.at_sys )
+	kri.Help.enrich( beh, 4, (pc.at_pos,), ('pos',) )
+	kri.Help.enrich( beh, 1, (pc.at_sys,), ('sys',) )
 	pm.behos.Add(beh)
 	
 	pLimt = par.Value[of single]('limit')
@@ -36,8 +36,9 @@ private class Render( kri.rend.part.Simple ):
 		d = rep.Dict()
 		d.var(pSize,pBrit)
 		# prog init
-		sa.add( 'text/draw_v', 'text/draw_f')
-		sa.link( kri.Ant.Inst.slotParticles, d, kri.Ant.Inst.dict )
+		bu.shader.add( 'text/draw_v', 'text/draw_f')
+		bu.dicts.Add(d)
+		bu.link()
 
 
 [System.STAThread]

@@ -3,8 +3,8 @@
 #---------	RENDER SKELETON SYNC		--------#
 
 public class Update( kri.rend.tech.Basic ):
+	private final va	= kri.vb.Array()
 	private final tf	= kri.TransFeedback(1)
-	#private final sa	= kri.shade.Smart()
 	private final bu	= kri.shade.Bundle()
 	private final par	= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
 		for i in range(kri.Ant.Inst.caps.bones) ).ToArray()
@@ -25,20 +25,20 @@ public class Update( kri.rend.tech.Basic ):
 		sa.feedback(true, 'to_vertex', 'to_quat')
 		bu.dicts.Add(dict)
 		bu.link()
-		#at_all = List[of int]( sa.gatherAttribs(sl,false) ).ToArray()
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		#sa.use()
+		va.bind()
 		using kri.Discarder(true):
 			for e in kri.Scene.Current.entities:
 				kri.Ant.Inst.params.modelView.activate( e.node )
 				tag = e.seTag[of Tag]()
-				continue	if not e.visible or not tag or tag.Sync
-					#or not attribs(false, e, *at_all)
-				continue	if not bu.apply( e.CombinedAttribs )
+				if not e.visible or not tag or tag.Sync:
+					continue
+				if bu.pushAttribs( e.CombinedAttribs )<0:
+					continue
 				vos = System.Array.ConvertAll(at_mod) do(a as int):
 					return e.store.find(a)
 				continue	if null in vos

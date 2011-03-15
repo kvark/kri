@@ -86,7 +86,7 @@ public class Bake( kri.rend.tech.Basic ):
 			pOffset.activate(sp)
 			kri.Ant.Inst.params.modelView.activate(s_new)
 			#draw
-			pu.apply( e.CombinedAttribs )
+			pu.pushAttribs( e.CombinedAttribs )
 			pu.activate()
 			e.mesh.draw(1)
 

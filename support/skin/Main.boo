@@ -29,7 +29,7 @@ public class Extra( kri.IExtension ):
 	public def pv_skin(r as kri.load.Reader) as bool:
 		ai = kri.vb.Info( slot:attrib, size:4,
 			type:VertexAttribPointerType.UnsignedShort,
-			integer:true )
+			integer:true, name:'skin' )
 		rez = kri.load.ExMesh.LoadArray[of ushort]( r,4,ai, {return r.bin.ReadUInt16()})
 		return false	if not rez
 		# link to the Armature

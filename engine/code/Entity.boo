@@ -128,7 +128,7 @@ public class Entity( kri.ani.data.Player ):
 		ml = List[of kri.Material]()
 		for t in tags:
 			tm = t as TagMat
-			continue if not tm
+			continue	if not tm
 			m = tm.mat
-			ml.Add(m)	if not m.tech[tid].handle
+			ml.Add(m)	if m.tech[tid] == shade.Bundle.Empty
 		return ml

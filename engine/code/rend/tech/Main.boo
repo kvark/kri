@@ -44,12 +44,13 @@ public class Meta(General):
 	protected def shade(slis as string*) as void:
 		shobs.Extend( kri.shade.Object.Load(s) for s in slis )
 	
-	private virtual def onLink(sa as kri.shade.Smart) as void:
-		sa.fragout( *lOuts )	if lOuts
+	private virtual def onLink(sa as kri.shade.Mega) as void:
+		if lOuts:
+			sa.fragout( *lOuts )
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( *shobs.ToArray() )
 
-	public override def construct(mat as kri.Material) as kri.shade.Smart:
+	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		sl = mat.collect(geom,lMets)
-		return kri.shade.Smart.Fixed	if not sl
+		return kri.shade.Bundle.Empty	if not sl
 		return factory.link( sl, mat.dict )

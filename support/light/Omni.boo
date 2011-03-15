@@ -8,8 +8,8 @@ import OpenTK.Graphics.OpenGL
 #---------	LIGHT OMNI FILL	--------#
 
 public class Fill( kri.rend.tech.General ):
-	protected final buf		= kri.buf.Holder(mask:0)
-	protected final sa		= kri.shade.Smart()
+	protected final fbo		= kri.buf.Holder(mask:0)
+	protected final bu		= kri.shade.Bundle()
 	protected final context	as support.light.Context
 	protected final pDist	= kri.shade.par.Value[of Vector4]('uni_dist')
 
@@ -17,14 +17,16 @@ public class Fill( kri.rend.tech.General ):
 		super('lit.omni.bake')
 		context = lc
 		# omni shader
-		sa.add( '/light/omni/bake_v', '/light/omni/bake_g', '/empty_f' )
-		sa.add( *kri.Ant.Inst.libShaders )
+		bu.shader.add( '/light/omni/bake_v', '/light/omni/bake_g', '/empty_f' )
+		bu.shader.add( *kri.Ant.Inst.libShaders )
 		dict = kri.shade.rep.Dict()
 		dict.var(pDist)
-		sa.link( kri.Ant.Inst.slotAttributes, dict, lc.dict, kri.Ant.Inst.dict )
+		bu.dicts.Add( dict )
+		bu.dicts.Add( lc.dict )
+		bu.link()
 
-	public override def construct(mat as kri.Material) as kri.shade.Smart:
-		return sa
+	public override def construct(mat as kri.Material) as kri.shade.Bundle:
+		return bu
 	private def setLight(l as kri.Light) as void:
 		kri.Ant.Inst.params.pLit.spatial.activate( l.node )
 		k = 1f / (l.rangeOut - l.rangeIn)
@@ -39,8 +41,8 @@ public class Fill( kri.rend.tech.General ):
 				l.depth = t = kri.buf.Texture.Depth(0)
 				t.target = TextureTarget.TextureCubeMap
 				t.wid = t.het = context.size
-			buf.at.depth = l.depth
-			buf.bind()
+			fbo.at.depth = l.depth
+			fbo.bind()
 			GL.ClearDepth( 1f )
 			GL.Clear( ClearBufferMask.DepthBufferBit )
 			drawScene()
