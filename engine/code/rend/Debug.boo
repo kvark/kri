@@ -24,7 +24,7 @@ public class Map( kri.rend.Basic ):
 		d.var(layer)
 		bu.dicts.Add(d)
 		# fill VAO
-		va = kri.Ant.inst.quad.render(null,bu,null,0)
+		va = kri.Ant.inst.quad.renderTest(bu)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)

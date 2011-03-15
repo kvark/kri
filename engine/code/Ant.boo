@@ -121,7 +121,7 @@ public class Ant(IDisposable):
 	
 	# Slots
 	public final slotTechniques	= lib.Slot( 24 )
-	public final slotAttributes	= lib.Slot( caps.vertexAttribs )
+	public final slotAttributes	= lib.Slot( caps.vertexAttribs )	#todo:remove
 	public final slotParticles	= lib.Slot( caps.vertexAttribs )
 	
 	# extensions
@@ -133,7 +133,7 @@ public class Ant(IDisposable):
 	public final dict		= shade.rep.Dict()
 	# libraries
 	public final params		= lib.Param(dict)
-	public final attribs	= lib.Attrib(slotAttributes)
+	public final attribs	= lib.Attrib(slotAttributes)	# todo: remove 
 	public final libShaders	as (kri.shade.Object)
 
 

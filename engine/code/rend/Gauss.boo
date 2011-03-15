@@ -20,7 +20,7 @@ public class Simple( kri.rend.Basic ):
 		pu.dicts.Add(dict)
 		pv.shader.add('/copy_v','/filter/gauss_ver_f')
 		pv.dicts.Add(dict)
-		va = kri.Ant.inst.quad.render(null,pu,null,0)
+		va = kri.Ant.inst.quad.renderTest(pu)
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		return	if not fbo
@@ -45,7 +45,7 @@ public class Advanced( kri.rend.Basic ):
 		d.var(pDir)
 		bu.shader.add('/copy_v','/filter/gauss_bi_f')
 		bu.dicts.Add(d)
-		va = kri.Ant.inst.quad.render(null,bu,null,0)
+		va = kri.Ant.inst.quad.renderTest(bu)
 	
 	public def spawn() as (kri.rend.Basic):
 		return ( Axis(self,Vector4.UnitX), Axis(self,Vector4.UnitY) )

@@ -57,7 +57,7 @@ public class Update( kri.rend.Basic ):
 				#assert System.Math.Abs(sum-1f) < eps
 				# bind attribs & draw
 				av = kri.Ant.Inst.attribs.vertex
-				ent.enable(false, (av,))
+				#ent.enable(false, (av,))
 				for i in range( System.Math.Min(4,keys.Length) ):
 					trans[av] = i+1
 					keys[i].data.attribTrans(trans)

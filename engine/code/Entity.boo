@@ -49,7 +49,7 @@ public class Mesh( vb.Storage ):
 		return vao
 	
 	public def render(vao as vb.Array, sa as shade.Mega, nob as uint) as vb.Array:
-		sa.bind()
+		assert sa.Ready
 		if not vao:
 			vao = vb.Array()
 			vao.bind()
@@ -57,9 +57,9 @@ public class Mesh( vb.Storage ):
 				return null
 			if ind:
 				ind.bind()
-		else:
-			vao.bind()
 		if nob>0:
+			vao.bind()
+			sa.bind()
 			draw(nob)
 		return vao
 	
@@ -68,6 +68,16 @@ public class Mesh( vb.Storage ):
 	
 	public def render(vao as vb.Array, bu as shade.Bundle) as vb.Array:
 		return render( vao, bu, vb.Storage.Empty, 1 )
+	
+	public def renderBack(vao as vb.Array, bu as shade.Bundle, tf as TransFeedback) as vb.Array:
+		assert vao and bu and tf
+		vao.bind()
+		if bu.pushAttribs(vbo)<0:
+			assert not 'good'	# will be removed later
+			return null
+		bu.activate()
+		draw(tf)
+		return vao
 
 	public def renderTest(bu as shade.Bundle) as vb.Array:
 		return render( null, bu, vb.Storage.Empty, 0 )
@@ -150,7 +160,7 @@ public class Entity( kri.ani.data.Player ):
 		at = store.find(id)
 		return (at	if at else	mesh.find(id))
 	
-	public def enable(local as bool, ids as int*) as bool:
+	private def enable(local as bool, ids as int*) as bool:
 		for i in ids:
 			continue if local and store.bind(i)
 			continue if mesh.bind(i)
@@ -175,6 +185,6 @@ public class Entity( kri.ani.data.Player ):
 			ml.Add(m)	if m.tech[tid] == shade.Bundle.Empty
 		return ml
 	
-	public def render(vao as vb.Array, bu as shade.Bundle, nob as int) as vb.Array:
+	public def render(vao as vb.Array, bu as shade.Bundle, nob as uint) as vb.Array:
 		assert mesh and store
 		return mesh.render(vao, bu, store, nob)
