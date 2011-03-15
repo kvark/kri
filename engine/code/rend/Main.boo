@@ -38,10 +38,12 @@ public class Chain(Basic):
 #---------	GENERAL FILTER	--------#
 
 public class Filter(Basic):
-	protected final bu		= kri.shade.Bundle()
-	protected final texIn	= kri.shade.par.Texture('input')
-	protected final dict	= kri.shade.rep.Dict()
-	protected linear		= false
+	protected	final bu	= kri.shade.Bundle()
+	protected	final texIn	= kri.shade.par.Texture('input')
+	protected	final dict	= kri.shade.rep.Dict()
+	protected	linear		= false
+	private		va	as kri.vb.Array	= null
+	
 	public def constructor():
 		dict.unit(texIn)
 		bu.dicts.Add(dict)
@@ -49,10 +51,9 @@ public class Filter(Basic):
 		texIn.Value = con.Input
 		con.Input.filt(linear,false)
 		con.activate(true)
-		bu.activate()
-		kri.Ant.inst.quad.draw()
+		va = kri.Ant.inst.quad.render(va,bu,null,1)
 
 public class FilterCopy(Filter):
 	public def constructor():
 		bu.shader.add('/copy_v','/copy_f')
-		bu.link()
+

@@ -58,14 +58,12 @@ public class Bake( kri.rend.Basic ):
 		con.ClearColor( Graphics.Color4(0f,0f,0f,0f) )
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
-		va.bind()
 		using blender = kri.Blender():
 			blender.add()
 			for l in kri.Scene.Current.lights:
 				continue	if l.fov != 0f
 				kri.Ant.Inst.params.activate(l)
-				bu.activate()
-				sphere.draw(1)
+				sphere.render(va,bu,null,1)
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 

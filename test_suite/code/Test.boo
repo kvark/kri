@@ -32,9 +32,10 @@ private class ShaderLink( kri.rend.Basic ):
 
 
 private class PolygonOffset( kri.rend.Basic ):
-	final sa	= kri.shade.Program()
+	final sa	= kri.shade.Mega()
 	final fbo	= kri.buf.Holder(mask:0)
 	final vbo	= kri.vb.Attrib()
+	final va	as kri.vb.Array
 
 	public def constructor():
 		text = """
@@ -48,6 +49,7 @@ private class PolygonOffset( kri.rend.Basic ):
 		sa.add( '/empty_f' )
 		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
+		va = kri.Ant.Inst.quad.render(null,sa,0)
 		t = kri.buf.Texture( dep:1,
 			target:TextureTarget.Texture2DArray,
 			intFormat:PixelInternalFormat.DepthComponent,
@@ -61,11 +63,10 @@ private class PolygonOffset( kri.rend.Basic ):
 		GL.DepthMask(true)
 		GL.ClearDepth( 1.0f );
 		GL.Clear( ClearBufferMask.DepthBufferBit )
-		sa.bind()
-		
+	
 		GL.Enable( EnableCap.PolygonOffsetFill )
 		GL.PolygonOffset( 0.0f, 2.0f )
-		kri.Ant.Inst.quad.draw()
+		kri.Ant.Inst.quad.render(va,sa,1)
 		
 		tmp = array[of single](9)
 		tm1 = array[of single](1)
@@ -154,7 +155,7 @@ private class Feedback( kri.rend.Basic ):
 
 private class DrawToStencil( kri.rend.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
-		bu	= kri.shade.Bundle()
+		sa	= kri.shade.Mega()
 		#make program
 		text = """
 		#version 130
@@ -163,9 +164,9 @@ private class DrawToStencil( kri.rend.Basic ):
 			to_stencil = 0;
 		}"""
 		pob = kri.shade.Object(ShaderType.FragmentShader,'my',text)
-		bu.shader.add('/copy_v')
-		bu.shader.add(pob)
-		bu.link()
+		sa.add('/copy_v')
+		sa.add(pob)
+		sa.link()
 		#make data
 		fbo = kri.buf.Holder()
 		fbo.at.stencil = t = kri.buf.Texture.Stencil(0)
@@ -178,5 +179,4 @@ private class DrawToStencil( kri.rend.Basic ):
 		fbo.mask = 1
 		fbo.bind()
 		#run!
-		bu.activate()
-		kri.Ant.Inst.quad.draw()
+		kri.Ant.Inst.quad.render(null,sa,1)

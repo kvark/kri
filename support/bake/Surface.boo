@@ -34,7 +34,8 @@ public class Tag( kri.ITag ):
 
 public class Update( kri.rend.tech.Basic ):
 	private final bu		= kri.shade.Bundle()
-	public final channel	as byte
+	public	final va		= kri.vb.Array()
+	public	final channel	as byte
 	
 	public def constructor(texId as byte, putId as bool):
 		super('bake.mesh')
@@ -46,15 +47,12 @@ public class Update( kri.rend.tech.Basic ):
 			sa.add( '/uv/set/geom_v', '/uv/bake_g' )
 		else:	sa.add('/uv/set/norm_v')
 		sa.fragout('re_vertex','re_quat')
-		bu.link()
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.DepthTest = false
 		for e in kri.Scene.Current.entities:
 			tag = e.seTag[of Tag]()
-			a = kri.Ant.Inst.attribs
-			continue if not e.visible or not tag or\
-				not attribs(true, e, a.vertex,a.quat,a.tex[channel])
+			continue if not e.visible or not tag
 			assert tag.uvChannel == 0
 			tag.stamp = kri.Ant.Inst.Time
 			n = (null,e.node)[tag.worldSpace]
@@ -63,5 +61,4 @@ public class Update( kri.rend.tech.Basic ):
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )
 				tag.clearTarget = false
-			bu.activate()
-			e.mesh.draw(1)
+			e.render(va,bu,1)

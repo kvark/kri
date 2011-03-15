@@ -9,7 +9,7 @@ public class ApplyBase( kri.rend.Basic ):
 	protected final bu		= Bundle()
 	protected final sphere	as kri.Mesh
 	protected final dict	= rep.Dict()
-	private final va		= kri.vb.Array()
+	protected final va		= kri.vb.Array()
 	private texDepth			as par.Texture	= null
 	# custom activation
 	private virtual def onInit() as void:
@@ -62,7 +62,6 @@ public class Apply( ApplyBase ):
 		# fill shader
 		bv.shader.add( '/copy_v', '/g/init_f' )
 		bv.dicts.Add(dict)
-		bv.link()
 	# shadow
 	private def bindShadow(t as kri.buf.Texture) as void:
 		if t:
@@ -73,11 +72,9 @@ public class Apply( ApplyBase ):
 			texLit.Value = context.defShadow
 	# work
 	private override def onInit() as void:
-		bv.activate()
-		kri.Ant.Inst.quad.draw()
+		kri.Ant.Inst.quad.render(va,bv,null,1)
 	private override def onDraw() as void:
 		for l in kri.Scene.Current.lights:
 			bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
-			bu.activate()
-			sphere.draw(1)
+			sphere.render(va,bu,null,1)

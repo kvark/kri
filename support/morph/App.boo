@@ -40,7 +40,6 @@ public class Update( kri.rend.Basic ):
 		bu.shader.add('/skin/morph_v')
 		bu.shader.feedback(true,'to_pos')
 		bu.dicts.Add(d)
-		bu.link()
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		trans = Dictionary[of int,int]()
@@ -63,5 +62,6 @@ public class Update( kri.rend.Basic ):
 					trans[av] = i+1
 					keys[i].data.attribTrans(trans)
 				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))
-				bu.activate()
-				ent.mesh.draw(tf)
+				assert not 'supported' # trans attributes?
+				#bu.activate()
+				#ent.mesh.draw(tf)

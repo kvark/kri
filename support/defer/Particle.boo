@@ -33,4 +33,5 @@ public class Particle(ApplyBase):
 			pe.data.attribTrans(trans)	
 			kri.Ant.Inst.params.activate(light)
 			bu.activate()
-			sphere.draw( pe.owner.total )
+			assert not 'supported' # trans attribs
+			#sphere.draw( pe.owner.total )

@@ -7,8 +7,9 @@ import kri.shade
 #---------	RENDER TEXTURE LAYER		--------#
 
 public class Map( kri.rend.Basic ):
-	private final bu	= Bundle()
-	public final layer	= par.Value[of single]('layer')
+	private	final bu	= Bundle()
+	public	final va	as kri.vb.Array
+	public	final layer	= par.Value[of single]('layer')
 	
 	public def constructor(depth as bool, cube as bool, id as int, t as par.IBase[of kri.buf.Texture]):
 		layer.Value = 1f * id
@@ -22,12 +23,12 @@ public class Map( kri.rend.Basic ):
 		d.unit( 'input', t )
 		d.var(layer)
 		bu.dicts.Add(d)
-		bu.link()
+		# fill VAO
+		va = kri.Ant.inst.quad.render(null,bu,null,0)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
-		bu.activate()
-		kri.Ant.inst.quad.draw()
+		kri.Ant.inst.quad.render(va,bu,null,1)
 
 
 public class MapDepth( Map ):
@@ -54,13 +55,6 @@ public class Attrib( kri.rend.Basic ):
 		con.activate( con.Target.Same, 0f, true )
 		con.ClearColor()
 		con.ClearDepth(1f)
-		va.bind()
 		for e in kri.Scene.Current.entities:
-			for a in (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat):
-				rez = e.store.bind(a) or e.mesh.bind(a)
-				assert rez
-			e.mesh.ind.bind()
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			bu.pushAttribs( e.CombinedAttribs )
-			bu.activate()
-			e.mesh.draw(1)
+			e.render( va, bu, 1 )

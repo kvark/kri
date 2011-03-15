@@ -15,6 +15,7 @@ public class Context:
 public class Bake( kri.rend.tech.Basic ):
 	private final pu		= kri.shade.Bundle()
 	private final pv		= kri.shade.Bundle()
+	public	final va		= kri.vb.Array()
 	private final buf		as kri.buf.Holder
 	private final diModel	= Dictionary[of kri.Entity,kri.Spatial]()
 	private final diCamera	= Dictionary[of kri.Camera,kri.Spatial]()
@@ -86,9 +87,7 @@ public class Bake( kri.rend.tech.Basic ):
 			pOffset.activate(sp)
 			kri.Ant.Inst.params.modelView.activate(s_new)
 			#draw
-			pu.pushAttribs( e.CombinedAttribs )
-			pu.activate()
-			e.mesh.draw(1)
+			e.mesh.render( va, pu, e.store, 1 )
 
 
 public class Apply( kri.rend.Filter ):

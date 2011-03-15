@@ -8,8 +8,9 @@ import kri.buf
 #---------	LIGHT INIT	--------#
 
 public class Init( kri.rend.Basic ):
-	public final fbo	= Holder( mask:3 )
-	private final bu	= kri.shade.Bundle()
+	public	final fbo	= Holder( mask:3 )
+	private	final bu	= kri.shade.Bundle()
+	public	final va	as kri.vb.Array
 
 	public def constructor(nlay as byte):
 		# init buffer
@@ -21,7 +22,7 @@ public class Init( kri.rend.Basic ):
 			intFormat:PixelInternalFormat.Rgb10A2 )
 		# init shader
 		bu.shader.add('/copy_v','/white_f') # temp
-		bu.link()
+		va = kri.Ant.Inst.quad.render(null,bu,null,0)
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		fbo.resize( pl.wid, pl.het )
@@ -39,7 +40,6 @@ public class Init( kri.rend.Basic ):
 			assert sm > 0
 			con.DepthTest = false
 			con.ClearStencil(1)
-			bu.activate()
 			#sb = -1; GL.GetInteger( GetPName.SampleBuffers, sb )
 			#sm = -1; GL.GetInteger( GetPName.Samples, sm )
 			# todo: optimize to use less passes
@@ -48,7 +48,7 @@ public class Init( kri.rend.Basic ):
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
 				for i in range(1,sm):
 					GL.SampleMask( 0, -1<<i )
-					kri.Ant.Inst.quad.draw()
+					kri.Ant.Inst.quad.render(va,bu,null,1)
 		else:
 			using kri.Section( EnableCap.SampleMask ):
 				for i in range( sm ):
@@ -64,11 +64,10 @@ public class Init( kri.rend.Basic ):
 			debugLayer = 1
 			fbo.mask = 2
 			fbo.bind()
-			bu.activate()
 			using kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Equal, debugLayer,-1 )
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
-				kri.Ant.Inst.quad.draw()
+				kri.Ant.Inst.quad.render(va,bu,null,1)
 		con.Multisample = true
 
 
@@ -81,7 +80,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sphere	as kri.Mesh
 	private final fbo		as Holder
 	private final texDep	= par.Texture('depth')
-	private final va		= kri.vb.Array()
+	private final va		as kri.vb.Array
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba
 
@@ -96,16 +95,13 @@ public class Bake( kri.rend.Basic ):
 		d = rep.Dict()
 		d.unit(texDep)
 		bu.dicts.AddRange((d,lc.dict))
-		bu.link()
 		# create geometry
-		va.bind()	# the buffer objects are bound in creation
 		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
-		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
+		va = sphere.render(null,bu,null,1)
 		# create white shader
 		sx = bv.shader
 		sx.add('/light/kbuf/bake_v','/empty_f')
 		sx.add( *kri.Ant.Inst.libShaders )
-		bv.link()
 
 	private def drawLights(mask as byte, bx as Bundle) as void:
 		fbo.mask = mask
@@ -113,8 +109,7 @@ public class Bake( kri.rend.Basic ):
 		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
-			bx.activate()
-			sphere.draw(1)
+			sphere.render(va,bx,null,1)
 			#break	# !debug!
 
 	public override def process(con as kri.rend.link.Basic) as void:
@@ -124,7 +119,6 @@ public class Bake( kri.rend.Basic ):
 		con.SetDepth(0f,false)
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
-		va.bind()
 		#todo: use stencil for front faces
 		using kri.Section( EnableCap.StencilTest ):
 			# write color values

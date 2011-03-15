@@ -119,8 +119,9 @@ public class View:
 		if cam:
 			cam.aspect = Link.Frame.getInfo().Aspect
 			Ant.Inst.params.activate(cam)
-		ren.process(Link)	if ren.active
-		vb.Array.unbind()
+		if ren.active:
+			ren.process(Link)	
+		vb.Array.Default.bind()
 		Scene.current = null
 
 

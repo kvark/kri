@@ -24,24 +24,21 @@ public class Update( kri.rend.tech.Basic ):
 		sa.add( '/skin/empty_v' )
 		sa.feedback(true, 'to_vertex', 'to_quat')
 		bu.dicts.Add(dict)
-		bu.link()
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		va.bind()
 		using kri.Discarder(true):
 			for e in kri.Scene.Current.entities:
 				kri.Ant.Inst.params.modelView.activate( e.node )
 				tag = e.seTag[of Tag]()
 				if not e.visible or not tag or tag.Sync:
 					continue
-				if bu.pushAttribs( e.CombinedAttribs )<0:
-					continue
 				vos = System.Array.ConvertAll(at_mod) do(a as int):
 					return e.store.find(a)
-				continue	if null in vos
+				if null in vos:
+					continue
 				tf.Bind( *vos )
 				# run the transform
 				spa as kri.Spatial
@@ -54,7 +51,6 @@ public class Update( kri.rend.tech.Basic ):
 					s1.inverse()
 					spa.combine(s0,s1)	# ->model
 					par[i+1].activate(spa)
-				bu.activate()
-				#kri.shade.Smart.UpdatePar()
-				e.mesh.draw(tf)
+				using tf.catch():
+					e.mesh.render(va,bu)
 				tag.Sync = true

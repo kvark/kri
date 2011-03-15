@@ -14,11 +14,9 @@ public struct Batch:	# why struct?
 	public num	as int
 
 	public def draw() as void:
-		va.bind()
 		nob = up()
 		kri.Ant.Inst.params.modelView.activate( e.node )
-		bu.activate()
-		e.mesh.draw(off,num,nob)
+		e.mesh.render(va,bu,null, off,num,nob)
 		
 	#public static cMat	= CompMat()
 	public class CompMat( IComparer[of Batch] ):

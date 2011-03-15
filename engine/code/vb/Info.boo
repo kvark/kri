@@ -32,6 +32,8 @@ public struct Info:
 
 public class Storage:
 	public final vbo = List[of kri.vb.Attrib]()
+	public final static	Empty	= Storage()
+	
 	public def find(id as int) as kri.vb.Attrib:
 		return vbo.Find() do(v as kri.vb.Attrib):
 			s = v.Semant

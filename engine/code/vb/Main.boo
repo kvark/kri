@@ -9,8 +9,9 @@ import OpenTK.Graphics.OpenGL
 #-----------------------
 
 public class Array:
-	public static final Default	= Array(0)
-	public final id	as int
+	public	static final Default	= Array(0)
+	private	static	Current	= Default
+	public	final	id	as int
 	public def constructor():
 		tmp = 0
 		GL.GenVertexArrays(1,tmp)
@@ -21,9 +22,10 @@ public class Array:
 		tmp = id
 		kri.Help.safeKill({ GL.DeleteVertexArrays(1,tmp) })
 	public def bind() as void:
+		if self == Current:
+			return
+		Current = self
 		GL.BindVertexArray(id)
-	public static def unbind() as void:
-		GL.BindVertexArray(0)
 
 
 #-----------------------

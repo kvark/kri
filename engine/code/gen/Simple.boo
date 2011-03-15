@@ -6,14 +6,15 @@ import OpenTK.Graphics.OpenGL
 
 public class Frame:
 	public final mesh	as kri.Mesh
-	public final va	= kri.vb.Array()
+	public final va		= kri.vb.Array()
 	public def constructor(m as kri.Mesh):
 		mesh = m
 		va.bind()
 		m.vbo[0].initAll(-1)
 	public def draw() as void:
 		va.bind()
-		mesh.draw(1)
+		assert not 'supported'
+		#mesh.draw(1)
 
 
 

@@ -33,7 +33,6 @@ public class Update( kri.rend.Basic ):
 		par = kri.Ant.Inst.params
 		par.light.data.Value = Vector4(0f,1f,0f,0f)
 		con.SetDepth(0f,true)
-		va.bind()
 		for e in kri.Scene.Current.entities:
 			tag = e.seTag[of Tag]()
 			continue	if not tag
@@ -43,11 +42,9 @@ public class Update( kri.rend.Basic ):
 			con.ClearDepth(1f)
 			par.pLit.activate( tag.proj )
 			par.modelView.activate( e.node )
-			bu.activate()
-			e.enable(true, (kri.Ant.Inst.attribs.vertex,))
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():
-				e.mesh.draw(1)
+				e.render(va,bu,1)
 			r = q.result()
 			r = 0
 

@@ -59,12 +59,10 @@ public class Core:
 		bu.shader.add('/zcull_v','/physics_f')
 		bu.shader.add( *kri.Ant.Inst.libShaders )
 		bu.dicts.Add(d)
-		bu.link()
 		# create down-sample program
 		bv.shader.add('/copy_v','/filter/phys_max_f')
 		bv.shader.fragout('to_sten','to_color')
 		bv.dicts.Add(d)
-		bv.link()
 
 	private def drawAll(scene as kri.Scene, bx as kri.shade.Bundle) as void:
 		kid = 1f / ((1 << (8,16)[isBig]) - 1f)
@@ -72,11 +70,10 @@ public class Core:
 			e = scene.entities[i]
 			va = e.va[tid]
 			continue	if va in (null,kri.vb.Array.Default)
-			e.va[tid].bind()
+			va.bind()
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			bx.activate()
-			e.mesh.draw(1)
+			e.render(va,bx,1)
 
 	public def tick(s as kri.Scene) as void:
 		# prepare the camera

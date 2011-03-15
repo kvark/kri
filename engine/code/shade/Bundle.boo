@@ -178,6 +178,8 @@ public class Bundle:
 		fillParams()
 
 	public def activate() as void:
+		if not shader.Ready:
+			link()
 		shader.bind()
 		for p in params:
 			p.upload()
@@ -212,5 +214,6 @@ public class Bundle:
 		return names.Count
 
 	public def pushAttribs(combined as kri.vb.Attrib*) as int:
-		assert shader.Ready
+		if not shader.Ready:
+			link()
 		return PushAttribs( shader.Attributes, combined )

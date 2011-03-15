@@ -11,6 +11,7 @@ public class Render( kri.rend.Basic ):
 	private final b2	= kri.buf.Holder()
 	private final pbo	= kri.vb.Pack()
 	private final context	as Context
+	public	final va		= kri.vb.Array()
 	private final bu_bright	= kri.shade.Bundle()
 	private final bu_scale	= kri.shade.Bundle()
 	private final bu_tone	= kri.shade.Bundle()
@@ -54,10 +55,9 @@ public class Render( kri.rend.Basic ):
 		# bright filter
 		t.level = 1
 		t.setLevels(0,0)
-		bu_bright.activate()
 		fbo.mask = b2.mask = 1
 		b2.bind()
-		kri.Ant.Inst.quad.draw()
+		kri.Ant.Inst.quad.render(va,bu_bright,null,1)
 		# down-sample
 		# TODO: support!
 		/*
@@ -87,6 +87,5 @@ public class Render( kri.rend.Basic ):
 		t.level = 0
 		t.setLevels(0,10)
 		t.filt(false,false)
-		bu_tone.activate()
 		con.activate(true)
-		kri.Ant.Inst.quad.draw()
+		kri.Ant.Inst.quad.render(va,bu_tone,null,1)

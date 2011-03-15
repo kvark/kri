@@ -6,6 +6,7 @@ import OpenTK
 public class Simplex( kri.rend.Basic ):
 	public final pMouse	= kri.shade.par.Value[of Vector4]('mouse_coord')
 	public final bu		= kri.shade.Bundle()
+	public final va		as kri.vb.Array
 	private kwid	as single	= 1f
 	private khet	as single	= 1f
 
@@ -18,7 +19,7 @@ public class Simplex( kri.rend.Basic ):
 		bu.shader.add( noise.sh_simplex, noise.sh_turbo )
 		noise.dict.var( pMouse )
 		bu.dicts.Add( noise.dict )
-		bu.link()
+		va = kri.Ant.Inst.quad.renderTest(bu)
 		# init mouse
 		win.Mouse.Move += def():
 			pMouse.Value.Xyz = win.PointerNdc
@@ -30,8 +31,7 @@ public class Simplex( kri.rend.Basic ):
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
-		bu.activate()
-		kri.Ant.Inst.quad.draw()
+		kri.Ant.Inst.quad.render(va,bu,null,1)
 
 
 

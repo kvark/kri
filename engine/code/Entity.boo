@@ -28,9 +28,52 @@ public class Mesh( vb.Storage ):
 		ind		= m.ind
 		drawMode	= m.drawMode
 		polySize	= m.polySize
-		vbo.AddRange( m.vbo )	
+		vbo.AddRange( m.vbo )
 	
-	public def draw(off as uint, num as uint, nob as uint) as void:
+	
+	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, off as uint, num as uint, nob as uint) as vb.Array:
+		if not vao:
+			vao = vb.Array()
+		vao.bind()
+		if ats:
+			combo = List[of vb.Attrib](vbo)
+			combo.AddRange( ats.vbo )
+			if bu.pushAttribs(combo)<0:
+				assert not 'good'	# will be removed later
+				return null
+			if ind:
+				ind.bind()
+		if nob>0:
+			bu.activate()
+			draw(off,num,nob)
+		return vao
+	
+	public def render(vao as vb.Array, sa as shade.Mega, nob as uint) as vb.Array:
+		sa.bind()
+		if not vao:
+			vao = vb.Array()
+			vao.bind()
+			if shade.Bundle.PushAttribs( sa.Attributes, vbo )<0:
+				return null
+			if ind:
+				ind.bind()
+		else:
+			vao.bind()
+		if nob>0:
+			draw(nob)
+		return vao
+	
+	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, nob as uint) as vb.Array:
+		return render(vao,bu,ats,0,nPoly,nob)
+	
+	public def render(vao as vb.Array, bu as shade.Bundle) as vb.Array:
+		return render( vao, bu, vb.Storage.Empty, 1 )
+
+	public def renderTest(bu as shade.Bundle) as vb.Array:
+		return render( null, bu, vb.Storage.Empty, 0 )
+	
+	
+	protected def draw(off as uint, num as uint, nob as uint) as void:
 		assert off>=0 and num>=0 and num+off<=nPoly
 		if ind: assert num*polySize <= kri.Ant.Inst.caps.elemIndices
 		assert nVert <= kri.Ant.Inst.caps.elemVertices
@@ -45,10 +88,10 @@ public class Mesh( vb.Storage ):
 		else:	GL.DrawArrays(		drawMode, polySize*off, polySize*num )
 
 	# draw all polygons once
-	public def draw(nob as uint) as void:
+	protected def draw(nob as uint) as void:
 		draw(0,nPoly,nob)
 	# transform points with feedback
-	public def draw(tf as TransFeedback) as void:
+	protected def draw(tf as TransFeedback) as void:
 		using tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, nVert )
 
@@ -78,7 +121,6 @@ public class Entity( kri.ani.data.Player ):
 		get:
 			return store.vbo	if not mesh
 			return mesh.vbo.ToArray() + store.vbo.ToArray()
-
 	
 	public def constructor():
 		pass
@@ -132,3 +174,7 @@ public class Entity( kri.ani.data.Player ):
 			m = tm.mat
 			ml.Add(m)	if m.tech[tid] == shade.Bundle.Empty
 		return ml
+	
+	public def render(vao as vb.Array, bu as shade.Bundle, nob as int) as vb.Array:
+		assert mesh and store
+		return mesh.render(vao, bu, store, nob)

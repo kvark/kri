@@ -35,10 +35,8 @@ public class Render( kri.rend.Basic ):
 		d.unit(pTex)
 		bu.shader.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
 		bu.dicts.Add(d)
-		bu.link()
 		bv.shader.add('/copy_v', '/copy_f')
 		bv.dicts.Add(d)
-		bv.link()
 	
 	def destructor():
 		mouse.ButtonDown -= ev
@@ -53,21 +51,16 @@ public class Render( kri.rend.Basic ):
 		con.ClearDepth( 1f )
 		con.ClearColor()
 		#GL.ClearBuffer(ClearBuffer.Color, 0, (of uint:10,10,10,10))
-		va.bind()
 		pInd.Value = 0f
 		ents = List[of kri.Entity](e for e in kri.Scene.Current.entities if e.seTag[of Tag]()).ToArray()
 		for i in range(ents.Length):
 			pInd.Value = (i+1f) / ((1<<16)-1)
-			e = ents[i]
-			e.enable( true, (kri.Ant.Inst.attribs.vertex,) )
-			kri.Ant.Inst.params.modelView.activate( e.node )
-			bu.activate()
-			e.mesh.draw(1)
+			kri.Ant.Inst.params.modelView.activate( ents[i].node )
+			ents[i].render(va,bu,1)
 		if not 'Debug':
 			con.activate( con.Target.Same, 0f, false )
 			pTex.Value = fbo.at.color[0] as kri.buf.Texture
-			bv.activate()
-			kri.Ant.Inst.quad.draw()
+			kri.Ant.Inst.quad.render(va,bv)
 			return
 		# react, todo: use PBO and actually read on demand
 		fbo.bind()
