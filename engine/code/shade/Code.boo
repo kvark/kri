@@ -73,10 +73,12 @@ public struct DefMethod:
 
 
 public class Collector:
-	public final prog	= Smart()
+	public final bu		= kri.shade.Bundle()
 	public final mets	= Dictionary[of string,DefMethod]()
 	public root			as Object	= null
 	public extra		= List[of Object]()
+	public Ready	as bool:
+		get: return bu.shader.Ready
 	
 	public def gather(method as string, codes as List[of ICode]) as Object:
 		dm = mets[method]
@@ -101,20 +103,22 @@ public class Collector:
 		cl = List[of ICode]()
 		for cd in codes:
 			cl.Add(cd as ICode)
-			prog.add( cd.Shader )
+			bu.shader.add( cd.Shader )
 		for key in mets.Keys:
 			sh = gather( key, cl )
-			prog.add(sh)
+			bu.shader.add(sh)
 	
 	public def compose( sem as kri.vb.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
 		assert root
-		prog.add('/lib/quat_v')
-		prog.add(root)
-		prog.add( *extra.ToArray() )
+		sa = bu.shader
+		sa.add('/lib/quat_v')
+		sa.add(root)
+		sa.add( *extra.ToArray() )
 		if sem:
 			names = List[of string]( 'to_'+sl.Name[at.slot] for at in sem )
-			prog.feedback( false, *names.ToArray() )
-		prog.link(sl,*dicts)
+			sa.feedback( false, *names.ToArray() )
+		bu.dicts.AddRange(dicts)
+		bu.link()
 
 
 //------------------------------//

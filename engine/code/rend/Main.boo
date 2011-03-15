@@ -38,20 +38,21 @@ public class Chain(Basic):
 #---------	GENERAL FILTER	--------#
 
 public class Filter(Basic):
-	protected final sa		= kri.shade.Smart()
+	protected final bu		= kri.shade.Bundle()
 	protected final texIn	= kri.shade.par.Texture('input')
 	protected final dict	= kri.shade.rep.Dict()
 	protected linear		= false
 	public def constructor():
 		dict.unit(texIn)
+		bu.dicts.Add(dict)
 	public override def process(con as link.Basic) as void:
 		texIn.Value = con.Input
 		con.Input.filt(linear,false)
 		con.activate(true)
-		sa.use()
+		bu.activate()
 		kri.Ant.inst.quad.draw()
 
 public class FilterCopy(Filter):
 	public def constructor():
-		sa.add('/copy_v','/copy_f')
-		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+		bu.shader.add('/copy_v','/copy_f')
+		bu.link()

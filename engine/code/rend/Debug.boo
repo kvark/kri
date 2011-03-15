@@ -7,25 +7,26 @@ import kri.shade
 #---------	RENDER TEXTURE LAYER		--------#
 
 public class Map( kri.rend.Basic ):
-	private final sa	= Smart()
+	private final bu	= Bundle()
 	public final layer	= par.Value[of single]('layer')
 	
 	public def constructor(depth as bool, cube as bool, id as int, t as par.IBase[of kri.buf.Texture]):
+		layer.Value = 1f * id
 		name = ''
 		if depth:
 			name = ('show_depth','copy_cube')[cube]
 		else:
 			name = ('copy','copy_ar')[id>=0]
-		sa.add( '/copy_v', "/${name}_f" )
-		layer.Value = 1f * id
-		dict = kri.shade.rep.Dict()
-		dict.unit( 'input', t )
-		dict.var(layer)
-		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+		bu.shader.add( '/copy_v', "/${name}_f" )
+		d = kri.shade.rep.Dict()
+		d.unit( 'input', t )
+		d.var(layer)
+		bu.dicts.Add(d)
+		bu.link()
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
-		sa.use()
+		bu.activate()
 		kri.Ant.inst.quad.draw()
 
 
@@ -43,12 +44,12 @@ public class MapDepth( Map ):
 #---------	RENDER DEBUG ATTRIBUTE		--------#
 
 public class Attrib( kri.rend.Basic ):
-	private final sa	= kri.shade.Smart()
+	private final bu	= kri.shade.Bundle()
 	private final va	= kri.vb.Array()
 	public def constructor():
-		sa.add( '/attrib_v', '/attrib_f' )
-		sa.add( *kri.Ant.Inst.libShaders )
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		bu.shader.add( '/attrib_v', '/attrib_f' )
+		bu.shader.add( *kri.Ant.Inst.libShaders )
+		bu.link()
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate( con.Target.Same, 0f, true )
 		con.ClearColor()
@@ -60,5 +61,6 @@ public class Attrib( kri.rend.Basic ):
 				assert rez
 			e.mesh.ind.bind()
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			sa.use()
+			bu.pushAttribs( e.CombinedAttribs )
+			bu.activate()
 			e.mesh.draw(1)

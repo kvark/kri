@@ -26,7 +26,7 @@ public class Anim( kri.ani.Loop ):
 
 public class Update( kri.rend.Basic ):
 	public final tf		= kri.TransFeedback(1)
-	public final sa		= kri.shade.Smart()
+	public final bu		= kri.shade.Bundle()
 	public final pVal	= kri.shade.par.Value[of Vector4]('shape_value')
 	private final va	= kri.vb.Array()
 	private final slot	= kri.lib.Slot(4)
@@ -37,13 +37,13 @@ public class Update( kri.rend.Basic ):
 			slot.create('pos'+(i+1))
 		d = kri.shade.rep.Dict()
 		d.var(pVal)
-		sa.add('/skin/morph_v')
-		sa.feedback(true,'to_pos')
-		sa.link( slot, d, kri.Ant.Inst.dict )
+		bu.shader.add('/skin/morph_v')
+		bu.shader.feedback(true,'to_pos')
+		bu.dicts.Add(d)
+		bu.link()
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		trans = Dictionary[of int,int]()
-		sa.use()
 		va.bind()
 		using kri.Discarder(true):
 			for ent in kri.Scene.Current.entities:
@@ -63,5 +63,5 @@ public class Update( kri.rend.Basic ):
 					trans[av] = i+1
 					keys[i].data.attribTrans(trans)
 				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))
-				kri.shade.Smart.UpdatePar()
+				bu.activate()
 				ent.mesh.draw(tf)

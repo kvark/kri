@@ -8,39 +8,38 @@ import kri.buf
 #---------	LIGHT INIT	--------#
 
 public class Init( kri.rend.Basic ):
-	public final buf	as Holder
-	private final sa	= kri.shade.Smart()
+	public final fbo	= Holder( mask:3 )
+	private final bu	= kri.shade.Bundle()
 
 	public def constructor(nlay as byte):
 		# init buffer
 		tt = TextureTarget.Texture2DMultisample
-		buf = Holder( mask:3 )
-		buf.at.stencil	= Texture.Stencil(nlay)
-		buf.at.color[0]	= Texture( target:tt, samples:nlay,
+		fbo.at.stencil	= Texture.Stencil(nlay)
+		fbo.at.color[0]	= Texture( target:tt, samples:nlay,
 			intFormat:PixelInternalFormat.Rgb16f )	# R11fG11fB10f
-		buf.at.color[1]	= Texture( target:tt, samples:nlay,
+		fbo.at.color[1]	= Texture( target:tt, samples:nlay,
 			intFormat:PixelInternalFormat.Rgb10A2 )
 		# init shader
-		sa.add('/copy_v','/white_f') # temp
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		bu.shader.add('/copy_v','/white_f') # temp
+		bu.link()
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
-		buf.resize( pl.wid, pl.het )
+		fbo.resize( pl.wid, pl.het )
 		return true
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		# depth copy
 		con.Multisample = false
-		buf.mask = 0
-		con.blitTo( buf, ClearBufferMask.DepthBufferBit )
+		fbo.mask = 0
+		con.blitTo( fbo, ClearBufferMask.DepthBufferBit )
 		# stencil init
 		GL.StencilMask(-1)
-		sm = buf.at.stencil.samples
+		sm = fbo.at.stencil.samples
 		if 'RectangleFill':	
 			assert sm > 0
 			con.DepthTest = false
 			con.ClearStencil(1)
-			sa.use()
+			bu.activate()
 			#sb = -1; GL.GetInteger( GetPName.SampleBuffers, sb )
 			#sm = -1; GL.GetInteger( GetPName.Samples, sm )
 			# todo: optimize to use less passes
@@ -57,15 +56,15 @@ public class Init( kri.rend.Basic ):
 					con.ClearStencil(i+1)
 		GL.SampleMask(0,-1)
 		# color clear
-		buf.mask = 3
-		buf.bind()
+		fbo.mask = 3
+		fbo.bind()
 		GL.ColorMask(true,true,true,true)
 		con.ClearColor()
 		if not 'DebugColor':
 			debugLayer = 1
-			buf.mask = 2
-			buf.bind()
-			sa.use()
+			fbo.mask = 2
+			fbo.bind()
+			bu.activate()
 			using kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Equal, debugLayer,-1 )
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
@@ -76,43 +75,45 @@ public class Init( kri.rend.Basic ):
 #---------	LIGHT PRE-PASS	--------#
 
 public class Bake( kri.rend.Basic ):
-	protected final sa		= Smart()
-	protected final sb		= Smart()
+	protected final bu		= Bundle()
+	protected final bv		= Bundle()
 	protected final context	as support.light.Context
 	protected final sphere	as kri.Mesh
-	private final buf		as Holder
+	private final fbo		as Holder
 	private final texDep	= par.Texture('depth')
 	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba
 
 	public def constructor(init as Init, lc as support.light.Context):
-		buf = init.buf
+		fbo = init.fbo
 		context = lc
 		# baking shader
-		sa.add( '/light/kbuf/bake_v', '/light/kbuf/bake_f', '/lib/defer_f' )
-		sa.add( *kri.Ant.Inst.libShaders )
-		sa.fragout('rez_dir','rez_color')
+		sx = bu.shader
+		sx.add( '/light/kbuf/bake_v', '/light/kbuf/bake_f', '/lib/defer_f' )
+		sx.add( *kri.Ant.Inst.libShaders )
+		sx.fragout('rez_dir','rez_color')
 		d = rep.Dict()
 		d.unit(texDep)
-		sa.link( kri.Ant.Inst.slotAttributes, d, lc.dict, kri.Ant.Inst.dict )
+		bu.dicts.AddRange((d,lc.dict))
+		bu.link()
 		# create geometry
 		va.bind()	# the buffer objects are bound in creation
 		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
 		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
 		# create white shader
-		sb.add('/light/kbuf/bake_v','/empty_f')
-		sb.add( *kri.Ant.Inst.libShaders )
-		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		sx = bv.shader
+		sx.add('/light/kbuf/bake_v','/empty_f')
+		sx.add( *kri.Ant.Inst.libShaders )
+		bv.link()
 
-	private def drawLights(mask as byte, sx as Smart) as void:
-		buf.mask = mask
-		buf.bind()
-		sx.useBare()
+	private def drawLights(mask as byte, bx as Bundle) as void:
+		fbo.mask = mask
+		fbo.bind()
 		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
-			Smart.UpdatePar()
+			bx.activate()
 			sphere.draw(1)
 			#break	# !debug!
 
@@ -129,11 +130,11 @@ public class Bake( kri.rend.Basic ):
 			# write color values
 			GL.StencilFunc( StencilFunction.Equal, 1,-1 )
 			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
-			drawLights(3,sa)
+			drawLights(3,bu)
 			# shift stencil route
 			GL.StencilFunc( StencilFunction.Always, 0,0 )
 			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
-			drawLights(0,sb)
+			drawLights(0,bv)
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 		con.Multisample = true
@@ -142,16 +143,16 @@ public class Bake( kri.rend.Basic ):
 #---------	LIGHT APPLICATION	--------#
 
 public class Apply( kri.rend.tech.Meta ):
-	private final buf	as kri.buf.Holder
+	private final fbo	as kri.buf.Holder
 	private final pDir	= par.Texture('dir')
 	private final pCol	= par.Texture('color')
 	# init
 	public def constructor(init as Init):
 		super('lit.kbuf', false, null,
 			'bump','emissive','diffuse','specular','glossiness')
-		buf = init.buf
-		pDir.Value = buf.at.color[0] as kri.buf.Texture
-		pCol.Value = buf.at.color[1] as kri.buf.Texture
+		fbo = init.fbo
+		pDir.Value = fbo.at.color[0] as kri.buf.Texture
+		pCol.Value = fbo.at.color[1] as kri.buf.Texture
 		dict.unit( pDir, pCol )
 		shade('/light/kbuf/apply')
 	# work

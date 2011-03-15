@@ -6,7 +6,7 @@ import kri.shade
 #---------	DEFERRED BASE APPLY		--------#
 
 public class ApplyBase( kri.rend.Basic ):
-	protected final sa		= Smart()
+	protected final bu		= Bundle()
 	protected final sphere	as kri.Mesh
 	protected final dict	= rep.Dict()
 	private final va		= kri.vb.Array()
@@ -25,9 +25,10 @@ public class ApplyBase( kri.rend.Basic ):
 	# link
 	protected def relink(con as Context) as void:
 		texDepth = con.texDepth
-		sa.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f' )
-		sa.add( con.sh_apply, con.sh_diff, con.sh_spec )
-		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
+		bu.dicts.Add(con.dict)
+		bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f' )
+		bu.shader.add( con.sh_apply, con.sh_diff, con.sh_spec )
+		bu.link()
 	# work
 	public override def process(con as kri.rend.link.Basic) as void:
 		texDepth.Value = con.Depth
@@ -49,18 +50,19 @@ public class ApplyBase( kri.rend.Basic ):
 #---------	DEFERRED STANDARD APPLY		--------#
 
 public class Apply( ApplyBase ):
-	private final s0		= Smart()
+	private final bv		= Bundle()
 	private final texLit	= par.Value[of kri.buf.Texture]('light')
 	private final context	as support.light.Context
 	# init
 	public def constructor(con as Context, lc as support.light.Context, qord as byte):
 		super(qord)
 		context = lc
-		sa.add('/g/apply_v')
+		bu.shader.add('/g/apply_v')
 		relink(con)
 		# fill shader
-		s0.add( '/copy_v', '/g/init_f' )
-		s0.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+		bv.shader.add( '/copy_v', '/g/init_f' )
+		bv.dicts.Add(dict)
+		bv.link()
 	# shadow
 	private def bindShadow(t as kri.buf.Texture) as void:
 		if t:
@@ -71,11 +73,11 @@ public class Apply( ApplyBase ):
 			texLit.Value = context.defShadow
 	# work
 	private override def onInit() as void:
-		s0.use()
+		bv.activate()
 		kri.Ant.Inst.quad.draw()
 	private override def onDraw() as void:
 		for l in kri.Scene.Current.lights:
 			bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
-			sa.use()
+			bu.activate()
 			sphere.draw(1)

@@ -7,32 +7,31 @@ public class Context:
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.buf.Holder()
+	private final fbo	= kri.buf.Holder()
 	private final b2	= kri.buf.Holder()
 	private final pbo	= kri.vb.Pack()
 	private final context	as Context
-	private final sa_bright	= kri.shade.Smart()
-	private final sa_scale	= kri.shade.Smart()
-	private final sa_tone	= kri.shade.Smart()
+	private final bu_bright	= kri.shade.Bundle()
+	private final bu_scale	= kri.shade.Bundle()
+	private final bu_tone	= kri.shade.Bundle()
 	private final tInput	= kri.shade.par.Texture('input')
 	private final pExpo		= kri.shade.par.Value[of single]('exposure')
 	
 	public def constructor(ctx as Context):
 		context = ctx
-		sl = kri.Ant.Inst.slotAttributes
 		pExpo.Value = 1f
 		d = kri.shade.rep.Dict()
 		d.unit(tInput)
 		d.var(pExpo)
-		sa_bright	.add('/copy_v','/hdr/bright_f')
-		sa_bright	.link(sl, d, kri.Ant.Inst.dict)
-		sa_scale	.add('/copy_v','/copy_f')
-		sa_scale	.link(sl, d, kri.Ant.Inst.dict)
-		sa_tone		.add('/copy_v','/hdr/tone_f')
-		sa_tone		.link(sl, d, kri.Ant.Inst.dict)
+		for i in range(3):
+			bu = (bu_bright,bu_scale,bu_tone)[i]
+			name = ('/hdr/bright_f','/copy_f','/hdr/tone_f')[i]
+			bu.shader.add('/copy_v',name)
+			bu.dicts.Add(d)
+			bu.link()
 	
 	public virtual def setup(pl as kri.buf.Plane) as bool:
-		buf.resize( pl.wid, pl.het )
+		fbo.resize( pl.wid, pl.het )
 		pbo.init( sizeof(single) )
 		return true
 	
@@ -48,15 +47,15 @@ public class Render( kri.rend.Basic ):
 		#w = pl.wid
 		#h = pl.het
 		tInput.Value = t = con.Input
-		buf.at.color[0] = b2.at.color[0] = t
+		fbo.at.color[0] = b2.at.color[0] = t
 		scale = t.genLevels()	# to be sure
 		t.filt(true,false)
 		scale = 8
 		# bright filter
 		t.level = 1
 		t.setLevels(0,0)
-		sa_bright.use()
-		buf.mask = b2.mask = 1
+		bu_bright.activate()
+		fbo.mask = b2.mask = 1
 		b2.bind()
 		kri.Ant.Inst.quad.draw()
 		# down-sample
@@ -88,6 +87,6 @@ public class Render( kri.rend.Basic ):
 		t.level = 0
 		t.setLevels(0,10)
 		t.filt(false,false)
-		sa_tone.use()
+		bu_tone.activate()
 		con.activate(true)
 		kri.Ant.Inst.quad.draw()

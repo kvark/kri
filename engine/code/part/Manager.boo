@@ -19,7 +19,7 @@ public class Manager(DataHolder):
 
 	private parTotal	= kri.shade.par.Value[of single]('part_total')
 	public Ready as bool:
-		get: return col_init.prog.Ready and col_update.prog.Ready
+		get: return col_init.Ready and col_update.Ready
 	
 	public def constructor(num as uint):
 		total = num
@@ -54,8 +54,8 @@ public class Manager(DataHolder):
 
 	public def init(pc as Context) as void:
 		if data:
-			col_init.prog.clear()
-			col_update.prog.clear()
+			col_init.bu.clear()
+			col_update.bu.clear()
 		# collect shaders
 		col_init	.absorb[of Behavior](behos)
 		col_update	.absorb[of Behavior](behos)
@@ -81,7 +81,7 @@ public class Manager(DataHolder):
 		return false	if not pe.prepare()
 		tf.Bind( pe.data )
 		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
-		col.prog.use()
+		col.bu.activate()
 		using kri.Discarder(true), tf.catch():
 			draw(0)
 		if not 'Debug':

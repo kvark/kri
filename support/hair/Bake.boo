@@ -13,13 +13,13 @@ public class Bake( kri.rend.Basic ):
 	public final vbo	= kri.vb.Attrib()
 	public final tf		= kri.TransFeedback(1)
 	# face section
-	public final s_face	= Smart()
+	public final bu_face	= Bundle()
 	private final pWid	= par.Value[of int]('width')
 	private final pVert	= par.Texture('vert')
 	private final pQuat	= par.Texture('quat')
 	private final pInit	= par.Value[of Vector4]('fur_init')
 	# vertex section
-	public final s_vert	= Smart()
+	public final bu_vert	= Bundle()
 	private final pStretch	= par.Value[of single]('vertex_ratio')
 	private final tbuf = (
 		kri.buf.Texture(),
@@ -34,12 +34,13 @@ public class Bake( kri.rend.Basic ):
 		d.unit(pVert,pQuat)
 		# init shader
 		com = Object.Load('/part/fur/base/main_v')
-		s_face.add('/lib/quat_v','/part/fur/base/face_v')
-		s_vert.add('/lib/quat_v','/part/fur/base/vert_v')
-		for sa in s_face,s_vert:
-			sa.add( com, pc.sh_tool )
-			sa.feedback(false, 'to_prev','to_base')
-			sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		bu_face.shader.add('/lib/quat_v','/part/fur/base/face_v')
+		bu_vert.shader.add('/lib/quat_v','/part/fur/base/vert_v')
+		for bu in bu_face,bu_vert:
+			bu.shader.add( com, pc.sh_tool )
+			bu.dicts.Add(d)
+			bu.shader.feedback(false, 'to_prev','to_base')
+			bu.link()
 		# init fake vertex attrib for drawing
 		vbo.Semant.Add( kri.vb.Info(
 			size:1, slot:0, type:VertexAttribPointerType.UnsignedByte ))
@@ -61,13 +62,13 @@ public class Bake( kri.rend.Basic ):
 				pWid.Value	= tBake.buf.getInfo().wid
 				pVert.Value	= tBake.Vert
 				pQuat.Value	= tBake.Quat
-				s_face.use()
+				bu_face.activate()
 			else:		# from vertices
 				pStretch.Value = e.mesh.nVert * 1f / tCur.pixels
 				ats = kri.Ant.Inst.attribs
 				(pVert.Value = tbuf[0]).init( SizedInternalFormat.Rgba32f,	e.findAny(ats.vertex) )
 				(pQuat.Value = tbuf[1]).init( SizedInternalFormat.Rgba32f,	e.findAny(ats.quat) )
-				s_vert.use()
+				bu_vert.activate()
 			using kri.Discarder(true), tf.catch():
 				GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )
 			tCur.stamp = kri.Ant.Inst.Time

@@ -73,7 +73,7 @@ public class Dict( SortedDictionary[of string,par.IBaseRoot] ):
 			Item[v.Name] = v
 	# add custom unit
 	public def unit(name as string, v as par.IBase[of kri.buf.Texture]) as void:
-		Item[Smart.prefixUnit + name] = v
+		Item[Mega.PrefixUnit + name] = v
 	# add texture unit representor
 	public def unit(*vat as (par.Value[of kri.buf.Texture])) as void:
 		for v in vat:

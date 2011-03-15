@@ -3,13 +3,14 @@
 import kri.buf
 
 public class Fill( kri.rend.Basic ):
-	public final sa			= kri.shade.Smart()
-	private final buf		as Holder	= null
+	public final bu			= kri.shade.Bundle()
+	private final fbo		as Holder	= null
 	private static doGeom	= true	#should be
 	
 	public def constructor(licon as support.light.Context, buffer as Holder):
 		assert licon
-		buf = buffer
+		fbo = buffer
+		sa = bu.shader
 		sa.add( '/lib/quat_v','/lib/tool_v' )
 		sa.add( licon.getFillShader() )
 		if doGeom:
@@ -17,23 +18,23 @@ public class Fill( kri.rend.Basic ):
 			sa.add( pref+'v', pref+'g' )
 		else:
 			sa.add( 'text/fill_point_v' )
-		sa.link( kri.Ant.Inst.slotParticles, licon.dict, kri.Ant.Inst.dict )
+		bu.dicts.Add( licon.dict )
+		bu.link()
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f,true)
-		sa.use()
 		for pe in kri.Scene.Current.particles:
 			pe.va.bind()
 			continue	if not pe.prepare()
 			for lit in kri.Scene.Current.lights:
 				continue	if not lit.depth
-				if buf.mask:
-					buf.at.color[0] = lit.depth
+				if fbo.mask:
+					fbo.at.color[0] = lit.depth
 				else:
-					buf.at.depth = lit.depth
-				buf.bind()
+					fbo.at.depth = lit.depth
+				fbo.bind()
 				kri.Ant.Inst.params.activate(lit)
-				kri.shade.Smart.UpdatePar()
+				bu.activate()
 				pe.owner.draw(0)
 
 

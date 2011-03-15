@@ -33,19 +33,20 @@ public class Tag( kri.ITag ):
 #---------	RENDER VERTEX SPATIAL TO UV		--------#
 
 public class Update( kri.rend.tech.Basic ):
-	private final sa		= kri.shade.Smart()
+	private final bu		= kri.shade.Bundle()
 	public final channel	as byte
 	
 	public def constructor(texId as byte, putId as bool):
 		super('bake.mesh')
 		channel = texId
 		# surface shader
+		sa = bu.shader
 		sa.add( '/uv/bake_v', '/lib/quat_v', '/uv/bake_f' )
 		if putId:
 			sa.add( '/uv/set/geom_v', '/uv/bake_g' )
 		else:	sa.add('/uv/set/norm_v')
 		sa.fragout('re_vertex','re_quat')
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict )
+		bu.link()
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.DepthTest = false
@@ -62,5 +63,5 @@ public class Update( kri.rend.tech.Basic ):
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )
 				tag.clearTarget = false
-			sa.use()
+			bu.activate()
 			e.mesh.draw(1)

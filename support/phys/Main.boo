@@ -20,12 +20,12 @@ public class Simulator( kri.ani.sim.Native ):
 public class Core:
 	private final fbo	= kri.buf.Holder(mask:1)
 	private final cam	= kri.Camera()
-	private final sa	= kri.shade.Smart()
-	private final sb	= kri.shade.Smart()
+	private final bu	= kri.shade.Bundle()
+	private final bv	= kri.shade.Bundle()
 	private final tid	as int
 	private final pbo	= kri.vb.Object( BufferTarget.PixelPackBuffer )
 	private final pId	= kri.shade.par.Value[of single]('object_id')
-	private final big	as bool
+	private final isBig	as bool
 	
 	public Color	as kri.buf.Texture:
 		get: return fbo.at.color[0] as kri.buf.Texture
@@ -33,7 +33,7 @@ public class Core:
 		get: return fbo.at.stencil	as kri.buf.Texture
 	
 	public def constructor( ord as byte, large as bool, techId as int ):
-		big = large
+		isBig = large
 		# init FBO
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
 		fbo.at.stencil = tSten		= kri.buf.Texture.Stencil(0)
@@ -56,16 +56,18 @@ public class Core:
 		d.unit(pSten,pColor)
 		d.var(pId)
 		# create draw program
-		sa.add('/zcull_v','/physics_f')
-		sa.add( *kri.Ant.Inst.libShaders )
-		sa.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		bu.shader.add('/zcull_v','/physics_f')
+		bu.shader.add( *kri.Ant.Inst.libShaders )
+		bu.dicts.Add(d)
+		bu.link()
 		# create down-sample program
-		sb.add('/copy_v','/filter/phys_max_f')
-		sb.fragout('to_sten','to_color')
-		sb.link( kri.Ant.Inst.slotAttributes, d, kri.Ant.Inst.dict )
+		bv.shader.add('/copy_v','/filter/phys_max_f')
+		bv.shader.fragout('to_sten','to_color')
+		bv.dicts.Add(d)
+		bv.link()
 
-	private def drawAll(scene as kri.Scene) as void:
-		kid = 1f / ((1 << (8,16)[big]) - 1f)
+	private def drawAll(scene as kri.Scene, bx as kri.shade.Bundle) as void:
+		kid = 1f / ((1 << (8,16)[isBig]) - 1f)
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
 			va = e.va[tid]
@@ -73,14 +75,13 @@ public class Core:
 			e.va[tid].bind()
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			kri.shade.Smart.UpdatePar()
+			bx.activate()
 			e.mesh.draw(1)
 
 	public def tick(s as kri.Scene) as void:
 		# prepare the camera
 		kri.Ant.Inst.params.activate( cam )
 		kri.Ant.Inst.params.activate( s.cameras[0] )
-		sa.useBare()
 		# prepare buffer
 		fbo.bind()
 		GL.DepthMask(true)
@@ -98,7 +99,7 @@ public class Core:
 		GL.ColorMask(true,false,false,false)
 		GL.DepthFunc( DepthFunction.Always )
 		GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line )
-		drawAll(s)
+		drawAll(s,bu)
 		GL.DepthMask(false)
 		GL.ColorMask(false,true,false,false)
 		GL.DepthFunc( DepthFunction.Lequal )
@@ -109,11 +110,11 @@ public class Core:
 			GL.PolygonOffset(1f,1f)
 			GL.CullFace( CullFaceMode.Back )
 			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Incr )
-			drawAll(s)
+			drawAll(s,bu)
 			GL.PolygonOffset(-1f,-1f)
 			GL.CullFace( CullFaceMode.Front )
 			GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Decr )
-			drawAll(s)
+			drawAll(s,bu)
 			GL.CullFace( CullFaceMode.Back )
 
 		# resize the map
@@ -121,7 +122,6 @@ public class Core:
 		GL.ColorMask(true,true,true,true)
 		
 		GL.Disable( EnableCap.DepthTest )
-		sb.use()
 		tc = fbo.at.color[0]	as kri.buf.Texture
 		ts = fbo.at.stencil		as kri.buf.Texture
 		for i in range(3):
@@ -139,10 +139,10 @@ public class Core:
 		size = pl.Size
 		GL.ReadPixels(0,0, pl.wid, pl.het, PixelFormat.StencilIndex, PixelType.Byte, IntPtr.Zero )
 		fbo.bindRead(true)
-		pt = (PixelType.UnsignedByte, PixelType.UnsignedShort)[big]
+		pt = (PixelType.UnsignedByte, PixelType.UnsignedShort)[isBig]
 		GL.ReadPixels(0,0, pl.wid, pl.het, PixelFormat.Rg, pt, IntPtr(size) )
 		# debug: extract result
-		es = (1,2)[big]
+		es = (1,2)[isBig]
 		dar = array[of byte]( size*(1+2*es) )
 		for i in range(dar.Length):
 			dar[i] = 123

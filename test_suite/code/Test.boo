@@ -102,10 +102,10 @@ private class TextureRead( kri.rend.Basic ):
 
 
 private class Feedback( kri.rend.Basic ):
-	private final	tf		= kri.TransFeedback(1)
-	private final	prog	= kri.shade.Smart()
-	private final	vin		= kri.vb.Attrib()
-	private final	sl		as kri.lib.Slot
+	private final	tf	= kri.TransFeedback(1)
+	private final	bu	= kri.shade.Bundle()
+	private final	vin	= kri.vb.Attrib()
+	private final	sl	as kri.lib.Slot
 	
 	public def constructor(pc as kri.part.Context):
 		if pc:
@@ -116,7 +116,7 @@ private class Feedback( kri.rend.Basic ):
 			sl.create('xxx')
 			atId = sl.create('pos')
 		
-		ai = kri.vb.Info(
+		ai = kri.vb.Info( name:'pos',
 			slot:atId, integer:false, size:4,
 			type:VertexAttribPointerType.Float )
 		vin.Semant.Add(ai)
@@ -131,9 +131,9 @@ private class Feedback( kri.rend.Basic ):
 			to_pos = vec4(10.0)-at_pos;
 		}"""
 		pob = kri.shade.Object(ShaderType.VertexShader,'my',text)
-		prog.add(pob)
-		prog.feedback(false,'to_pos')
-		prog.link(sl)
+		bu.shader.add(pob)
+		bu.shader.feedback(false,'to_pos')
+		bu.link()
 		#make data
 		varray = kri.vb.Array()
 		varray.bind()
@@ -143,7 +143,7 @@ private class Feedback( kri.rend.Basic ):
 		vot.init(8*4)
 		vin.attribFirst()
 		#run!
-		prog.use()
+		bu.activate()
 		tf.Bind(vot)
 		using tf.catch(), kri.Discarder(true):
 			GL.DrawArrays( BeginMode.Points, 0, 2 )
@@ -154,7 +154,7 @@ private class Feedback( kri.rend.Basic ):
 
 private class DrawToStencil( kri.rend.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
-		prog	= kri.shade.Smart()
+		bu	= kri.shade.Bundle()
 		#make program
 		text = """
 		#version 130
@@ -163,9 +163,9 @@ private class DrawToStencil( kri.rend.Basic ):
 			to_stencil = 0;
 		}"""
 		pob = kri.shade.Object(ShaderType.FragmentShader,'my',text)
-		prog.add('/copy_v')
-		prog.add(pob)
-		prog.link( kri.Ant.Inst.slotAttributes )
+		bu.shader.add('/copy_v')
+		bu.shader.add(pob)
+		bu.link()
 		#make data
 		fbo = kri.buf.Holder()
 		fbo.at.stencil = t = kri.buf.Texture.Stencil(0)
@@ -178,5 +178,5 @@ private class DrawToStencil( kri.rend.Basic ):
 		fbo.mask = 1
 		fbo.bind()
 		#run!
-		prog.use()
+		bu.activate()
 		kri.Ant.Inst.quad.draw()

@@ -94,9 +94,10 @@ public class Bake( kri.rend.tech.Basic ):
 public class Apply( kri.rend.Filter ):
 	public def constructor(con as Context):
 		linear = true
-		sa.add( '/copy_v', '/filter/blur_vector_f', '/motion/apply_f' )
+		bu.shader.add( '/copy_v', '/filter/blur_vector_f', '/motion/apply_f' )
 		pTex = kri.shade.par.Texture('velocity')
 		pTex.Value = con.buf.at.color[0] as kri.buf.Texture
 		dict.var(con.pRadius)
 		dict.unit(pTex)
-		sa.link( kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+		bu.dicts.Add(dict)
+		bu.link()

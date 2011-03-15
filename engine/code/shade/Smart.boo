@@ -6,22 +6,22 @@ import OpenTK.Graphics.OpenGL
 #	SMART SHADER 		#
 #-----------------------#
 
-public class Smart(Program):
+public class Smart2(Program):
 	private final repList	= List[of rep.Base]()
 	private sourceList		as (par.IBaseRoot)
-	private static activeProgram		as Smart	= null
+	private static activeProgram		as Smart2	= null
 	public static final prefixAttrib	as string	= 'at_'
 	public static final prefixGhost		as string	= 'ghost_'
 	public static final ghostSym		as string	= '@'
 	public static final prefixUnit		as string	= 'unit_'
 	
-	public static final Fixed = Smart(0)
+	public static final Fixed = Smart2(0)
 	
 	public def constructor():
 		super()
 	private def constructor(xid as int):
 		super(xid)
-	public def constructor(sa as Smart):
+	public def constructor(sa as Smart2):
 		super( sa.handle )	# cloning
 		repList.Extend( sa.repList )
 		sourceList = array[of par.IBaseRoot]( sa.sourceList.Length )

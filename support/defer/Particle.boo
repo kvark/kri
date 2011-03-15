@@ -16,7 +16,7 @@ public class Particle(ApplyBase):
 		trans[ pc.at_pos ] = pc.ghost_pos
 		# program link
 		dict.var(pHalo)
-		sa.add('/part/draw/light_v')
+		bu.shader.add('/part/draw/light_v')
 		relink(con)
 	# work
 	private override def onDraw() as void:
@@ -32,5 +32,5 @@ public class Particle(ApplyBase):
 			light.setLimit( pHalo.Value.X )
 			pe.data.attribTrans(trans)	
 			kri.Ant.Inst.params.activate(light)
-			sa.use()
+			bu.activate()
 			sphere.draw( pe.owner.total )

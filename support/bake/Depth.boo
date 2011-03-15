@@ -20,14 +20,14 @@ public class Tag( kri.ITag ):
 #	Update render		#
 
 public class Update( kri.rend.Basic ):
-	public final sa		= kri.shade.Smart()
-	public final buf	= kri.buf.Holder(mask:0)
+	public final bu		= kri.shade.Bundle()
+	public final fbo	= kri.buf.Holder(mask:0)
 	public final va		= kri.vb.Array()
 
 	public def constructor():
-		buf.at.depth = kri.buf.Texture.Depth(0)
-		sa.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
-		sa.link(kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict)
+		fbo.at.depth = kri.buf.Texture.Depth(0)
+		bu.shader.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
+		bu.link()
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		par = kri.Ant.Inst.params
@@ -38,12 +38,12 @@ public class Update( kri.rend.Basic ):
 			tag = e.seTag[of Tag]()
 			continue	if not tag
 			assert tag.proj
-			buf.at.depth = tag.tex
-			buf.bind()
+			fbo.at.depth = tag.tex
+			fbo.bind()
 			con.ClearDepth(1f)
 			par.pLit.activate( tag.proj )
 			par.modelView.activate( e.node )
-			sa.use()
+			bu.activate()
 			e.enable(true, (kri.Ant.Inst.attribs.vertex,))
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():

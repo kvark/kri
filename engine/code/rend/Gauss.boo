@@ -7,56 +7,58 @@ import kri.shade
 #---------	GAUSS FILTER	--------#
 
 public class Simple( kri.rend.Basic ):
-	protected	final sa	= Smart()
-	protected	final sb	= Smart()
+	protected	final pu	= Bundle()
+	protected	final pv	= Bundle()
 	protected	final texIn	= par.Texture('input')
-	public		buf		as Holder	= null
+	public		fbo		as Holder	= null
 
 	public def constructor():
 		dict = rep.Dict()
 		dict.unit(texIn)
-		sa.add('/copy_v','/filter/gauss_hor_f')
-		sa.link( kri.Ant.Inst.slotAttributes, dict )
-		sb.add('/copy_v','/filter/gauss_ver_f')
-		sb.link( kri.Ant.Inst.slotAttributes, dict )
+		pu.shader.add('/copy_v','/filter/gauss_hor_f')
+		pu.dicts.Add(dict)
+		pu.link()
+		pv.shader.add('/copy_v','/filter/gauss_ver_f')
+		pv.dicts.Add(dict)
+		pv.link()
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		return	if not buf
-		assert buf.at.color[0] and buf.at.color[1]
+		return	if not fbo
+		assert fbo.at.color[0] and fbo.at.color[1]
 		for i in range(2):
-			texIn.Value = buf.at.color[i] as Texture
-			buf.mask = 3 ^ (1<<i)
-			buf.bind()
-			(sa,sb)[i].use()
+			texIn.Value = fbo.at.color[i] as Texture
+			fbo.mask = 3 ^ (1<<i)
+			fbo.bind()
+			(pu,pv)[i].activate()
 			kri.Ant.inst.quad.draw()
 
 
 public class Advanced( kri.rend.Basic ):
-	public	final	sa		= Smart()
+	public	final	bu		= Bundle()
 	public	final	pTex	= par.Texture('input')
 	public	final	pDir	= par.Value[of Vector4]('dir')
-	public	buf		as Holder = null
+	public	fbo		as Holder = null
 	
 	public def constructor():
-		dict = rep.Dict()
-		dict.unit(pTex)
-		dict.var(pDir)
-		sa.add('/copy_v','/filter/gauss_bi_f')
-		sa.link( kri.Ant.Inst.slotAttributes, dict )
+		d = rep.Dict()
+		d.unit(pTex)
+		d.var(pDir)
+		bu.shader.add('/copy_v','/filter/gauss_bi_f')
+		bu.dicts.Add(d)
+		bu.link()
 	
 	public def spawn() as (kri.rend.Basic):
 		return ( Axis(self,Vector4.UnitX), Axis(self,Vector4.UnitY) )
 	
 	public override def process(con as kri.rend.link.Basic) as void:
-		return	if not buf
-		assert buf.at.color[0] and buf.at.color[1]
-		sa.useBare()
+		return	if not fbo
+		assert fbo.at.color[0] and fbo.at.color[1]
 		for i in range(2):
-			pTex.Value = buf.at.color[i] as Texture
+			pTex.Value = fbo.at.color[i] as Texture
 			pDir.Value = (Vector4.UnitX,Vector4.UnitY)[i]
-			buf.mask = 3 ^ (1<<i)
-			buf.bind()
-			Smart.UpdatePar()
+			fbo.mask = 3 ^ (1<<i)
+			fbo.bind()
+			bu.activate()
 			kri.Ant.inst.quad.draw()
 
 
@@ -72,5 +74,5 @@ public class Axis( kri.rend.Basic ):
 		parent.pTex.Value = con.Input
 		parent.pDir.Value = dir
 		con.activate(true)
-		parent.sa.use()
+		parent.bu.activate()
 		kri.Ant.inst.quad.draw()

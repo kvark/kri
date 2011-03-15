@@ -8,15 +8,15 @@ public class Tag( kri.ITag ):
 	
 
 public class Render( kri.rend.Basic ):
-	private final buf	= kri.buf.Holder( mask:1 )
+	private final fbo	= kri.buf.Holder( mask:1 )
 	private final va	= kri.vb.Array()
-	private final sa	= kri.shade.Smart()
+	private final bu	= kri.shade.Bundle()
 	private final qlog	as uint
 	private final pInd	= kri.shade.par.Value[of single]('index')
 	private final mouse	as MouseDevice
 	private coord	=	(of uint: 0,0)
 	#debug data
-	private final sb	= kri.shade.Smart()
+	private final bv	= kri.shade.Bundle()
 	private final pTex	= kri.shade.par.Value[of kri.buf.Texture]('input')
 
 	public def constructor(win as kri.Window, reduct as uint, numorder as uint):
@@ -26,27 +26,29 @@ public class Render( kri.rend.Basic ):
 		mouse.ButtonDown += ev
 		# make buffer
 		assert numorder<=16
-		buf.at.depth = kri.buf.Texture.Depth(0)
-		buf.at.color[0] = kri.buf.Texture(
+		fbo.at.depth = kri.buf.Texture.Depth(0)
+		fbo.at.color[0] = kri.buf.Texture(
 			intFormat:PixelInternalFormat.Rgba16 )
 		# make shader
-		sa.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
 		d = kri.shade.rep.Dict()
 		d.var(pInd)
-		sa.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict, d )
 		d.unit(pTex)
-		sb.add('/copy_v', '/copy_f')
-		sb.link( kri.Ant.Inst.slotAttributes, kri.Ant.Inst.dict, d )
+		bu.shader.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
+		bu.dicts.Add(d)
+		bu.link()
+		bv.shader.add('/copy_v', '/copy_f')
+		bv.dicts.Add(d)
+		bv.link()
 	
 	def destructor():
 		mouse.ButtonDown -= ev
 
 	public override def setup(pl as kri.buf.Plane) as bool:
-		buf.resize( pl.wid>>qlog, pl.het>>qlog)
+		fbo.resize( pl.wid>>qlog, pl.het>>qlog)
 		return true
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		buf.bind()
+		fbo.bind()
 		con.SetDepth(0f, true)
 		con.ClearDepth( 1f )
 		con.ClearColor()
@@ -59,16 +61,16 @@ public class Render( kri.rend.Basic ):
 			e = ents[i]
 			e.enable( true, (kri.Ant.Inst.attribs.vertex,) )
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			sa.use()
+			bu.activate()
 			e.mesh.draw(1)
 		if not 'Debug':
 			con.activate( con.Target.Same, 0f, false )
-			pTex.Value = buf.at.color[0] as kri.buf.Texture
-			sb.use()
+			pTex.Value = fbo.at.color[0] as kri.buf.Texture
+			bv.activate()
 			kri.Ant.Inst.quad.draw()
 			return
 		# react, todo: use PBO and actually read on demand
-		buf.bind()
+		fbo.bind()
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
 		index = (of ushort: ushort.MaxValue )
 		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
@@ -78,7 +80,7 @@ public class Render( kri.rend.Basic ):
 		GL.ReadBuffer( cast(ReadBufferMode,0) )
 		val = (of single: single.NaN )
 		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.DepthComponent, PixelType.Float, val)
-		pl = buf.at.color[0]
+		pl = fbo.at.color[0]
 		vin = OpenTK.Vector3(coord[0]*1f / pl.wid, coord[1]*1f / pl.het, val[0])
 		point = kri.Camera.Current.toWorld(vin)
 		# call the react method
@@ -91,4 +93,4 @@ public class Render( kri.rend.Basic ):
 	public def ev(ob as object, arg as OpenTK.Input.MouseButtonEventArgs) as void:
 		active = true
 		coord[0] = (mouse.X >> qlog)
-		coord[1] = buf.at.color[0].het - (mouse.Y >> qlog)
+		coord[1] = fbo.at.color[0].het - (mouse.Y >> qlog)

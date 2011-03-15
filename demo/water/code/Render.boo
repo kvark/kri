@@ -47,7 +47,7 @@ private class Update( kri.ani.Delta ):
 	private final pKern	= kri.shade.par.Texture('kern')
 	private final pWave	= kri.shade.par.Texture('wave')
 	private final pCon	= kri.shade.par.Value[of Vector4]('wave_con')
-	private final sa	= kri.shade.Smart()
+	private final bu	= kri.shade.Bundle()
 	private final ct	as Context
 	private final kb	as Input.KeyboardDevice
 	
@@ -59,8 +59,9 @@ private class Update( kri.ani.Delta ):
 		# shaders
 		con.dict.unit(pKern,pWave)
 		con.dict.var(pCon)
-		sa.add('/copy_v','text/wave_f')
-		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
+		bu.shader.add('/copy_v','text/wave_f')
+		bu.dicts.Add( con.dict )
+		bu.link()
 	
 	protected override def onDelta(delta as double) as uint:
 		return 0	if not ct.buf.at.color[0].wid
@@ -75,7 +76,7 @@ private class Update( kri.ani.Delta ):
 		# update height
 		pWave.Value = ct.buf.at.color[ct.buf.mask-1]
 		ct.bind(3)
-		sa.use()
+		bu.activate()
 		kri.Ant.Inst.quad.draw()
 		return 0
 
@@ -83,7 +84,7 @@ private class Update( kri.ani.Delta ):
 
 public class Touch( kri.ani.IBase ):
 	public final point	= kri.gen.Frame( kri.gen.Point() )
-	private	final sa	= kri.shade.Smart()
+	private	final bu	= kri.shade.Bundle()
 	private final win	as kri.Window
 	private final ct	as Context
 	private final pPos	= kri.shade.par.Value[of Vector4]('mouse_pos')
@@ -92,15 +93,16 @@ public class Touch( kri.ani.IBase ):
 		win = kw
 		ct = con
 		con.dict.var(pPos)
-		sa.add('text/touch_v','text/touch_f')
-		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
+		bu.shader.add('text/touch_v','text/touch_f')
+		bu.dicts.Add( con.dict )
+		bu.link()
 	
 	def kri.ani.IBase.onFrame(time as double) as uint:
 		return 0	if not win.Mouse.Item[Input.MouseButton.Left]
 		pPos.Value.Xyz = win.PointerNdc
 		GL.Disable( EnableCap.DepthTest )
 		ct.bind(0)
-		sa.use()
+		bu.activate()
 		GL.PointSize(100f)
 		using blend = kri.Blender():
 			blend.add()
@@ -108,7 +110,7 @@ public class Touch( kri.ani.IBase ):
 
 
 public class Draw( kri.rend.Basic ):
-	private	final sa	= kri.shade.Smart()
+	private	final bu	= kri.shade.Bundle()
 	private final ct	as Context
 	public	final anim	as Update
 	public final pTownTex	= kri.shade.par.Texture('town')
@@ -119,8 +121,9 @@ public class Draw( kri.rend.Basic ):
 		con.dict.unit(pTownTex)
 		con.dict.var(pTownPos)
 		ct = con
-		sa.add('/copy_v','text/draw_f')
-		sa.link( kri.Ant.Inst.slotAttributes, con.dict, kri.Ant.Inst.dict )
+		bu.shader.add('/copy_v','text/draw_f')
+		bu.dicts.Add( con.dict )
+		bu.link()
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		ct.buf.resize( pl.wid, pl.het )
@@ -130,5 +133,5 @@ public class Draw( kri.rend.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
 		kri.Ant.Inst.params.activate(lit)
 		con.activate(false)
-		sa.use()
+		bu.activate()
 		kri.Ant.Inst.quad.draw()

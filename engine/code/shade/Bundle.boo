@@ -66,7 +66,7 @@ public struct Uniform:
 			assert type == ActiveUniformType.FloatVec4
 			return ParUni_Color4(loc,iv)
 		elif T == kri.buf.Texture:
-			assert name.StartsWith( Smart.prefixUnit )
+			assert name.StartsWith( Mega.PrefixUnit )
 			tn = tun++
 			return ParTexture(loc,iv,tn)
 		return null
@@ -106,6 +106,10 @@ public struct Attrib:
 public class Mega(Program):
 	private attribs	as (Attrib) = null
 	private final uniforms	= List[of Uniform]()
+	public static final PrefixAttrib	as string	= 'at_'
+	public static final PrefixGhost		as string	= 'ghost_'
+	public static final GhostSym		as string	= '@'
+	public static final PrefixUnit		as string	= 'unit_'
 	
 	public Attributes as (Attrib):
 		get: return attribs
@@ -121,8 +125,8 @@ public class Mega(Program):
 		attribs = array[of Attrib](num)
 		for i in range(num):
 			str = GL.GetActiveAttrib( handle, i, size, attribs[i].type )
-			assert str.StartsWith( Smart.prefixAttrib )
-			attribs[i].name = str.Substring( Smart.prefixAttrib.Length )
+			assert str.StartsWith( PrefixAttrib )
+			attribs[i].name = str.Substring( PrefixAttrib.Length )
 			attribs[i].size = size
 		# read uniforms
 		uniforms.Clear()
@@ -177,6 +181,11 @@ public class Bundle:
 		shader.bind()
 		for p in params:
 			p.upload()
+	
+	public def clear() as void:
+		shader.clear()
+		dicts.Clear()
+		params.Clear()
 	
 	public static def PushAttribs(sat as (Attrib), vat as kri.vb.Attrib*) as int:
 		names = List[of string]()
