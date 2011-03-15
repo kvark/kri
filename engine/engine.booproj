@@ -110,7 +110,6 @@
     <Compile Include="code\shade\Linker.boo" />
     <Compile Include="code\shade\par\Main.boo" />
     <Compile Include="code\shade\rep\Main.boo" />
-    <Compile Include="code\shade\Smart.boo" />
     <Compile Include="code\shade\Object.boo" />
     <Compile Include="code\shade\Program.boo" />
     <Compile Include="code\sound\Main.boo" />
