@@ -48,7 +48,7 @@ public class Extra( kri.IExtension ):
 			elif ph: pm.makeHair(con)
 			else: return
 			pm.init(con)
-		if not pe.Data:
+		if not pe.Ready:
 			pe.allocate()
 	
 	private def upNode(e as kri.Entity):
@@ -89,7 +89,8 @@ public class Extra( kri.IExtension ):
 		ph = pm.seBeh[of support.hair.Behavior]()
 		if source=='FACE' and not ent.seTag[of support.bake.surf.Tag]():
 			st = bake
-			st.pixels = pm.total	if ph
+			if ph:
+				st.pixels = pm.Total
 			ent.tags.Add( st.tag() )
 		if ph:
 			assert source in ('VERT','FACE')

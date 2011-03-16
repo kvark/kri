@@ -30,17 +30,18 @@ public class Behavior( kri.part.Behavior ):
 		lar = List[of kri.part.Emitter]( kri.part.Emitter(em.owner,"${em.name}-${i}")\
 			for i in range(layers) ).ToArray()
 		assert not em.obj.seTag[of Tag]()
-		tag = Tag( em.owner.total )
+		tag = Tag( em.owner.Total )
 		tag.param = init
 		em.obj.tags.Add(tag)
-		# external attribs setup
-		ex0 = kri.part.ExtAttrib( dest:'prev' )
-		ex1 = kri.part.ExtAttrib( dest:'base' )
+		assert not 'ready'
 		# localize id in a function
 		def genFunc(id as int):
 			return do(e as kri.Entity) as bool:
 				pSegment.Value.Y = 1f*id
 				return tag.stamp>0f
+		/*ex0 = kri.part.ExtAttrib( dest:'prev' )
+		ex1 = kri.part.ExtAttrib( dest:'base' )
+		# external attribs setup
 		for i in range(lar.Length):
 			pe = lar[i]
 			pe.obj = em.obj
@@ -50,24 +51,30 @@ public class Behavior( kri.part.Behavior ):
 				ex0.source = ex1.source = null
 				ex0.vat = ex1.vat = tag
 			else:
+				assert not 'ready'
 				ex1.source = posName
-				ex1.vat = lar[i-1]
+				#ex1.vat = lar[i-1]
 				if i == 1:
 					ex0.source = 'base'
 					ex0.vat = tag
 				else:
 					ex0.source = posName
-					ex0.vat = lar[i-2]
-			pe.extList.AddRange((ex0,ex1))
+					#ex0.vat = lar[i-2]
+			assert not 'ready'
+			#pe.extList.AddRange((ex0,ex1))
+		*/
 		return lar
 	
 	# add children dependencies
 	public static def prepareChildren(scene as kri.Scene, man as kri.part.Manager) as void:
-		root as (kri.part.ExtAttrib) = null
+		root as kri.vb.Attrib = null
 		for pe in scene.particles:
-			continue	if pe.owner != man
+			if pe.owner != man:
+				continue
 			assert pe.obj
 			tag = pe.obj.seTag[of Tag]()
 			assert tag
-			root = tag.makeRoot()	if not root
-			pe.extList.AddRange(root)
+			if not root:
+				root = tag.Data
+			assert not 'ready'
+			pe.exData.vbo.Add(root)

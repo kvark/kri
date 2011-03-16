@@ -24,8 +24,9 @@ public class Fill( kri.rend.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f,true)
 		for pe in kri.Scene.Current.particles:
-			pe.va.bind()
-			continue	if not pe.prepare()
+			assert not 'ready'
+			#pe.va.bind()
+			#continue	if not pe.prepare()
 			for lit in kri.Scene.Current.lights:
 				continue	if not lit.depth
 				if fbo.mask:
@@ -35,7 +36,7 @@ public class Fill( kri.rend.Basic ):
 				fbo.bind()
 				kri.Ant.Inst.params.activate(lit)
 				bu.activate()
-				pe.owner.draw(0)
+				#pe.owner.draw(0)
 
 
 

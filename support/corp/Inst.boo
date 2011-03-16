@@ -45,8 +45,9 @@ public class Rend( kri.rend.tech.Meta ):
 			continue	if not inst
 			ent = inst.ent
 			continue	if not ent
-			pats = List[of string](sem.name	for sem in pe.data.Semant)
-			continue	if not List[of string](trans.Keys).TrueForAll({at| return at in pats })
+			assert not 'supported'
+			#pats = List[of string](sem.name	for sem in pe.data.Semant)
+			#continue	if not List[of string](trans.Keys).TrueForAll({at| return at in pats })
 			cur = pe
 			addObject(ent)
 		for b in butch:

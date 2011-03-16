@@ -8,22 +8,35 @@ import OpenTK.Graphics.OpenGL
 #	ABSTRACT PARTICLE MANAGER			#
 #---------------------------------------#
 
-public class Manager(DataHolder):
-	protected final tf	= kri.TransFeedback(1)
-	public final behos	= List[of Behavior]()
-	public final dict	= kri.shade.rep.Dict()
-	public final total	as uint
+public class Manager:
+	public	final tf	= kri.TransFeedback(1)
+	public	final va	= kri.vb.Array()
+	public	final behos	= List[of Behavior]()
+	public	final dict	= kri.shade.rep.Dict()
+	public	final mesh	= kri.Mesh( BeginMode.Points )
 
-	public final col_init	= kri.shade.Collector()
-	public final col_update	= kri.shade.Collector()
+	public	final col_init	= kri.shade.Collector()
+	public	final col_update	= kri.shade.Collector()
 
 	private parTotal	= kri.shade.par.Value[of single]('part_total')
-	public Ready as bool:
+	public	Total	as uint:
+		get: return mesh.nVert
+	public	Ready	as bool:
 		get: return col_init.Ready and col_update.Ready
 	
 	public def constructor(num as uint):
-		total = num
+		mesh.nVert = num
 		dict.var(parTotal)
+	
+	public def initMesh(m as kri.Mesh) as void:
+		assert m and mesh.vbo.Count
+		if m.vbo.Count:
+			m.vbo[0].Semant.Clear()
+		else:
+			m.vbo.Add( kri.vb.Attrib() )
+		m.nVert = Total
+		m.vbo[0].Semant.AddRange( mesh.vbo[0].Semant )
+		m.allocate()
 	
 	public def makeStandard(pc as Context) as void:
 		#init
@@ -53,49 +66,47 @@ public class Manager(DataHolder):
 		return null	as T
 
 	public def init(pc as Context) as void:
-		if data:
-			col_init.bu.clear()
-			col_update.bu.clear()
+		col_init.bu.clear()
+		col_update.bu.clear()
 		# collect shaders
 		col_init	.absorb[of Behavior](behos)
 		col_update	.absorb[of Behavior](behos)
 		# collect attributes
-		sem = List[of kri.vb.Info]()
+		mesh.vbo.Clear()
+		mesh.vbo.Add( vob = kri.vb.Attrib() )
 		for b in behos:
-			sem.AddRange( b.Semant )
+			vob.Semant.AddRange( b.Semant )
 			b.link(dict)
-		init(sem,total)
+		mesh.allocate()
 		# link
 		for col in (col_init,col_update):
-			col.compose( sem, dict, kri.Ant.Inst.dict )
+			col.compose( vob.Semant, dict, kri.Ant.Inst.dict )
 	
-	public def draw(nin as uint) as void:
+	private def draw(nin as uint) as void:
 		if nin:
-			GL.DrawArraysInstanced( BeginMode.Points, 0, total, nin )
+			GL.DrawArraysInstanced( BeginMode.Points, 0, Total, nin )
 		else:
-			GL.DrawArrays( BeginMode.Points, 0, total )
+			GL.DrawArrays( BeginMode.Points, 0, Total )
 	
-	protected def process(pe as Emitter, col as kri.shade.Collector) as bool:
-		assert pe.data
-		va.bind()
-		return false	if not pe.prepare()
-		tf.Bind( pe.data )
-		parTotal.Value = (0f, 1f / (total-1))[ total>1 ]
-		col.bu.activate()
-		using kri.Discarder(true), tf.catch():
-			draw(0)
+	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
+		if not pe.update():
+			return false
+		tf.Bind( pe.mesh.vbo[0] )
+		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
+		using kri.Discarder(true):
+			mesh.renderBack( va, bu, pe.exData, tf )
 		if not 'Debug':
-			assert tf.result() == total
-			ar = array[of single]( total * data.unitSize() >>2 )
-			pe.va.bind()
-			pe.data.read(ar)
+			assert tf.result() == Total
+			ar = array[of single]( Total * pe.mesh.vbo[0].unitSize() >>2 )
+			pe.mesh.vbo[0].read(ar)
 		return true
 
-	protected def swapData(pe as Emitter) as void:
-		kri.Help.swap(data, pe.data)
-		kri.Help.swap(va, pe.va)
-	public def init(pe as Emitter) as bool:
-		return process(pe, col_init)
-	public def tick(pe as Emitter) as bool:
-		swapData(pe)
-		return process(pe, col_update)
+	public def opInit(pe as Emitter) as bool:
+		return process( pe, col_init.bu )
+	public def opTick(pe as Emitter) as bool:
+		# swap data
+		data = mesh.vbo[0]
+		mesh.vbo[0] = pe.mesh.vbo[0]
+		pe.mesh.vbo[0] = data
+		# continue
+		return process( pe, col_update.bu )

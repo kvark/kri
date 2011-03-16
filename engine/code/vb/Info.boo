@@ -4,20 +4,13 @@ import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
 
-public interface ISource:
-	Data	as Attrib:
-		get
-
-
-#---------
-
 public struct Info:
 	public name	as string
-	public size	as int		# in units
+	public size	as byte		# in units
 	public type	as VertexAttribPointerType
 	public integer	as bool
-	public def fullSize() as int:
-		b = 0
+	public def fullSize() as uint:
+		b as uint = 0
 		b = 1	if type == VertexAttribPointerType.UnsignedByte
 		b = 2	if type == VertexAttribPointerType.HalfFloat
 		b = 2	if type == VertexAttribPointerType.UnsignedShort

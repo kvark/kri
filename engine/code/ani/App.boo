@@ -25,8 +25,8 @@ public class Particle( IBase ):
 		pe = ps
 	def IBase.onFrame(time as double) as uint:
 		kri.Ant.Inst.params.parTime.Value.Y = time
-		if ready: pe.owner.tick(pe)
-		else: ready = pe.owner.init(pe)
+		if ready: pe.owner.opTick(pe)
+		else: ready = pe.owner.opInit(pe)
 		return 0
 
 

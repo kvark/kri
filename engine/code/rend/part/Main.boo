@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 #---------	RENDER PARTICLES BASE		--------#
 
 public class Basic( kri.rend.Basic ):
-	public bAdd		as single = 0f
+	public bAdd		as single = 0f 
 	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Bundle:
 		pass
 	public def drawScene() as void:
@@ -17,15 +17,11 @@ public class Basic( kri.rend.Basic ):
 			if bAdd>0f:	blend.add()
 			else:		blend.alpha()
 			for pe in kri.Scene.Current.particles:
-				nInst as uint = 0
+				nInst as uint = 1
 				bu = prepare(pe,nInst)
-				if not bu:
+				if not bu or not pe.update():
 					continue
-				pe.va.bind()
-				if not pe.prepare():
-					return	
-				bu.activate()
-				pe.owner.draw(nInst)
+				pe.mesh.render( pe.owner.va, bu, pe.exData, nInst )
 
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#

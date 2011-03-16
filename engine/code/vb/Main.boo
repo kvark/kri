@@ -9,9 +9,10 @@ import OpenTK.Graphics.OpenGL
 #-----------------------
 
 public class Array:
-	public	static final Default	= Array(0)
-	private	static	Current	= Default
+	public	static	final Default	= Array(0)
+	public	static	Current	= Default
 	public	final	id	as int
+	
 	public def constructor():
 		tmp = 0
 		GL.GenVertexArrays(1,tmp)
@@ -20,12 +21,29 @@ public class Array:
 		id = xid
 	def destructor():
 		tmp = id
-		kri.Help.safeKill({ GL.DeleteVertexArrays(1,tmp) })
+		kri.Help.safeKill() do():
+			GL.DeleteVertexArrays(1,tmp)
+	
 	public def bind() as void:
 		if self == Current:
 			return
 		Current = self
 		GL.BindVertexArray(id)
+	
+	public def clean() as void:
+		bind()
+		for i in range(kri.Ant.Inst.caps.vertexAttribs):
+			GL.DisableVertexAttribArray(i)
+	
+	public def push(slot as uint, ref at as Info, off as int, total as int) as void:
+		GL.EnableVertexAttribArray( slot )
+		if at.integer: #TODO: use proper enum
+			GL.VertexAttribIPointer( slot, at.size,
+				cast(VertexAttribIPointerType,cast(int,at.type)),
+				total, System.IntPtr(off) )
+		else:
+			GL.VertexAttribPointer( slot, at.size,
+				at.type, false, total, off)
 
 
 #-----------------------
@@ -65,15 +83,15 @@ public class Object(Proxy):
 	public def unbind() as void:
 		bind(null)
 	# filling
-	private def getHint(dyn as bool) as BufferUsageHint:
+	private static def GetHint(dyn as bool) as BufferUsageHint:
 		return (BufferUsageHint.StreamDraw if dyn else BufferUsageHint.StaticDraw)
 	public def init(size as uint) as void:
 		bind()
-		GL.BufferData(target, IntPtr(size), IntPtr.Zero, getHint(true))
+		GL.BufferData(target, IntPtr(size), IntPtr.Zero, GetHint(true))
 		filled = true
 	public def init[of T(struct)](ptr as (T), dyn as bool) as void:
 		bind()
-		GL.BufferData(target, IntPtr(ptr.Length * kri.Sizer[of T].Value), ptr, getHint(dyn))
+		GL.BufferData(target, IntPtr(ptr.Length * kri.Sizer[of T].Value), ptr, GetHint(dyn))
 		filled = true
 	# mapping
 	public def tomap(ba as BufferAccess) as IntPtr:

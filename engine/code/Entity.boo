@@ -30,6 +30,18 @@ public class Mesh( vb.Storage ):
 		polySize	= m.polySize
 		vbo.AddRange( m.vbo )
 	
+	public def allocate() as void:
+		for v in vbo:
+			v.initUnit(nVert)
+		assert not ind
+	
+	public def getTotalSize() as uint:
+		rez = 0
+		for v in vbo:
+			rez += v.unitSize()
+		return rez * nVert
+	
+	#---	render functions	---#
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, off as uint, num as uint, nob as uint) as vb.Array:
 		if not vao:
@@ -64,14 +76,19 @@ public class Mesh( vb.Storage ):
 		return vao
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, nob as uint) as vb.Array:
-		return render(vao,bu,ats,0,nPoly,nob)
+		num = (nVert,nPoly)[ind!=null]
+		return render(vao,bu,ats,0,num,nob)
 	
 	public def render(vao as vb.Array, bu as shade.Bundle) as vb.Array:
 		return render( vao, bu, vb.Storage.Empty, 1 )
 	
-	public def renderBack(vao as vb.Array, bu as shade.Bundle, tf as TransFeedback) as vb.Array:
+	public def renderBack(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, tf as TransFeedback) as vb.Array:
 		assert vao and bu and tf
 		vao.bind()
+		combo = vbo
+		if ats:
+			combo = List[of vb.Attrib](vbo)
+			combo.AddRange( ats.vbo )
 		if bu.pushAttribs(vbo)<0:
 			assert not 'good'	# will be removed later
 			return null
@@ -82,12 +99,17 @@ public class Mesh( vb.Storage ):
 	public def renderTest(bu as shade.Bundle) as vb.Array:
 		return render( null, bu, vb.Storage.Empty, 0 )
 	
+	#---	internal drawing functions	---#
 	
 	protected def draw(off as uint, num as uint, nob as uint) as void:
-		assert off>=0 and num>=0 and num+off<=nPoly
-		if ind: assert num*polySize <= kri.Ant.Inst.caps.elemIndices
+		assert off>=0 and num>=0
+		if ind:
+			assert num+off<=nPoly
+			assert num*polySize <= kri.Ant.Inst.caps.elemIndices
+		else:
+			assert num+off<=nVert
 		assert nVert <= kri.Ant.Inst.caps.elemVertices
-		# works for Uint16 indices only
+		# works for ushort indices only
 		if ind and nob != 1:
 			GL.DrawElementsInstanced( drawMode, polySize*num,
 				DrawElementsType.UnsignedShort, IntPtr(polySize*2*off), nob)
@@ -127,11 +149,13 @@ public class Entity( kri.ani.data.Player ):
 	public final va		= array[of vb.Array]	( kri.Ant.Inst.techniques.Size )
 	public final tags	= List[of ITag]()
 	
-	public CombinedAttribs as vb.Attrib*:
+	public CombinedAttribs as IList[of vb.Attrib]:
 		get:
 			if not mesh:
 				return store.vbo
-			return store.vbo.ToArray() + mesh.vbo.ToArray()
+			tmp = List[of vb.Attrib]( store.vbo )
+			tmp.AddRange(mesh.vbo)
+			return tmp
 	
 	public def constructor():
 		pass
@@ -170,7 +194,7 @@ public class Entity( kri.ani.data.Player ):
 		mesh.ind.bind()	if mesh.ind
 		return true
 
-	public def enable(local as bool, tid as int, ids as int*) as bool:
+	private def enable(local as bool, tid as int, ids as int*) as bool:
 		va[tid] = vb.Array()
 		va[tid].bind()
 		return enable(local,ids)

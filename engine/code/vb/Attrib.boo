@@ -25,11 +25,15 @@ public class Attrib( ISemanted, Object ):
 				at = ain
 			sum += ain.fullSize()
 		return off >= 0
-	public def unitSize() as int:
-		rez = 0
+
+	public def unitSize() as uint:
+		rez as uint = 0
 		for a in semantics:
 			rez += a.fullSize()
 		return rez
+	
+	public def initUnit(num as uint) as void:
+		init( num * unitSize() )
 	
 	private def initAll(num as int) as void:
 		off,total = 0,unitSize()
@@ -37,24 +41,14 @@ public class Attrib( ISemanted, Object ):
 		if num<0:	bind()
 		else:	init(num * total)
 		semantics.ForEach() do(ref at as Info):
-			Push(0, at, off, total)
+			#Push(0, at, off, total)
 			off += at.fullSize()
 
-	public static def Push(slot as uint, ref at as Info, off as int, total as int) as void:
-		GL.EnableVertexAttribArray( slot )
-		if at.integer: #TODO: use proper enum
-			GL.VertexAttribIPointer( slot, at.size,
-				cast(VertexAttribIPointerType,cast(int,at.type)),
-				total, System.IntPtr(off) )
-		else:
-			GL.VertexAttribPointer( slot, at.size,
-				at.type, false, total, off)
-				
 	private def push(ref at as Info) as void:
 		off,sum = 0,0
 		unitLoc(at,off,sum)	# no modification here
 		assert not 'supported'	# slot=?
-		Push(0,at,off,sum)
+		#Push(0,at,off,sum)
 
 	private def attrib(name as string) as bool:
 		at = Info( name:name )
@@ -63,7 +57,7 @@ public class Attrib( ISemanted, Object ):
 			return false
 		bind()
 		assert not 'supported'	# slot=?
-		Push(0,at,off,sum)
+		#Push(0,at,off,sum)
 		return true
 			
 	private def attribFirst() as void:
@@ -79,12 +73,12 @@ public class Attrib( ISemanted, Object ):
 
 	private def attribTrans(dict as IDictionary[of string,string]) as void:
 		bind()
-		off,total = 0,unitSize()
+		#off,total = 0,unitSize()
 		for at in semantics:
 			val = ''
 			if dict.TryGetValue(at.name,val):
 				a2 = at
 				a2.name = val
 				assert not 'supported'	# slot=?
-				Push(0,a2,off,total)
-			off += at.fullSize()
+				#Push(0,a2,off,total)
+			#off += at.fullSize()

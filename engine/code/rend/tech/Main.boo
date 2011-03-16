@@ -9,11 +9,13 @@ public class Basic( kri.rend.Basic ):
 		core = kri.Ant.Inst
 		core.techniques.delete(tid)	if core
 	protected def attribs(local as bool, e as kri.Entity, *ats as (int)) as bool:
-		return false	if e.va[tid] == kri.vb.Array.Default
-		if e.va[tid]:	e.va[tid].bind()
-		elif not e.enable(local,tid,ats):
-			e.va[tid] = kri.vb.Array.Default
+		if e.va[tid] == kri.vb.Array.Default:
 			return false
+		assert not 'supported'
+		if e.va[tid]:	e.va[tid].bind()
+		#elif not e.enable(local,tid,ats):
+		#	e.va[tid] = kri.vb.Array.Default
+		#	return false
 		return true
 
 

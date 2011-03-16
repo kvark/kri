@@ -189,8 +189,9 @@ public class Bundle:
 		dicts.Clear()
 		params.Clear()
 	
-	public static def PushAttribs(sat as (Attrib), vat as kri.vb.Attrib*) as int:
+	public static def PushAttribs(sat as (Attrib), vat as IList[of kri.vb.Attrib]) as int:
 		names = List[of string]()
+		va = kri.vb.Array.Current
 		for cur in sat:
 			assert cur.name and cur.size
 			if cur.name in names:
@@ -208,11 +209,15 @@ public class Bundle:
 					break
 			if not cur.matches(target):
 				return -1
-			kri.vb.Attrib.Push( names.Count, target, off, total )
+			va.push( names.Count, target, off, total )
 			names.Add( cur.name )
+		# need at least one
+		if not sat.Length:
+			sem = vat[0].Semant[0]
+			va.push(0,sem,0,0)
 		return names.Count
 
-	public def pushAttribs(combined as kri.vb.Attrib*) as int:
+	public def pushAttribs(combined as IList[of kri.vb.Attrib]) as int:
 		if not shader.Ready:
 			link()
 		return PushAttribs( shader.Attributes, combined )
