@@ -1,6 +1,7 @@
 ﻿namespace kri.buf
 
 import System
+import System.Runtime.InteropServices
 import OpenTK.Graphics.OpenGL
 
 
@@ -20,7 +21,8 @@ public class Frame:
 		hardId = manId
 
 	def destructor():
-		return	if not hardId
+		if not hardId:
+			return
 		kri.Help.safeKill() do:
 			tmp as int = hardId
 			GL.DeleteFramebuffers(1,tmp)
@@ -43,7 +45,8 @@ public class Frame:
 	public def bindRead(color as bool) as void:
 		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, hardId )
 		rm = cast(ReadBufferMode,0)
-		rm = getReadMode()	if color
+		if color:
+			rm = getReadMode()
 		GL.ReadBuffer(rm)
 	
 	public def copyTo(fr as Frame, what as ClearBufferMask) as void:
@@ -61,6 +64,18 @@ public class Frame:
 			p0.X,p0.Y,i0.wid,i0.het,
 			p1.X,p1.Y,i1.wid,i1.het,
 			what, BlitFramebufferFilter.Linear )
+	
+	public def readRaw[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle, ptr as IntPtr) as void:
+		noColorFormats = (PixelFormat.DepthComponent, PixelFormat.DepthStencil, PixelFormat.StencilIndex)
+		type = Texture.GetPixelType(T)
+		bindRead( fm not in noColorFormats )
+		GL.ReadPixels( rect.Left, rect.Top, rect.Width, rect.Height, fm, type, ptr )
+
+	public def read[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle) as (T):
+		data = array[of T](rect.Width * rect.Height)
+		ptr = GCHandle.Alloc( data, GCHandleType.Pinned )
+		readRaw[of T]( fm, rect, ptr.AddrOfPinnedObject() )
+		return data
 
 
 public class Screen(Frame):

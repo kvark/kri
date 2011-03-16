@@ -131,13 +131,11 @@ public class Core:
 			
 		# read back result
 		pbo.bind()
-		fbo.bindRead(false)
 		pl = fbo.at.color[0]
 		size = pl.Size
-		GL.ReadPixels(0,0, pl.wid, pl.het, PixelFormat.StencilIndex, PixelType.Byte, IntPtr.Zero )
-		fbo.bindRead(true)
-		pt = (PixelType.UnsignedByte, PixelType.UnsignedShort)[isBig]
-		GL.ReadPixels(0,0, pl.wid, pl.het, PixelFormat.Rg, pt, IntPtr(size) )
+		rect = Drawing.Rectangle( 0, 0, pl.wid, pl.het )
+		fbo.readRaw[of byte]( PixelFormat.StencilIndex, rect, IntPtr.Zero )
+		fbo.readRaw[of byte]( PixelFormat.Rg, rect, IntPtr(size) )
 		# debug: extract result
 		es = (1,2)[isBig]
 		dar = array[of byte]( size*(1+2*es) )

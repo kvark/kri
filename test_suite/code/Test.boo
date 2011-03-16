@@ -67,14 +67,15 @@ private class PolygonOffset( kri.rend.Basic ):
 		GL.PolygonOffset( 0.0f, 2.0f )
 		kri.Ant.Inst.quad.render(va,sa,1)
 		
-		tmp = array[of single](9)
-		tm1 = array[of single](1)
 		t = fbo.at.depth as kri.buf.Texture
 		t.shadow(false)
 		t.genLevels()
-		GL.GetTexImage(t.target, 1, PixelFormat.DepthComponent, PixelType.Float, tm1)
-		GL.GetTexImage(t.target, 0, PixelFormat.DepthComponent, PixelType.Float, tmp)
-		print tmp[0]
+		t.switchLevel(1)
+		tm1 = t.read[of single]()
+		t.switchLevel(0)
+		tm0 = t.read[of single]()
+		tm1 = null
+		print tm0[0]
 
 
 private class TextureRead( kri.rend.Basic ):
@@ -90,14 +91,9 @@ private class TextureRead( kri.rend.Basic ):
 		buf.bind()
 		#GL.ClearBuffer( ClearBuffer.Color, 0, (of int:5,5,5,5) )
 		kri.rend.link.Basic.ClearColor()
-		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
-		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
-		p1 = p2 = (of short: 6,6,6,6)
-		GL.ReadPixels(0,0,2,2, PixelFormat.RedInteger, PixelType.Short, p1)
-		#pix = (of ushort: 0,0,0,0)
-		#GL.ReadPixels(0,0,2,2, PixelFormat.RedInteger, PixelType.UnsignedShort, pix)
-		buf.at.color[0].bind()
-		GL.GetTexImage( TextureTarget.Texture2D, 0, PixelFormat.RedInteger, PixelType.Short, p2)
+		rect = System.Drawing.Rectangle(0,0,2,2)
+		p1 = buf.read[of ushort]( PixelFormat.RedInteger, rect )
+		p2 = (buf.at.color[0] as kri.buf.Texture).read[of ushort]()
 		assert p1[0] == 0 and p2[0] == 0
 
 

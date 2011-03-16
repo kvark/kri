@@ -10,6 +10,8 @@ public class Texture(Surface):
 	private final	hardId	as uint
 	private static	boundId	as uint	= 0
 	private			ready	= false
+	private			fullWidth	as uint	= 0
+	private			fullHeight	as uint	= 0
 	public			target		= TextureTarget.Texture2D
 	public			intFormat	= PixelInternalFormat.Rgba
 	public			pixFormat	= PixelFormat.Rgba
@@ -101,6 +103,7 @@ public class Texture(Surface):
 		bind()
 		caps = kri.Ant.Inst.caps
 		assert not level
+		fullWidth,fullHeight = wid,het
 		assert samples and samples <= caps.multiSamples
 		assert wid <= caps.textureSize
 		assert het <= caps.textureSize
@@ -114,7 +117,7 @@ public class Texture(Surface):
 			assert target == TextureTarget.Texture2DMultisample
 			GL.TexImage2DMultisample( tams, samples, intFormat, wid, het, fixedLoc )
 	
-	public def GetPixelType(t as Type) as PixelType:
+	public static def GetPixelType(t as Type) as PixelType:
 		return PixelType.UnsignedByte	if t==byte
 		return PixelType.UnsignedShort	if t==ushort
 		return PixelType.UnsignedInt	if t==uint
@@ -126,6 +129,8 @@ public class Texture(Surface):
 	
 	private def setImage[of T(struct)](tg as TextureTarget, data as (T)) as void:
 		assert not samples
+		if not level:
+			fullWidth,fullHeight = wid,het
 		caps = kri.Ant.Inst.caps
 		assert wid <= caps.textureSize
 		assert het <= caps.textureSize
@@ -161,6 +166,12 @@ public class Texture(Surface):
 			setImage[of byte]( t, null )
 	
 	# read back
+	
+	public def switchLevel(val as byte) as void:
+		assert fullWidth
+		level = val
+		wid = ((fullWidth-1)>>val)+1
+		het = ((fullHeight-1)>>val)+1
 	
 	public def read[of T(struct)]() as (T):
 		bind()

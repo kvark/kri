@@ -63,16 +63,12 @@ public class Render( kri.rend.Basic ):
 			kri.Ant.Inst.quad.render(va,bv)
 			return
 		# react, todo: use PBO and actually read on demand
-		fbo.bind()
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
-		index = (of ushort: ushort.MaxValue )
-		GL.ReadBuffer( ReadBufferMode.ColorAttachment0 )
-		GL.ReadPixels( coord[0],coord[1], 1,1, PixelFormat.Red, PixelType.UnsignedShort, index )
+		rect = System.Drawing.Rectangle(coord[0],coord[1], 1,1)
+		index = fbo.read[of ushort]( PixelFormat.Red, rect )
 		active = false
 		return if not index[0]
-		GL.ReadBuffer( cast(ReadBufferMode,0) )
-		val = (of single: single.NaN )
-		GL.ReadPixels(coord[0], coord[1], 1,1, PixelFormat.DepthComponent, PixelType.Float, val)
+		val = fbo.read[of single]( PixelFormat.DepthComponent, rect )
 		pl = fbo.at.color[0]
 		vin = OpenTK.Vector3(coord[0]*1f / pl.wid, coord[1]*1f / pl.het, val[0])
 		point = kri.Camera.Current.toWorld(vin)
