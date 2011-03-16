@@ -42,8 +42,8 @@ public class Bake( kri.rend.Basic ):
 			bu.shader.feedback(false, 'to_prev','to_base')
 			bu.link()
 		# init fake vertex attrib for drawing
-		vbo.Semant.Add( kri.vb.Info(
-			size:1, slot:0, type:VertexAttribPointerType.UnsignedByte ))
+		vbo.Semant.Add( kri.vb.Info( name:'pos', size:1,
+			type:VertexAttribPointerType.UnsignedByte ))
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		for e in kri.Scene.Current.entities:
@@ -55,7 +55,8 @@ public class Bake( kri.rend.Basic ):
 			tf.Bind( tCur.Data )
 			tCur.va.bind()
 			if tCur.stamp<0f:
-				vbo.initAll( tCur.pixels )
+				assert not 'ready'	# initAll?
+				#vbo.initAll( tCur.pixels )
 			tBake	= e.seTag[of support.bake.surf.Tag]()
 			if tBake:	# emit from face
 				continue	if tBake.stamp<0f
@@ -65,9 +66,8 @@ public class Bake( kri.rend.Basic ):
 				bu_face.activate()
 			else:		# from vertices
 				pStretch.Value = e.mesh.nVert * 1f / tCur.pixels
-				ats = kri.Ant.Inst.attribs
-				(pVert.Value = tbuf[0]).init( SizedInternalFormat.Rgba32f,	e.findAny(ats.vertex) )
-				(pQuat.Value = tbuf[1]).init( SizedInternalFormat.Rgba32f,	e.findAny(ats.quat) )
+				(pVert.Value = tbuf[0]).init( SizedInternalFormat.Rgba32f,	e.findAny('vertex') )
+				(pQuat.Value = tbuf[1]).init( SizedInternalFormat.Rgba32f,	e.findAny('quat') )
 				bu_vert.activate()
 			using kri.Discarder(true), tf.catch():
 				GL.DrawArrays( BeginMode.Points, 0, tCur.pixels )

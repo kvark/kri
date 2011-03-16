@@ -14,12 +14,13 @@ public class DataHolder( kri.vb.ISource ):
 		else:		data = kri.vb.Attrib()
 		data.Semant.AddRange( sem )
 		va.bind()
-		data.initAll( num )
+		assert not 'supported'	# initAll?
+		#data.initAll( num )
 
 # external particle attribute
 public struct ExtAttrib:
-	public dest		as int
-	public source	as int
+	public dest		as string
+	public source	as string
 	public vat		as kri.vb.ISource
 
 
@@ -61,17 +62,17 @@ public class Emitter(DataHolder):
 		loadFake()
 		return true
 
-	public def loadFake()	as void:
-		d = Dictionary[of int,int]()
+	private def loadFake()	as void:	#todo: redo
+		d = Dictionary[of string,string]()
 		for fa in extList:
 			vat = fa.vat.Data
 			assert vat
-			if fa.source >= 0:
+			if fa.source:
 				d.Clear()
 				d[fa.source] = fa.dest
-				vat.attribTrans(d)
-			else: vat.attrib( fa.dest )
+			#	vat.attribTrans(d)
+			#else: vat.attrib( fa.dest )
 
-	public def listAttribs() as (int):
-		return	List[of int](sem.slot	for sem in data.Semant).ToArray() + \
-				List[of int](ext.dest	for ext in extList).ToArray()
+	public def listAttribs() as (string):
+		return	List[of string](sem.name	for sem in data.Semant).ToArray() +\
+				List[of string](ext.dest	for ext in extList).ToArray()

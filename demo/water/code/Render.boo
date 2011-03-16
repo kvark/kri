@@ -84,7 +84,8 @@ private class Update( kri.ani.Delta ):
 
 
 public class Touch( kri.ani.IBase ):
-	public final point	= kri.gen.Frame( kri.gen.Point() )
+	public	final point	= kri.gen.Point()
+	private	final va	as kri.vb.Array
 	private	final bu	= kri.shade.Bundle()
 	private final win	as kri.Window
 	private final ct	as Context
@@ -96,18 +97,17 @@ public class Touch( kri.ani.IBase ):
 		con.dict.var(pPos)
 		bu.shader.add('text/touch_v','text/touch_f')
 		bu.dicts.Add( con.dict )
-		bu.link()
+		va = point.renderTest(bu)
 	
 	def kri.ani.IBase.onFrame(time as double) as uint:
 		return 0	if not win.Mouse.Item[Input.MouseButton.Left]
 		pPos.Value.Xyz = win.PointerNdc
 		GL.Disable( EnableCap.DepthTest )
 		ct.bind(0)
-		bu.activate()
 		GL.PointSize(100f)
 		using blend = kri.Blender():
 			blend.add()
-			point.draw()
+			point.render(va,bu,null,1)
 
 
 public class Draw( kri.rend.Basic ):

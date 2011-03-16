@@ -39,52 +39,52 @@ public class ExMesh( kri.IExtension ):
 	
 	#---	Parse mesh vertices (w = handness)	---#
 	public def pv_pos(r as Reader) as bool:
-		ai = kri.vb.Info(
-			slot: kri.Ant.Inst.attribs.vertex, size:4,
+		ai = kri.vb.Info( name:'vertex', size:4,
 			type: VertexAttribPointerType.Float,
-			integer:false,	name:'vertex' )
+			integer:false )
 		return LoadArray[of Vector4]( r,1,ai, r.getVec4 )
 	
 	#---	Parse mesh quaternions 	---#
 	public def pv_quat(r as Reader) as bool:
-		ai = kri.vb.Info(
-			slot: kri.Ant.Inst.attribs.quat, size:4,
+		ai = kri.vb.Info( name:'quat', size:4,
 			type: VertexAttribPointerType.Float,
-			integer:false,	name:'quat' )
+			integer:false )
 		return LoadArray[of Quaternion]( r,1,ai, r.getQuat )
 	
 	#---	Parse mesh texture coordinates (UV)	---#
 	public def pv_uv(r as Reader) as bool:
 		m = r.geData[of kri.Mesh]()
 		return false	if not m
-		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.tex ) do(i as int):
-			return m.find(i) == null
-		assert slot>=0
+		slot = 0
+		for slot in range(4):
+			if not m.find('tex'+slot):
+				break
+		assert slot!=4
 		r.getString()	# layer name, not used
-		ai = kri.vb.Info(
-			slot:kri.Ant.Inst.attribs.tex[slot], size:2,
+		ai = kri.vb.Info( name:'tex'+slot, size:2,
 			type:VertexAttribPointerType.Float,
-			integer:false,	name:'tex'+slot )
+			integer:false)
 		return LoadArray[of Vector2]( r,1,ai, r.getVec2 )
 	
 	#---	Parse mesh vertex colors	---#
 	public def pv_color(r as Reader) as bool:
 		m = r.geData[of kri.Mesh]()
-		return false	if not m
-		slot = System.Array.FindIndex( kri.Ant.Inst.attribs.color ) do(i as int):
-			return m.find(i) == null
-		assert slot>=0
+		if not m: return false
+		slot = 0
+		for slot in range(4):
+			if not m.find('color'+slot):
+				break
+		assert slot!=4
 		r.getString()	# layer name, not used
-		ai = kri.vb.Info(
-			slot:kri.Ant.Inst.attribs.color[slot], size:3,
+		ai = kri.vb.Info( name:'color'+slot, size:3,
 			type:VertexAttribPointerType.UnsignedByte,
-			integer:false,	name:'color')
+			integer:false)
 		return LoadArray[of ColorRaw]( r,1,ai, r.getColorRaw )
 	
 	#---	Parse mesh indexes	---#
 	public def pv_ind(r as Reader) as bool:
 		m = r.geData[of kri.Mesh]()
-		return false	if not m
+		if not m: return false
 		m.nPoly = r.bin.ReadUInt16()
 		if m.nPoly:	# indexes
 			af = GetArray[of ushort]( m.nPoly*3, r.bin.ReadUInt16 )

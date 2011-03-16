@@ -115,7 +115,7 @@ public class Collector:
 		sa.add(root)
 		sa.add( *extra.ToArray() )
 		if sem:
-			names = List[of string]( 'to_'+sl.Name[at.slot] for at in sem )
+			names = List[of string]( 'to_'+at.name for at in sem )
 			sa.feedback( false, *names.ToArray() )
 		bu.dicts.AddRange(dicts)
 		bu.link()

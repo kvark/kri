@@ -15,8 +15,8 @@ public class Standard( kri.part.Behavior ):
 
 	public def constructor(pc as kri.part.Context):
 		super('/part/beh/main')
-		kri.Help.enrich( self, 2, (pc.at_sub,), ('sub',) )
-		kri.Help.enrich( self, 3, (pc.at_pos, pc.at_speed), ('pos','speed') )
+		enrich(2,'sub')
+		enrich(3,'pos','speed')
 
 	public def constructor(std as Standard):
 		super(std)	#is that enough?

@@ -6,16 +6,15 @@ import kri.part
 
 
 public class Sys(Behavior):	# at_sys storage for standard root
-	public def constructor(pc as kri.part.Context):
+	public def constructor():
 		super('/part/beh/sys')
-		kri.Help.enrich( self, 2, (pc.at_sys,), ('sys',) )
+		enrich(2,'sys')
 
 
 public class Pad(Behavior):	# padding for rgba32f align
-	public static final	slot	= kri.Ant.Inst.slotParticles.getForced('pad')
 	public def constructor():
 		super('/part/beh/pad')
-		kri.Help.enrich( self, 1, (slot,), ('pad',) )
+		enrich(1,'pad')
 
 
 public class Norm(Behavior):	# fur normalizing
@@ -70,6 +69,6 @@ public class Stiff(Simple[of single]):		# fur stiffness
 		super( '/part/beh/fur_stiff','fur_stiff',val)
 
 public class Rotate(Simple[of single]):		# particle rotation
-	public def constructor(val as single, pc as kri.part.Context):
+	public def constructor(val as single):
 		super('/part/beh/rotate','part_spin', val)
-		kri.Help.enrich( self, 4, (pc.at_rot,), ('rot',) )
+		enrich(4,'rot')

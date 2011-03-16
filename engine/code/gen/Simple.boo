@@ -4,20 +4,6 @@ import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
-public class Frame:
-	public final mesh	as kri.Mesh
-	public final va		= kri.vb.Array()
-	public def constructor(m as kri.Mesh):
-		mesh = m
-		va.bind()
-		m.vbo[0].initAll(-1)
-	public def draw() as void:
-		va.bind()
-		assert not 'supported'
-		#mesh.draw(1)
-
-
-
 #---------	Wrap	---------#
 
 public class Mesh( kri.Mesh ):
@@ -41,9 +27,8 @@ public class Point( Mesh ):
 		.nVert = .nPoly = 1
 		vat = kri.vb.Attrib()
 		vat.init(1)
-		ai = kri.vb.Info(
-			slot:kri.Ant.Inst.attribs.vertex, name:'vertex',
-			size:1, type:VertexAttribPointerType.UnsignedByte )
+		ai = kri.vb.Info( name:'vertex', size:1,
+			type:VertexAttribPointerType.UnsignedByte )
 		vat.Semant.Add(ai)
 		vbo.Add(vat)
 
@@ -60,9 +45,8 @@ public class Quad( Mesh ):
 			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
 			Vector2h(-1f,1f),	Vector2h(1f,1f),
 			), false)
-		ai = kri.vb.Info(
-			slot:kri.Ant.Inst.attribs.vertex, name:'vertex',
-			size:2, type:VertexAttribPointerType.HalfFloat )
+		ai = kri.vb.Info( name:'vertex', size:2,
+			type:VertexAttribPointerType.HalfFloat )
 		vat.Semant.Add(ai)
 		vbo.Add(vat)
 
@@ -77,7 +61,7 @@ public class Line( Mesh ):
 		data = (of Vector4: Vector4(-1f,0f,0f,1f), Vector4(1f,0f,0f,1f))
 		vat = kri.vb.Attrib()
 		vat.init( data, false )
-		kri.Help.enrich( vat, 4, (kri.Ant.Inst.attribs.vertex,), ('vertex',) )
+		kri.Help.enrich(vat, 4, 'vertex')
 		vbo.Add(vat)
 
 
@@ -110,7 +94,7 @@ public class PlaneTex( Mesh ):
 		vat = kri.vb.Attrib()
 		vat.init( v, false )
 		# fill semantics
-		kri.Help.enrich( vat, 4, (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat), ('vertex','quat') )
-		kri.Help.enrich( vat, 2, (kri.Ant.Inst.attribs.tex[0],), ('tex0',) )
+		kri.Help.enrich(vat, 4, 'vertex','quat')
+		kri.Help.enrich(vat, 2, 'tex0')
 		# return
 		vbo.Add(vat)

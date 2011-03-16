@@ -108,18 +108,10 @@ private class Feedback( kri.rend.Basic ):
 	private final	vin	= kri.vb.Attrib()
 	private final	sl	as kri.lib.Slot
 	
-	public def constructor(pc as kri.part.Context):
-		if pc:
-			sl = kri.Ant.Inst.slotParticles
-			atId = pc.at_pos
-		else:
-			sl = kri.lib.Slot(5)
-			sl.create('xxx')
-			atId = sl.create('pos')
-		
-		ai = kri.vb.Info( name:'pos',
-			slot:atId, integer:false, size:4,
-			type:VertexAttribPointerType.Float )
+	public def constructor():
+		ai = kri.vb.Info( name:'pos', size:4,
+			type:VertexAttribPointerType.Float,
+			integer:false )
 		vin.Semant.Add(ai)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
@@ -142,7 +134,8 @@ private class Feedback( kri.rend.Basic ):
 		vin.init(dar,false)
 		vot = kri.vb.Attrib()
 		vot.init(8*4)
-		vin.attribFirst()
+		assert not 'supported' # attribFirst?
+		#vin.attribFirst()
 		#run!
 		bu.activate()
 		tf.Bind(vot)

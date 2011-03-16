@@ -8,7 +8,7 @@ public class Update( kri.rend.tech.Basic ):
 	private final bu	= kri.shade.Bundle()
 	private final par	= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
 		for i in range(kri.Ant.Inst.caps.bones) ).ToArray()
-	public final at_mod	= (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat)
+	public final at_mod	= ('vertex','quat')
 	public final at_all	as (int)
 
 	public def constructor(dq as bool):
@@ -35,7 +35,7 @@ public class Update( kri.rend.tech.Basic ):
 				tag = e.seTag[of Tag]()
 				if not e.visible or not tag or tag.Sync:
 					continue
-				vos = System.Array.ConvertAll(at_mod) do(a as int):
+				vos = System.Array.ConvertAll(at_mod) do(a as string):
 					return e.store.find(a)
 				if null in vos:
 					continue

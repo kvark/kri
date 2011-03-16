@@ -27,6 +27,8 @@ public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code 
 	
 	public virtual def link(d as rep.Dict) as void:	#imp: kri.meta.IBase
 		pass
+	public def enrich(size as byte, *names as (string)) as void:
+		kri.Help.enrich(self,size,*names)
 	def System.ICloneable.Clone() as object:
 		return Behavior(self)
 	par.INamed.Name:

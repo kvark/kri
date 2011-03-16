@@ -20,12 +20,11 @@ public static class Help:
 		except e as GraphicsContextMissingException:
 			pass
 	# semantics fill helper
-	public def enrich(ob as vb.ISemanted, size as byte, slots as (int), names as (string)) as void:
-		assert slots.Length == names.Length
-		for i in range(slots.Length):
-			ob.Semant.Add( vb.Info( name:names[i],
-				integer:false, size:size, slot:slots[i],
-				type: VertexAttribPointerType.Float ))
+	public def enrich(ob as vb.ISemanted, size as byte, *names as (string)) as void:
+		for str in names:
+			ob.Semant.Add( vb.Info(
+				name:str, size:size, integer:false,
+				type:VertexAttribPointerType.Float ))
 	# get integer state value
 	public def getInteger( pn as GetPName ) as int:
 		rez = -1

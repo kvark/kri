@@ -47,7 +47,7 @@ public class Rend( kri.rend.tech.Meta ):
 			continue	if not inst
 			ent = inst.ent
 			continue	if not ent
-			pats = List[of int](sem.slot	for sem in pe.data.Semant)
+			pats = List[of string](sem.name	for sem in pe.data.Semant)
 			continue	if not List[of int](trans.Keys).TrueForAll({at| return at in pats })
 			cur = pe
 			addObject(ent)

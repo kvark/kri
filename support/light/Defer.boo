@@ -24,7 +24,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sphere	as kri.Mesh
 	private final fbo		as Holder
 	private final texDep	= par.Value[of kri.buf.Texture]('depth')
-	private final va		= kri.vb.Array()
+	private final va		as kri.vb.Array
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba16f
 
@@ -40,11 +40,9 @@ public class Bake( kri.rend.Basic ):
 		d = rep.Dict()
 		d.unit(texDep)
 		bu.dicts.AddRange(( d, lc.dict ))
-		bu.link()
 		# create geometry
-		va.bind()	# the buffer objects are bound in creation
 		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
-		sphere.vbo[0].attrib( kri.Ant.Inst.attribs.vertex )
+		va = sphere.renderTest(bu)
 
 	public override def setup(pl as kri.buf.Plane) as bool:
 		fbo.at.color[0].samples = 3

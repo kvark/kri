@@ -41,7 +41,7 @@ public class Extra( kri.IExtension ):
 			ps = pm.seBeh[of beh.Standard]()
 			ph = pm.seBeh[of support.hair.Behavior]()
 			if ps:
-				pm.behos.Add( beh.Sys(con) )
+				pm.behos.Add( beh.Sys() )
 				pm.makeStandard(con)
 				born = (con.sh_born_time, con.sh_born_loop)[ bLoop ]
 				pm.col_update.extra.Add(born)
@@ -101,11 +101,11 @@ public class Extra( kri.IExtension ):
 			pe.onUpdate = upNode
 		elif source == 'VERT':
 			for i in range(2):
-				t = kri.shade.par.Value[of kri.buf.Texture]( ('vertex','quat')[i] )
+				at = ('vertex','quat')[i]
+				t = kri.shade.par.Value[of kri.buf.Texture](at)
 				pm.dict.unit(t.Name,t)
-				t.Value = kri.buf.Texture()
-				ats = (kri.Ant.Inst.attribs.vertex, kri.Ant.inst.attribs.quat)
-				t.Value.init( SizedInternalFormat.Rgba32f, ent.findAny(ats[i]) )
+				t.Value = kri.buf.Texture()	
+				t.Value.init( SizedInternalFormat.Rgba32f, ent.findAny(at) )
 				pe.onUpdate = upNode
 			parNumber = kri.shade.par.Value[of single]('num_vertices')
 			parNumber.Value = 1f * ent.mesh.nVert
@@ -183,7 +183,7 @@ public class Extra( kri.IExtension ):
 		if mode == 'SPIN':
 			pm = r.geData[of kri.part.Manager]()
 			return false	if not pm
-			pm.behos.Add( beh.Rotate(factor,con) )
+			pm.behos.Add( beh.Rotate(factor) )
 		return true
 	
 	public def fp_phys(r as kri.load.Reader) as bool:

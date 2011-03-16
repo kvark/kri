@@ -12,9 +12,8 @@ public interface ISource:
 #---------
 
 public struct Info:
-	public slot	as int	# from slotAttributes
 	public name	as string
-	public size	as int	# in units
+	public size	as int		# in units
 	public type	as VertexAttribPointerType
 	public integer	as bool
 	public def fullSize() as int:
@@ -34,13 +33,14 @@ public class Storage:
 	public final vbo = List[of kri.vb.Attrib]()
 	public final static	Empty	= Storage()
 	
-	public def find(id as int) as kri.vb.Attrib:
+	public def find(name as string) as kri.vb.Attrib:
 		return vbo.Find() do(v as kri.vb.Attrib):
 			s = v.Semant
-			return s.Count>0 and s[0].slot==id
-	public def bind(id as int) as bool:
+			return s.Count>0 and s[0].name==name
+	private def bind(name as string) as bool:	#todo: remove
 		return vbo.Exists() do(v as kri.vb.Attrib):
-			return v.attrib(id)
+			return true
+			#return v.attrib(name)
 	public def swap(x as kri.vb.Attrib, y as kri.vb.Attrib) as void:
 		#vbo.Remove(x)
 		#vbo.Add(y)

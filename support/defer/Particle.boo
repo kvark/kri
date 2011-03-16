@@ -30,7 +30,7 @@ public class Particle(ApplyBase):
 			continue	if not halo
 			pHalo.Value = halo.Data
 			light.setLimit( pHalo.Value.X )
-			pe.data.attribTrans(trans)	
+			#pe.data.attribTrans(trans)	#?
 			kri.Ant.Inst.params.activate(light)
 			bu.activate()
 			assert not 'supported' # trans attribs

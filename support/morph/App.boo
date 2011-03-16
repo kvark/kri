@@ -60,8 +60,8 @@ public class Update( kri.rend.Basic ):
 				#ent.enable(false, (av,))
 				for i in range( System.Math.Min(4,keys.Length) ):
 					trans[av] = i+1
-					keys[i].data.attribTrans(trans)
-				tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))
+					#keys[i].data.attribTrans(trans)	#support?
+				#tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))	#?
 				assert not 'supported' # trans attributes?
 				#bu.activate()
 				#ent.mesh.draw(tf)

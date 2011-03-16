@@ -28,12 +28,13 @@ public struct Constructor:
 	
 	# fill up the mesh data
 	public def apply(m as kri.Mesh) as void:
+		kri.vb.Array.Default.bind()
 		if v:
 			m.nVert = v.Length
 			m.nPoly = m.nVert / m.polySize
 			vbo = kri.vb.Attrib()
 			vbo.init( v, false )
-			kri.Help.enrich( vbo, 4, (kri.Ant.Inst.attribs.vertex, kri.Ant.Inst.attribs.quat), ('vertex','quat') )
+			kri.Help.enrich(vbo, 4, 'vertex','quat')
 			m.vbo.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize

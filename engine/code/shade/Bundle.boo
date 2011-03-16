@@ -208,9 +208,8 @@ public class Bundle:
 					break
 			if not cur.matches(target):
 				return -1
-			target.slot = names.Count
+			kri.vb.Attrib.Push( names.Count, target, off, total )
 			names.Add( cur.name )
-			kri.vb.Attrib.Push(target,off,total)
 		return names.Count
 
 	public def pushAttribs(combined as kri.vb.Attrib*) as int:

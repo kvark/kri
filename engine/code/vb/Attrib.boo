@@ -19,7 +19,7 @@ public class Attrib( ISemanted, Object ):
 	public def unitLoc(ref at as Info, ref off as int, ref sum as int) as bool:
 		off,sum = -1,0
 		for ain in semantics:
-			if ain.slot == at.slot:
+			if ain.name == at.name:
 				assert off<0
 				off = sum
 				at = ain
@@ -31,56 +31,60 @@ public class Attrib( ISemanted, Object ):
 			rez += a.fullSize()
 		return rez
 	
-	public def initAll(num as int) as void:
+	private def initAll(num as int) as void:
 		off,total = 0,unitSize()
+		assert not 'supported'	# slot=?
 		if num<0:	bind()
 		else:	init(num * total)
 		semantics.ForEach() do(ref at as Info):
-			Push(at, off, total)
+			Push(0, at, off, total)
 			off += at.fullSize()
 
-	public static def Push(ref at as Info, off as int, total as int) as void:
-		GL.EnableVertexAttribArray( at.slot )
+	public static def Push(slot as uint, ref at as Info, off as int, total as int) as void:
+		GL.EnableVertexAttribArray( slot )
 		if at.integer: #TODO: use proper enum
-			GL.VertexAttribIPointer( at.slot, at.size,
+			GL.VertexAttribIPointer( slot, at.size,
 				cast(VertexAttribIPointerType,cast(int,at.type)),
 				total, System.IntPtr(off) )
 		else:
-			GL.VertexAttribPointer(at.slot, at.size,
+			GL.VertexAttribPointer( slot, at.size,
 				at.type, false, total, off)
 				
 	private def push(ref at as Info) as void:
 		off,sum = 0,0
 		unitLoc(at,off,sum)	# no modification here
-		Push(at,off,sum)
+		assert not 'supported'	# slot=?
+		Push(0,at,off,sum)
 
-	public def attrib(id as uint) as bool:
-		at = Info( slot:id )
+	private def attrib(name as string) as bool:
+		at = Info( name:name )
 		off,sum = 0,0
 		if not unitLoc(at,off,sum):
 			return false
 		bind()
-		Push(at,off,sum)
+		assert not 'supported'	# slot=?
+		Push(0,at,off,sum)
 		return true
 			
-	public def attribFirst() as void:
+	private def attribFirst() as void:
 		bind()
 		ai = semantics[0]
 		push(ai)
 	
-	public def attribFake(slot as uint) as void:
+	private def attribFake(name as string) as void:
 		bind()
 		ai = semantics[0]
-		ai.slot = slot
+		ai.name = name
 		push(ai)
 
-	public def attribTrans(dict as IDictionary[of int,int]) as void:
+	private def attribTrans(dict as IDictionary[of string,string]) as void:
 		bind()
 		off,total = 0,unitSize()
 		for at in semantics:
-			val = 0
-			if dict.TryGetValue(at.slot,val):
+			val = ''
+			if dict.TryGetValue(at.name,val):
 				a2 = at
-				a2.slot = val
-				Push(a2,off,total)
+				a2.name = val
+				assert not 'supported'	# slot=?
+				Push(0,a2,off,total)
 			off += at.fullSize()

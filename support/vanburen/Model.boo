@@ -137,14 +137,14 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 		rez = kri.vb.Attrib()
 		ai = kri.vb.Info( size:4, integer:false,
 			type: VertexAttribPointerType.Float )
-		ai.slot = kri.Ant.Inst.attribs.vertex
+		ai.name = 'vertex'
 		rez.Semant.Add(ai)
-		ai.slot = kri.Ant.Inst.attribs.quat
+		ai.name = 'quat'
 		rez.Semant.Add(ai)
-		ai.slot = kri.Ant.Inst.attribs.tex[0]
+		ai.name = 'tex0'
 		ai.size = 2
 		rez.Semant.Add(ai)
-		ai.slot = kri.Ant.Inst.attribs.color[0]
+		ai.name = 'col0'
 		ai.size = 4
 		ai.type = VertexAttribPointerType.UnsignedByte
 		rez.Semant.Add(ai)
@@ -273,9 +273,8 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 			if hasBones:
 				rd.makeSkeleton()
 				nb = rd.getLong()
-				ai = kri.vb.Info(
-					slot: kri.Ant.Inst.slotAttributes.getForced('skin'),
-					size:4, type: VertexAttribPointerType.UnsignedShort,
+				ai = kri.vb.Info( name:'skin', size:4,
+					type: VertexAttribPointerType.UnsignedShort,
 					integer:false )
 				LoadArray[of BoneLink]( rd, ai, BoneLink.Fun(nb) )
 			nmat = rd.getLong()

@@ -129,8 +129,9 @@ public class Entity( kri.ani.data.Player ):
 	
 	public CombinedAttribs as vb.Attrib*:
 		get:
-			return store.vbo	if not mesh
-			return mesh.vbo.ToArray() + store.vbo.ToArray()
+			if not mesh:
+				return store.vbo
+			return store.vbo.ToArray() + mesh.vbo.ToArray()
 	
 	public def constructor():
 		pass
@@ -156,14 +157,15 @@ public class Entity( kri.ani.data.Player ):
 			tlis.Add(t)	if t
 		return tlis.ToArray()
 	
-	public def findAny(id as int) as kri.vb.Attrib:
-		at = store.find(id)
-		return (at	if at else	mesh.find(id))
+	public def findAny(name as string) as kri.vb.Attrib:
+		at = store.find(name)
+		return (at	if at else	mesh.find(name))
 	
 	private def enable(local as bool, ids as int*) as bool:
 		for i in ids:
-			continue if local and store.bind(i)
-			continue if mesh.bind(i)
+			assert not 'supported'	# bind()
+			#continue if local and store.bind(i)
+			#continue if mesh.bind(i)
 			return false
 		mesh.ind.bind()	if mesh.ind
 		return true
