@@ -8,7 +8,6 @@ import OpenTK
 
 public class Tag( kri.ITag, kri.vb.ISource ):
 	public final va			= kri.vb.Array()
-	public final ghost_tex	= kri.Ant.inst.slotAttributes.getForced('@tex')
 
 	[Getter(Data)]
 	private final aBase	as kri.vb.Attrib	= kri.vb.Attrib()

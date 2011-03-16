@@ -47,7 +47,6 @@ private class PolygonOffset( kri.rend.Basic ):
 		pob = kri.shade.Object(ShaderType.VertexShader,'my',text)
 		sa.add( pob )
 		sa.add( '/empty_f' )
-		sa.attrib( kri.Ant.Inst.attribs.vertex, 'at_vertex' )
 		sa.link()
 		va = kri.Ant.Inst.quad.render(null,sa,0)
 		t = kri.buf.Texture( dep:1,

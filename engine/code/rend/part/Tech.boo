@@ -12,7 +12,7 @@ public class Tech( Basic ):
 	
 	protected def constructor(name as string):
 		super()
-		tid = kri.Ant.Inst.slotTechniques.getForced(name)
+		tid = kri.Ant.Inst.techniques.getForced(name)
 	
 	public abstract def construct(pe as kri.part.Emitter) as Bundle:
 		pass
@@ -48,8 +48,7 @@ public class Meta( Tech ):
 	private final geom		as bool
 	protected shobs			= List[of Object]()
 	protected final dict	= rep.Dict()
-	private final factory	= Linker(
-		kri.Ant.Inst.slotParticles, dict, kri.Ant.Inst.dict )
+	private final factory	= Linker(dict)
 	
 	public def constructor(name as string, gs as bool, *mets as (string)):
 		super(name)

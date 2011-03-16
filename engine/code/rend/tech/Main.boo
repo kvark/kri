@@ -4,10 +4,10 @@
 public class Basic( kri.rend.Basic ):
 	public	final tid	as int		# technique ID
 	protected def constructor(name as string):
-		tid = kri.Ant.Inst.slotTechniques.create(name)
+		tid = kri.Ant.Inst.techniques.create(name)
 	def destructor():
 		core = kri.Ant.Inst
-		core.slotTechniques.delete(tid)	if core
+		core.techniques.delete(tid)	if core
 	protected def attribs(local as bool, e as kri.Entity, *ats as (int)) as bool:
 		return false	if e.va[tid] == kri.vb.Array.Default
 		if e.va[tid]:	e.va[tid].bind()
@@ -30,8 +30,7 @@ public class Meta(General):
 	private final geom	as bool
 	protected shobs			= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.rep.Dict()
-	private final factory	= kri.shade.Linker(
-		kri.Ant.Inst.slotAttributes, dict, kri.Ant.Inst.dict )
+	private final factory	= kri.shade.Linker(dict)
 	
 	protected def constructor(name as string, gs as bool, outs as (string), *mets as (string)):
 		super(name)

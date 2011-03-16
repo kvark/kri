@@ -35,17 +35,3 @@ public struct Slot:
 	public def getForced(name as string) as int:
 		id = find(name)
 		return (id if id>=0 else create(name))
-
-
-public final class Attrib:
-	public final vertex		as int
-	public final quat		as int
-	public final tex		= (of int: 0,0,0,0)
-	public final color		= (of int: 0)
-	internal def constructor(s as Slot):
-		vertex	= s.getForced('vertex')
-		quat	= s.getForced('quat')
-		for i in range(tex.Length):
-			tex[i]		= s.getForced('tex'+i)
-		for i in range(color.Length):
-			color[i]	= s.getForced('color'+i)

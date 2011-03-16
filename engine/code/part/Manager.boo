@@ -67,7 +67,7 @@ public class Manager(DataHolder):
 		init(sem,total)
 		# link
 		for col in (col_init,col_update):
-			col.compose( sem, kri.Ant.Inst.slotParticles, dict, kri.Ant.Inst.dict )
+			col.compose( sem, dict, kri.Ant.Inst.dict )
 	
 	public def draw(nin as uint) as void:
 		if nin:

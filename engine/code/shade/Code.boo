@@ -108,7 +108,7 @@ public class Collector:
 			sh = gather( key, cl )
 			bu.shader.add(sh)
 	
-	public def compose( sem as kri.vb.Info*, sl as kri.lib.Slot, *dicts as (rep.Dict) ) as void:
+	public def compose( sem as kri.vb.Info*, *dicts as (rep.Dict) ) as void:
 		assert root
 		sa = bu.shader
 		sa.add('/lib/quat_v')

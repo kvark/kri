@@ -42,7 +42,7 @@ public class Update( kri.rend.Basic ):
 		bu.dicts.Add(d)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
-		trans = Dictionary[of int,int]()
+		trans = Dictionary[of string,string]()
 		va.bind()
 		using kri.Discarder(true):
 			for ent in kri.Scene.Current.entities:
@@ -56,10 +56,11 @@ public class Update( kri.rend.Basic ):
 				pVal.Value.X += 1f-sum
 				#assert System.Math.Abs(sum-1f) < eps
 				# bind attribs & draw
-				av = kri.Ant.Inst.attribs.vertex
 				#ent.enable(false, (av,))
+				trans['vertex'] = ''
 				for i in range( System.Math.Min(4,keys.Length) ):
-					trans[av] = i+1
+					pass
+					#trans['vertex'] = i+1
 					#keys[i].data.attribTrans(trans)	#support?
 				#tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))	#?
 				assert not 'supported' # trans attributes?

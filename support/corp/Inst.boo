@@ -13,17 +13,15 @@ public class Meta( kri.meta.Advanced ):
 
 
 public class Rend( kri.rend.tech.Meta ):
-	private final trans		= Dictionary[of int,int]()
+	private final trans		= Dictionary[of string,string]()
 	private cur	as kri.part.Emitter	= null
 	private final pBase		= kri.shade.par.Value[of Vector4]('base_color')
 	
 	public def constructor(pc as kri.part.Context):
 		super('part.object', false, null, 'emissive')
 		# attributes
-		trans[ pc.at_pos ] = pc.ghost_pos
-		trans[ pc.at_rot ] = pc.ghost_rot
-		trans[ pc.at_sys ] = pc.ghost_sys
-		trans[ pc.at_sub ] = pc.ghost_sub
+		for str in ('pos','rot','sys','sub'):
+			trans[str] = '@'+str
 		# shade
 		pBase.Value = Vector4.UnitX
 		dict.var(pBase)
@@ -48,7 +46,7 @@ public class Rend( kri.rend.tech.Meta ):
 			ent = inst.ent
 			continue	if not ent
 			pats = List[of string](sem.name	for sem in pe.data.Semant)
-			continue	if not List[of int](trans.Keys).TrueForAll({at| return at in pats })
+			continue	if not List[of string](trans.Keys).TrueForAll({at| return at in pats })
 			cur = pe
 			addObject(ent)
 		for b in butch:
