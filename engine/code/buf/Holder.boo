@@ -47,8 +47,8 @@ public class Holder(Frame):
 		return null	if sm<0
 		pl = Plane( samples:sm, wid:1<<30, het:1<<30 )
 		for sf in at.All:
-			pl.wid	= Math.Min( pl.wid,	sf.Width )
-			pl.het	= Math.Min( pl.het,	sf.Height )
+			pl.wid	= Math.Min( pl.wid,	sf.wid )
+			pl.het	= Math.Min( pl.het,	sf.het )
 		return pl
 	
 	public override def bind() as void:
@@ -61,7 +61,7 @@ public class Holder(Frame):
 			addSurface( FramebufferAttachment.DepthAttachment,			old.depth,		at.depth )
 		for i in range( old.color.Length ):
 			surface = old.color[i]	# Boo bug workaround
-			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,	at.color[i] )
+			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,		at.color[i] )
 			old.color[i] = surface
 		# check
 		CheckStatus()

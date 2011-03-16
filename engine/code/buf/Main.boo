@@ -6,14 +6,10 @@ public class Plane:
 	public wid		as uint	= 0
 	public het		as uint	= 0
 	# attributes
-	public virtual Width as uint:
-		get: return wid
-	public virtual Height as uint:
-		get: return het
 	public Aspect	as single:
 		get: return wid*1f / het
 	public Size		as uint:
-		get: return Width * Height * System.Math.Max(samples,0)
+		get: return wid * het * System.Math.Max(samples,1)
 	# methods
 	public def isCompatible(pl as Plane) as bool:
 		if samples!=pl.samples:

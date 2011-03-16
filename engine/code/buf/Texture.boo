@@ -16,11 +16,6 @@ public class Texture(Surface):
 	public			dep		as uint	= 0		# depth (z-dimension)
 	public			level	as byte = 0		# active mip level
 	public 			layer	as int	= -1	# active layer for Cube/Array textures
-	
-	public override Width as uint:
-		get: return ((wid-1)>>level)+1
-	public override Height as uint:
-		get: return ((het-1)>>level)+1
 
 	public def constructor():
 		hardId = GL.GenTexture()	
@@ -164,6 +159,15 @@ public class Texture(Surface):
 			TextureTarget.TextureCubeMapNegativeY,	TextureTarget.TextureCubeMapPositiveY,
 			TextureTarget.TextureCubeMapNegativeZ,	TextureTarget.TextureCubeMapPositiveZ):
 			setImage[of byte]( t, null )
+	
+	# read back
+	
+	public def read[of T(struct)]() as (T):
+		bind()
+		pt = GetPixelType(T)
+		data = array[of T](wid*het)
+		GL.GetTexImage(target,level,pixFormat,pt,data)
+		return data
 
 	# state routines
 	
