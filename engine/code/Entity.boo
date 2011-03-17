@@ -50,13 +50,12 @@ public class Mesh( vb.Storage ):
 			combo = List[of vb.Attrib](vbo)
 			combo.AddRange( ats.vbo )
 			if bu.pushAttribs(vao,combo)<0:
-				assert not 'good'	# will be removed later
 				return null
 			if ind:
 				ind.bind()
 		else:
 			vao.bind()
-			# make sure the attribs match
+			#todo: make sure the attribs match
 		if nob>0:
 			bu.activate()
 			draw(off,num,nob)

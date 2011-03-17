@@ -1,6 +1,5 @@
 ﻿namespace kri.vb
 
-#import System
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 

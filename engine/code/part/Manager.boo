@@ -15,7 +15,7 @@ public class Manager:
 	public	final dict	= kri.shade.rep.Dict()
 	public	final mesh	= kri.Mesh( BeginMode.Points )
 
-	public	final col_init	= kri.shade.Collector()
+	public	final col_init		= kri.shade.Collector()
 	public	final col_update	= kri.shade.Collector()
 
 	private parTotal	= kri.shade.par.Value[of single]('part_total')
@@ -66,11 +66,6 @@ public class Manager:
 		return null	as T
 
 	public def init(pc as Context) as void:
-		col_init.bu.clear()
-		col_update.bu.clear()
-		# collect shaders
-		col_init	.absorb[of Behavior](behos)
-		col_update	.absorb[of Behavior](behos)
 		# collect attributes
 		mesh.vbo.Clear()
 		mesh.vbo.Add( vob = kri.vb.Attrib() )
@@ -78,15 +73,11 @@ public class Manager:
 			vob.Semant.AddRange( b.Semant )
 			b.link(dict)
 		mesh.allocate()
-		# link
+		# collect shaders
 		for col in (col_init,col_update):
+			col.bu.clear()
+			col.absorb[of Behavior](behos)
 			col.compose( vob.Semant, dict, kri.Ant.Inst.dict )
-	
-	private def draw(nin as uint) as void:
-		if nin:
-			GL.DrawArraysInstanced( BeginMode.Points, 0, Total, nin )
-		else:
-			GL.DrawArrays( BeginMode.Points, 0, Total )
 	
 	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
 		if not pe.update():
