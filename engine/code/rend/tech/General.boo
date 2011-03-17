@@ -71,11 +71,11 @@ public class General( Basic ):
 			if prog == kri.shade.Bundle.Empty:
 				continue
 			if atList:
-				atList.AddRange( prog.shader.Attributes )
+				atList.AddRange( prog.shader.attribs )
 			b.bu = prog
 			b.up = getUpdater(m).fun
 			tempList.Add(b)
-		if atList and b.va.pushAll( atList.ToArray(), e.CombinedAttribs ) < 0:
+		if atList and not b.va.pushAll( atList.ToArray(), e.CombinedAttribs ):
 			e.va[tid] = kri.vb.Array.Default
 		else: butch.AddRange(tempList)
 

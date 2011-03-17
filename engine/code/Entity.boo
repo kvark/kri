@@ -49,7 +49,7 @@ public class Mesh( vb.Storage ):
 		if ats:
 			combo = List[of vb.Attrib](vbo)
 			combo.AddRange( ats.vbo )
-			if bu.pushAttribs(vao,combo)<0:
+			if not bu.pushAttribs(vao,combo):
 				return null
 			if ind:
 				ind.bind()
@@ -65,7 +65,7 @@ public class Mesh( vb.Storage ):
 		assert sa.Ready
 		if not vao:
 			vao = vb.Array()
-			if vao.pushAll( sa.Attributes, vbo )<0:
+			if not vao.pushAll( sa.attribs, vbo ):
 				return null
 			if ind:
 				ind.bind()
@@ -88,7 +88,7 @@ public class Mesh( vb.Storage ):
 		if ats:
 			combo = List[of vb.Attrib](vbo)
 			combo.AddRange( ats.vbo )
-		if bu.pushAttribs(vao,vbo)<0:
+		if not bu.pushAttribs(vao,vbo):
 			assert not 'good'	# will be removed later
 			return null
 		bu.activate()

@@ -104,17 +104,12 @@ public struct Attrib:
 #---------
 
 public class Mega(Program):
-	private attribs	as (Attrib) = null
-	private final uniforms	= List[of Uniform]()
-	public static final PrefixAttrib	as string	= 'at_'
-	public static final PrefixGhost		as string	= 'ghost_'
-	public static final GhostSym		as string	= '@'
-	public static final PrefixUnit		as string	= 'unit_'
-	
-	public Attributes as (Attrib):
-		get: return attribs
-	public Uniforms as Uniform*:
-		get: return uniforms
+	public	final attribs	= array[of Attrib]( kri.Ant.Inst.caps.vertexAttribs )
+	public	final uniforms	= List[of Uniform]()
+	public	final static PrefixAttrib	as string	= 'at_'
+	public	final static PrefixGhost	as string	= 'ghost_'
+	public	final static GhostSym		as string	= '@'
+	public	final static PrefixUnit		as string	= 'unit_'
 	
 	public override def link() as void:
 		super()
@@ -122,12 +117,14 @@ public class Mega(Program):
 		# read attribs
 		num = size = -1
 		GL.GetProgram( handle, ProgramParameter.ActiveAttributes, num )
-		attribs = array[of Attrib](num)
 		for i in range(num):
+			at = Attrib()
 			str = GL.GetActiveAttrib( handle, i, size, attribs[i].type )
 			assert str.StartsWith( PrefixAttrib )
-			attribs[i].name = str.Substring( PrefixAttrib.Length )
-			attribs[i].size = size
+			at.name = str.Substring( PrefixAttrib.Length )
+			at.size = size
+			loc = GL.GetAttribLocation( handle, str )
+			attribs[loc] = at
 		# read uniforms
 		uniforms.Clear()
 		GL.GetProgram( handle, ProgramParameter.ActiveUniforms, num )
@@ -138,7 +135,8 @@ public class Mega(Program):
 	
 	public override def clear() as void:
 		super()
-		attribs = null
+		for i in range(attribs.Length):
+			attribs[i].name = ''
 		uniforms.Clear()
 
 
@@ -162,7 +160,7 @@ public class Bundle:
 		assert shader.Ready
 		params.Clear()
 		tun = 0
-		for uni in shader.Uniforms:
+		for uni in shader.uniforms:
 			iv	as par.IBaseRoot = null
 			for d in dicts:
 				d.TryGetValue( uni.name, iv )
@@ -189,7 +187,7 @@ public class Bundle:
 		dicts.Clear()
 		params.Clear()
 	
-	public def pushAttribs(va as kri.vb.Array, combined as IList[of kri.vb.Attrib]) as int:
+	public def pushAttribs(va as kri.vb.Array, combined as IList[of kri.vb.Attrib]) as bool:
 		if not shader.Ready:
 			link()
-		return va.pushAll( shader.Attributes, combined )
+		return va.pushAll( shader.attribs, combined )
