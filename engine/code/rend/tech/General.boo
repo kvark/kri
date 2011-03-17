@@ -52,14 +52,12 @@ public class General( Basic ):
 		return	if not e.visible
 		#alist as List[of int] = null
 		tempList = List[of Batch]()
-		atList	as List[of kri.shade.Attrib]	= null
+		atar	as (kri.shade.Attrib)	= null
 		if e.va[tid] == kri.vb.Array.Default:
 			return
 		elif not e.va[tid]:
-			(e.va[tid] = kri.vb.Array()).bind()
-			atList = List[of kri.shade.Attrib]()
-			if e.mesh:
-				e.mesh.ind.bind()
+			e.va[tid] = kri.vb.Array()
+			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
 		b = Batch(e:e, va:e.va[tid], off:0)
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
@@ -68,16 +66,28 @@ public class General( Basic ):
 			prog = m.tech[tid]
 			if not prog:
 				m.tech[tid] = prog = construct(m)
+				if not prog.shader.Ready:	# force attribute order
+					prog.shader.attribAll( e.mesh.gatherAttribs() )
+					prog.link()
 			if prog == kri.shade.Bundle.Empty:
 				continue
-			if atList:
-				atList.AddRange( prog.shader.attribs )
+			if atar:	# merge attribs
+				ats = prog.shader.attribs
+				for i in range(atar.Length):
+					if atar[i].name == ats[i].name:
+						continue
+					assert not atar[i].name
+					atar[i] = ats[i]
 			b.bu = prog
 			b.up = getUpdater(m).fun
 			tempList.Add(b)
-		if atList and not b.va.pushAll( atList.ToArray(), e.CombinedAttribs ):
-			e.va[tid] = kri.vb.Array.Default
-		else: butch.AddRange(tempList)
+		if atar:
+			if not b.va.pushAll( atar, e.CombinedAttribs ):
+				e.va[tid] = kri.vb.Array.Default
+				return
+			if e.mesh:
+				e.mesh.ind.bind()
+		butch.AddRange(tempList)
 
 
 	# shouldn't be used as some objects have to be excluded

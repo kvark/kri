@@ -38,3 +38,10 @@ public class Storage:
 		#vbo.Remove(x)
 		#vbo.Add(y)
 		vbo[ vbo.IndexOf(x) ] = y
+
+	public def gatherAttribs() as (string):
+		al = List[of string]()
+		for vat in vbo:
+			for ai in vat.Semant:
+				al.Add( ai.name )
+		return al.ToArray()

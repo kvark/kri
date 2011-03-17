@@ -67,6 +67,9 @@ public class Program:
 	public def attrib(index as byte, name as string) as void:
 		assert index < kri.Ant.Inst.caps.vertexAttribs
 		GL.BindAttribLocation(handle, index, name)
+	public def attribAll(names as (string)) as void:
+		for i in range(names.Length):
+			attrib(i,names[i])
 	# assign fragment output slot
 	public def fragout(*names as (string)) as void:
 		assert names.Length <= kri.Ant.Inst.caps.drawBuffers

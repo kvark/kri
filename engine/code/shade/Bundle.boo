@@ -119,7 +119,7 @@ public class Mega(Program):
 		GL.GetProgram( handle, ProgramParameter.ActiveAttributes, num )
 		for i in range(num):
 			at = Attrib()
-			str = GL.GetActiveAttrib( handle, i, size, attribs[i].type )
+			str = GL.GetActiveAttrib( handle, i, size, at.type )
 			assert str.StartsWith( PrefixAttrib )
 			at.name = str.Substring( PrefixAttrib.Length )
 			at.size = size
@@ -157,7 +157,8 @@ public class Bundle:
 		shader = bu.shader
 	
 	public def fillParams() as void:
-		assert shader.Ready
+		if not shader.Ready:
+			link()
 		params.Clear()
 		tun = 0
 		for uni in shader.uniforms:
