@@ -115,6 +115,7 @@
     <Compile Include="code\sound\Main.boo" />
     <Compile Include="code\Spatial.boo" />
     <Compile Include="code\Tool.boo" />
+    <Compile Include="code\vb\Array.boo" />
     <Compile Include="code\vb\Attrib.boo" />
     <Compile Include="code\vb\Info.boo" />
     <Compile Include="code\vb\Main.boo" />

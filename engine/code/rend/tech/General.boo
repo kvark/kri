@@ -23,7 +23,7 @@ public struct Batch:	# why struct?
 		public def Compare(a as Batch, b as Batch) as int:
 			r = a.bu.shader.handle - b.bu.shader.handle
 			return r	if r
-			r = a.va.id - b.va.id
+			r = a.va.handle - b.va.handle
 			return r
 
 	public static cMat	as IComparer[of Batch]	= CompMat()
@@ -75,7 +75,7 @@ public class General( Basic ):
 			b.bu = prog
 			b.up = getUpdater(m).fun
 			tempList.Add(b)
-		if atList and 0 > kri.shade.Bundle.PushAttribs( atList.ToArray(), e.CombinedAttribs ):
+		if atList and b.va.pushAll( atList.ToArray(), e.CombinedAttribs ) < 0:
 			e.va[tid] = kri.vb.Array.Default
 		else: butch.AddRange(tempList)
 

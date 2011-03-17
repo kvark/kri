@@ -7,11 +7,15 @@ import OpenTK.Graphics.OpenGL
 public interface ISemanted:
 	Semant	as List[of Info]:
 		get
+	Data	as Object:
+		get
 
 
 public class Attrib( ISemanted, Object ):
 	[Getter(Semant)]
 	private final semantics	as List[of Info]	= List[of Info]()
+	ISemanted.Data	as Object:
+		get: return self
 
 	public def constructor():
 		super( BufferTarget.ArrayBuffer )

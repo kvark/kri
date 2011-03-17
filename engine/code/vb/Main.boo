@@ -5,48 +5,6 @@ import OpenTK.Graphics.OpenGL
 
 
 #-----------------------
-#	VERTEX ARRAY
-#-----------------------
-
-public class Array:
-	public	static	final Default	= Array(0)
-	public	static	Current	= Default
-	public	final	id	as int
-	
-	public def constructor():
-		tmp = 0
-		GL.GenVertexArrays(1,tmp)
-		id = tmp
-	private def constructor(xid as int):
-		id = xid
-	def destructor():
-		tmp = id
-		kri.Help.safeKill() do():
-			GL.DeleteVertexArrays(1,tmp)
-	
-	public def bind() as void:
-		if self == Current:
-			return
-		Current = self
-		GL.BindVertexArray(id)
-	
-	public def clean() as void:
-		bind()
-		for i in range(kri.Ant.Inst.caps.vertexAttribs):
-			GL.DisableVertexAttribArray(i)
-	
-	public def push(slot as uint, ref at as Info, off as int, total as int) as void:
-		GL.EnableVertexAttribArray( slot )
-		if at.integer: #TODO: use proper enum
-			GL.VertexAttribIPointer( slot, at.size,
-				cast(VertexAttribIPointerType,cast(int,at.type)),
-				total, System.IntPtr(off) )
-		else:
-			GL.VertexAttribPointer( slot, at.size,
-				at.type, false, total, off)
-
-
-#-----------------------
 #	BUFFER PROXY
 #-----------------------
 

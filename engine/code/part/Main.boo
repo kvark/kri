@@ -11,6 +11,8 @@ import kri.shade
 public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
 	[Getter(Semant)]
 	private final semantics	as List[of kri.vb.Info]	= List[of kri.vb.Info]()
+	kri.vb.ISemanted.Data	as kri.vb.Object:
+		get: return null
 	[getter(Shader)]
 	private final sh		as Object
 

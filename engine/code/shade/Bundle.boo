@@ -189,35 +189,7 @@ public class Bundle:
 		dicts.Clear()
 		params.Clear()
 	
-	public static def PushAttribs(sat as (Attrib), vat as IList[of kri.vb.Attrib]) as int:
-		names = List[of string]()
-		va = kri.vb.Array.Current
-		for cur in sat:
-			assert cur.name and cur.size
-			if cur.name in names:
-				continue
-			target as kri.vb.Info
-			for at in vat:
-				off = total = 0
-				for sem in at.Semant:
-					if sem.name == cur.name:
-						target = sem
-						off = total
-					total += sem.fullSize()
-				if target.size:
-					at.bind()
-					break
-			if not cur.matches(target):
-				return -1
-			va.push( names.Count, target, off, total )
-			names.Add( cur.name )
-		# need at least one
-		if not sat.Length:
-			sem = vat[0].Semant[0]
-			va.push(0,sem,0,0)
-		return names.Count
-
-	public def pushAttribs(combined as IList[of kri.vb.Attrib]) as int:
+	public def pushAttribs(va as kri.vb.Array, combined as IList[of kri.vb.Attrib]) as int:
 		if not shader.Ready:
 			link()
-		return PushAttribs( shader.Attributes, combined )
+		return va.pushAll( shader.Attributes, combined )
