@@ -191,3 +191,8 @@ public class Bundle:
 		if not shader.Ready:
 			link()
 		return va.pushAll( shader.attribs, combined )
+
+	public def pushAttribs(va as kri.vb.Array, dict as Dictionary[of string,kri.vb.Entry]) as bool:
+		if not shader.Ready:
+			link()
+		return va.pushAll( shader.attribs, dict )

@@ -61,6 +61,7 @@ public class Array:
 		push( slot, e.info, e.offset, e.stride )
 	
 	public def pushAll(sat as (kri.shade.Attrib), vat as IList[of kri.vb.Attrib]) as bool:
+		empty = true
 		bind()
 		for i in range(sat.Length):
 			if not sat[i].name:
@@ -86,6 +87,7 @@ public class Array:
 		return true
 	
 	public def pushAll(sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
+		empty = true
 		bind()
 		for i in range(sat.Length):
 			str = sat[i].name
@@ -100,7 +102,7 @@ public class Array:
 			en.info.name = str
 			push(i,en)
 		# need at least one
-		if not sat.Length:
+		if Empty:
 			for en in edic.Values:
 				push(0,en)
 				break

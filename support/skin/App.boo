@@ -53,5 +53,5 @@ public class Update( kri.rend.tech.Basic ):
 					par[i+1].activate(spa)
 				#using tf.catch():
 				#	e.mesh.render(va,bu)
-				e.mesh.renderBack(va,bu,null,tf)
+				e.mesh.renderBack(va,bu,tf)
 				tag.Sync = true

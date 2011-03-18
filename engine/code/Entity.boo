@@ -13,6 +13,8 @@ public class Mesh( vb.Storage ):
 	public ind		as vb.Index	= null
 	public final drawMode	as BeginMode
 	public final polySize	as uint
+	public NumElements as uint:
+		get: return (nVert,nPoly)[ind!=null]
 	
 	public def constructor(dmode as BeginMode):
 		drawMode,polySize = dmode,0
@@ -61,40 +63,42 @@ public class Mesh( vb.Storage ):
 			draw(off,num,nob)
 		return vao
 	
-	public def render(vao as vb.Array, sa as shade.Mega, nob as uint) as vb.Array:
-		assert sa.Ready
-		if not vao:
-			vao = vb.Array()
-			if not vao.pushAll( sa.attribs, vbo ):
-				return null
-			if ind:
-				ind.bind()
+	public def render(va as vb.Array, bu as shade.Bundle, dict as Dictionary[of string,vb.Entry], nob as uint, tf as TransFeedback) as bool:
+		assert va and bu
+		if not bu.pushAttribs(va,dict):
+			assert not 'good'	# will be removed later
+			return false
+		bu.activate()
+		if tf:	draw(tf)
+		else:	draw(nob)
+		return true
+	
+	public def render(va as vb.Array, sa as shade.Mega, nob as uint) as bool:
+		assert sa.Ready and va
+		if not va.pushAll( sa.attribs, vbo ):
+			return false
+		if ind:
+			ind.bind()
 		if nob>0:
-			vao.bind()
 			sa.bind()
 			draw(nob)
-		return vao
+		return true
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, nob as uint) as vb.Array:
-		num = (nVert,nPoly)[ind!=null]
-		return render(vao,bu,ats,0,num,nob)
+		return render(vao,bu,ats,0,NumElements,nob)
 	
 	public def render(vao as vb.Array, bu as shade.Bundle) as vb.Array:
 		return render( vao, bu, vb.Storage.Empty, 1 )
 	
-	public def renderBack(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, tf as TransFeedback) as vb.Array:
+	public def renderBack(vao as vb.Array, bu as shade.Bundle, tf as TransFeedback) as bool:
 		assert vao and bu and tf
-		combo = vbo
-		if ats:
-			combo = List[of vb.Attrib](vbo)
-			combo.AddRange( ats.vbo )
 		if not bu.pushAttribs(vao,vbo):
 			assert not 'good'	# will be removed later
-			return null
+			return false
 		bu.activate()
 		draw(tf)
-		return vao
-
+		return true
+	
 	public def renderTest(bu as shade.Bundle) as vb.Array:
 		return render( null, bu, vb.Storage.Empty, 0 )
 	
@@ -120,7 +124,7 @@ public class Mesh( vb.Storage ):
 
 	# draw all polygons once
 	protected def draw(nob as uint) as void:
-		draw(0,nPoly,nob)
+		draw(0,NumElements,nob)
 	# transform points with feedback
 	protected def draw(tf as TransFeedback) as void:
 		using tf.catch():

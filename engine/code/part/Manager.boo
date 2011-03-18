@@ -82,23 +82,21 @@ public class Manager:
 	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
 		if not pe.update():
 			return false
-		tf.Bind( pe.mesh.vbo[0] )
+		tf.Bind( mesh.vbo[0] )
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
-		assert not 'supported'
-		#using kri.Discarder(true):
-			#mesh.renderBack( va, bu, pe.exData, tf )
-		if not 'Debug':
+		using kri.Discarder(true):
+			mesh.render( va, bu, pe.entries, 0, tf )
+		if 'Debug':
 			assert tf.result() == Total
-			ar = array[of single]( Total * pe.mesh.vbo[0].unitSize() >>2 )
-			pe.mesh.vbo[0].read(ar)
+			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
+			mesh.vbo[0].read(ar)
+		# swap data
+		data = mesh.vbo[0]
+		mesh.vbo[0] = pe.mesh.vbo[0]
+		pe.mesh.vbo[0] = data
 		return true
 
 	public def opInit(pe as Emitter) as bool:
 		return process( pe, col_init.bu )
 	public def opTick(pe as Emitter) as bool:
-		# swap data
-		data = mesh.vbo[0]
-		mesh.vbo[0] = pe.mesh.vbo[0]
-		pe.mesh.vbo[0] = data
-		# continue
 		return process( pe, col_update.bu )

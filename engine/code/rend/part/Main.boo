@@ -19,10 +19,7 @@ public class Basic( kri.rend.Basic ):
 			for pe in kri.Scene.Current.particles:
 				nInst as uint = 1
 				bu = prepare(pe,nInst)
-				if not bu or not pe.update():
-					continue
-				assert not 'supported'
-				#pe.mesh.render( pe.owner.va, bu, pe.exData, nInst )
+				pe.draw(bu,nInst)
 
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#

@@ -37,27 +37,26 @@ public class Emitter:
 		name	= pe.name
 	
 	public def update() as bool:
+		remapBuffers()
 		return (not onUpdate) or onUpdate(obj)
+	
+	public def remapBuffers() as void:
+		assert owner
+		allKeys = List[of string](entries.Keys)
+		for key in allKeys:
+			val = entries[key]
+			if val.data != owner.mesh.vbo[0]:
+				continue
+			val.data = mesh.vbo[0]
+			entries[key] = val
 
 	public def allocate() as void:
 		assert owner
 		owner.initMesh( mesh )
 		entries.Clear()
 		mesh.fillEntries(entries)
-
-/*	private def loadFake()	as void:	#todo: redo
-		assert not 'ready'
-		d = Dictionary[of string,string]()
-		for fa in extList:
-			vat = fa.vat.Data
-			assert vat
-			if fa.source:
-				d.Clear()
-				d[fa.source] = fa.dest
-			#	vat.attribTrans(d)
-			#else: vat.attrib( fa.dest )*/
-
-	public def listAttribs() as (string):
-		assert not 'supported'
-		return	List[of string](sem.name	for sem in mesh.vbo[0].Semant).ToArray()# +
-				#List[of string](sem.name	for sem in vbo for vbo in extMesh).ToArray()
+	
+	public def draw(bu as kri.shade.Bundle, num as uint) as bool:
+		if not bu or not update():
+			return false
+		return mesh.render( owner.va, bu, entries, num, null )
