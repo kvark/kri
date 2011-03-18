@@ -10,7 +10,6 @@ import kri.buf
 public class Init( kri.rend.Basic ):
 	public	final fbo	= Holder( mask:3 )
 	private	final bu	= kri.shade.Bundle()
-	public	final va	as kri.vb.Array
 
 	public def constructor(nlay as byte):
 		# init buffer
@@ -22,7 +21,6 @@ public class Init( kri.rend.Basic ):
 			intFormat:PixelInternalFormat.Rgb10A2 )
 		# init shader
 		bu.shader.add('/copy_v','/white_f') # temp
-		va = kri.Ant.Inst.quad.render(null,bu,null,0)
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		fbo.resize( pl.wid, pl.het )
@@ -48,7 +46,7 @@ public class Init( kri.rend.Basic ):
 				GL.StencilOp( StencilOp.Incr, StencilOp.Incr, StencilOp.Incr )
 				for i in range(1,sm):
 					GL.SampleMask( 0, -1<<i )
-					kri.Ant.Inst.quad.render(va,bu,null,1)
+					kri.Ant.Inst.quad.draw(bu)
 		else:
 			using kri.Section( EnableCap.SampleMask ):
 				for i in range( sm ):
@@ -67,7 +65,7 @@ public class Init( kri.rend.Basic ):
 			using kri.Section( EnableCap.StencilTest ):
 				GL.StencilFunc( StencilFunction.Equal, debugLayer,-1 )
 				GL.StencilOp( StencilOp.Keep, StencilOp.Keep, StencilOp.Keep )
-				kri.Ant.Inst.quad.render(va,bu,null,1)
+				kri.Ant.Inst.quad.draw(bu)
 		con.Multisample = true
 
 

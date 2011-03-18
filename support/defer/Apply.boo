@@ -7,10 +7,8 @@ import kri.shade
 
 public class ApplyBase( kri.rend.Basic ):
 	protected final bu		= Bundle()
-	protected final sphere	as kri.Mesh
+	protected final sphere	as kri.gen.Frame
 	protected final dict	= rep.Dict()
-	[Getter(VAO)]
-	private va			as kri.vb.Array	= null
 	private texDepth		as par.Texture	= null
 	# custom activation
 	private virtual def onInit() as void:
@@ -19,7 +17,8 @@ public class ApplyBase( kri.rend.Basic ):
 		pass
 	# init
 	public def constructor(qord as byte):
-		sphere = kri.gen.Sphere( qord, OpenTK.Vector3.One )
+		sh = kri.gen.Sphere( qord, OpenTK.Vector3.One )
+		sphere = kri.gen.Frame(sh)
 	# link
 	protected def relink(con as Context) as void:
 		texDepth = con.texDepth
@@ -27,7 +26,6 @@ public class ApplyBase( kri.rend.Basic ):
 		bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f' )
 		bu.shader.add( con.sh_apply, con.sh_diff, con.sh_spec )
 		bu.link()
-		va = sphere.renderTest(bu)
 	# work
 	public override def process(con as kri.rend.link.Basic) as void:
 		texDepth.Value = con.Depth
@@ -70,9 +68,9 @@ public class Apply( ApplyBase ):
 			texLit.Value = context.defShadow
 	# work
 	private override def onInit() as void:
-		kri.Ant.Inst.quad.render(VAO,bv,null,1)
+		kri.Ant.Inst.quad.draw(bv)
 	private override def onDraw() as void:
 		for l in kri.Scene.Current.lights:
 			bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
-			sphere.render(VAO,bu,null,1)
+			sphere.draw(bu)

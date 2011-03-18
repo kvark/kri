@@ -148,13 +148,13 @@ public class Entity( kri.ani.data.Player ):
 	public final va		= array[of vb.Array]	( kri.Ant.Inst.techniques.Size )
 	public final tags	= List[of ITag]()
 	
-	public CombinedAttribs as IList[of vb.Attrib]:
+	public CombinedAttribs as Dictionary[of string, vb.Entry]:
 		get:
-			if not mesh:
-				return store.vbo
-			tmp = List[of vb.Attrib]( store.vbo )
-			tmp.AddRange(mesh.vbo)
-			return tmp
+			d = Dictionary[of string, vb.Entry]()
+			if mesh:
+				mesh.fillEntries(d)
+			store.fillEntries(d)
+			return d
 	
 	public def constructor():
 		pass

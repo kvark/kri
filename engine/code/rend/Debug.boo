@@ -8,7 +8,6 @@ import kri.shade
 
 public class Map( kri.rend.Basic ):
 	private	final bu	= Bundle()
-	public	final va	as kri.vb.Array
 	public	final layer	= par.Value[of single]('layer')
 	
 	public def constructor(depth as bool, cube as bool, id as int, t as par.IBase[of kri.buf.Texture]):
@@ -23,12 +22,10 @@ public class Map( kri.rend.Basic ):
 		d.unit( 'input', t )
 		d.var(layer)
 		bu.dicts.Add(d)
-		# fill VAO
-		va = kri.Ant.inst.quad.renderTest(bu)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
-		kri.Ant.inst.quad.render(va,bu,null,1)
+		kri.Ant.inst.quad.draw(bu)
 
 
 public class MapDepth( Map ):

@@ -77,4 +77,4 @@ public class Behavior( kri.part.Behavior ):
 			if not root:
 				root = tag.Data
 			assert not 'ready'
-			pe.exData.vbo.Add(root)
+			#pe.exData.vbo.Add(root)

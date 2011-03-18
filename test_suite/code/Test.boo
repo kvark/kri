@@ -35,7 +35,6 @@ private class PolygonOffset( kri.rend.Basic ):
 	final sa	= kri.shade.Mega()
 	final fbo	= kri.buf.Holder(mask:0)
 	final vbo	= kri.vb.Attrib()
-	final va	as kri.vb.Array
 
 	public def constructor():
 		text = """
@@ -48,7 +47,6 @@ private class PolygonOffset( kri.rend.Basic ):
 		sa.add( pob )
 		sa.add( '/empty_f' )
 		sa.link()
-		va = kri.Ant.Inst.quad.render(null,sa,0)
 		t = kri.buf.Texture( dep:1,
 			target:TextureTarget.Texture2DArray,
 			intFormat:PixelInternalFormat.DepthComponent,
@@ -65,7 +63,7 @@ private class PolygonOffset( kri.rend.Basic ):
 	
 		GL.Enable( EnableCap.PolygonOffsetFill )
 		GL.PolygonOffset( 0.0f, 2.0f )
-		kri.Ant.Inst.quad.render(va,sa,1)
+		kri.Ant.Inst.quad.draw(sa)
 		
 		t = fbo.at.depth as kri.buf.Texture
 		t.shadow(false)
@@ -167,4 +165,4 @@ private class DrawToStencil( kri.rend.Basic ):
 		fbo.mask = 1
 		fbo.bind()
 		#run!
-		kri.Ant.Inst.quad.render(null,sa,1)
+		kri.Ant.Inst.quad.draw(sa)

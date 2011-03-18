@@ -20,7 +20,7 @@ public class Emitter:
 	public	mat			as kri.Material	= null
 	public	final owner	as Manager
 	public	final name	as string
-	public	final exData	= kri.vb.Storage()
+	public	final entries	= Dictionary[of string,kri.vb.Entry]()
 	public	final techReady	= array[of TechState]( kri.Ant.Inst.techniques.Size )
 	public	final mesh		= kri.Mesh( BeginMode.Points )
 	public	onUpdate	as callable(kri.Entity) as bool	= null
@@ -42,6 +42,8 @@ public class Emitter:
 	public def allocate() as void:
 		assert owner
 		owner.initMesh( mesh )
+		entries.Clear()
+		mesh.fillEntries(entries)
 
 /*	private def loadFake()	as void:	#todo: redo
 		assert not 'ready'

@@ -112,7 +112,7 @@ public class Ant(IDisposable):
 	# context
 	public final caps	= lib.Capabilities()	# Render capabilities
 	public final debug	as bool					# is debug context
-	public final quad	as Mesh					# Standard quad
+	public final quad	as gen.Frame			# Standard quad frame
 	# time
 	private final sw	= Diagnostics.Stopwatch()	# Time counter
 	public anim	as ani.IBase	= null		# Animation
@@ -151,7 +151,7 @@ public class Ant(IDisposable):
 		inst = self
 		sw.Start()
 		debug = bug
-		quad = gen.Quad()
+		quad = gen.Frame( gen.Quad() )
 		
 		# shader library init
 		dataMan.register( shade.Loader() )

@@ -50,7 +50,6 @@ private class Update( kri.ani.Delta ):
 	private final bu	= kri.shade.Bundle()
 	private final ct	as Context
 	private final kb	as Input.KeyboardDevice
-	private final va	as kri.vb.Array
 	
 	public def constructor(con as Context, win as kri.Window):
 		ct = con
@@ -62,7 +61,6 @@ private class Update( kri.ani.Delta ):
 		con.dict.var(pCon)
 		bu.shader.add('/copy_v','text/wave_f')
 		bu.dicts.Add( con.dict )
-		va = kri.Ant.Inst.quad.renderTest(bu)
 	
 	protected override def onDelta(delta as double) as uint:
 		if not ct.buf.at.color[0].wid:
@@ -78,7 +76,7 @@ private class Update( kri.ani.Delta ):
 		# update height
 		pWave.Value = ct.buf.at.color[ct.buf.mask-1]
 		ct.bind(3)
-		kri.Ant.Inst.quad.render(va,bu,null,1)
+		kri.Ant.Inst.quad.draw(bu)
 		return 0
 
 
@@ -117,7 +115,6 @@ public class Draw( kri.rend.Basic ):
 	public	final pTownTex	= kri.shade.par.Texture('town')
 	public	final pTownPos	= kri.shade.par.Value[of Vector4]('town_pos')
 	public	lit			as kri.Light	= null
-	public	final va	as kri.vb.Array
 	
 	public def constructor(con as Context):
 		con.dict.unit(pTownTex)
@@ -125,7 +122,6 @@ public class Draw( kri.rend.Basic ):
 		ct = con
 		bu.shader.add('/copy_v','text/draw_f')
 		bu.dicts.Add( con.dict )
-		va = kri.Ant.Inst.quad.render(null,bu,null,0)
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		ct.buf.resize( pl.wid, pl.het )
@@ -135,4 +131,4 @@ public class Draw( kri.rend.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
 		kri.Ant.Inst.params.activate(lit)
 		con.activate(false)
-		kri.Ant.Inst.quad.render(va,bu,null,1)
+		kri.Ant.Inst.quad.draw(bu)

@@ -45,3 +45,11 @@ public class Storage:
 			for ai in vat.Semant:
 				al.Add( ai.name )
 		return al.ToArray()
+	
+	public def fillEntries(d as Dictionary[of string,Entry]) as void:
+		for vat in vbo:
+			e = Entry( data:vat, offset:0, stride:vat.unitSize() )
+			for sem in vat.Semant:
+				e.info = sem
+				d[sem.name] = e
+				e.offset += sem.fullSize()

@@ -5,10 +5,10 @@ import OpenTK.Graphics.OpenGL
 
 
 public struct Entry:
-	data	as Object
-	info	as Info
-	offset	as uint
-	stride	as uint
+	public	data	as Object
+	public	info	as Info
+	public	offset	as uint
+	public	stride	as uint
 
 
 
@@ -45,16 +45,20 @@ public class Array:
 		for i in range(kri.Ant.Inst.caps.vertexAttribs):
 			GL.DisableVertexAttribArray(i)
 	
-	public def push(slot as uint, ref at as Info, off as int, total as int) as void:
+	public def push(slot as uint, ref at as Info, offset as uint, stride as uint) as void:
 		empty = false
 		GL.EnableVertexAttribArray( slot )
 		if at.integer: #TODO: use proper enum
 			GL.VertexAttribIPointer( slot, at.size,
 				cast(VertexAttribIPointerType,cast(int,at.type)),
-				total, System.IntPtr(off) )
+				stride, System.IntPtr(offset) )
 		else:
 			GL.VertexAttribPointer( slot, at.size,
-				at.type, false, total, off)
+				at.type, false, stride, offset)
+	
+	public def push(slot as uint, ref e as Entry) as void:
+		e.data.bind()
+		push( slot, e.info, e.offset, e.stride )
 	
 	public def pushAll(sat as (kri.shade.Attrib), vat as IList[of kri.vb.Attrib]) as bool:
 		bind()
@@ -81,23 +85,23 @@ public class Array:
 			push(0,sem,0,0)
 		return true
 	
-	/*public def pushAll(sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as int:
+	public def pushAll(sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
 		bind()
-		names = List[of string]()
-		for cur in sat:
-			str = cur.name
-			assert str and cur.size
+		for i in range(sat.Length):
+			str = sat[i].name
+			if not str:
+				continue
+			assert sat[i].size
 			en as Entry
 			if not edic.TryGetValue(str,en):
-				return -1
-			if not cur.matches( en.info ):
-				return -1
+				return false
+			if not sat[i].matches( en.info ):
+				return false
 			en.info.name = str
-			en.data.bind()
-			push( names.Count, en.info, off, total )
-			names.Add( str )
+			push(i,en)
 		# need at least one
 		if not sat.Length:
-			sem = vat[0].Semant[0]
-			push(0,sem,0,0)
-		return names.Count*/
+			for en in edic.Values:
+				push(0,en)
+				break
+		return true

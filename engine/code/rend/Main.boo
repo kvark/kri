@@ -42,7 +42,6 @@ public class Filter(Basic):
 	protected	final texIn	= kri.shade.par.Texture('input')
 	protected	final dict	= kri.shade.rep.Dict()
 	protected	linear		= false
-	private		va	as kri.vb.Array	= null
 	
 	public def constructor():
 		dict.unit(texIn)
@@ -51,7 +50,7 @@ public class Filter(Basic):
 		texIn.Value = con.Input
 		con.Input.filt(linear,false)
 		con.activate(true)
-		va = kri.Ant.inst.quad.render(va,bu,null,1)
+		kri.Ant.inst.quad.draw(bu)
 
 public class FilterCopy(Filter):
 	public def constructor():

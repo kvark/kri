@@ -21,7 +21,8 @@ public class Basic( kri.rend.Basic ):
 				bu = prepare(pe,nInst)
 				if not bu or not pe.update():
 					continue
-				pe.mesh.render( pe.owner.va, bu, pe.exData, nInst )
+				assert not 'supported'
+				#pe.mesh.render( pe.owner.va, bu, pe.exData, nInst )
 
 
 #---------	RENDER PARTICLES: SINGLE SHADER		--------#

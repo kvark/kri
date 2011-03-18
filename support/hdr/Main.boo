@@ -11,7 +11,6 @@ public class Render( kri.rend.Basic ):
 	private final b2	= kri.buf.Holder()
 	private final pbo	= kri.vb.Pack()
 	private final context	as Context
-	public	final va		= kri.vb.Array()
 	private final bu_bright	= kri.shade.Bundle()
 	private final bu_scale	= kri.shade.Bundle()
 	private final bu_tone	= kri.shade.Bundle()
@@ -29,7 +28,6 @@ public class Render( kri.rend.Basic ):
 			name = ('/hdr/bright_f','/copy_f','/hdr/tone_f')[i]
 			bu.shader.add('/copy_v',name)
 			bu.dicts.Add(d)
-			bu.link()
 	
 	public virtual def setup(pl as kri.buf.Plane) as bool:
 		fbo.resize( pl.wid, pl.het )
@@ -57,7 +55,7 @@ public class Render( kri.rend.Basic ):
 		t.setLevels(0,0)
 		fbo.mask = b2.mask = 1
 		b2.bind()
-		kri.Ant.Inst.quad.render(va,bu_bright,null,1)
+		kri.Ant.Inst.quad.draw(bu_bright)
 		# down-sample
 		# TODO: support!
 		/*
@@ -88,4 +86,4 @@ public class Render( kri.rend.Basic ):
 		t.setLevels(0,10)
 		t.filt(false,false)
 		con.activate(true)
-		kri.Ant.Inst.quad.render(va,bu_tone,null,1)
+		kri.Ant.Inst.quad.draw(bu_tone)

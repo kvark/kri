@@ -9,11 +9,11 @@ public class Tag( kri.ITag ):
 
 public class Render( kri.rend.Basic ):
 	private final fbo	= kri.buf.Holder( mask:1 )
-	private final va	= kri.vb.Array()
 	private final bu	= kri.shade.Bundle()
 	private final qlog	as uint
 	private final pInd	= kri.shade.par.Value[of single]('index')
 	private final mouse	as MouseDevice
+	private final va	= kri.vb.Array()
 	private coord	=	(of uint: 0,0)
 	#debug data
 	private final bv	= kri.shade.Bundle()
@@ -60,7 +60,7 @@ public class Render( kri.rend.Basic ):
 		if not 'Debug':
 			con.activate( con.Target.Same, 0f, false )
 			pTex.Value = fbo.at.color[0] as kri.buf.Texture
-			kri.Ant.Inst.quad.render(va,bv)
+			kri.Ant.Inst.quad.draw(bv)
 			return
 		# react, todo: use PBO and actually read on demand
 		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )

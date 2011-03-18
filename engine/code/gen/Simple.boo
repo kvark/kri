@@ -4,6 +4,19 @@ import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
+#---------	Frame	---------#
+
+public class Frame:
+	public final mesh	as kri.Mesh
+	public final va	= kri.vb.Array()
+	public def constructor(m as kri.Mesh):
+		mesh = m
+	public def draw(bu as kri.shade.Bundle) as void:
+		mesh.render(va,bu)
+	public def draw(sa as kri.shade.Mega) as void:
+		mesh.render(va,sa,1)
+
+
 #---------	Wrap	---------#
 
 public class Mesh( kri.Mesh ):

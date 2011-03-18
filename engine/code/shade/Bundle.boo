@@ -157,8 +157,7 @@ public class Bundle:
 		shader = bu.shader
 	
 	public def fillParams() as void:
-		if not shader.Ready:
-			link()
+		assert shader.Ready
 		params.Clear()
 		tun = 0
 		for uni in shader.uniforms:

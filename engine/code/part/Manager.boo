@@ -84,8 +84,9 @@ public class Manager:
 			return false
 		tf.Bind( pe.mesh.vbo[0] )
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
-		using kri.Discarder(true):
-			mesh.renderBack( va, bu, pe.exData, tf )
+		assert not 'supported'
+		#using kri.Discarder(true):
+			#mesh.renderBack( va, bu, pe.exData, tf )
 		if not 'Debug':
 			assert tf.result() == Total
 			ar = array[of single]( Total * pe.mesh.vbo[0].unitSize() >>2 )
