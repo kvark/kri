@@ -5,7 +5,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Material( ani.data.Player ):
 	public final name	as string
-	public final dict	= shade.rep.Dict()
+	public final dict	= shade.par.Dict()
 	public final unit	= List[of meta.AdUnit]()
 	public final tech	= array[of shade.Bundle]( kri.Ant.Inst.techniques.Size )
 	public final metaList = List[of meta.Advanced]()

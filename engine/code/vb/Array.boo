@@ -75,32 +75,6 @@ public class Array:
 		e.buffer.Data.bind()
 		push( slot, e.info, e.offset, e.stride )
 	
-	public def pushAll(sat as (kri.shade.Attrib), vat as IList[of kri.vb.Attrib]) as bool:
-		empty = true
-		bind()
-		for i in range(sat.Length):
-			if not sat[i].name:
-				continue
-			target as kri.vb.Info
-			for at in vat:
-				offset = stride = 0
-				for sem in at.Semant:
-					if sem.name == sat[i].name:
-						target = sem
-						offset = stride
-					stride += sem.fullSize()
-				if target.size:
-					at.bind()
-					break
-			if not sat[i].matches(target):
-				return false
-			push(i,target,offset,stride)
-		# need at least one
-		if Empty:
-			sem = vat[0].Semant[0]
-			push(0,sem,0,0)
-		return true
-	
 	public def pushAll(sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
 		empty = true
 		bind()

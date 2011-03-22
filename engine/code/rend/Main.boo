@@ -40,7 +40,7 @@ public class Chain(Basic):
 public class Filter(Basic):
 	protected	final bu	= kri.shade.Bundle()
 	protected	final texIn	= kri.shade.par.Texture('input')
-	protected	final dict	= kri.shade.rep.Dict()
+	protected	final dict	= kri.shade.par.Dict()
 	protected	linear		= false
 	
 	public def constructor():

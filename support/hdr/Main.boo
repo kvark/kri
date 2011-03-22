@@ -20,7 +20,7 @@ public class Render( kri.rend.Basic ):
 	public def constructor(ctx as Context):
 		context = ctx
 		pExpo.Value = 1f
-		d = kri.shade.rep.Dict()
+		d = kri.shade.par.Dict()
 		d.unit(tInput)
 		d.var(pExpo)
 		for i in range(3):

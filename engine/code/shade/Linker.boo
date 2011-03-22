@@ -7,14 +7,14 @@ import System.Collections.Generic
 #-------------------------------#
 
 public class Linker:
-	private final condict	as (rep.Dict)
+	private final condict	as (par.Dict)
 	public final samap = Dictionary[of string,Bundle]()
 	public onLink	as callable(Mega)	= null
 	
-	public def constructor(*cad as (rep.Dict)):
+	public def constructor(*cad as (par.Dict)):
 		condict = cad
 	
-	public def link(sl as Object*, *dc as (rep.Dict)) as Bundle:
+	public def link(sl as Object*, *dc as (par.Dict)) as Bundle:
 		key = join( (x.handle.ToString() for x in sl), ',' )
 		bu as Bundle = null
 		if samap.TryGetValue(key,bu):

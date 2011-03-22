@@ -18,7 +18,7 @@ public class Map( kri.rend.Basic ):
 		else:
 			name = ('copy','copy_ar')[id>=0]
 		bu.shader.add( '/copy_v', "/${name}_f" )
-		d = kri.shade.rep.Dict()
+		d = kri.shade.par.Dict()
 		d.unit( 'input', t )
 		d.var(layer)
 		bu.dicts.Add(d)

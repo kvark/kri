@@ -37,7 +37,7 @@ public class Bake( kri.rend.Basic ):
 		sa.add( dc.tool )
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.fragout('ca','cb','cc')
-		d = rep.Dict()
+		d = par.Dict()
 		d.unit(texDep)
 		bu.dicts.AddRange(( d, lc.dict ))
 		# create geometry

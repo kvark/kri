@@ -13,7 +13,7 @@ public class InputObject(Hermit):
 		ib = InputObject()
 		ib.pNode.activate( pNode.extract() )
 		return copyTo(ib)
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		(pNode as IBase).link(d)
 
 
@@ -31,7 +31,7 @@ public class Data[of T(struct)]( Advanced ):
 		d2 = Data[of T](Name,Shader,Value)
 		d2.Unit = Unit
 		return d2
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d.var(data)
 
 
@@ -43,7 +43,7 @@ public class Strand(Advanced):
 	
 	def ICloneable.Clone() as object:
 		return copyTo( Strand( Data:Data ))
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d.var(pData)
 
 
@@ -55,5 +55,5 @@ public class Halo(Advanced):
 	
 	def ICloneable.Clone() as object:
 		return copyTo( Halo( Data:Data ))
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d.var(pData)

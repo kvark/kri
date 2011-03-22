@@ -29,7 +29,7 @@ public class Shared(IBase):
 		sh.position.Value = position.Value
 		sh.rotation.Value = rotation.Value
 		return sh
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d.var(position,rotation)
 
 
@@ -64,6 +64,6 @@ public class Linked(IBase):
 		ln = Linked(name)
 		ln.activate( extract() )
 		return ln
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d[Name+'.pos']	= position
 		d[Name+'.rot']	= rotation

@@ -48,7 +48,7 @@ public class Core:
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader
 		tid = techId
-		d = kri.shade.rep.Dict()
+		d = kri.shade.par.Dict()
 		pSten	= kri.shade.par.Texture('sten')
 		pColor	= kri.shade.par.Texture('color')
 		pSten.Value	= tSten

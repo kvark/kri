@@ -33,7 +33,7 @@ public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code 
 		semantics.AddRange( b.Semant )
 		sh = b.sh
 	
-	public virtual def link(d as rep.Dict) as void:	#imp: kri.meta.IBase
+	public virtual def link(d as par.Dict) as void:	#imp: kri.meta.IBase
 		pass
 	public def enrich(size as byte, *names as (string)) as void:
 		kri.Help.enrich(self,size,*names)

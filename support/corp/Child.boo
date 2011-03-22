@@ -10,7 +10,7 @@ public class Meta( kri.meta.Advanced ):
 	
 	def System.ICloneable.Clone() as object:
 		return copyTo( Meta( num:num, Data:Data ))
-	def kri.meta.IBase.link(d as kri.shade.rep.Dict) as void:
+	def kri.meta.IBase.link(d as kri.shade.par.Dict) as void:
 		d.var(data)
 
 

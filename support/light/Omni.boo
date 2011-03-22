@@ -19,7 +19,7 @@ public class Fill( kri.rend.tech.General ):
 		# omni shader
 		bu.shader.add( '/light/omni/bake_v', '/light/omni/bake_g', '/empty_f' )
 		bu.shader.add( *kri.Ant.Inst.libShaders )
-		dict = kri.shade.rep.Dict()
+		dict = kri.shade.par.Dict()
 		dict.var(pDist)
 		bu.dicts.Add( dict )
 		bu.dicts.Add( lc.dict )

@@ -6,7 +6,7 @@ import kri.shade
 
 public class Context:
 	public final buf		= Holder()
-	public final dict		= rep.Dict()
+	public final dict		= par.Dict()
 	public final texDepth	= par.Texture('depth')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')

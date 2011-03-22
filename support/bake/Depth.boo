@@ -61,6 +61,6 @@ public class Behavior( kri.part.Behavior ):
 		super('/part/beh/bounce_land')
 		pTex.Value = tag.tex
 		proj.activate( tag.proj )
-	public override def link(d as kri.shade.rep.Dict) as void:	#imp: kri.meta.IBase
+	public override def link(d as kri.shade.par.Dict) as void:	#imp: kri.meta.IBase
 		d.unit(pTex)
 		(proj as kri.meta.IBase).link(d)

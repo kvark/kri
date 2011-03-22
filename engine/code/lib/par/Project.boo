@@ -32,5 +32,5 @@ public final class Shared( IBase ):
 	
 	def ICloneable.Clone() as object:
 		return self	# stub
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d.var(data,range)

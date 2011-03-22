@@ -29,7 +29,7 @@ public class Bake( kri.rend.tech.Basic ):
 		super('motion')
 		buf = con.buf
 		# parameters
-		d = kri.shade.rep.Dict()
+		d = kri.shade.par.Dict()
 		for par as kri.meta.IBase in (pModel,pCamera,pOffset):
 			par.link(d)
 		for par as kri.meta.IBase in bones:

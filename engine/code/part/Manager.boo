@@ -12,7 +12,7 @@ public class Manager:
 	public	final tf	= kri.TransFeedback(1)
 	public	final va	= kri.vb.Array()
 	public	final behos	= List[of Behavior]()
-	public	final dict	= kri.shade.rep.Dict()
+	public	final dict	= kri.shade.par.Dict()
 	public	final mesh	= kri.Mesh( BeginMode.Points )
 
 	public	final col_init		= kri.shade.Collector()

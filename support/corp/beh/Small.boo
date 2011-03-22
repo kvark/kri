@@ -27,7 +27,7 @@ public class Norm(Behavior):	# fur normalizing
 public class Physics(Behavior):
 	public final pSize	= par.Value[of Vector4]('part_size')
 	public final pForce	= par.Value[of Vector4]('port_force')
-	public override def link(d as rep.Dict) as void:
+	public override def link(d as par.Dict) as void:
 		d.var(pSize,pForce)
 
 
@@ -38,7 +38,7 @@ public class Gravity(Behavior):
 	public def constructor(pg as par.Value[of Vector4]):
 		super('/part/beh/grav')
 		par = pg
-	public override def link(d as rep.Dict) as void:
+	public override def link(d as par.Dict) as void:
 		d.var(par)
 
 
@@ -52,7 +52,7 @@ public class Simple[of T(struct)](Behavior):
 		super(path)
 		pData = par.Value[of T](varname)
 		pData.Value = data
-	public override def link(d as rep.Dict) as void:
+	public override def link(d as par.Dict) as void:
 		d.var(pData)
 
 

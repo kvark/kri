@@ -8,10 +8,10 @@ import kri.shade
 #---	stand-alone meta interface	---#
 
 public interface IBase( par.INamed, ICloneable ):
-	def link(d as rep.Dict) as void
+	def link(d as par.Dict) as void
 
 public interface ISlave( ICloneable ):
-	def link(name as string, d as rep.Dict) as void
+	def link(name as string, d as par.Dict) as void
 
 public interface IUnited:
 	Unit as int:
@@ -35,7 +35,7 @@ public class Hermit(IBase,IShaded):
 		return h
 	def ICloneable.Clone() as object:
 		return copyTo(Hermit())
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		pass
 
 
@@ -62,7 +62,7 @@ public class AdUnit( ISlave, par.ValuePure[of kri.buf.Texture] ):
 	def ICloneable.Clone() as object:
 		return AdUnit( Value:Value, input:input, Offset:Offset, Scale:Scale )
 	
-	def ISlave.link(name as string, d as rep.Dict) as void:
+	def ISlave.link(name as string, d as par.Dict) as void:
 		d.unit(name,self)
 		d['offset_'	+name] = pOffset
 		d['scale_'	+name] = pScale

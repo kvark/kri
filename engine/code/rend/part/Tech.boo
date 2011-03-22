@@ -43,7 +43,7 @@ public class Meta( Tech ):
 	private final lMets		as (string)
 	private final geom		as bool
 	protected shobs			= List[of Object]()
-	protected final dict	= rep.Dict()
+	protected final dict	= par.Dict()
 	private final factory	= Linker(dict)
 	
 	public def constructor(name as string, gs as bool, *mets as (string)):

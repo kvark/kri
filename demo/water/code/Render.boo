@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 private class Context:
 	public final buf	= kri.buf.Holder()
 	public final tKernel	as kri.buf.Texture
-	public final dict		= kri.shade.rep.Dict()
+	public final dict		= kri.shade.par.Dict()
 	public final calc	= Calculator(10000,0.001f,1f)
 	private final G0	as single	= calc.gen({x| return 1f})
 	public final kernel	as byte

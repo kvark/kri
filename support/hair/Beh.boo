@@ -23,7 +23,7 @@ public class Behavior( kri.part.Behavior ):
 		kd = 1f / segs
 		pSegment.Value	= Vector4( 0f, 0f, kd, 0f )
 		pSystem.Value	= Vector4.Zero
-	public override def link(d as kri.shade.rep.Dict) as void:
+	public override def link(d as kri.shade.par.Dict) as void:
 		d.var(pSegment,pSystem)
 
 	# generate fur layers

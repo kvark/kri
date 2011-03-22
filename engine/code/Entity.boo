@@ -49,9 +49,10 @@ public class Mesh( vb.Storage ):
 		if not vao:
 			vao = vb.Array()
 		if ats:
-			combo = List[of vb.Attrib](vbo)
-			combo.AddRange( ats.vbo )
-			if not bu.pushAttribs(vao,combo):
+			d = Dictionary[of string, vb.Entry]()
+			fillEntries(d)
+			ats.fillEntries(d)
+			if not bu.pushAttribs(vao,d):
 				return null
 			if ind:
 				ind.bind()
@@ -77,7 +78,9 @@ public class Mesh( vb.Storage ):
 	
 	public def render(va as vb.Array, sa as shade.Mega, nob as uint) as bool:
 		assert sa.Ready and va
-		if not va.pushAll( sa.attribs, vbo ):
+		d = Dictionary[of string, vb.Entry]()
+		fillEntries(d)
+		if not va.pushAll( sa.attribs, d ):
 			return false
 		if ind:
 			ind.bind()
@@ -94,7 +97,9 @@ public class Mesh( vb.Storage ):
 	
 	public def renderBack(vao as vb.Array, bu as shade.Bundle, tf as TransFeedback) as bool:
 		assert vao and bu and tf
-		if not bu.pushAttribs(vao,vbo):
+		d = Dictionary[of string, vb.Entry]()
+		fillEntries(d)
+		if not bu.pushAttribs(vao,d):
 			assert not 'good'	# will be removed later
 			return false
 		bu.activate()

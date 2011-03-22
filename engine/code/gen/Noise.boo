@@ -7,7 +7,7 @@ public class Noise:
 	private final targ	= TextureTarget.Texture1D
 	private final tPerm	= par.Texture('perm')
 	private final tGrad	= par.Texture('grad')
-	public final dict	= rep.Dict()
+	public final dict	= par.Dict()
 	public final sh_simplex	= Object.Load('/gen/noise_f')
 	public final sh_turbo	= Object.Load('/gen/turbo_f')
 	public final sh_tile	= Object.Load('/gen/tile_f')

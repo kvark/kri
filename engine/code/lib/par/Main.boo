@@ -22,7 +22,7 @@ public final class Light( IBase ):
 		get: return 'Light'
 	def ICloneable.Clone() as object:
 		return self	# stub
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		d.var(color)
 		d.var(attenu,data)
 
@@ -43,6 +43,6 @@ public final class Project( IBase ):
 		get: return project.Name
 	def ICloneable.Clone() as object:
 		return self	# stub
-	def IBase.link(d as rep.Dict) as void:
+	def IBase.link(d as par.Dict) as void:
 		for ib as IBase in (project,spatial):
 			ib.link(d)

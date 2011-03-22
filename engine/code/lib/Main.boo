@@ -21,7 +21,7 @@ public final class Param:
 	public def activate(pl as kri.buf.Plane) as void:
 		parSize.Value = Vector4( 1f*pl.wid, 1f*pl.het, 0.5f*(pl.wid+pl.het), 0f)
 		
-	public def constructor(d as rep.Dict):
+	public def constructor(d as par.Dict):
 		for me in (of kri.meta.IBase: modelView,light,pLit,pCam):
 			me.link(d)
 		d.var(parSize,parTime)

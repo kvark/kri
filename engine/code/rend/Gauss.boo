@@ -13,7 +13,7 @@ public class Simple( kri.rend.Basic ):
 	public		fbo		as Holder	= null
 
 	public def constructor():
-		dict = rep.Dict()
+		dict = par.Dict()
 		dict.unit(texIn)
 		pu.shader.add('/copy_v','/filter/gauss_hor_f')
 		pu.dicts.Add(dict)
@@ -37,7 +37,7 @@ public class Advanced( kri.rend.Basic ):
 	public	fbo		as Holder = null
 	
 	public def constructor():
-		d = rep.Dict()
+		d = par.Dict()
 		d.unit(pTex)
 		d.var(pDir)
 		bu.shader.add('/copy_v','/filter/gauss_bi_f')

@@ -108,8 +108,8 @@
     <Compile Include="code\shade\Bundle.boo" />
     <Compile Include="code\shade\Code.boo" />
     <Compile Include="code\shade\Linker.boo" />
+    <Compile Include="code\shade\Mega.boo" />
     <Compile Include="code\shade\par\Main.boo" />
-    <Compile Include="code\shade\rep\Main.boo" />
     <Compile Include="code\shade\Object.boo" />
     <Compile Include="code\shade\Program.boo" />
     <Compile Include="code\sound\Main.boo" />
@@ -187,7 +187,6 @@
     <Folder Include="code\" />
     <Folder Include="code\rend\" />
     <Folder Include="code\rend\link" />
-    <Folder Include="code\shade\rep" />
     <Folder Include="code\shade\par" />
     <Folder Include="shader\" />
     <Folder Include="shader\" />

@@ -33,7 +33,7 @@ private class Render( kri.rend.part.Simple ):
 		# dict init
 		pSize.Value = 5f
 		pBrit.Value = 0.002f
-		d = rep.Dict()
+		d = par.Dict()
 		d.var(pSize,pBrit)
 		# prog init
 		bu.shader.add( 'text/draw_v', 'text/draw_f')

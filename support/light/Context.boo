@@ -18,7 +18,7 @@ public class Context:
 	public final pX		= par.Value[of OpenTK.Vector4]('dark')
 	public final pOff	= par.Value[of single]('texel_offset')
 	public final pHemi	= par.Value[of single]('hemi')
-	public final dict	= rep.Dict()
+	public final dict	= par.Dict()
 	public mipmap	as bool = false
 	public smooth	as bool	= true
 	public type 	= LiType.SIMPLE

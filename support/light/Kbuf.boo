@@ -90,7 +90,7 @@ public class Bake( kri.rend.Basic ):
 		sx.add( '/light/kbuf/bake_v', '/light/kbuf/bake_f', '/lib/defer_f' )
 		sx.add( *kri.Ant.Inst.libShaders )
 		sx.fragout('rez_dir','rez_color')
-		d = rep.Dict()
+		d = par.Dict()
 		d.unit(texDep)
 		bu.dicts.AddRange((d,lc.dict))
 		# create geometry

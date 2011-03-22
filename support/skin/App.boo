@@ -13,7 +13,7 @@ public class Update( kri.rend.tech.Basic ):
 
 	public def constructor(dq as bool):
 		super('skin')
-		dict = kri.shade.rep.Dict()
+		dict = kri.shade.par.Dict()
 		for p as kri.meta.IBase in par:
 			p.link(dict)
 		# prepare shader

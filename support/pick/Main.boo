@@ -30,7 +30,7 @@ public class Render( kri.rend.Basic ):
 		fbo.at.color[0] = kri.buf.Texture(
 			intFormat:PixelInternalFormat.Rgba16 )
 		# make shader
-		d = kri.shade.rep.Dict()
+		d = kri.shade.par.Dict()
 		d.var(pInd)
 		d.unit(pTex)
 		bu.shader.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')

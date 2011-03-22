@@ -35,7 +35,7 @@ public class Update( kri.rend.Basic ):
 		slot.create('pos')
 		for i in range(4):
 			slot.create('pos'+(i+1))
-		d = kri.shade.rep.Dict()
+		d = kri.shade.par.Dict()
 		d.var(pVal)
 		bu.shader.add('/skin/morph_v')
 		bu.shader.feedback(true,'to_pos')

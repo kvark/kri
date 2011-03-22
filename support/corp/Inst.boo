@@ -8,7 +8,7 @@ public class Meta( kri.meta.Advanced ):
 	public ent	as kri.Entity	= null
 	def System.ICloneable.Clone() as object:
 		return copyTo( Meta( ent:ent ))
-	def kri.meta.IBase.link(d as kri.shade.rep.Dict) as void:
+	def kri.meta.IBase.link(d as kri.shade.par.Dict) as void:
 		pass
 
 

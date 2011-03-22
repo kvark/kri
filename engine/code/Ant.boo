@@ -128,7 +128,7 @@ public class Ant(IDisposable):
 	# resource manager
 	public final dataMan		= data.Manager()
 	# main uniform dictionary
-	public final dict		= shade.rep.Dict()
+	public final dict		= shade.par.Dict()
 	# libraries
 	public final params		= lib.Param(dict)
 	public final libShaders	as (kri.shade.Object)

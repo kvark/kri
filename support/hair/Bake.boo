@@ -23,7 +23,7 @@ public class Bake( kri.rend.Basic ):
 
 	public def constructor(pc as kri.part.Context):
 		# init dictionary
-		d = rep.Dict()
+		d = par.Dict()
 		d.var(pWid)
 		d.var(pInit)
 		d.var(pStretch)

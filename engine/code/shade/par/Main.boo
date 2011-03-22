@@ -1,5 +1,7 @@
 ﻿namespace kri.shade.par
 
+import System.Collections.Generic
+
 #-----------------------#
 #	AUTO PARAMETERS 	#
 #-----------------------#
@@ -55,3 +57,22 @@ public class UnitProxy( IBase[of kri.buf.Texture] ):
 		fun = f
 	public override Value as kri.buf.Texture:
 		get: return fun()
+
+
+# Standard uniform dictionary
+public class Dict( SortedDictionary[of string,IBaseRoot] ):
+	# copy contents of another dictionary
+	public def attach(d as Dict) as void:
+		for u in d:
+			Item[u.Key] = u.Value
+	# add standard uniform
+	public def var[of T](*var as (Value[of T])) as void:
+		for v in var:
+			Item[v.Name] = v
+	# add custom unit
+	public def unit(name as string, v as IBase[of kri.buf.Texture]) as void:
+		Item[kri.shade.Mega.PrefixUnit + name] = v
+	# add texture unit representor
+	public def unit(*vat as (Value[of kri.buf.Texture])) as void:
+		for v in vat:
+			unit(v.Name,v)

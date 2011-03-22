@@ -8,7 +8,7 @@ import kri.shade
 public class ApplyBase( kri.rend.Basic ):
 	protected final bu		= Bundle()
 	protected final sphere	as kri.gen.Frame
-	protected final dict	= rep.Dict()
+	protected final dict	= par.Dict()
 	private texDepth		as par.Texture	= null
 	# custom activation
 	private virtual def onInit() as void:

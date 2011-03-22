@@ -31,7 +31,7 @@ public class Meta(General):
 	private final lOuts	as (string)
 	private final geom	as bool
 	protected shobs			= List[of kri.shade.Object]()
-	protected final dict	= kri.shade.rep.Dict()
+	protected final dict	= kri.shade.par.Dict()
 	private final factory	= kri.shade.Linker(dict)
 	
 	protected def constructor(name as string, gs as bool, outs as (string), *mets as (string)):

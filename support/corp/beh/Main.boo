@@ -21,5 +21,5 @@ public class Standard( kri.part.Behavior ):
 	public def constructor(std as Standard):
 		super(std)	#is that enough?
 
-	public override def link(d as rep.Dict) as void:
+	public override def link(d as par.Dict) as void:
 		d.var(parLife, parVelTan, parVelObj, parVelKeep)
