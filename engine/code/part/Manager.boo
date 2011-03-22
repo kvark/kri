@@ -70,7 +70,7 @@ public class Manager:
 		mesh.vbo.Clear()
 		mesh.vbo.Add( vob = kri.vb.Attrib() )
 		for b in behos:
-			vob.Semant.AddRange( b.Semant )
+			vob.Semant.AddRange( (b as kri.vb.ISemanted).Semant )
 			b.link(dict)
 		mesh.allocate()
 		# collect shaders
@@ -86,8 +86,7 @@ public class Manager:
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
 		using kri.Discarder(true):
 			mesh.render( va, bu, pe.entries, 0, tf )
-		if 'Debug':
-			assert tf.result() == Total
+		if not 'Debug':
 			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
 			mesh.vbo[0].read(ar)
 		# swap data

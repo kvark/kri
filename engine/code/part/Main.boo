@@ -9,12 +9,18 @@ import kri.shade
 #---------------------------------------#
 
 public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
-	[Getter(Semant)]
-	private final semantics	as List[of kri.vb.Info]	= List[of kri.vb.Info]()
-	kri.vb.ISemanted.Data	as kri.vb.Object:
-		get: return null
-	[getter(Shader)]
+	private final semantics	= List[of kri.vb.Info]()
 	private final sh		as Object
+	
+	def System.ICloneable.Clone() as object:
+		return Behavior(self)
+	par.INamed.Name:
+		get: return 'behavior'
+	
+	kri.meta.IShaded.Shader as kri.shade.Object:
+		get: return sh
+	kri.vb.ISemanted.Semant as List[of kri.vb.Info]:
+		get: return semantics
 
 	public def constructor():
 		super( CodeNull() )
@@ -31,11 +37,7 @@ public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code 
 		pass
 	public def enrich(size as byte, *names as (string)) as void:
 		kri.Help.enrich(self,size,*names)
-	
-	def System.ICloneable.Clone() as object:
-		return Behavior(self)
-	par.INamed.Name:
-		get: return 'behavior'
+
 
 
 #---------------------------------------#

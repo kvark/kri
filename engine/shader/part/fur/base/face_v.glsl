@@ -1,6 +1,6 @@
 #version 130
 //#define INT
-#define FILTER
+//#define FILTER
 
 uniform sampler2D unit_vert, unit_quat;
 uniform int width;

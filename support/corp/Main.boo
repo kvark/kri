@@ -8,19 +8,27 @@ import OpenTK.Graphics.OpenGL
 public struct SetBake:
 	public pixels	as uint
 	public ratio	as single
-	public b_pos	as byte
-	public b_rot	as byte
+	public piPos	as PixelInternalFormat
+	public piRot	as PixelInternalFormat
 	public filt		as bool
+	
+	public def constructor(order as byte, smooth as bool):
+		pixels = 1<<order
+		ratio = 1f
+		piPos = PixelInternalFormat.Rgba32f
+		piRot = PixelInternalFormat.Rgba32f
+		filt = smooth
+	
 	public def tag() as kri.ITag:
 		assert ratio > 0f
 		side = Math.Sqrt(pixels / ratio)
 		wid,het = cast(int,side*ratio),cast(int,side)
-		return support.bake.surf.Tag(wid,het,b_pos,b_rot,filt)
+		return support.bake.surf.Tag(wid,het,(piPos,piRot),filt)
 
 
 public class Extra( kri.IExtension ):
 	public final con	= kri.part.Context()
-	public bake			= SetBake( pixels:1<<16, ratio:1f, b_pos:16, b_rot:8, filt:true )
+	public bake			= SetBake(16,false)
 	public bLoop		= false
 	
 	def kri.IExtension.attach(nt as kri.load.Native) as void:
@@ -35,7 +43,7 @@ public class Extra( kri.IExtension ):
 		nt.readers['p_child']	= fp_child
 		nt.readers['pr_inst']	= fpr_inst
 
-	public def finish(pe as kri.part.Emitter) as void:
+	public def finish(pe as kri.part.Emitter, scene as kri.Scene) as void:
 		pm = pe.owner
 		if not pm.Ready:
 			ps = pm.seBeh[of beh.Standard]()
@@ -45,11 +53,17 @@ public class Extra( kri.IExtension ):
 				pm.makeStandard(con)
 				born = (con.sh_born_time, con.sh_born_loop)[ bLoop ]
 				pm.col_update.extra.Add(born)
-			elif ph: pm.makeHair(con)
+			elif ph:
+				pm.makeHair(con)
 			else: return
 			pm.init(con)
+			if ph:
+				scene.particles.Remove(pe)
+				lays = ph.genLayers(pe)
+				scene.particles.AddRange(lays)
 		if not pe.Ready:
 			pe.allocate()
+		
 	
 	private def upNode(e as kri.Entity):
 		assert e
@@ -68,11 +82,11 @@ public class Extra( kri.IExtension ):
 		r.at.scene.particles.Add(pe)
 		# link to material
 		pe.mat = r.at.mats[ r.getString() ]
-		pe.mat = kri.Ant.Inst.loaders.materials.con.mDef	if not pe.mat
+		if not pe.mat:
+			pe.mat = kri.Ant.Inst.loaders.materials.con.mDef
 		# post-process
 		r.addPostProcess() do(n as kri.Node):
-			for emi in r.at.scene.particles:
-				finish(emi)
+			finish( pe, r.at.scene )
 		return true
 
 
@@ -170,11 +184,9 @@ public class Extra( kri.IExtension ):
 			ps.parVelKeep.Value = Vector4.Zero
 		elif ph:	# hair
 			magic = 5f / ph.layers	# todo: find out Blender scale source
+			ph.layParam = magic * Vector4(tan,add.Y)
 			avgLen = tan.LengthFast + objFactor.LengthFast + 0.001f
 			ph.pSystem.Value.X = ph.layers / avgLen
-			lays = ph.genLayers( pe, magic * Vector4(tan,add.Y) )
-			r.at.scene.particles.Remove(pe)
-			r.at.scene.particles.AddRange(lays)
 		else: return false
 		return true
 	

@@ -19,24 +19,22 @@ public class Fill( kri.rend.Basic ):
 		else:
 			sa.add( 'text/fill_point_v' )
 		bu.dicts.Add( licon.dict )
-		bu.link()
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.SetDepth(1f,true)
 		for pe in kri.Scene.Current.particles:
-			assert not 'ready'
-			#pe.va.bind()
-			#continue	if not pe.prepare()
+			if not pe.update():
+				continue
 			for lit in kri.Scene.Current.lights:
-				continue	if not lit.depth
+				if not lit.depth:
+					continue
 				if fbo.mask:
 					fbo.at.color[0] = lit.depth
 				else:
 					fbo.at.depth = lit.depth
 				fbo.bind()
 				kri.Ant.Inst.params.activate(lit)
-				bu.activate()
-				#pe.owner.draw(0)
+				pe.draw(bu,1)
 
 
 

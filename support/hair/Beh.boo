@@ -14,6 +14,7 @@ public class Behavior( kri.part.Behavior ):
 	# number of layers
 	public final layers		as byte
 	private final posName	as string
+	public layParam		as Vector4
 	# fun
 	public def constructor(pc as kri.part.Context, segs as byte):
 		super('/part/beh/fur_main')
@@ -26,43 +27,39 @@ public class Behavior( kri.part.Behavior ):
 		d.var(pSegment,pSystem)
 
 	# generate fur layers
-	public def genLayers(em as kri.part.Emitter, init as Vector4) as (kri.part.Emitter):
-		lar = List[of kri.part.Emitter]( kri.part.Emitter(em.owner,"${em.name}-${i}")\
+	public def genLayers(em as kri.part.Emitter) as (kri.part.Emitter):
+		lar = List[of kri.part.Emitter](
+			kri.part.Emitter(em.owner,"${em.name}-${i}")
 			for i in range(layers) ).ToArray()
 		assert not em.obj.seTag[of Tag]()
 		tag = Tag( em.owner.Total )
-		tag.param = init
+		tag.param = layParam
 		em.obj.tags.Add(tag)
-		assert not 'ready'
 		# localize id in a function
 		def genFunc(id as int):
 			return do(e as kri.Entity) as bool:
 				pSegment.Value.Y = 1f*id
-				return tag.stamp>0f
-		/*ex0 = kri.part.ExtAttrib( dest:'prev' )
-		ex1 = kri.part.ExtAttrib( dest:'base' )
+				return tag.Ready
 		# external attribs setup
+		ex0 as kri.vb.Entry
+		ex1 as kri.vb.Entry
 		for i in range(lar.Length):
 			pe = lar[i]
+			pe.allocate()
 			pe.obj = em.obj
 			pe.mat = em.mat
 			pe.onUpdate = genFunc(i)
 			if i == 0:
-				ex0.source = ex1.source = null
-				ex0.vat = ex1.vat = tag
+				ex0 = kri.vb.Entry( tag.data, 'root_prev' )
+				ex1 = kri.vb.Entry( tag.data, 'root_base' )
 			else:
-				assert not 'ready'
-				ex1.source = posName
-				#ex1.vat = lar[i-1]
 				if i == 1:
-					ex0.source = 'base'
-					ex0.vat = tag
+					ex0 = kri.vb.Entry( tag.data, 'root_base' )
 				else:
-					ex0.source = posName
-					#ex0.vat = lar[i-2]
-			assert not 'ready'
-			#pe.extList.AddRange((ex0,ex1))
-		*/
+					ex0 = kri.vb.Entry( lar[i-2], 'pos' )
+				ex1 = kri.vb.Entry( lar[i-1], 'pos' )
+			pe.entries['prev'] = ex0
+			pe.entries['base'] = ex1
 		return lar
 	
 	# add children dependencies
@@ -75,6 +72,6 @@ public class Behavior( kri.part.Behavior ):
 			tag = pe.obj.seTag[of Tag]()
 			assert tag
 			if not root:
-				root = tag.Data
+				root = tag.data
 			assert not 'ready'
 			#pe.exData.vbo.Add(root)

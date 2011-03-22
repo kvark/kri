@@ -4,32 +4,28 @@ import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
 
-public interface ISemanted:
-	Semant	as List[of Info]:
-		get
+public interface IBuffed:
 	Data	as Object:
 		get
 
+public interface ISemanted:
+	Semant	as List[of Info]:
+		get
 
-public class Attrib( ISemanted, Object ):
+public interface IProvider(IBuffed,ISemanted):
+	pass
+
+
+
+public class Attrib( IProvider, Object ):
 	[Getter(Semant)]
 	private final semantics	as List[of Info]	= List[of Info]()
-	ISemanted.Data	as Object:
+	IBuffed.Data		as Object:
 		get: return self
 
 	public def constructor():
 		super( BufferTarget.ArrayBuffer )
 	
-	public def unitLoc(ref at as Info, ref off as int, ref sum as int) as bool:
-		off,sum = -1,0
-		for ain in semantics:
-			if ain.name == at.name:
-				assert off<0
-				off = sum
-				at = ain
-			sum += ain.fullSize()
-		return off >= 0
-
 	public def unitSize() as uint:
 		rez as uint = 0
 		for a in semantics:
@@ -39,6 +35,7 @@ public class Attrib( ISemanted, Object ):
 	public def initUnit(num as uint) as void:
 		init( num * unitSize() )
 	
+	
 	private def initAll(num as int) as void:
 		off,total = 0,unitSize()
 		assert not 'supported'	# slot=?
@@ -47,6 +44,16 @@ public class Attrib( ISemanted, Object ):
 		semantics.ForEach() do(ref at as Info):
 			#Push(0, at, off, total)
 			off += at.fullSize()
+
+	private def unitLoc(ref at as Info, ref off as int, ref sum as int) as bool:
+		off,sum = -1,0
+		for ain in semantics:
+			if ain.name == at.name:
+				assert off<0
+				off = sum
+				at = ain
+			sum += ain.fullSize()
+		return off >= 0
 
 	private def push(ref at as Info) as void:
 		off,sum = 0,0

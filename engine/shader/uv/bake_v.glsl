@@ -3,7 +3,6 @@
 in	vec2 at_tex0;
 in	vec4 at_vertex, at_quat;
 out	vec2 to_tex;
-out	vec4 to_vertex, to_quat;
 
 uniform struct Spatial	{
 	vec4 pos,rot;

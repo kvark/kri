@@ -58,7 +58,7 @@ public class Mesh( vb.Storage ):
 		else:
 			vao.bind()
 			#todo: make sure the attribs match
-		if nob>0:
+		if nob:
 			bu.activate()
 			draw(off,num,nob)
 		return vao
@@ -69,8 +69,10 @@ public class Mesh( vb.Storage ):
 			assert not 'good'	# will be removed later
 			return false
 		bu.activate()
-		if tf:	draw(tf)
-		else:	draw(nob)
+		if tf:
+			draw(tf)
+		elif nob:
+			draw(nob)
 		return true
 	
 	public def render(va as vb.Array, sa as shade.Mega, nob as uint) as bool:
@@ -79,7 +81,7 @@ public class Mesh( vb.Storage ):
 			return false
 		if ind:
 			ind.bind()
-		if nob>0:
+		if nob:
 			sa.bind()
 			draw(nob)
 		return true
@@ -129,6 +131,7 @@ public class Mesh( vb.Storage ):
 	protected def draw(tf as TransFeedback) as void:
 		using tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, nVert )
+		assert tf.result() == nVert
 
 
 #--------- Tag ---------#

@@ -5,10 +5,25 @@ import OpenTK.Graphics.OpenGL
 
 
 public struct Entry:
-	public	data	as Object
-	public	info	as Info
-	public	offset	as uint
-	public	stride	as uint
+	public	final	buffer	as IBuffed
+	public	final	info	as Info
+	public	final	offset	as uint
+	public	final	stride	as uint
+
+	public	def constructor(vat as IProvider, name as string):
+		buffer = null
+		stride = offset = 0
+		for ai in vat.Semant:
+			if ai.name == name:
+				buffer = vat
+				info = ai
+				offset = stride
+			stride += ai.fullSize()
+	
+	public	def constructor(vat as IBuffed, ai as Info, off as uint, size as uint):
+		buffer = vat
+		info = ai
+		offset,stride = off,size
 
 
 
@@ -45,7 +60,7 @@ public class Array:
 		for i in range(kri.Ant.Inst.caps.vertexAttribs):
 			GL.DisableVertexAttribArray(i)
 	
-	public def push(slot as uint, ref at as Info, offset as uint, stride as uint) as void:
+	public def push(slot as uint, at as Info, offset as uint, stride as uint) as void:
 		empty = false
 		GL.EnableVertexAttribArray( slot )
 		if at.integer: #TODO: use proper enum
@@ -57,7 +72,7 @@ public class Array:
 				at.type, false, stride, offset)
 	
 	public def push(slot as uint, ref e as Entry) as void:
-		e.data.bind()
+		e.buffer.Data.bind()
 		push( slot, e.info, e.offset, e.stride )
 	
 	public def pushAll(sat as (kri.shade.Attrib), vat as IList[of kri.vb.Attrib]) as bool:
@@ -97,13 +112,16 @@ public class Array:
 			en as Entry
 			if not edic.TryGetValue(str,en):
 				return false
-			if not sat[i].matches( en.info ):
+			ai = en.info
+			if not sat[i].matches(ai):
 				return false
-			en.info.name = str
-			push(i,en)
+			ai.name = str
+			en.buffer.Data.bind()
+			push( i, ai, en.offset, en.stride )
 		# need at least one
 		if Empty:
 			for en in edic.Values:
 				push(0,en)
 				break
+		assert not Empty
 		return true

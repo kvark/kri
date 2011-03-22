@@ -17,7 +17,7 @@ public class Tech( Basic ):
 	public abstract def construct(pe as kri.part.Emitter) as Bundle:
 		pass
 	protected virtual def update(pe as kri.part.Emitter) as uint:
-		return 0
+		return 1
 	
 	protected override def prepare(pe as kri.part.Emitter, ref nin as uint) as Bundle:
 		m = pe.mat
@@ -28,14 +28,10 @@ public class Tech( Basic ):
 			m.tech[tid] = bu = construct(pe)
 		if bu == Bundle.Empty:
 			return null
-		if pe.techReady[tid] == kri.part.TechState.Unknown:
-			assert not 'implemented'
-			#ats = List[of int]( bu.shader.gatherAttribs( kri.Ant.Inst.slotParticles, false )).ToArray()
-			#pat = pe.listAttribs()
-			#ok = Array.TrueForAll(ats, {a| return a in pat })
-			ok = true
+		if	pe.techReady[tid] == kri.part.TechState.Unknown:
+			ok = pe.draw(bu,0)
 			pe.techReady[tid] = (kri.part.TechState.Invalid, kri.part.TechState.Ready)[ok]
-		if pe.techReady[tid] == kri.part.TechState.Invalid:
+		if	pe.techReady[tid] == kri.part.TechState.Invalid:
 			return null
 		nin = update(pe)
 		return bu

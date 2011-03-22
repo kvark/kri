@@ -18,14 +18,11 @@ public class Tag( kri.ITag ):
 	public Quat as kri.buf.Texture:
 		get: return buf.at.color[1] as kri.buf.Texture
 	
-	public def constructor(w as uint, h as uint, bv as byte, bq as byte, filt as bool):
+	public def constructor(w as uint, h as uint, pif as (OpenGL.PixelInternalFormat), filt as bool):
 		allowFilter = filt
 		for i in range(2):
-			bits = (bv,bq)[i]
-			continue	if not bits
 			buf.mask |= 1<<i
-			pf = kri.rend.link.Buffer.FmColor[bits>>3]
-			buf.at.color[i] = t = kri.buf.Texture( intFormat:pf )
+			buf.at.color[i] = t = kri.buf.Texture( intFormat:pif[i] )
 			t.filt( allowFilter and not i, false )
 		buf.resize(w,h)
 
@@ -52,7 +49,8 @@ public class Update( kri.rend.tech.Basic ):
 		con.DepthTest = false
 		for e in kri.Scene.Current.entities:
 			tag = e.seTag[of Tag]()
-			continue if not e.visible or not tag
+			if not e.visible or not tag:
+				continue
 			assert tag.uvChannel == 0
 			tag.stamp = kri.Ant.Inst.Time
 			n = (null,e.node)[tag.worldSpace]
