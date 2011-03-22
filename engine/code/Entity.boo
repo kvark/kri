@@ -10,7 +10,7 @@ import OpenTK.Graphics.OpenGL
 public class Mesh( vb.Storage ):
 	public nVert	as uint	= 0
 	public nPoly	as uint	= 0
-	public ind		as vb.Index	= null
+	public ind		as vb.Object	= null
 	public final drawMode	as BeginMode
 	public final polySize	as uint
 	public NumElements as uint:
@@ -52,10 +52,8 @@ public class Mesh( vb.Storage ):
 			d = Dictionary[of string, vb.Entry]()
 			fillEntries(d)
 			ats.fillEntries(d)
-			if not bu.pushAttribs(vao,d):
+			if not bu.pushAttribs(ind,vao,d):
 				return null
-			if ind:
-				ind.bind()
 		else:
 			vao.bind()
 			#todo: make sure the attribs match
@@ -66,7 +64,7 @@ public class Mesh( vb.Storage ):
 	
 	public def render(va as vb.Array, bu as shade.Bundle, dict as Dictionary[of string,vb.Entry], nob as uint, tf as TransFeedback) as bool:
 		assert va and bu
-		if not bu.pushAttribs(va,dict):
+		if not bu.pushAttribs(null,va,dict):
 			assert not 'good'	# will be removed later
 			return false
 		bu.activate()
@@ -80,10 +78,8 @@ public class Mesh( vb.Storage ):
 		assert sa.Ready and va
 		d = Dictionary[of string, vb.Entry]()
 		fillEntries(d)
-		if not va.pushAll( sa.attribs, d ):
+		if not va.pushAll( ind, sa.attribs, d ):
 			return false
-		if ind:
-			ind.bind()
 		if nob:
 			sa.bind()
 			draw(nob)
@@ -99,7 +95,7 @@ public class Mesh( vb.Storage ):
 		assert vao and bu and tf
 		d = Dictionary[of string, vb.Entry]()
 		fillEntries(d)
-		if not bu.pushAttribs(vao,d):
+		if not bu.pushAttribs(null,vao,d):
 			assert not 'good'	# will be removed later
 			return false
 		bu.activate()

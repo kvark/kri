@@ -178,4 +178,4 @@ public class TransFeedback(Query):
 	public static def Bind(*buffers as (vb.Object)) as void:
 		for i as uint in range( buffers.Length ):
 			assert buffers[i].Ready
-			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].Extract )
+			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].handle )

@@ -323,7 +323,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 			for i in range(sum):
 				dar[i] = rd.bin.ReadUInt16()
 			mesh.nPoly = sum / 3
-			mesh.ind = kri.vb.Index()
+			mesh.ind = kri.vb.Object()
 			mesh.ind.init(dar,false)
 			# deferred vertex push
 			vat = ProcessVertices(dar,va)

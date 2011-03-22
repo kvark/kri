@@ -87,7 +87,7 @@ public class Texture(Surface):
 		target = TextureTarget.TextureBuffer
 		bind()
 		ready = true
-		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.Extract )
+		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.handle )
 		#syncBack()	# produces InvalidEnum when asking for width
 	
 	public override def init() as void:

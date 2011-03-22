@@ -82,11 +82,9 @@ public class General( Basic ):
 			b.up = getUpdater(m).fun
 			tempList.Add(b)
 		if atar:
-			if not b.va.pushAll( atar, e.CombinedAttribs ):
+			if not b.va.pushAll( e.mesh.ind, atar, e.CombinedAttribs ):
 				e.va[tid] = kri.vb.Array.Default
 				return
-			if e.mesh:
-				e.mesh.ind.bind()
 		butch.AddRange(tempList)
 
 

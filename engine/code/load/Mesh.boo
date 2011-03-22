@@ -88,7 +88,7 @@ public class ExMesh( kri.IExtension ):
 		m.nPoly = r.bin.ReadUInt16()
 		if m.nPoly:	# indexes
 			af = GetArray[of ushort]( m.nPoly*3, r.bin.ReadUInt16 )
-			m.ind = kri.vb.Index()
+			m.ind = kri.vb.Object()
 			m.ind.init(af,false)
 		else: m.nPoly /= 3
 		return true

@@ -38,7 +38,7 @@ public struct Constructor:
 			m.vbo.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize
-			m.ind = kri.vb.Index()
+			m.ind = kri.vb.Object()
 			m.ind.init( i, false )
 	
 	# triangle mesh subdivision

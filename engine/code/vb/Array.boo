@@ -36,7 +36,9 @@ public class Array:
 	public	static	Current	= Default
 	public	final	handle	as uint
 	[Getter(Empty)]
-	private empty	as bool	= true
+	private empty	as bool		= true
+	private final	slots		= array[of Entry]( kri.Ant.Inst.caps.vertexAttribs )
+	private index	as Object	= null
 	
 	public def constructor():
 		tmp = 0
@@ -72,10 +74,11 @@ public class Array:
 				at.type, false, stride, offset)
 	
 	public def push(slot as uint, ref e as Entry) as void:
+		slots[slot] = e
 		e.buffer.Data.bind()
 		push( slot, e.info, e.offset, e.stride )
 	
-	public def pushAll(sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
+	public def pushAll(ind as Object, sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
 		empty = true
 		bind()
 		for i in range(sat.Length):
@@ -93,6 +96,7 @@ public class Array:
 			en.buffer.Data.bind()
 			push( i, ai, en.offset, en.stride )
 		# need at least one
+		Object.Index = index = ind
 		if Empty:
 			for en in edic.Values:
 				push(0,en)

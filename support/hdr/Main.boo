@@ -9,7 +9,7 @@ public class Context:
 public class Render( kri.rend.Basic ):
 	private final fbo	= kri.buf.Holder()
 	private final b2	= kri.buf.Holder()
-	private final pbo	= kri.vb.Pack()
+	private final pbo	= kri.vb.Object()
 	private final context	as Context
 	private final bu_bright	= kri.shade.Bundle()
 	private final bu_scale	= kri.shade.Bundle()

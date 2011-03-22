@@ -23,7 +23,7 @@ public class Core:
 	private final bu	= kri.shade.Bundle()
 	private final bv	= kri.shade.Bundle()
 	private final tid	as int
-	private final pbo	= kri.vb.Object( BufferTarget.PixelPackBuffer )
+	private final pbo	= kri.vb.Object()
 	private final pId	= kri.shade.par.Value[of single]('object_id')
 	private final isBig	as bool
 	
@@ -130,7 +130,7 @@ public class Core:
 				FramebufferAttachment.ColorAttachment1, ts.target, ts.HardId, i+1)
 			
 		# read back result
-		pbo.bind()
+		kri.vb.Object.Bind[ BufferTarget.PixelPackBuffer ] = pbo
 		pl = fbo.at.color[0]
 		size = pl.Size
 		rect = Drawing.Rectangle( 0, 0, pl.wid, pl.het )

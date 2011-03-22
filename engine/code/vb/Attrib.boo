@@ -1,7 +1,6 @@
 ﻿namespace kri.vb
 
 import System.Collections.Generic
-import OpenTK.Graphics.OpenGL
 
 
 public interface IBuffed:
@@ -23,9 +22,6 @@ public class Attrib( IProvider, Object ):
 	IBuffed.Data		as Object:
 		get: return self
 
-	public def constructor():
-		super( BufferTarget.ArrayBuffer )
-	
 	public def unitSize() as uint:
 		rez as uint = 0
 		for a in semantics:
