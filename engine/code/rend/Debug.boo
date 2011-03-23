@@ -54,4 +54,4 @@ public class Attrib( kri.rend.Basic ):
 		con.ClearDepth(1f)
 		for e in kri.Scene.Current.entities:
 			kri.Ant.Inst.params.modelView.activate( e.node )
-			e.render( va, bu, 1 )
+			e.render(va,bu)

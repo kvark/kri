@@ -16,6 +16,14 @@ public interface IProvider(IBuffed,ISemanted):
 
 
 
+public class Dict( Dictionary[of string,Entry] ):
+	public def constructor(*stores as (Storage)):
+		super()
+		for st in stores:
+			if st: st.fillEntries(self)
+
+
+
 public class Attrib( IProvider, Object ):
 	[Getter(Semant)]
 	private final semantics	as List[of Info]	= List[of Info]()

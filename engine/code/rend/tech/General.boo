@@ -16,7 +16,7 @@ public struct Batch:	# why struct?
 	public def draw() as void:
 		nob = up()
 		kri.Ant.Inst.params.modelView.activate( e.node )
-		e.mesh.render(va,bu,null, off,num,nob)
+		e.render(va,bu,off,num,nob)
 		
 	#public static cMat	= CompMat()
 	public class CompMat( IComparer[of Batch] ):
@@ -66,7 +66,8 @@ public class General( Basic ):
 			prog = m.tech[tid]
 			if not prog:
 				m.tech[tid] = prog = construct(m)
-				if not prog.shader.Ready:	# force attribute order
+				if prog.shader and not prog.shader.Ready:
+					# force attribute order
 					prog.shader.attribAll( e.mesh.gatherAttribs() )
 					prog.link()
 			if prog == kri.shade.Bundle.Empty:

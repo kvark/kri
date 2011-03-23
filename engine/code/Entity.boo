@@ -45,65 +45,22 @@ public class Mesh( vb.Storage ):
 	
 	#---	render functions	---#
 	
-	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, off as uint, num as uint, nob as uint) as vb.Array:
-		if not vao:
-			vao = vb.Array()
-		if ats:
-			d = Dictionary[of string, vb.Entry]()
-			fillEntries(d)
-			ats.fillEntries(d)
-			if not bu.pushAttribs(ind,vao,d):
-				return null
-		else:
-			vao.bind()
-			#todo: make sure the attribs match
-		if nob:
-			bu.activate()
-			draw(off,num,nob)
-		return vao
-	
-	public def render(va as vb.Array, bu as shade.Bundle, dict as Dictionary[of string,vb.Entry], nob as uint, tf as TransFeedback) as bool:
-		assert va and bu
-		if not bu.pushAttribs(null,va,dict):
-			assert not 'good'	# will be removed later
+	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, off as uint, num as uint, nob as uint, tf as TransFeedback) as bool:
+		if not bu.pushAttribs(ind,vao,dict):
+			assert not 'good'
 			return false
 		bu.activate()
 		if tf:
 			draw(tf)
-		elif nob:
-			draw(nob)
+		elif nob>0:
+			draw(off,num,nob)
 		return true
 	
-	public def render(va as vb.Array, sa as shade.Mega, nob as uint) as bool:
-		assert sa.Ready and va
-		d = Dictionary[of string, vb.Entry]()
-		fillEntries(d)
-		if not va.pushAll( ind, sa.attribs, d ):
-			return false
-		if nob:
-			sa.bind()
-			draw(nob)
-		return true
+	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, nob as uint, tf as TransFeedback) as bool:
+		return render(vao,bu,dict,0,NumElements,nob,tf)
 	
-	public def render(vao as vb.Array, bu as shade.Bundle, ats as vb.Storage, nob as uint) as vb.Array:
-		return render(vao,bu,ats,0,NumElements,nob)
-	
-	public def render(vao as vb.Array, bu as shade.Bundle) as vb.Array:
-		return render( vao, bu, vb.Storage.Empty, 1 )
-	
-	public def renderBack(vao as vb.Array, bu as shade.Bundle, tf as TransFeedback) as bool:
-		assert vao and bu and tf
-		d = Dictionary[of string, vb.Entry]()
-		fillEntries(d)
-		if not bu.pushAttribs(null,vao,d):
-			assert not 'good'	# will be removed later
-			return false
-		bu.activate()
-		draw(tf)
-		return true
-	
-	public def renderTest(bu as shade.Bundle) as vb.Array:
-		return render( null, bu, vb.Storage.Empty, 0 )
+	public def render(vao as vb.Array, bu as shade.Bundle, tf as TransFeedback) as bool:
+		return render( vao, bu, vb.Dict(self), 1, tf)
 	
 	#---	internal drawing functions	---#
 	
@@ -156,13 +113,8 @@ public class Entity( kri.ani.data.Player ):
 	public final va		= array[of vb.Array]	( kri.Ant.Inst.techniques.Size )
 	public final tags	= List[of ITag]()
 	
-	public CombinedAttribs as Dictionary[of string, vb.Entry]:
-		get:
-			d = Dictionary[of string, vb.Entry]()
-			if mesh:
-				mesh.fillEntries(d)
-			store.fillEntries(d)
-			return d
+	public CombinedAttribs as vb.Dict:
+		get: return vb.Dict(mesh,store)
 	
 	public def constructor():
 		pass
@@ -192,20 +144,6 @@ public class Entity( kri.ani.data.Player ):
 		at = store.find(name)
 		return (at	if at else	mesh.find(name))
 	
-	private def enable(local as bool, ids as int*) as bool:
-		for i in ids:
-			assert not 'supported'	# bind()
-			#continue if local and store.bind(i)
-			#continue if mesh.bind(i)
-			return false
-		mesh.ind.bind()	if mesh.ind
-		return true
-
-	private def enable(local as bool, tid as int, ids as int*) as bool:
-		va[tid] = vb.Array()
-		va[tid].bind()
-		return enable(local,ids)
-	
 	# returns null if entity does't have all attributes requested
 	# otherwise - a list of rejected materials
 	public def check(tid as int) as kri.Material*:
@@ -213,11 +151,17 @@ public class Entity( kri.ani.data.Player ):
 		ml = List[of kri.Material]()
 		for t in tags:
 			tm = t as TagMat
-			continue	if not tm
+			if not tm:
+				continue	
 			m = tm.mat
-			ml.Add(m)	if m.tech[tid] == shade.Bundle.Empty
+			if m.tech[tid] == shade.Bundle.Empty:
+				ml.Add(m)
 		return ml
 	
-	public def render(vao as vb.Array, bu as shade.Bundle, nob as uint) as vb.Array:
+	public def render(vao as vb.Array, bu as shade.Bundle, off as uint, num as uint, nob as uint) as bool:
 		assert mesh and store
-		return mesh.render(vao, bu, store, nob)
+		return mesh.render( vao,bu, CombinedAttribs, off,num,nob,null )
+	
+	public def render(vao as vb.Array, bu as shade.Bundle) as bool:
+		assert mesh and store
+		return mesh.render( vao,bu, CombinedAttribs, 1,null )

@@ -44,7 +44,7 @@ public class Update( kri.rend.Basic ):
 			par.modelView.activate( e.node )
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():
-				e.render(va,bu,1)
+				e.render(va,bu)
 			r = q.result()
 			r = 0
 

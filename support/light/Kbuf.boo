@@ -78,7 +78,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sphere	as kri.Mesh
 	private final fbo		as Holder
 	private final texDep	= par.Texture('depth')
-	private final va		as kri.vb.Array
+	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba
 
@@ -95,7 +95,6 @@ public class Bake( kri.rend.Basic ):
 		bu.dicts.AddRange((d,lc.dict))
 		# create geometry
 		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
-		va = sphere.render(null,bu,null,1)
 		# create white shader
 		sx = bv.shader
 		sx.add('/light/kbuf/bake_v','/empty_f')
@@ -107,7 +106,7 @@ public class Bake( kri.rend.Basic ):
 		for l in kri.Scene.Current.lights:
 			continue	if l.fov != 0f
 			kri.Ant.Inst.params.activate(l)
-			sphere.render(va,bx,null,1)
+			sphere.render(va,bx,null)
 			#break	# !debug!
 
 	public override def process(con as kri.rend.link.Basic) as void:

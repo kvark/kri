@@ -20,7 +20,7 @@ public class Emitter( kri.vb.IProvider ):
 	public	mat			as kri.Material	= null
 	public	final owner	as Manager
 	public	final name	as string
-	public	final entries	= Dictionary[of string,kri.vb.Entry]()
+	public	final entries	= kri.vb.Dict()
 	public	final techReady	= array[of TechState]( kri.Ant.Inst.techniques.Size )
 	public	final mesh		= kri.Mesh( BeginMode.Points )
 	public	onUpdate	as callable(kri.Entity) as bool	= null

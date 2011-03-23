@@ -56,7 +56,7 @@ public class Render( kri.rend.Basic ):
 		for i in range(ents.Length):
 			pInd.Value = (i+1f) / ((1<<16)-1)
 			kri.Ant.Inst.params.modelView.activate( ents[i].node )
-			ents[i].render(va,bu,1)
+			ents[i].render(va,bu)
 		if not 'Debug':
 			con.activate( con.Target.Same, 0f, false )
 			pTex.Value = fbo.at.color[0] as kri.buf.Texture

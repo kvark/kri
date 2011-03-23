@@ -87,7 +87,7 @@ public class Bake( kri.rend.tech.Basic ):
 			pOffset.activate(sp)
 			kri.Ant.Inst.params.modelView.activate(s_new)
 			#draw
-			e.mesh.render( va, pu, e.store, 1 )
+			e.render(va,pu)
 
 
 public class Apply( kri.rend.Filter ):

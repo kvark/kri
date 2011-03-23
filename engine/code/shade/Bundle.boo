@@ -86,7 +86,7 @@ public class Bundle:
 		dicts.Clear()
 		params.Clear()
 
-	public def pushAttribs(ind as kri.vb.Object, va as kri.vb.Array, dict as Dictionary[of string,kri.vb.Entry]) as bool:
+	public def pushAttribs(ind as kri.vb.Object, va as kri.vb.Array, dict as kri.vb.Dict) as bool:
 		if not shader.Ready:
 			link()
 		return va.pushAll( ind, shader.attribs, dict )

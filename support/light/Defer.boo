@@ -24,7 +24,7 @@ public class Bake( kri.rend.Basic ):
 	protected final sphere	as kri.Mesh
 	private final fbo		as Holder
 	private final texDep	= par.Value[of kri.buf.Texture]('depth')
-	private final va		as kri.vb.Array
+	private final va		= kri.vb.Array()
 	private final static 	geoQuality	= 1
 	private final static	pif = PixelInternalFormat.Rgba16f
 
@@ -42,7 +42,6 @@ public class Bake( kri.rend.Basic ):
 		bu.dicts.AddRange(( d, lc.dict ))
 		# create geometry
 		sphere = kri.gen.Sphere( geoQuality, OpenTK.Vector3.One )
-		va = sphere.renderTest(bu)
 
 	public override def setup(pl as kri.buf.Plane) as bool:
 		fbo.at.color[0].samples = 3
@@ -61,7 +60,7 @@ public class Bake( kri.rend.Basic ):
 			for l in kri.Scene.Current.lights:
 				continue	if l.fov != 0f
 				kri.Ant.Inst.params.activate(l)
-				sphere.render(va,bu,null,1)
+				sphere.render(va,bu,null)
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )
 

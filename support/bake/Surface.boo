@@ -59,4 +59,4 @@ public class Update( kri.rend.tech.Basic ):
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )
 				tag.clearTarget = false
-			e.render(va,bu,1)
+			e.render(va,bu)

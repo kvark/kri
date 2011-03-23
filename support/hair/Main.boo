@@ -34,5 +34,5 @@ public class Tag( kri.ITag ):
 	public def bake(bu as kri.shade.Bundle) as void:
 		tf.Bind( data )
 		using kri.Discarder(true):
-			mesh.renderBack(va,bu,tf)
+			mesh.render(va,bu,tf)
 		stamp = kri.Ant.Inst.Time
