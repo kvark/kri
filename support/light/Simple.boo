@@ -83,7 +83,8 @@ public class Apply( kri.rend.tech.Meta ):
 	public override def process(con as kri.rend.link.Basic) as void:
 		butch.Clear()
 		for l in kri.Scene.Current.lights:
-			continue if l.fov == 0f
+			if l.fov == 0f:
+				continue
 			lit = l
 			texLit.Value = l.depth
 			# determine subset of affected objects

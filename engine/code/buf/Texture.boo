@@ -6,9 +6,8 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Texture(Surface):
-	[Getter(HardId)]
-	private final	hardId	as uint
-	private static	boundId	as uint	= 0
+	public	final	handle	as uint
+	private static	bound	as uint	= 0
 	private			ready	= false
 	private			fullWidth	as uint	= 0
 	private			fullHeight	as uint	= 0
@@ -20,7 +19,7 @@ public class Texture(Surface):
 	public 			layer	as int	= -1	# active layer for Cube/Array textures
 
 	public def constructor():
-		hardId = GL.GenTexture()	
+		handle = GL.GenTexture()	
 	public def constructor(sm as byte, ifm as PixelInternalFormat, pf as PixelFormat):
 		self()
 		target = (TextureTarget.Texture2D,TextureTarget.Texture2DMultisample)[sm>0]
@@ -37,18 +36,20 @@ public class Texture(Surface):
 
 	private def constructor(manId as uint):
 		ready = true
-		hardId = manId
+		handle = manId
 	public static final	Zero	= Texture(0)
 	def destructor():
-		return	if not hardId
-		ResetCache()	if hardId==boundId
+		if not handle:
+			return
+		if handle==bound:
+			ResetCache()
 		kri.Help.safeKill() do():
-			GL.DeleteTexture(hardId)
+			GL.DeleteTexture(handle)
 	
 	public static def Slot(tun as byte) as void:
 		GL.ActiveTexture( TextureUnit.Texture0 + tun )
 	public static def ResetCache() as void:
-		boundId = 0
+		bound = 0
 		
 	# virtual routines
 
@@ -56,16 +57,16 @@ public class Texture(Surface):
 		init()	if not ready
 		assert ready
 		if layer>=0:
-			GL.FramebufferTextureLayer(	FramebufferTarget.Framebuffer, fa, hardId, level, layer)
+			GL.FramebufferTextureLayer(	FramebufferTarget.Framebuffer, fa, handle, level, layer)
 		else:	# let GL decide
-			GL.FramebufferTexture(		FramebufferTarget.Framebuffer, fa, hardId, level )
+			GL.FramebufferTexture(		FramebufferTarget.Framebuffer, fa, handle, level )
 
 	public override def bind() as void:
 		# can't use cache as we have different bounds
 		# per texture slots and targets
 		#return	if boundId == hardId
-		boundId = hardId
-		GL.BindTexture( target, hardId )
+		bound = handle
+		GL.BindTexture( target, handle )
 	
 	public override def syncBack() as void:
 		bind()

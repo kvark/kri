@@ -79,16 +79,18 @@ public class ExMaterial( kri.IExtension ):
 	
 	public def pm_unit(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		# map targets
 		u = AdUnit()
 		m.unit.Add(u)
 		r.puData(u)
 		while (name = r.getString()) != '':
 			targ as MapTarget
-			continue if not tarDict.TryGetValue(name,targ)
+			if not tarDict.TryGetValue(name,targ):
+				continue
 			me = m.Meta[targ.name] as Advanced
-			continue	if not me
+			if not me:
+				continue
 			me.Unit = m.unit.IndexOf(u)
 			me.Shader = targ.prog
 		# map inputs
@@ -112,7 +114,7 @@ public class ExMaterial( kri.IExtension ):
 #---	Strand properties	---#
 	public def pm_hair(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		ms = Strand( Name:'strand', Data:r.getVec4() )
 		r.getByte()	# tangent shading
 		r.getReal()	# surface diffuse distance
@@ -124,7 +126,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Halo properties		---#
 	public def pm_halo(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		mh = Halo( Name:'halo', Data:Vector4(r.getVector()) )
 		r.getByte()	# use texture - ignored
 		mh.Shader = con.slib.halo_u
@@ -134,7 +136,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Surface properties	---#
 	public def pm_surf(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		r.getByte()	# shadeless
 		r.getReal()	# parallax
 		m.metaList.Add( Advanced( Name:'bump', Shader:con.slib.bump_c ))
@@ -145,7 +147,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Meta: emissive	---#
 	public def pm_emis(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		color = r.getColorFull()
 		m.metaList.Add( Data[of Color4]('emissive',
 			con.slib.emissive_u, color ))
@@ -154,7 +156,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Meta: diffuse	---#
 	public def pm_diff(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		color = r.getColorFull()
 		m.metaList.Add( Data[of Color4]('diffuse',
 			con.slib.diffuse_u,	color ))
@@ -163,13 +165,13 @@ public class ExMaterial( kri.IExtension ):
 			'LAMBERT':	con.slib.lambert
 			}[model]
 		assert sh and 'unknown diffuse model!'
-		m.metaList.Add(Advanced( Name:'comp_diff', Shader:sh ))	if sh
+		m.metaList.Add(Advanced( Name:'comp_diff', Shader:sh ))
 		return true
 
 	#---	Meta: specular	---#
 	public def pm_spec(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
-		return false	if not m
+		if not m:	return false
 		m.metaList.Add( Data[of Color4]('specular',
 			con.slib.specular_u,	r.getColorFull() ))
 		m.metaList.Add( Data[of single]('glossiness',
@@ -187,7 +189,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: mapping	---#
 	public def pt_map(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
-		return false	if not u
+		if not u:	return false
 		# tex-coords
 		u.pOffset.Value	= Vector4(r.getVector(), 0.0)
 		u.pScale.Value	= Vector4(r.getVector(), 1.0)
@@ -196,7 +198,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: sampling	---#
 	public def pt_samp(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
-		return false	if not u
+		if not u:	return false
 		bRepeat	= r.getByte()>0	# extend by repeat
 		bMipMap	= r.getByte()>0	# generate mip-maps
 		bFilter	= r.getByte()>0	# linear filtering
@@ -208,7 +210,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: file path	---#
 	public def pt_path(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
-		return false	if not u
+		if not u:	return false
 		path = prefix + r.getString()
 		u.Value = r.data.load[of kri.buf.Texture](path)
 		return u.Value != null
@@ -228,7 +230,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: color ramp		---#
 	public def pt_ramp(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
-		return false	if not u
+		if not u:	return false
 		r.getString()	# interpolator
 		num = r.getByte()
 		data = array[of kri.gen.Texture.Key](num)
@@ -242,7 +244,7 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: noise		---#
 	public def pt_noise(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
-		return false	if not u
+		if not u:	return false
 		u.Value = kri.gen.Texture.noise
 		return true
 

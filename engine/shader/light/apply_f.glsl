@@ -1,14 +1,14 @@
 ﻿#version 130
 
-uniform vec4 lit_color, lit_data, proj_lit;
+uniform	vec4 lit_color, lit_data, proj_lit;
 
-float get_shadow(vec4);
-vec4 get_lighting(float,vec3,vec3);
+float	get_shadow(vec4);
+vec4	get_lighting(float,vec3,vec3);
 
-in vec3 v2lit, v2cam;
-in vec4 v_shadow;
-in float lit_int;
-out vec4 rez_color;
+in	vec3	v2lit, v2cam;
+in	vec4	v_shadow;
+in	float	lit_int;
+out	vec4	rez_color;
 
 
 void main()	{

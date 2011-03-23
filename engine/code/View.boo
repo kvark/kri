@@ -24,7 +24,7 @@ public class Projector( ani.data.Player ):
 		dz = -1f / v.Z
 		tn = dz / Math.Tan(fov)
 		assert fov > 0f
-		return Vector3(tn*v.X, aspect*tn*v.Y,
+		return Vector3( tn*v.X, tn*v.Y * aspect,
 				(2f*dz*rangeIn*rangeOut - rangeIn-rangeOut) / (rangeIn - rangeOut))
 	public def toWorld(ref vin as Vector3) as Vector3:
 		v = Vector3.Add( Vector3.Multiply(vin,2f), Vector3.One )
@@ -55,7 +55,7 @@ public class Light(Projector,IColored):
 	public depth	as buf.Texture	= null
 	# parallel projection
 	public def setLimit(radius as single) as void:
-		rangeIn = 0
+		rangeIn = 1
 		rangeOut = radius
 		sphere = 1f / radius
 

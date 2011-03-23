@@ -12,7 +12,7 @@ public static class Meta:
 	private final tVert	= Template('/tmp/tc_v')
 	private final tGeom	= Template('/tmp/tc_g')
 	private final tFrag	= Template('/tmp/tc_f')
-	public final LightSet	= ('bump','comp_diff','comp_spec',\
+	public final LightSet	= ('bump','comp_diff','comp_spec',
 		'diffuse','specular','glossiness')
 	
 	# Provide a generator+translator shader for texture coordinates on each required stage
@@ -22,7 +22,8 @@ public static class Meta:
 			return (h.Name	for h in dict.Values	if h.Shader.type == tmp.tip)
 		def ar2dict(val as string*):
 			d2 = Dictionary[of string,string]()
-			for v in val: d2[v] = string.Empty
+			for v in val:
+				d2[v] = string.Empty
 			return d2
 		# create dict
 		d = Dictionary[of string,IDictionary[of string,string]]()
@@ -32,7 +33,8 @@ public static class Meta:
 		d['o'] = ar2dict(( ('mr','mv')[geom], ))
 		d['p'] = ar2dict( ((of string:,),('uv0',))['uv0' in filterInputs(tVert)] )
 		d['t'] = d3 = Dictionary[of string,string]()
-		for v in dict: d3.Add( v.Key, v.Value.Name )
+		for v in dict:
+			d3.Add( v.Key, v.Value.Name )
 		# instance list
 		rez = List[of Object]()
 		rez.Add( tVert.instance(d) )
@@ -77,18 +79,17 @@ public class Context:
 		ml.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
 
 	public def setMatTexture(mat as kri.Material, tex as kri.buf.Texture) as void:
-		id = mat.unit.Count
-		un = kri.meta.AdUnit( Value:tex )
-		un.input = kri.meta.Hermit( Name:'uv0', Shader:slib.tc_uv0 )
-		mat.unit.Add(un)
 		me = mat.Meta['emissive']
 		md = mat.Meta['diffuse']
 		assert me and md
+		me.Unit = md.Unit = mat.unit.Count
+		un = kri.meta.AdUnit( Value:tex )
+		un.input = kri.meta.Hermit( Name:'uv0', Shader:slib.tc_uv0 )
+		mat.unit.Add(un)
 		me.Shader = slib.emissive_t2
 		md.Shader = slib.diffuse_t2
-		me.Unit = md.Unit = id
 
 	public def constructor():
-		fillMat(mDef, Color4.DarkGray, Color4.Gray, Color4.Gray, 50f)
+		fillMat(mDef, Color4.Black, Color4.Gray, Color4.Gray, 50f)
 		mDef.metaList.Add(Halo( Name:'halo', Shader:slib.halo_u, Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
 		mDef.link()

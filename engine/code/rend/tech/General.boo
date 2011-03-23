@@ -49,7 +49,8 @@ public class General( Basic ):
 			return 1
 
 	protected def addObject(e as kri.Entity) as void:
-		return	if not e.visible
+		if not e.visible:
+			return
 		#alist as List[of int] = null
 		tempList = List[of Batch]()
 		atar	as (kri.shade.Attrib)	= null

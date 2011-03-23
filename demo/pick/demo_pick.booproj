@@ -18,6 +18,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <StartArguments>sample.tga</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -53,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="Main.boo" />
+    <Compile Include="Task.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\opentk\Source\OpenTK\OpenTK.csproj">

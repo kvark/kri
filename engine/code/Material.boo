@@ -54,10 +54,12 @@ public class Material( ani.data.Player ):
 		din = Dictionary[of string,meta.Hermit]()
 		for str in melist:
 			m = Meta[str]
-			return null	if not m
+			if not m:
+				return null
 			push(m)
 			ud = m.Unit
-			continue	if ud<0
+			if ud<0:
+				continue
 			u = unit[ud]
 			push( u.input )
 			din.Add( m.Name, u.input )

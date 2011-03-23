@@ -125,9 +125,9 @@ public class Core:
 			for tex in (tc,ts):
 				tex.setLevels(i,i+1)
 			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
-				FramebufferAttachment.ColorAttachment0, tc.target, tc.HardId, i+1)
+				FramebufferAttachment.ColorAttachment0, tc.target, tc.handle, i+1)
 			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
-				FramebufferAttachment.ColorAttachment1, ts.target, ts.HardId, i+1)
+				FramebufferAttachment.ColorAttachment1, ts.target, ts.handle, i+1)
 			
 		# read back result
 		kri.vb.Object.Bind[ BufferTarget.PixelPackBuffer ] = pbo

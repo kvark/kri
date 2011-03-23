@@ -12,9 +12,10 @@ public class Cube(Mesh):
 	public def constructor(scale as Vector3):
 		con = Constructor()
 		sar = (-1f,1f)
-		verts = List[of Vector4]( Vector4( scale.X * sar[i&1],\
-			scale.Y * sar[(i>>1)&1],\
-			scale.Z * sar[i>>2], 1f)\
+		verts = List[of Vector4]( Vector4(
+			scale.X * sar[i&1],
+			scale.Y * sar[(i>>1)&1],
+			scale.Z * sar[i>>2], 1f)
 			for i in range(8)).ToArray()
 		#vi = (0,1,4,5,7,1,3,0,2,4,6,7,2,3)	# tri-strip version
 		vi = (0,4,5,1, 4,6,7,5, 6,2,3,7, 2,0,1,3, 2,6,4,0, 1,5,7,3)

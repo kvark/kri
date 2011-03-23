@@ -67,7 +67,7 @@ public class Render( kri.rend.Basic ):
 		rect = System.Drawing.Rectangle(coord[0],coord[1], 1,1)
 		index = fbo.read[of ushort]( PixelFormat.Red, rect )
 		active = false
-		return if not index[0]
+		if not index[0]: return
 		val = fbo.read[of single]( PixelFormat.DepthComponent, rect )
 		pl = fbo.at.color[0]
 		vin = OpenTK.Vector3(coord[0]*1f / pl.wid, coord[1]*1f / pl.het, val[0])

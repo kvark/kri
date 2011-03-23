@@ -53,5 +53,6 @@ public class Meta(General):
 
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		sl = mat.collect(geom,lMets)
-		return kri.shade.Bundle.Empty	if not sl
+		if not sl:
+			return kri.shade.Bundle.Empty
 		return factory.link( sl, mat.dict )
