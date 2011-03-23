@@ -31,8 +31,10 @@ public class Chain(Basic):
 		
 	public override def process(con as link.Basic) as void:
 		for r in renders:
-			r.process(ln)	if r.active
-		ln.blitTo(con)
+			if r.active:
+				r.process(ln)
+		if con:
+			ln.blitTo(con)
 
 
 #---------	GENERAL FILTER	--------#

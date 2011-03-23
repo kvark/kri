@@ -13,7 +13,7 @@ public class AniTrans( kri.ani.Loop ):
 		n = node
 		s0 = n.local
 		s1 = targ
-		lTime = 0.5
+		lTime = 0.2
 	protected override def onRate(rate as double) as void:
 		n.local.lerpDq(s0,s1,rate)
 		n.touch()
@@ -48,35 +48,35 @@ public class AniRot( kri.ani.Loop ):
 private class Task:
 	private static final size	= 5
 	private ec	as kri.Entity	= null
-	private final al	as kri.ani.Scheduler = null
+	public	final animan	= kri.ani.Scheduler()
+	public	final texture	as kri.buf.Texture
 
 	public def fun(e as kri.Entity, point as Vector3) as void:
 		if not 'Swap':
 			kri.Help.swap[of kri.Spatial]( e.node.local, ec.node.local )
 			e.node.touch()
 			ec = e
+			return
 		diff = Vector3.Subtract( ec.node.local.pos, e.node.local.pos )
 		ax,ay = Math.Abs(diff.X), Math.Abs(diff.Y)
-		if not al.Empty or ax+ay>8f:
+		if not animan.Empty or ax+ay>8f:
 			return
-		al.add( AniRot(e.node,ec.node.local) )
+		animan.add( AniTrans(e.node,ec.node.local) )
 		#al.add( AniTrans(e.node,ec.node.local) )
 		ec.node.local = e.node.local
 		ec.node.touch()
 		#al.add( e.node.play('rotate') )
 	
-	private def makeMat(texName as string) as kri.Material:
+	private def makeMat() as kri.Material:
 		con = kri.load.Context()
 		mat = kri.Material( con.mDef )
-		if texName:
-			targa = kri.load.image.Targa()
-			tex = targa.read(texName).generate()
-			con.setMatTexture(mat,tex)
+		if texture:
+			con.setMatTexture(mat,texture)
 		mat.link()
 		return mat
 	
-	private def makeEnt(texName as string) as kri.Entity:
-		mat = makeMat(texName)
+	private def makeEnt() as kri.Entity:
+		mat = makeMat()
 		# create mesh
 		m = kri.gen.Cube( Vector3(3f,2f,0.5f) )
 		e = kri.Entity( mesh:m )
@@ -103,7 +103,7 @@ private class Task:
 	private def makeTexCoord(x as uint, y as uint) as kri.vb.Attrib:
 		vbo = kri.vb.Attrib()
 		kri.Help.enrich(vbo,2,'tex0')
-		data = array[of Vector2](8)
+		data = array[of Vector2](24)
 		for k in range(data.Length):
 			x1 = x+(((k+0)>>1)&1)
 			y1 = y+(((k+1)>>1)&1)
@@ -111,9 +111,16 @@ private class Task:
 		vbo.init(data,false)
 		return vbo
 
-	public def constructor(ar as List[of kri.Entity], sched as kri.ani.Scheduler, texName as string):
-		al = sched
-		e = makeEnt(texName)
+	public def constructor(ar as List[of kri.Entity], texName as string):
+		# prepare texture
+		if texName:
+			targa = kri.load.image.Targa()
+			texture = targa.read(texName).generate()
+			texture.setState(0,true,true)
+		else:
+			texture = null
+		# make original
+		e = makeEnt()
 		rec = makeRec()
 		# populate
 		for i in range(size*size):

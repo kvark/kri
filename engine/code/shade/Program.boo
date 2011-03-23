@@ -25,7 +25,7 @@ public class Program:
 		handle = xid
 		linked = true
 	def destructor():
-		if Current==self:
+		if Current == self:
 			Current = null
 		kri.Help.safeKill({ GL.DeleteProgram(handle) })
 	
@@ -48,7 +48,7 @@ public class Program:
 		assert not linked
 		blocks.Extend(shads)
 		for sh in shads:
-			GL.AttachShader(handle, sh.handle)	if sh
+			if sh:	GL.AttachShader(handle, sh.handle)
 	# add object from library
 	public def add(*names as (string)) as void:
 		for s in names:
