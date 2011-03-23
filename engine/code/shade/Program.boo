@@ -25,6 +25,8 @@ public class Program:
 		handle = xid
 		linked = true
 	def destructor():
+		if Current==self:
+			Current = null
 		kri.Help.safeKill({ GL.DeleteProgram(handle) })
 	
 	public static Zero	= Program(0)
@@ -36,6 +38,10 @@ public class Program:
 		return	if result
 		print "Check ${pp} failed for program ${handle}:\n${log}"
 		raise log
+	
+	public def validate() as void:
+		GL.ValidateProgram(handle)
+		check( ProgramParameter.ValidateStatus )
 	
 	# add specific objects
 	public def add(*shads as (Object)) as void:
@@ -56,10 +62,8 @@ public class Program:
 	# activate program
 	public def bind() as void:
 		assert linked
-		if kri.Ant.Inst.debug:
-			GL.ValidateProgram(handle)
-			check( ProgramParameter.ValidateStatus )
-		return if Current == self
+		if Current == self:
+			return
 		GL.UseProgram(handle)
 		Current = self
 

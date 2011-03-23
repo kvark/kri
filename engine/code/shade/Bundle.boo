@@ -80,6 +80,8 @@ public class Bundle:
 		shader.bind()
 		for p in params:
 			p.upload()
+		if kri.Ant.Inst.debug:
+			shader.validate()
 	
 	public def clear() as void:
 		shader.clear()

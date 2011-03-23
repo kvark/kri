@@ -9,6 +9,8 @@ public struct Entry:
 	public	final	info	as Info
 	public	final	offset	as uint
 	public	final	stride	as uint
+	
+	public	final	static	Zero = Entry(null,Info(),0,0)
 
 	public	def constructor(vat as IProvider, name as string):
 		buffer = null
@@ -33,10 +35,8 @@ public struct Entry:
 
 public class Array:
 	public	static	final Default	= Array(0)
-	public	static	Current	= Default
-	public	final	handle	as uint
-	[Getter(Empty)]
-	private empty	as bool		= true
+	public	static	Current		= Default
+	public	final	handle		as uint
 	private final	slots		= array[of Entry]( kri.Ant.Inst.caps.vertexAttribs )
 	private index	as Object	= null
 	
@@ -59,27 +59,31 @@ public class Array:
 	
 	public def clean() as void:
 		bind()
-		for i in range(kri.Ant.Inst.caps.vertexAttribs):
+		for i in range(slots.Length):
+			slots[i] = Entry.Zero
 			GL.DisableVertexAttribArray(i)
 	
-	public def push(slot as uint, at as Info, offset as uint, stride as uint) as void:
-		empty = false
-		GL.EnableVertexAttribArray( slot )
-		if at.integer: #TODO: use proper enum
-			GL.VertexAttribIPointer( slot, at.size,
-				cast(VertexAttribIPointerType,cast(int,at.type)),
-				stride, System.IntPtr(offset) )
-		else:
-			GL.VertexAttribPointer( slot, at.size,
-				at.type, false, stride, offset)
+	public def isEmpty() as bool:
+		for en in slots:
+			if en.buffer:
+				return false
+		return true
 	
 	public def push(slot as uint, ref e as Entry) as void:
+		if slots[slot] == e:
+			return
 		slots[slot] = e
 		e.buffer.Data.bind()
-		push( slot, e.info, e.offset, e.stride )
+		GL.EnableVertexAttribArray( slot )
+		if e.info.integer: #TODO: use proper enum
+			GL.VertexAttribIPointer( slot, e.info.size,
+				cast(VertexAttribIPointerType,cast(int,e.info.type)),
+				e.stride, System.IntPtr(e.offset) )
+		else:
+			GL.VertexAttribPointer( slot, e.info.size,
+				e.info.type, false, e.stride, e.offset)
 	
 	public def pushAll(ind as Object, sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
-		empty = true
 		bind()
 		for i in range(sat.Length):
 			str = sat[i].name
@@ -92,14 +96,11 @@ public class Array:
 			ai = en.info
 			if not sat[i].matches(ai):
 				return false
-			ai.name = str
-			en.buffer.Data.bind()
-			push( i, ai, en.offset, en.stride )
+			push(i,en)
 		# need at least one
 		Object.Index = index = ind
-		if Empty:
+		if isEmpty():
 			for en in edic.Values:
 				push(0,en)
 				break
-		assert not Empty
-		return true
+		return not isEmpty()
