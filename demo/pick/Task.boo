@@ -46,26 +46,70 @@ public class AniRot( kri.ani.Loop ):
 
 
 private class Task:
-	private static final size	= 5
-	private ec	as kri.Entity	= null
-	public	final animan	= kri.ani.Scheduler()
-	public	final texture	as kri.buf.Texture
+	private static	final size		= 5
+	private ec		as kri.Entity	= null
+	public	final	animan	= kri.ani.Scheduler()
+	public	final	texture	as kri.buf.Texture
+	private	final	grid	= array[of kri.Entity](size*size)
+	
+	public class TagId(kri.ITag):
+		public final id	as int
+		public def constructor(n as int):
+			id = n
+	
+	private Grid[x as byte, y as byte] as kri.Entity:
+		get: return grid[x+y*size]
+		set: grid[x+y*size] = value
+	
+	private def checkGrid() as bool:
+		for i in range(grid.Length):
+			tag = grid[i].seTag[of TagId]()
+			assert tag
+			if i != tag.id:
+				return false
+		return true
+	
+	private def shuffle() as void:
+		rn = Random( kri.Ant.Inst.Time )
+		for i in range(1000):
+			a = rn.Next() % (size*size)
+			b = rn.Next() % (size*size)
+			e = grid[a]
+			grid[a] = grid[b]
+			grid[b] = e
+			n = e.node
+			grid[b].node = grid[a].node
+			grid[a].node = n
 
 	public def fun(e as kri.Entity, point as Vector3) as void:
+		if not animan.Empty:
+			return
+		# find the closest one
+		i0 = i1 = -1
+		for i in range(grid.Length):
+			if grid[i] == ec:	i0 = i
+			if grid[i] == e:	i1 = i
+		# swap?
 		if not 'Swap':
 			kri.Help.swap[of kri.Spatial]( e.node.local, ec.node.local )
 			e.node.touch()
 			ec = e
 			return
-		diff = Vector3.Subtract( ec.node.local.pos, e.node.local.pos )
-		ax,ay = Math.Abs(diff.X), Math.Abs(diff.Y)
-		if not animan.Empty or ax+ay>8f:
+		# 
+		#diff = Vector3.Subtract( ec.node.local.pos, e.node.local.pos )
+		#ax,ay = Math.Abs(diff.X), Math.Abs(diff.Y)
+		if i0!=i1+1 and i0!=i1-1 and i0!=i1+size and i0!=i1-size:
 			return
 		animan.add( AniTrans(e.node,ec.node.local) )
-		#al.add( AniTrans(e.node,ec.node.local) )
 		ec.node.local = e.node.local
 		ec.node.touch()
-		#al.add( e.node.play('rotate') )
+		# swap grid
+		x = grid[i0]
+		grid[i0] = grid[i1]
+		grid[i1] = x
+		# win?
+		if checkGrid():
+			ec.visible = true
 	
 	private def makeMat() as kri.Material:
 		con = kri.load.Context()
@@ -103,7 +147,7 @@ private class Task:
 	private def makeTexCoord(x as uint, y as uint) as kri.vb.Attrib:
 		vbo = kri.vb.Attrib()
 		kri.Help.enrich(vbo,2,'tex0')
-		data = array[of Vector2](24)
+		data = array[of Vector2](24)	#vertices in a cube
 		for k in range(data.Length):
 			x1 = x+(((k+0)>>1)&1)
 			y1 = y+(((k+1)>>1)&1)
@@ -124,8 +168,9 @@ private class Task:
 		rec = makeRec()
 		# populate
 		for i in range(size*size):
-			ec = kri.Entity(e)
-			ec.node = n = kri.Node('cell')
+			ec = grid[i] = kri.Entity(e)
+			ec.tags.Add( TagId(i) )
+			ec.node = n = kri.Node('cell'+i)
 			n.anims.Add(rec)
 			if e.node:
 				n.Parent = e.node.Parent
@@ -139,3 +184,5 @@ private class Task:
 		ec.tags.RemoveAll() do(t as kri.ITag):
 			t2 = t as support.pick.Tag
 			return t2 != null
+		# prepare level
+		shuffle()
