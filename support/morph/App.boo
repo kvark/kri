@@ -1,6 +1,5 @@
 ﻿namespace support.morph
 
-import System.Collections.Generic
 import OpenTK
 
 #----------------------------------------
@@ -29,12 +28,8 @@ public class Update( kri.rend.Basic ):
 	public final bu		= kri.shade.Bundle()
 	public final pVal	= kri.shade.par.Value[of Vector4]('shape_value')
 	private final va	= kri.vb.Array()
-	private final slot	= kri.lib.Slot(4)
 	private final eps	= 1.0e-7
 	public def constructor():
-		slot.create('pos')
-		for i in range(4):
-			slot.create('pos'+(i+1))
 		d = kri.shade.par.Dict()
 		d.var(pVal)
 		bu.shader.add('/skin/morph_v')
@@ -42,27 +37,21 @@ public class Update( kri.rend.Basic ):
 		bu.dicts.Add(d)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
-		trans = Dictionary[of string,string]()
-		va.bind()
 		using kri.Discarder(true):
 			for ent in kri.Scene.Current.entities:
 				keys = ent.enuTags[of Tag]()
 				dirty = System.Array.Find(keys) do(t as Tag):
 					return t.Dirty
-				continue	if keys.Length<2 or not dirty
+				if keys.Length<2 or not dirty:
+					continue
 				assert ent.mesh
 				pVal.Value = Vector4( keys[0].Value, keys[1].Value, 0f,0f )
 				sum = Vector4.Dot( pVal.Value, Vector4.One )
 				pVal.Value.X += 1f-sum
-				#assert System.Math.Abs(sum-1f) < eps
+				assert System.Math.Abs(sum-1f) < eps
+				d = ent.CombinedAttribs
 				# bind attribs & draw
-				#ent.enable(false, (av,))
-				trans['vertex'] = ''
 				for i in range( System.Math.Min(4,keys.Length) ):
-					pass
-					#trans['vertex'] = i+1
-					#keys[i].data.attribTrans(trans)	#support?
-				#tf.Bind( ent.mesh.find( kri.Ant.Inst.attribs.vertex ))	#?
-				assert not 'supported' # trans attributes?
-				#bu.activate()
-				#ent.mesh.draw(tf)
+					d['pos'+i] = kri.vb.Entry( keys[i].data, 'vertex' )
+				tf.Bind( ent.mesh.find('vertex') )
+				ent.mesh.render(va,bu,d,1,tf)
