@@ -8,7 +8,7 @@ public class Simulator( kri.ani.sim.Native ):
 	public final pr	as	Core
 	public def constructor( s as kri.Scene, ord as int, rz as kri.rend.EarlyZ ):
 		super(s)
-		pr = Core( ord, true, rz.tid )
+		pr = Core( ord, true, rz.name )
 	protected override def onDelta(delta as double) as uint:
 		super(delta)
 		pr.tick(scene)
@@ -22,7 +22,7 @@ public class Core:
 	private final cam	= kri.Camera()
 	private final bu	= kri.shade.Bundle()
 	private final bv	= kri.shade.Bundle()
-	private final tid	as int
+	private final name	as string
 	private final pbo	= kri.vb.Object()
 	private final pId	= kri.shade.par.Value[of single]('object_id')
 	private final isBig	as bool
@@ -32,7 +32,7 @@ public class Core:
 	public Stencil	as kri.buf.Texture:
 		get: return fbo.at.stencil	as kri.buf.Texture
 	
-	public def constructor( ord as byte, large as bool, techId as int ):
+	public def constructor( ord as byte, large as bool, techName as string ):
 		isBig = large
 		# init FBO
 		pif = (PixelInternalFormat.Rg8, PixelInternalFormat.Rg16)[large]
@@ -47,7 +47,7 @@ public class Core:
 		# 8 bit stencil + 2*[8,16] bit color
 		pbo.init( (3,5)[large]<<(2*ord) )
 		# init shader
-		tid = techId
+		name = techName
 		d = kri.shade.par.Dict()
 		pSten	= kri.shade.par.Texture('sten')
 		pColor	= kri.shade.par.Texture('color')
@@ -68,8 +68,9 @@ public class Core:
 		kid = 1f / ((1 << (8,16)[isBig]) - 1f)
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
-			va = e.va[tid]
-			continue	if va in (null,kri.vb.Array.Default)
+			va as kri.vb.Array = null
+			if not e.va.TryGetValue(name,va) or va == kri.vb.Array.Default:
+				continue
 			va.bind()
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.modelView.activate( e.node )

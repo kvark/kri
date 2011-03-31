@@ -9,11 +9,6 @@ import OpenTK.Graphics.OpenGL
 #	PARTICLE EMITTER 					#
 #---------------------------------------#
 
-public enum TechState:
-	Unknown
-	Ready
-	Invalid
-
 public class Emitter( kri.vb.IProvider ):
 	public	visible		as bool		= true
 	public	obj			as kri.Entity	= null
@@ -21,7 +16,7 @@ public class Emitter( kri.vb.IProvider ):
 	public	final owner	as Manager
 	public	final name	as string
 	public	final entries	= kri.vb.Dict()
-	public	final techReady	= array[of TechState]( kri.Ant.Inst.techniques.Size )
+	public	final techReady	= Dictionary[of string,bool]()
 	public	final mesh		= kri.Mesh( BeginMode.Points )
 	public	onUpdate	as callable(kri.Entity) as bool	= null
 

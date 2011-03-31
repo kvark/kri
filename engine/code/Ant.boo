@@ -119,9 +119,8 @@ public class Ant(IDisposable):
 	public Time as double:
 		get: return sw.Elapsed.TotalSeconds
 	
-	# Slots
-	public final techniques	= lib.Slot( 24 )
-	
+	# techniques
+	public final techniques	= Dictionary[of string,rend.Basic]()
 	# extensions
 	public final extensions	= List[of IExtension]()
 	public final loaders	as load.Standard

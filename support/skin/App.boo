@@ -6,8 +6,10 @@ public class Update( kri.rend.tech.Basic ):
 	private final va	= kri.vb.Array()
 	private final tf	= kri.TransFeedback(1)
 	private final bu	= kri.shade.Bundle()
-	private final par	= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
-		for i in range(kri.Ant.Inst.caps.bones) ).ToArray()
+	private final par	= List[of kri.lib.par.spa.Shared](
+		kri.lib.par.spa.Shared("bone[${i}]")
+		for i in range(kri.Ant.Inst.caps.bones)
+		).ToArray()
 	public final at_mod	= ('vertex','quat')
 	public final at_all	as (int)
 
@@ -51,7 +53,5 @@ public class Update( kri.rend.tech.Basic ):
 					s1.inverse()
 					spa.combine(s0,s1)	# ->model
 					par[i+1].activate(spa)
-				#using tf.catch():
-				#	e.mesh.render(va,bu)
 				e.mesh.render(va,bu,tf)
 				tag.Sync = true

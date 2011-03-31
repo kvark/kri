@@ -2,17 +2,19 @@
 
 
 public class Basic( kri.rend.Basic ):
-	public	final tid	as int		# technique ID
-	protected def constructor(name as string):
-		tid = kri.Ant.Inst.techniques.create(name)
+	public	final name	as string		# technique name
+	protected def constructor(str as string):
+		name = str
+		kri.Ant.Inst.techniques.Add(name,self)
 	def destructor():
 		core = kri.Ant.Inst
-		core.techniques.delete(tid)	if core
+		if core:
+			core.techniques.Remove(name)
 	protected def attribs(local as bool, e as kri.Entity, *ats as (int)) as bool:
-		if e.va[tid] == kri.vb.Array.Default:
+		if e.va[name] == kri.vb.Array.Default:
 			return false
 		assert not 'supported'
-		if e.va[tid]:	e.va[tid].bind()
+		if e.va[name]:	e.va[name].bind()
 		#elif not e.enable(local,tid,ats):
 		#	e.va[tid] = kri.vb.Array.Default
 		#	return false

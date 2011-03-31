@@ -54,19 +54,20 @@ public class General( Basic ):
 		#alist as List[of int] = null
 		tempList = List[of Batch]()
 		atar	as (kri.shade.Attrib)	= null
-		if e.va[tid] == kri.vb.Array.Default:
-			return
-		elif not e.va[tid]:
-			e.va[tid] = kri.vb.Array()
+		vao as kri.vb.Array = null
+		if not e.va.TryGetValue(name,vao):
+			e.va[name] = vao = kri.vb.Array()
 			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
-		b = Batch(e:e, va:e.va[tid], off:0)
+		if vao == kri.vb.Array.Default:
+			return
+		b = Batch(e:e, va:vao, off:0)
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
 			b.num = tag.num
 			b.off = tag.off
-			prog = m.tech[tid]
-			if not prog:
-				m.tech[tid] = prog = construct(m)
+			prog as kri.shade.Bundle = null
+			if not m.tech.TryGetValue(name,prog):
+				m.tech[name] = prog = construct(m)
 				if prog.shader and not prog.shader.Ready:
 					# force attribute order
 					prog.shader.attribAll( e.mesh.gatherAttribs() )
@@ -85,7 +86,7 @@ public class General( Basic ):
 			tempList.Add(b)
 		if atar:
 			if not b.va.pushAll( e.mesh.ind, atar, e.CombinedAttribs ):
-				e.va[tid] = kri.vb.Array.Default
+				e.va[name] = kri.vb.Array.Default
 				return
 		butch.AddRange(tempList)
 

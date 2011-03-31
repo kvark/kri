@@ -57,10 +57,6 @@ private class Task:
 		public def constructor(n as int):
 			id = n
 	
-	private Grid[x as byte, y as byte] as kri.Entity:
-		get: return grid[x+y*size]
-		set: grid[x+y*size] = value
-	
 	private def checkGrid() as bool:
 		for i in range(grid.Length):
 			tag = grid[i].seTag[of TagId]()

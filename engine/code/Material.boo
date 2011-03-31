@@ -7,7 +7,7 @@ public class Material( ani.data.Player ):
 	public final name	as string
 	public final dict	= shade.par.Dict()
 	public final unit	= List[of meta.AdUnit]()
-	public final tech	= array[of shade.Bundle]( kri.Ant.Inst.techniques.Size )
+	public final tech	= Dictionary[of string,shade.Bundle]()
 	public final metaList = List[of meta.Advanced]()
 	public Meta[str as string] as meta.Advanced:
 		get: return metaList.Find({m| return m.Name == str})

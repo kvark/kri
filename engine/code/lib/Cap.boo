@@ -22,7 +22,7 @@ public final class Capabilities:
 	public final elemVertices	as uint
 	public final contextVersion	as string
 	public final shadingVersion	as string
-	public final bones			= 80
+	public final bones			as byte
 	
 	public static def Var(pn as GetPName) as int:
 		val as int = -1
@@ -45,3 +45,5 @@ public final class Capabilities:
 		samplesDepth	= Var( GetPName.MaxDepthTextureSamples )
 		elemIndices		= Var( GetPName.MaxElementsIndices )
 		elemVertices	= Var( GetPName.MaxElementsVertices )
+		vertComponents	= Var( GetPName.MaxVertexUniformComponents )
+		bones = System.Math.Min( vertComponents>>3, 128 )

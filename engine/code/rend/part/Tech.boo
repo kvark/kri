@@ -7,12 +7,16 @@ import kri.shade
 #---------	RENDER PARTICLES: TECHNIQUE	--------#
 
 public class Tech( Basic ):
-	public final tid	as int
+	public final name	as	string
 	public static final	Invalid	= (of int:,)
 	
-	protected def constructor(name as string):
-		super()
-		tid = kri.Ant.Inst.techniques.getForced(name)
+	protected def constructor(str as string):
+		name = str
+		kri.Ant.Inst.techniques.Add(name,self)
+	def destructor():
+		core = kri.Ant.Inst
+		if core:
+			core.techniques.Remove(name)
 	
 	public abstract def construct(pe as kri.part.Emitter) as Bundle:
 		pass
@@ -23,15 +27,15 @@ public class Tech( Basic ):
 		m = pe.mat
 		if not m:
 			return null
-		bu = m.tech[tid]
-		if not bu:
-			m.tech[tid] = bu = construct(pe)
+		bu as kri.shade.Bundle = null
+		if not m.tech.TryGetValue(name,bu):
+			m.tech[name] = bu = construct(pe)
 		if bu == Bundle.Empty:
 			return null
-		if	pe.techReady[tid] == kri.part.TechState.Unknown:
-			ok = pe.draw(bu,0)
-			pe.techReady[tid] = (kri.part.TechState.Invalid, kri.part.TechState.Ready)[ok]
-		if	pe.techReady[tid] == kri.part.TechState.Invalid:
+		ready as bool
+		if not pe.techReady.TryGetValue(name,ready):
+			pe.techReady[name] = ready = pe.draw(bu,0)
+		if not ready:
 			return null
 		nin = update(pe)
 		return bu

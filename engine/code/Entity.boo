@@ -110,7 +110,7 @@ public class Entity( kri.ani.data.Player ):
 	public mesh		as Mesh	= null
 	public visible	as bool	= true
 	public final store	= vb.Storage()
-	public final va		= array[of vb.Array]	( kri.Ant.Inst.techniques.Size )
+	public final va		= Dictionary[of string,vb.Array]()
 	public final tags	= List[of ITag]()
 	
 	public CombinedAttribs as vb.Dict:
@@ -146,15 +146,16 @@ public class Entity( kri.ani.data.Player ):
 	
 	# returns null if entity does't have all attributes requested
 	# otherwise - a list of rejected materials
-	public def check(tid as int) as kri.Material*:
-		return null	if va[tid] == vb.Array.Default
+	public def check(name as string) as kri.Material*:
+		if va[name] == vb.Array.Default:
+			return null
 		ml = List[of kri.Material]()
 		for t in tags:
 			tm = t as TagMat
 			if not tm:
 				continue	
 			m = tm.mat
-			if m.tech[tid] == shade.Bundle.Empty:
+			if m.tech[name] == shade.Bundle.Empty:
 				ml.Add(m)
 		return ml
 	
