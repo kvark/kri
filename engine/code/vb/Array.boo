@@ -6,6 +6,7 @@ import OpenTK.Graphics.OpenGL
 
 public struct Entry:
 	public	final	buffer	as IBuffed
+	public	divisor			as uint
 	public	final	info	as Info
 	public	final	offset	as uint
 	public	final	stride	as uint
@@ -14,7 +15,7 @@ public struct Entry:
 
 	public	def constructor(vat as IProvider, name as string):
 		buffer = null
-		stride = offset = 0
+		divisor = stride = offset = 0
 		for ai in vat.Semant:
 			if ai.name == name:
 				buffer = vat
@@ -24,6 +25,7 @@ public struct Entry:
 	
 	public	def constructor(vat as IBuffed, ai as Info, off as uint, size as uint):
 		buffer = vat
+		divisor = 0
 		info = ai
 		offset,stride = off,size
 
@@ -75,6 +77,7 @@ public class Array:
 		slots[slot] = e
 		e.buffer.Data.bind()
 		GL.EnableVertexAttribArray( slot )
+		GL.VertexAttribDivisor( slot, e.divisor )
 		if e.info.integer: #TODO: use proper enum
 			GL.VertexAttribIPointer( slot, e.info.size,
 				cast(VertexAttribIPointerType,cast(int,e.info.type)),
