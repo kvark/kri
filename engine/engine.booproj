@@ -72,7 +72,6 @@
     <Compile Include="code\lib\par\Main.boo" />
     <Compile Include="code\lib\par\Project.boo" />
     <Compile Include="code\lib\par\Spatial.boo" />
-    <Compile Include="code\lib\Slot.boo" />
     <Compile Include="code\load\Anim.boo" />
     <Compile Include="code\load\image\Main.boo" />
     <Compile Include="code\load\image\Targa.boo" />
