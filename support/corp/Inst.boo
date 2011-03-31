@@ -29,14 +29,15 @@ public class Rend( kri.rend.tech.Meta ):
 			if not inst:	continue	
 			ent = inst.ent
 			if not ent:		continue
-			assert not 'supported'
-			#pats = List[of string](sem.name	for sem in pe.data.Semant)
-			#continue	if not List[of string](trans.Keys).TrueForAll({at| return at in pats })
-			cur = pe
-			addObject(ent)
-		for b in butch:
 			for s in ('pos','rot','sys','sub'):
-				en = kri.vb.Entry(null,s)
+				en = kri.vb.Entry( pe.mesh, s )
+				if not en.buffer:
+					ent = null
+					break
 				en.divisor = 1
-				b.dict['ghost_'+s] = en
+				extraDict['ghost_'+s] = en
+			if ent:
+				cur = pe
+				addObject(ent)
+		for b in butch:
 			b.draw()

@@ -41,7 +41,8 @@ public struct Batch:	# why struct?
 
 public class General( Basic ):
 	public static comparer	as IComparer[of Batch]	= null
-	protected	final butch	= List[of Batch]()
+	protected	final	extraDict	= kri.vb.Dict()
+	protected	final	butch		= List[of Batch]()
 	
 	public struct Updater:
 		public final fun	as callable() as int
@@ -59,7 +60,6 @@ public class General( Basic ):
 	protected def addObject(e as kri.Entity) as void:
 		if not e.visible:
 			return
-		#alist as List[of int] = null
 		tempList = List[of Batch]()
 		atar	as (kri.shade.Attrib)	= null
 		vao as kri.vb.Array = null
@@ -69,6 +69,8 @@ public class General( Basic ):
 		if vao == kri.vb.Array.Default:
 			return
 		b = Batch(e,vao)
+		for de in extraDict:
+			b.dict.Add( de.Key, de.Value )
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
 			b.num = tag.num
