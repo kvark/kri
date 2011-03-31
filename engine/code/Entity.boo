@@ -159,10 +159,6 @@ public class Entity( kri.ani.data.Player ):
 				ml.Add(m)
 		return ml
 	
-	public def render(vao as vb.Array, bu as shade.Bundle, off as uint, num as uint, nob as uint) as bool:
-		assert mesh and store
-		return mesh.render( vao,bu, CombinedAttribs, off,num,nob,null )
-	
 	public def render(vao as vb.Array, bu as shade.Bundle) as bool:
 		assert mesh and store
 		return mesh.render( vao,bu, CombinedAttribs, 1,null )

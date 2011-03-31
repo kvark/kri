@@ -10,20 +10,6 @@ public class Basic( kri.rend.Basic ):
 		core = kri.Ant.Inst
 		if core:
 			core.techniques.Remove(name)
-	protected def attribs(local as bool, e as kri.Entity, *ats as (int)) as bool:
-		if e.va[name] == kri.vb.Array.Default:
-			return false
-		assert not 'supported'
-		if e.va[name]:	e.va[name].bind()
-		#elif not e.enable(local,tid,ats):
-		#	e.va[tid] = kri.vb.Array.Default
-		#	return false
-		return true
-
-
-#public class Object(Basic):
-#	protected final sa	= kri.shade.Smart()
-#	protected final va	= kri.vb.Array()
 
 
 #---------	META TECHNIQUE	--------#

@@ -6,17 +6,25 @@ import System.Collections.Generic
 #--------- Batch ---------#
 
 public struct Batch:	# why struct?
-	public e	as kri.Entity
-	public va	as kri.vb.Array
+	public final	e		as kri.Entity
+	public final	va		as kri.vb.Array
+	public final	dict	as kri.vb.Dict
 	public bu	as kri.shade.Bundle
 	public up	as callable() as int
 	public off	as int
 	public num	as int
+	
+	public def constructor(ent as kri.Entity, vao as kri.vb.Array):
+		e = ent
+		va = vao
+		dict = e.CombinedAttribs
+		off = num = 0
 
 	public def draw() as void:
 		nob = up()
 		kri.Ant.Inst.params.modelView.activate( e.node )
-		e.render(va,bu,off,num,nob)
+		#e.render(va,bu,off,num,nob)
+		e.mesh.render(va,bu,dict,off,num,nob,null)
 		
 	#public static cMat	= CompMat()
 	public class CompMat( IComparer[of Batch] ):
@@ -33,7 +41,7 @@ public struct Batch:	# why struct?
 
 public class General( Basic ):
 	public static comparer	as IComparer[of Batch]	= null
-	protected final butch	= List[of Batch]()
+	protected	final butch	= List[of Batch]()
 	
 	public struct Updater:
 		public final fun	as callable() as int
@@ -60,7 +68,7 @@ public class General( Basic ):
 			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
 		if vao == kri.vb.Array.Default:
 			return
-		b = Batch(e:e, va:vao, off:0)
+		b = Batch(e,vao)
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
 			b.num = tag.num
