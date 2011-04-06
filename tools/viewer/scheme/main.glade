@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<glade-interface>
+  <!-- interface-requires gtk+ 2.16 -->
+  <!-- interface-naming-policy project-wide -->
+  <widget class="GtkWindow" id="KriViewer">
+    <property name="visible">True</property>
+    <property name="double_buffered">False</property>
+    <property name="title" translatable="yes">KriViewer</property>
+    <property name="window_position">center</property>
+    <property name="default_width">440</property>
+    <property name="default_height">250</property>
+    <child>
+      <placeholder/>
+    </child>
+  </widget>
+</glade-interface>
