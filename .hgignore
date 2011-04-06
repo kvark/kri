@@ -10,7 +10,6 @@ demo/test
 demo/dude
 demo/vanburen
 demo/particle/res
-tools/viewer
 game_*
 sol
 

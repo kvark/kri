@@ -99,7 +99,6 @@ private class Feedback( kri.rend.Basic ):
 	private final	tf	= kri.TransFeedback(1)
 	private final	bu	= kri.shade.Bundle()
 	private final	vin	= kri.vb.Attrib()
-	private final	sl	as kri.lib.Slot
 	
 	public def constructor():
 		ai = kri.vb.Info( name:'pos', size:4,
