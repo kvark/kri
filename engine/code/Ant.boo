@@ -10,6 +10,8 @@ public class Config:
 	private final dict	= Collections.Generic.Dictionary[of string,string]()
 	public def constructor():
 		pass
+	public def constructor(path as string):
+		read(path)
 	public def read(path as string) as void:
 		for line in IO.File.ReadAllLines(path):
 			continue	if line =~ /^\s*#/
@@ -43,8 +45,7 @@ public class Window( GameWindow ):
 
 	public def constructor(cPath as string, depth as int):
 		# read config
-		conf = Config()
-		conf.read(cPath)
+		conf = Config(cPath)
 		title	= conf.ask('Title','kri')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
 		context	= conf.ask('Context','0')

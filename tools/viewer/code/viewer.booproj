@@ -42,6 +42,10 @@
     <Compile Include="Window.boo" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\GLWidget\GLWidget\GLWidget.csproj">
+      <Project>{34627299-AB51-4C99-B5DA-C03EB751B387}</Project>
+      <Name>GLWidget</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\opentk\Source\OpenTK\OpenTK.csproj">
       <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>

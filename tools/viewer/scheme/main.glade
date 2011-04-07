@@ -2,7 +2,7 @@
 <glade-interface>
   <!-- interface-requires gtk+ 2.16 -->
   <!-- interface-naming-policy project-wide -->
-  <widget class="GtkWindow" id="KriViewer">
+  <widget class="GtkWindow" id="window">
     <property name="visible">True</property>
     <property name="double_buffered">False</property>
     <property name="title" translatable="yes">KriViewer</property>
@@ -10,7 +10,15 @@
     <property name="default_width">440</property>
     <property name="default_height">250</property>
     <child>
-      <placeholder/>
+      <widget class="GtkViewport" id="viewport">
+        <property name="visible">True</property>
+        <property name="extension_events">cursor</property>
+        <property name="double_buffered">False</property>
+        <property name="resize_mode">queue</property>
+        <child>
+          <placeholder/>
+        </child>
+      </widget>
     </child>
   </widget>
 </glade-interface>
