@@ -18,7 +18,7 @@ public class Targa( ILoaderGen[of IGenerator[of kri.buf.Texture]] ):
 		public bits		as byte
 		public descr	as byte
 		public def check() as bool:
-			return false	if cmType!=0 or imType!=2
+			return false	if cmType!=0 or imType != 10
 			return false	if xrig + yrig
 			return false	if descr<bits and bits != 24+descr
 			return true
@@ -38,7 +38,8 @@ public class Targa( ILoaderGen[of IGenerator[of kri.buf.Texture]] ):
 			het		: br.ReadUInt16(),
 			bits	: br.ReadByte(),
 			descr	: br.ReadByte() )
-		assert hd.check()
+		if not hd.check():
+			return null
 		br.ReadBytes( hd.idSize )	# skip ID
 		d = hd.bits>>3
 		data = br.ReadBytes( hd.wid * hd.het * d )

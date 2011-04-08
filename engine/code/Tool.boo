@@ -7,8 +7,50 @@ import OpenTK.Graphics.OpenGL
 # Generic structures size calculator
 
 public static class Sizer[of T(struct)]:
-	public final Value = Runtime.InteropServices.Marshal.SizeOf(T)
+	public final Value = System.Runtime.InteropServices.Marshal.SizeOf(T)
 
+
+public class MessageJournal:
+	private final messages	= List[of string]()
+	public def add(str as string) as int:
+		messages.Add(str)
+		return messages.Count
+
+
+# Window FPS counter
+public class FpsCounter:
+	public final kPeriod	as double
+	public final title		as string
+	private kNext 	= 0.0
+	private kPrev	= 0.0
+	private fSum	= 0.0
+	private fMax	= 0.0
+	private nFrames	= 0.0
+	# interface
+	public def constructor(per as double, name as string):
+		kPeriod = kNext = per
+		title = name
+	public def update(moment as Double) as bool:
+		return false	if kPeriod<=0.0
+		t = moment - kPrev
+		kPrev += t
+		fSum += t
+		fMax = Math.Max(fMax,t)
+		nFrames += 1.0
+		return moment > kNext
+	public def gen() as string:
+		avg = fSum / nFrames
+		fps = nFrames / kPeriod
+		stats = '{0,4} fps, {1,6:f4} avg, {2,6:f4} max'
+		rez = "${title}: ${stats}" % (fps,avg,fMax)
+		fSum = fMax = nFrames = 0.0
+		kNext += kPeriod
+		return rez
+
+
+#-----------#
+#	HELP	#
+#-----------#
 
 public static class Help:
 	# swap two abstract elements
@@ -93,38 +135,6 @@ public class Discarder(Section):
 		if safe:
 			GL.ColorMask(true,true,true,true)
 		super()
-
-
-# Window FPS counter
-public class FpsCounter:
-	public final kPeriod	as double
-	public final title		as string
-	private kNext 	= 0.0
-	private kPrev	= 0.0
-	private fSum	= 0.0
-	private fMax	= 0.0
-	private nFrames	= 0.0
-	# interface
-	public def constructor(per as double, name as string):
-		kPeriod = kNext = per
-		title = name
-	public def update(moment as Double) as bool:
-		return false	if kPeriod<=0.0
-		t = moment - kPrev
-		kPrev += t
-		fSum += t
-		fMax = Math.Max(fMax,t)
-		nFrames += 1.0
-		return moment > kNext
-	public def gen() as string:
-		avg = fSum / nFrames
-		fps = nFrames / kPeriod
-		stats = '{0,4} fps, {1,6:f4} avg, {2,6:f4} max'
-		rez = "${title}: ${stats}" % (fps,avg,fMax)
-		fSum = fMax = nFrames = 0.0
-		kNext += kPeriod
-		return rez
-
 
 #-----------#
 #	QUERY	#

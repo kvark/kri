@@ -9,15 +9,19 @@ public def Main(argv as (string)) as void:
 
 public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
-	[Glade.Widget]	hbox1			as Gtk.HBox
-	[Glade.Widget]	menuFileOpen	as Gtk.ImageMenuItem
+	[Glade.Widget]	hBox			as Gtk.HBox
 	[Glade.Widget]	statusBar		as Gtk.Statusbar
+	[Glade.Widget]	toolBar			as Gtk.Toolbar
+	[Glade.Widget]	butClear		as Gtk.ToolButton
+	[Glade.Widget]	butOpen			as Gtk.ToolButton
 	
 	private	final	config	= kri.Config('kri.conf')
 	private	final	view	= kri.ViewScreen()
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private rset	as RenderSet	= null
 	private final	gw		as Gtk.GLWidget
+	
+	# signals
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		kri.Ant(config,true)
@@ -37,23 +41,42 @@ public class GladeApp:
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
 		if not view.ren:
 			return
-		view.resize( args.Allocation.Width, args.Allocation.Height )
-		statusBar.Push(0, 'Resized into ' + args.Allocation.Width + 'x' + args.Allocation.Height )
+		w = args.Allocation.Width
+		h = args.Allocation.Height
+		view.resize(w,h)
+		statusBar.Push(0, 'Resized into '+w+'x'+h )
 	
-	public def onMenuOpen(o as object, args as System.EventArgs) as void:
-		if dOpen.Run() != 0:
-			return
+	public def onButClear(o as object, args as System.EventArgs) as void:
+		view.scene = null
+		view.cam = null
+		gw.QueueDraw()
+		statusBar.Push(0, 'Cleared')
+	
+	public def onButOpen(o as object, args as System.EventArgs) as void:
+		rez = dOpen.Run()
 		dOpen.Hide()
+		if rez != 0:
+			statusBar.Push(0, 'Load cancelled')
+			return
 		path = dOpen.Filename
 		pos = path.LastIndexOfAny((char('/'),char('\\')))
 		fdir = path.Substring(0,pos)
+		# load scene
 		kri.Ant.Inst.loaders.materials.prefix = fdir
 		loader = kri.load.Native()
-		at = loader.read(path)
+		try:
+			at = loader.read(path)
+		except e as System.Exception:
+			Gtk.MessageDialog( window, Gtk.DialogFlags.Modal, Gtk.MessageType.Error,
+				Gtk.ButtonsType.Ok, e.StackTrace ).Run()
 		view.scene = at.scene
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]
+		# notify
+		gw.QueueDraw()
 		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
+	
+	# construction
 			
 	private def makeWidget() as Gtk.GLWidget:
 		context	= config.ask('Context','0')
@@ -70,19 +93,21 @@ public class GladeApp:
 		# load scheme
 		scheme = Glade.XML('scheme/main.glade', 'window', null)
 		scheme.Autoconnect(self)
-		window.DeleteEvent += onDelete
-		menuFileOpen.Activated += onMenuOpen
-		dOpen = Gtk.FileChooserDialog('Select KRI scene to load',
-			window, Gtk.FileChooserAction.Open, Gtk.ButtonsType.OkCancel )
-		dOpen.AddButton('Open',0)
-		filter = Gtk.FileFilter()
+		window.DeleteEvent	+= onDelete
+		# make toolbar
+		butClear.Clicked	+= onButClear
+		butOpen.Clicked 	+= onButOpen
+		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
+			window, Gtk.FileChooserAction.Open )
+		dOpen.AddButton('Load',0)
+		filter = Gtk.FileFilter( Name:'kri scenes' )
 		filter.AddPattern("*.scene")
 		dOpen.AddFilter(filter)
 		# add gl widget
 		gw = makeWidget()
-		gw.RenderFrame += onFrame
-		gw.SizeAllocated += onSize
-		hbox1.PackStart(gw)
+		gw.RenderFrame		+= onFrame
+		gw.SizeAllocated	+= onSize
+		hBox.PackStart(gw)
 		gw.Visible = true
 		# run
 		statusBar.Push(0, 'Started')
