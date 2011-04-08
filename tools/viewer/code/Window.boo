@@ -11,6 +11,7 @@ public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
 	[Glade.Widget]	hbox1			as Gtk.HBox
 	[Glade.Widget]	menuFileOpen	as Gtk.ImageMenuItem
+	[Glade.Widget]	statusBar		as Gtk.Statusbar
 	
 	private	final	config	= kri.Config('kri.conf')
 	private	final	view	= kri.ViewScreen()
@@ -34,21 +35,25 @@ public class GladeApp:
 		view.update()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
-		if view.ren:
-			view.resize( args.Allocation.Width, args.Allocation.Height )
+		if not view.ren:
+			return
+		view.resize( args.Allocation.Width, args.Allocation.Height )
+		statusBar.Push(0, 'Resized into ' + args.Allocation.Width + 'x' + args.Allocation.Height )
 	
 	public def onMenuOpen(o as object, args as System.EventArgs) as void:
 		if dOpen.Run() != 0:
 			return
 		dOpen.Hide()
 		path = dOpen.Filename
-		fdir = path.Substring( 0, path.LastIndexOfAny((char('/'),char('\\'))) )
+		pos = path.LastIndexOfAny((char('/'),char('\\')))
+		fdir = path.Substring(0,pos)
 		kri.Ant.Inst.loaders.materials.prefix = fdir
 		loader = kri.load.Native()
 		at = loader.read(path)
 		view.scene = at.scene
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]
+		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
 			
 	private def makeWidget() as Gtk.GLWidget:
 		context	= config.ask('Context','0')
@@ -80,4 +85,5 @@ public class GladeApp:
 		hbox1.PackStart(gw)
 		gw.Visible = true
 		# run
+		statusBar.Push(0, 'Started')
 		Gtk.Application.Run()
