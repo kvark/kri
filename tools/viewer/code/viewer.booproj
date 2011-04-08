@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="Render.boo" />
     <Compile Include="Window.boo" />
   </ItemGroup>
   <ItemGroup>

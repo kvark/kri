@@ -103,8 +103,11 @@ public class General( Basic ):
 
 	# shouldn't be used as some objects have to be excluded
 	protected def drawScene() as void:
+		scene = kri.Scene.Current
+		if not scene:
+			return
 		butch.Clear()
-		for e in kri.Scene.Current.entities:
+		for e in scene.entities:
 			addObject(e)
 		if comparer:
 			butch.Sort(comparer)

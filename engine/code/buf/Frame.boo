@@ -6,7 +6,7 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Frame:
-	private final	hardId	as uint
+	private final	handle	as uint
 	
 	public static def CheckStatus() as void:
 		status = GL.CheckFramebufferStatus( FramebufferTarget.Framebuffer )
@@ -15,35 +15,36 @@ public class Frame:
 	public def constructor():
 		id = -1
 		GL.GenFramebuffers(1,id)
-		hardId = id
+		handle = id
 	
 	protected def constructor(manId as uint):
-		hardId = manId
+		handle = manId
 
 	def destructor():
-		if not hardId:
+		if not handle:
 			return
 		kri.Help.safeKill() do:
-			tmp as int = hardId
+			tmp as int = handle
 			GL.DeleteFramebuffers(1,tmp)
 	
 	public abstract def getInfo() as Plane:
 		pass
 	public def getDimensions() as Drawing.Size:
 		pl = getInfo()
+		assert pl
 		return Drawing.Size( pl.wid, pl.het )
 	public virtual def getOffsets() as Drawing.Point:
 		return Drawing.Point(0,0)
 
 	public virtual def bind() as void:
-		GL.BindFramebuffer( FramebufferTarget.Framebuffer, hardId )
+		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
 		GL.Viewport( getOffsets(), getDimensions() )
 	
 	private abstract def getReadMode() as ReadBufferMode:
 		pass
 	
 	public def bindRead(color as bool) as void:
-		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, hardId )
+		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
 		rm = cast(ReadBufferMode,0)
 		if color:
 			rm = getReadMode()
@@ -53,7 +54,7 @@ public class Frame:
 		assert self != fr
 		bind()	# update attachments
 		fr.bind()
-		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, hardId )
+		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
 		bindRead( what & ClearBufferMask.ColorBufferBit != 0 )
 		i0 = getInfo()
 		p0 = getOffsets()

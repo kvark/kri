@@ -25,10 +25,13 @@ public class Basic(Help):
 	public def activate(toNew as bool) as void:
 		ct = (Target.Same,Target.New)[toNew]
 		activate( ct, System.Single.NaN, true )
-	public def blitTo(dest as kri.buf.Frame, what as ClearBufferMask) as void:
-		Frame.copyTo(dest,what)
-	public def blitTo(bas as Basic) as void:
-		blitTo( bas.Frame, ClearBufferMask.ColorBufferBit )
+	public def blitTo(dest as kri.buf.Frame, what as ClearBufferMask) as bool:
+		if Frame.getInfo():
+			Frame.copyTo(dest,what)
+			return true
+		return false
+	public def blitTo(bas as Basic) as bool:
+		return blitTo( bas.Frame, ClearBufferMask.ColorBufferBit )
 
 
 public class Screen(Basic):
