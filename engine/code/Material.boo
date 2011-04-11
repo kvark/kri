@@ -34,13 +34,14 @@ public class Material( ani.data.Player ):
 		dict.Clear()
 		lis = List[of meta.IBase]()
 		def push(h as meta.IBase):
-			return if h in lis
+			if h in lis:	return
 			h.link(dict)
 			lis.Add(h)
 		for m in metaList:
 			push(m)
-			continue	if m.Unit<0
+			if m.Unit<0:	continue
 			u = unit[m.Unit]
+			if not u.Value:	continue
 			(u as meta.ISlave).link( m.Name, dict )
 		for u in unit:
 			push( u.input )

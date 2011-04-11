@@ -10,13 +10,6 @@ public static class Sizer[of T(struct)]:
 	public final Value = System.Runtime.InteropServices.Marshal.SizeOf(T)
 
 
-public class MessageJournal:
-	private final messages	= List[of string]()
-	public def add(str as string) as int:
-		messages.Add(str)
-		return messages.Count
-
-
 # Window FPS counter
 public class FpsCounter:
 	public final kPeriod	as double

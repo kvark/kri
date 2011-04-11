@@ -11,11 +11,12 @@ public struct Uniform:
 	public type	as ActiveUniformType
 
 	public def genParam(loc as int, iv as par.IBaseRoot, ref tun as int) as Parameter:
-		return null	if not iv
-		assert size == 1
+		if size!=1 or not iv:
+			return null
 		it = iv.GetType().GetInterface('IBase`1')
-		assert it
-		T = it.GetGenericArguments()[0]
+		T = object
+		if it:
+			T = it.GetGenericArguments()[0]
 		if T == int:
 			assert type in (ActiveUniformType.Int,ActiveUniformType.UnsignedInt)
 			return ParUni_int(loc,iv)
@@ -35,6 +36,7 @@ public struct Uniform:
 			assert name.StartsWith( Mega.PrefixUnit )
 			tn = tun++
 			return ParTexture(loc,iv,tn)
+		kri.lib.Journal.Log("Alien uniform type (${iv.GetType()})")
 		return null
 
 
@@ -73,8 +75,6 @@ public class Mega(Program):
 	public	final attribs	= array[of Attrib]( kri.Ant.Inst.caps.vertexAttribs )
 	public	final uniforms	= List[of Uniform]()
 	public	final static PrefixAttrib	as string	= 'at_'
-	public	final static PrefixGhost	as string	= 'ghost_'
-	public	final static GhostSym		as string	= '@'
 	public	final static PrefixUnit		as string	= 'unit_'
 	
 	public override def link() as void:

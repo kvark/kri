@@ -18,7 +18,7 @@ public class Targa( ILoaderGen[of IGenerator[of kri.buf.Texture]] ):
 		public bits		as byte
 		public descr	as byte
 		public def check() as bool:
-			return false	if cmType!=0 or imType != 10
+			return false	if cmType!=0 or imType != 2
 			return false	if xrig + yrig
 			return false	if descr<bits and bits != 24+descr
 			return true
@@ -39,6 +39,7 @@ public class Targa( ILoaderGen[of IGenerator[of kri.buf.Texture]] ):
 			bits	: br.ReadByte(),
 			descr	: br.ReadByte() )
 		if not hd.check():
+			kri.lib.Journal.Log("Targa: bad format (${path}), image type (${hd.imType})")
 			return null
 		br.ReadBytes( hd.idSize )	# skip ID
 		d = hd.bits>>3

@@ -27,12 +27,13 @@ public class Atom:
 #------		NATIVE LOADER		------#
 
 public class Native( kri.data.ILoaderGen[of Atom] ):
-	public final readers	= Dictionary[of string,callable(Reader) as bool]()
-	public final skipped	= Dictionary[of string,uint]()
-	public final resMan		= kri.data.Manager()
+	public	final readers	= Dictionary[of string,callable(Reader) as bool]()
+	public	final resMan	= kri.data.Manager()
+	private	final blocks	= Dictionary[of string,string]()
+	private	goodSign		= true
 	
-	public final swImage	= kri.data.Switch[of kri.buf.Texture]()
-	public final swSound	= kri.data.Switch[of kri.sound.Buffer]()
+	public	final swImage	= kri.data.Switch[of kri.buf.Texture]()
+	public	final swSound	= kri.data.Switch[of kri.sound.Buffer]()
 	
 	public def constructor():
 		swImage.ext['.tga'] = image.Targa()
@@ -44,28 +45,42 @@ public class Native( kri.data.ILoaderGen[of Atom] ):
 		readers['grav']	= p_grav
 		for ext in kri.Ant.Inst.extensions:
 			ext.attach(self)
-
+	
 	public def read(path as string) as Atom:	#imp: kri.res.ILoaderGen
+		goodSign = false
 		kri.data.Manager.Check(path)
 		rd = Reader(path,resMan)
 		bs = rd.bin.BaseStream
 		while bs.Position != bs.Length:
 			name = rd.getString(8)
 			size = rd.bin.ReadUInt32()
+			if name in blocks:
+				rd.bin.ReadBytes(size)
+				continue
 			size += bs.Position
-			assert size <= bs.Length
+			if size > bs.Length:
+				kri.lib.Journal.Log("Loader: file size exceeded (${path})")
+				break
 			p as callable(Reader) as bool = null
-			if readers.TryGetValue(name,p) and p(rd):
-				assert bs.Position == size
-			else:
-				skipped[name] = size
-				bs.Seek(size, IO.SeekOrigin.Begin)
+			status as string = null
+			if readers.TryGetValue(name,p):
+				if p(rd):	# call reader
+					if bs.Position != size:
+						status = 'incomplete'
+				else:	status = 'screwed'
+			else:		status = 'unknown'
+			if status:
+				kri.lib.Journal.Log("Loader: block '${name}' is ${status}")
+				blocks[name] = status
+				bs.Seek( size, IO.SeekOrigin.Begin )
+			if not goodSign:
+				break
 		return rd.finish()
 	
 	public def p_sign(r as Reader) as bool:
 		ver = r.getByte()
-		assert ver == 3 and r.Clear
-		return true
+		goodSign = (ver == 3)
+		return r.Clear
 	
 	public def p_grav(r as Reader) as bool:
 		r.at.scene.pGravity = pg = kri.shade.par.Value[of Vector4]('gravity')

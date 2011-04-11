@@ -20,6 +20,18 @@ public class GladeApp:
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private rset	as RenderSet	= null
 	private final	gw		as Gtk.GLWidget
+	private	final	log		= kri.lib.Journal()
+	private final	dialog	as Gtk.MessageDialog
+	
+	private def flushJournal() as bool:
+		all = log.flush()
+		if not all: return false
+		gw.Visible = false
+		dialog.Text = all
+		dialog.Run()
+		dialog.Hide()
+		gw.Visible = true
+		return true
 	
 	# signals
 	
@@ -27,7 +39,8 @@ public class GladeApp:
 		kri.Ant(config,true)
 		rset = RenderSet()
 		view.ren = rset.gen( Scheme.Simple )
-		view.resize( gw.Allocation.Width, gw.Allocation.Height )
+		r = gw.Allocation
+		view.resize( r.Width, r.Height )
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		rset = null
@@ -37,14 +50,14 @@ public class GladeApp:
 	public def onFrame(o as object, args as System.EventArgs) as void:
 		kri.Ant.Inst.update(1)
 		view.update()
+		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
 		if not view.ren:
 			return
-		w = args.Allocation.Width
-		h = args.Allocation.Height
-		view.resize(w,h)
-		statusBar.Push(0, 'Resized into '+w+'x'+h )
+		r = args.Allocation
+		view.resize( r.Width, r.Height )
+		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
 		view.scene = null
@@ -64,15 +77,12 @@ public class GladeApp:
 		# load scene
 		kri.Ant.Inst.loaders.materials.prefix = fdir
 		loader = kri.load.Native()
-		try:
-			at = loader.read(path)
-		except e as System.Exception:
-			Gtk.MessageDialog( window, Gtk.DialogFlags.Modal, Gtk.MessageType.Error,
-				Gtk.ButtonsType.Ok, e.StackTrace ).Run()
+		at = loader.read(path)
 		view.scene = at.scene
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]
 		# notify
+		flushJournal()
 		gw.QueueDraw()
 		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
 	
@@ -89,7 +99,9 @@ public class GladeApp:
 	
 	public def constructor():
 		Gtk.Application.Init()
-		Gtk.GLWidget.GraphicsContextInitialized		+= onInit
+		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
+			Gtk.MessageType.Error, Gtk.ButtonsType.Ok, null )
+		kri.lib.Journal.Inst = log
 		# load scheme
 		scheme = Glade.XML('scheme/main.glade', 'window', null)
 		scheme.Autoconnect(self)
@@ -105,6 +117,7 @@ public class GladeApp:
 		dOpen.AddFilter(filter)
 		# add gl widget
 		gw = makeWidget()
+		gw.Initialized		+= onInit
 		gw.RenderFrame		+= onFrame
 		gw.SizeAllocated	+= onSize
 		hBox.PackStart(gw)

@@ -59,16 +59,21 @@ public class Bundle:
 		assert shader.Ready
 		params.Clear()
 		tun = 0
+		badNames = List[of string]()
 		for uni in shader.uniforms:
 			iv	as par.IBaseRoot = null
 			for d in dicts:
 				d.TryGetValue( uni.name, iv )
 				if iv: break
-			assert iv
+			if not iv:
+				badNames.Add(uni.name)
+				continue
 			loc = shader.getLocation( uni.name )
 			p = uni.genParam(loc,iv,tun)
-			assert p
-			params.Add(p)
+			if p: params.Add(p)
+		if badNames.Count:
+			str = string.Join( ',', badNames.ToArray() )
+			kri.lib.Journal.Log('Shader params not bound: '+str)
 
 	public def link() as void:
 		shader.link()

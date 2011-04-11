@@ -3,6 +3,25 @@
 import OpenTK
 import kri.shade
 
+public interface ILogger:
+	def log(str as string) as void
+	
+public class Journal(ILogger):
+	public	static	Inst		as ILogger	= null
+	public	final	messages	= List[of string]()
+	def ILogger.log(str as string) as void:
+		messages.Add(str)
+	public static def Log(str as string) as void:
+		if Inst:
+			Inst.log(str)
+	public def flush() as string:
+		if not messages.Count:
+			return null
+		rez = string.Join("\n",messages.ToArray())
+		messages.Clear()
+		return rez
+	
+
 # Shader Parameter Library
 public final class Param:
 	public final modelView	= par.spa.Shared('s_model')	# object->world

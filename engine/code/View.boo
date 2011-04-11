@@ -113,13 +113,15 @@ public class View:
 	public scene	as Scene	= null
 
 	public virtual def resize(wid as int, het as int) as bool:
+		if not ren:
+			return true
 		return ren.setup( kri.buf.Plane(wid:wid,het:het) )
 	public def update() as void:
 		Scene.current = scene
 		if cam:
 			cam.aspect = Link.Frame.getInfo().Aspect
 			Ant.Inst.params.activate(cam)
-		if ren.active:
+		if ren and ren.active:
 			ren.process(Link)
 		vb.Array.Default.bind()
 		Scene.current = null
@@ -132,10 +134,12 @@ public class ViewScreen(View):
 	public override Link as kri.rend.link.Basic:
 		get: return link
 	public override def resize(wid as int, het as int) as bool:
+		return resize(0,0,wid,het)
+	public def resize(ofx as int, ofy as int, wid as int, het as int) as bool:
 		sc = link.screen
 		pl = sc.plane
-		pl.wid	= cast(int, wid*area.Width)
-		pl.het	= cast(int, het*area.Height)
-		sc.ofx	= cast(int, wid*area.Left)
-		sc.ofy	= cast(int, het*area.Top)
-		return super(wid,het)
+		pl.wid	= cast(int, wid*area.Width	)
+		pl.het	= cast(int, het*area.Height	)
+		sc.ofx	= cast(int, wid*area.Left	) + ofx
+		sc.ofy	= cast(int, het*area.Top	) + ofy
+		return super.resize(wid,het)

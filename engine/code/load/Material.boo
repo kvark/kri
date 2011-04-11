@@ -65,7 +65,7 @@ public class ExMaterial( kri.IExtension ):
 			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
 		limDict['ORCO']		= do(r as Reader):
 			mat = r.geData[of kri.Material]()
-			assert mat
+			if not mat:	return null
 			r.getString()	# mapping type, not supported
 			sh = (orcoVert,orcoHalo)[ mat.Meta['halo'] != null ]
 			return Hermit( Shader:sh, Name:'orco' )
@@ -164,7 +164,9 @@ public class ExMaterial( kri.IExtension ):
 		sh = { '':		con.slib.lambert,
 			'LAMBERT':	con.slib.lambert
 			}[model]
-		assert sh and 'unknown diffuse model!'
+		if not sh:
+			kri.lib.Journal.Log("Unknown diffuse lighting model (${model})")
+			return false
 		m.metaList.Add(Advanced( Name:'comp_diff', Shader:sh ))
 		return true
 
@@ -182,7 +184,9 @@ public class ExMaterial( kri.IExtension ):
 			'PHONG':	con.slib.phong,
 			'BLINN':	con.slib.phong	#fake
 			}[model]
-		assert sh and 'unknown specular model!'
+		if not sh:
+			kri.lib.Journal.Log("Unknown specular lighting model (${model})")
+			return false
 		m.metaList.Add( Advanced( Name:'comp_spec', Shader:sh ))
 		return true
 
@@ -198,12 +202,11 @@ public class ExMaterial( kri.IExtension ):
 	#---	Texture: sampling	---#
 	public def pt_samp(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
-		if not u:	return false
+		if not (u and u.Value):	return false
 		bRepeat	= r.getByte()>0	# extend by repeat
 		bMipMap	= r.getByte()>0	# generate mip-maps
 		bFilter	= r.getByte()>0	# linear filtering
 		# init sampler parameters, todo: use sampler object
-		assert u.Value
 		u.Value.setState( (0,1)[bRepeat], bFilter, bMipMap )
 		return true
 

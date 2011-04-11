@@ -12,14 +12,17 @@
     <child>
       <widget class="GtkVBox" id="vBox">
         <property name="visible">True</property>
+        <property name="double_buffered">False</property>
         <property name="orientation">vertical</property>
         <child>
           <widget class="GtkToolbar" id="toolBar">
             <property name="visible">True</property>
+            <property name="double_buffered">False</property>
             <property name="toolbar_style">both-horiz</property>
             <child>
               <widget class="GtkToolButton" id="butClear">
                 <property name="visible">True</property>
+                <property name="double_buffered">False</property>
                 <property name="is_important">True</property>
                 <property name="label" translatable="yes">Clear</property>
                 <property name="use_underline">True</property>
@@ -33,6 +36,7 @@
             <child>
               <widget class="GtkToolButton" id="butOpen">
                 <property name="visible">True</property>
+                <property name="double_buffered">False</property>
                 <property name="is_important">True</property>
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
@@ -52,6 +56,7 @@
         <child>
           <widget class="GtkHBox" id="hBox">
             <property name="visible">True</property>
+            <property name="double_buffered">False</property>
             <child>
               <placeholder/>
             </child>
@@ -66,6 +71,7 @@
         <child>
           <widget class="GtkStatusbar" id="statusBar">
             <property name="visible">True</property>
+            <property name="double_buffered">False</property>
             <property name="spacing">2</property>
           </widget>
           <packing>

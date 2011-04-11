@@ -15,7 +15,8 @@ public class Switch[of T(class)]( ILoaderGen[of T] ):
 		for dd in ext:
 			if path.EndsWith(dd.Key):
 				raw = dd.Value.read(path)
-				if raw:
-					return raw.generate()
-		assert not 'valid extension'
+				if not raw:
+					return null
+				return raw.generate()
+		kri.lib.Journal.Log("Image extension (${path}) is not recognized")
 		return null
