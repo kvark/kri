@@ -32,9 +32,10 @@ public class Fill( kri.rend.tech.General ):
 		return bu
 
 	public override def process(con as kri.rend.link.Basic) as void:
+		if not kri.Scene.Current:	return
 		con.SetDepth(1f, true)
 		for l in kri.Scene.Current.lights:
-			continue if l.fov == 0f
+			if l.fov == 0f: continue
 			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.type == LiType.VARIANCE]
 			if not l.depth:
@@ -81,6 +82,7 @@ public class Apply( kri.rend.tech.Meta ):
 			return metaFun()
 	# work
 	public override def process(con as kri.rend.link.Basic) as void:
+		if not kri.Scene.Current:	return
 		butch.Clear()
 		for l in kri.Scene.Current.lights:
 			if l.fov == 0f:

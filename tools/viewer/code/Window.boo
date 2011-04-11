@@ -36,9 +36,10 @@ public class GladeApp:
 	# signals
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
-		kri.Ant(config,true)
+		ant = kri.Ant(config,true)
+		ant.extensions.Add( support.skin.Extra() )
 		rset = RenderSet()
-		view.ren = rset.gen( Scheme.Simple )
+		view.ren = rset.gen( Scheme.Forward )
 		r = gw.Allocation
 		view.resize( r.Width, r.Height )
 	
@@ -49,7 +50,10 @@ public class GladeApp:
 	
 	public def onFrame(o as object, args as System.EventArgs) as void:
 		kri.Ant.Inst.update(1)
-		view.update()
+		try:
+			view.update()
+		except e:
+			dialog.Text = e.StackTrace
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
@@ -99,13 +103,13 @@ public class GladeApp:
 	
 	public def constructor():
 		Gtk.Application.Init()
-		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
-			Gtk.MessageType.Error, Gtk.ButtonsType.Ok, null )
 		kri.lib.Journal.Inst = log
 		# load scheme
 		scheme = Glade.XML('scheme/main.glade', 'window', null)
 		scheme.Autoconnect(self)
 		window.DeleteEvent	+= onDelete
+		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
+			Gtk.MessageType.Warning, Gtk.ButtonsType.Ok, null )
 		# make toolbar
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen

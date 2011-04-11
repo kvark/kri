@@ -55,6 +55,10 @@
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\support\support.booproj">
+      <Project>{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}</Project>
+      <Name>support</Name>
+    </ProjectReference>
     <Reference Include="glade-sharp">
       <HintPath>..\..\..\..\..\..\Program Files\Mono-2.10.1\lib\mono\gtk-sharp-2.0\glade-sharp.dll</HintPath>
     </Reference>

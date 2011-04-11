@@ -33,18 +33,19 @@ public class Fill( kri.rend.tech.General ):
 		pDist.Value = Vector4(k, l.rangeIn+l.rangeOut, 0f, 0f)
 
 	public override def process(con as kri.rend.link.Basic) as void:
+		if not kri.Scene.Current:	return
 		con.SetDepth(1f, true)	# offset for HW filtering
 		for l in kri.Scene.Current.lights:
-			continue	if l.fov != 0f
+			if l.fov != 0f:	continue
 			setLight(l)
 			if not l.depth:
 				l.depth = t = kri.buf.Texture.Depth(0)
 				t.target = TextureTarget.TextureCubeMap
 				t.wid = t.het = context.size
+				t.initCube()
 			fbo.at.depth = l.depth
 			fbo.bind()
-			GL.ClearDepth( 1f )
-			GL.Clear( ClearBufferMask.DepthBufferBit )
+			con.ClearDepth(1.0)
 			drawScene()
 
 
@@ -64,11 +65,12 @@ public class Apply( kri.rend.tech.Meta ):
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	public override def process(con as kri.rend.link.Basic) as void:
+		if not kri.Scene.Current:	return
 		con.activate( con.Target.Same, 0f, false )
 		butch.Clear()
 		#Texture.Slot(8)
 		for l in kri.Scene.Current.lights:
-			continue	if l.fov != 0f
+			if l.fov != 0f:	continue
 			lit = l
 			#if l.depth:
 			#	l.depth.bind()
