@@ -31,27 +31,36 @@ public class Update( kri.rend.tech.Basic ):
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		using kri.Discarder(true):
-			for e in kri.Scene.Current.entities:
-				kri.Ant.Inst.params.modelView.activate( e.node )
-				tag = e.seTag[of Tag]()
-				if not e.visible or not tag or tag.Sync:
-					continue
-				vos = System.Array.ConvertAll(at_mod) do(a as string):
-					return e.store.find(a)
-				if null in vos:
-					continue
-				tf.Bind( *vos )
-				# run the transform
-				spa as kri.Spatial
-				for i in range( tag.skel.bones.Length ):
-					b = tag.skel.bones[i]	# model->pose
-					b.genTransPose( e.node.local, spa )
-					s0 = s1 = b.World
-					s0.combine(spa,s1)	# ->world
-					s1 = e.node.World
-					s1.inverse()
-					spa.combine(s0,s1)	# ->model
-					par[i+1].activate(spa)
+		if not kri.Scene.Current:	return
+		for e in kri.Scene.Current.entities:
+			kri.Ant.Inst.params.modelView.activate( e.node )
+			tag = e.seTag[of Tag]()
+			if not e.visible or not tag or tag.Sync:
+				continue
+			# collect or create destination buffers
+			vos = array[of kri.vb.Attrib]( at_mod.Length )
+			for i in range( vos.Length ):
+				vos[i] = e.store.find(at_mod[i])
+				if vos[i]:	continue
+				orig = e.mesh.find(at_mod[i])
+				assert orig
+				ai = orig.Semant[0]
+				vos[i] = v = kri.vb.Attrib()
+				v.Semant.Add(ai)
+				v.init( e.mesh.nVert * ai.fullSize() )
+				e.store.vbo.Add(v)
+			tf.Bind( *vos )
+			# run the transform
+			spa as kri.Spatial
+			for i in range( tag.skel.bones.Length ):
+				b = tag.skel.bones[i]	# model->pose
+				b.genTransPose( e.node.local, spa )
+				s0 = s1 = b.World
+				s0.combine(spa,s1)	# ->world
+				s1 = e.node.World
+				s1.inverse()
+				spa.combine(s0,s1)	# ->model
+				par[i+1].activate(spa)
+			using kri.Discarder(true):
 				e.mesh.render(va,bu,tf)
-				tag.Sync = true
+			tag.Sync = true

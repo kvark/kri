@@ -29,26 +29,10 @@ public class Extra( kri.IExtension ):
 			type:VertexAttribPointerType.UnsignedShort,
 			integer:true )
 		rez = kri.load.ExMesh.LoadArray[of ushort]( r,4,ai, {return r.bin.ReadUInt16()})
-		return false	if not rez
+		if not rez:	return false
 		# link to the Armature
-		prepare(
-			r.geData[of kri.Entity](),
-			r.geData[of kri.Skeleton]() )
-		return true
-
-	public def prepare(e as kri.Entity, s as kri.Skeleton) as bool:
-		cond = e and s and not e.seTag[of Tag]() and e.mesh.find('skin')
-		return false	if not cond
-		for str in ('vertex','quat'):
-			if e.store.find(str):
-				continue	
-			v = e.mesh.find(str)
-			if not v:
-				return false	
-			ai = v.Semant[0]
-			v2 = kri.vb.Attrib()
-			v2.Semant.Add(ai)
-			v2.init( e.mesh.nVert * ai.fullSize() )
-			e.store.vbo.Add(v2)
+		e = r.geData[of kri.Entity]()
+		s = r.geData[of kri.Skeleton]()
+		if not (e and s): return false
 		e.tags.Add( Tag(skel:s) )
 		return true

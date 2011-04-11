@@ -47,7 +47,7 @@ public class Mesh( vb.Storage ):
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, off as uint, num as uint, nob as uint, tf as TransFeedback) as bool:
 		if not bu.pushAttribs(ind,vao,dict):
-			assert not 'good'
+			kri.lib.Journal.Log("Failed to render mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
 			return false
 		bu.activate()
 		if tf:

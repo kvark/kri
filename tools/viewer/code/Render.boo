@@ -11,6 +11,7 @@ public class RenderSet:
 	public	final	rClear	= kri.rend.Clear()
 	public	final	rZcull	= kri.rend.EarlyZ()
 	public	final	rEmi	= kri.rend.Emission()
+	public	final	rSkin	= support.skin.Update(true)
 	public	final	grForward	= support.light.group.Forward(8)
 	
 	public	BaseColor 	as Graphics.Color4:
@@ -19,7 +20,7 @@ public class RenderSet:
 		set:	rClear.backColor = rEmi.backColor = value
 	
 	public def constructor():
-		rChain.renders.AddRange((rClear,rZcull,rEmi))
+		rChain.renders.AddRange((rSkin,rClear,rZcull,rEmi))
 		rChain.renders.AddRange( grForward.list )
 	
 	public def gen(sh as Scheme) as kri.rend.Basic:
