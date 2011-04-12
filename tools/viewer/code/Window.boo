@@ -29,7 +29,7 @@ public class GladeApp:
 	private final	dialog	as Gtk.MessageDialog
 	private	final	objList		= Gtk.ListStore(kri.INoded)
 	private	final	tagList		= Gtk.ListStore(kri.ITag)
-	private	final	aniList		= Gtk.ListStore(string, kri.ani.IBase)
+	private	final	aniList		= Gtk.ListStore(string,single)
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -47,7 +47,6 @@ public class GladeApp:
 		for an in list:
 			n = an.Node
 			if not n: continue
-			#objList.AppendValues( n.name, an )
 			objList.AppendValues(an)
 	
 	private def selectPage(id as byte) as void:
@@ -131,6 +130,13 @@ public class GladeApp:
 		if not objTree.Selection.GetSelected(iter):
 			return
 		obj = objList.GetValue(iter,0)
+		# fill animations
+		aniList.Clear()
+		pl = obj as kri.ani.data.Player
+		if pl:
+			for rec in pl.anims:
+				aniList.AppendValues( rec.name, rec.length )
+		# fill object-specific info	
 		ent = obj as kri.Entity
 		if ent:
 			tagList.Clear()
@@ -167,9 +173,10 @@ public class GladeApp:
 	
 	private def aniFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		str = model.GetValue(iter,0) as string
+		length = cast(single,model.GetValue(iter,0))
 		cr = cell as Gtk.CellRendererText
 		assert str and cr
-		cr.Text = str
+		cr.Text = "${str} (${length})"
 	
 	public def constructor():
 		Gtk.Application.Init()

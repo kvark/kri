@@ -262,8 +262,9 @@ def save_mesh(mesh,armature,groups):
 	for fn,m in zip(face_num,mesh.materials):
 		if not fn: break
 		out.pack('H', fn)
-		out.text( m.name )
-		print("\t+entity: %d faces, [%s]" % (fn,m.name))
+		s = (m.name	if m else '')
+		out.text(s)
+		print("\t+entity: %d faces, [%s]" % (fn,s))
 	out.pack('H',0)
 	out.end()
 	
@@ -292,7 +293,7 @@ def save_mesh(mesh,armature,groups):
 		avg += nw
 		if not nw:
 			nempty += 1
-			array.array('H',[255,0,0,0]).tofile(file)
+			out.array('H',[255,0,0,0])
 			continue
 		bone = sorted(v.vert.groups, key=lambda x: x.weight, reverse=True) [:min(4,nw)]
 		left, total = 255, sum(b.weight for b in bone)
