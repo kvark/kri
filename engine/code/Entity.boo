@@ -105,13 +105,16 @@ public class TagMat(ITag):
 
 #--------- Entity ---------#
 
-public class Entity( kri.ani.data.Player ):
+public class Entity( kri.ani.data.Player, INoded ):
 	public node		as Node	= null
 	public mesh		as Mesh	= null
 	public visible	as bool	= true
 	public final store	= vb.Storage()
 	public final va		= Dictionary[of string,vb.Array]()
 	public final tags	= List[of ITag]()
+	
+	INoded.Node as Node:
+		get: return node
 	
 	public CombinedAttribs as vb.Dict:
 		get: return vb.Dict(mesh,store)

@@ -10,13 +10,20 @@ public interface IColored:
 		get
 		set
 
+public interface INoded:
+	Node as Node:
+		get
+
 # Perspective projector for light & camera
-public class Projector( ani.data.Player ):
+public class Projector( ani.data.Player, INoded ):
 	public node		as Node
 	public rangeIn	= 1f
 	public rangeOut	= 100f
 	public fov		= 0.4f	# ~23 degrees (half)
 	public aspect	= 1f
+	
+	INoded.Node as Node:
+		get: return node
 	
 	public def touch() as void:	#imp: IPlayer
 		pass

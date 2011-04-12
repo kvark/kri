@@ -1,6 +1,7 @@
 ﻿namespace viewer
 
 import OpenTK.Graphics
+import System.Collections.Generic
 
 [System.STAThread]
 public def Main(argv as (string)) as void:
@@ -9,11 +10,15 @@ public def Main(argv as (string)) as void:
 
 public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
-	[Glade.Widget]	hBox			as Gtk.HBox
+	[Glade.Widget]	drawBox			as Gtk.Container
 	[Glade.Widget]	statusBar		as Gtk.Statusbar
 	[Glade.Widget]	toolBar			as Gtk.Toolbar
 	[Glade.Widget]	butClear		as Gtk.ToolButton
 	[Glade.Widget]	butOpen			as Gtk.ToolButton
+	[Glade.Widget]	noteBook		as Gtk.Notebook
+	[Glade.Widget]	objTree			as Gtk.TreeView
+	[Glade.Widget]	aniTree			as Gtk.TreeView
+	[Glade.Widget]	tagTree			as Gtk.TreeView
 	
 	private	final	config	= kri.Config('kri.conf')
 	private	final	view	= kri.ViewScreen()
@@ -22,6 +27,9 @@ public class GladeApp:
 	private final	gw		as Gtk.GLWidget
 	private	final	log		= kri.lib.Journal()
 	private final	dialog	as Gtk.MessageDialog
+	private	final	objList		= Gtk.ListStore(kri.INoded)
+	private	final	tagList		= Gtk.ListStore(kri.ITag)
+	private	final	aniList		= Gtk.ListStore(string, kri.ani.IBase)
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -31,7 +39,27 @@ public class GladeApp:
 		dialog.Run()
 		dialog.Hide()
 		gw.Visible = true
+		#window.QueueDraw()
 		return true
+	
+	private def fillObjNames[of T(kri.INoded)](list as List[of T]) as void:
+		objList.Clear()
+		for an in list:
+			n = an.Node
+			if not n: continue
+			#objList.AppendValues( n.name, an )
+			objList.AppendValues(an)
+	
+	private def selectPage(id as byte) as void:
+		if not (view and view.scene):
+			return
+		if id == 0:
+			fillObjNames( view.scene.entities )
+		if id == 1:
+			fillObjNames( view.scene.lights )
+		if id == 2:
+			fillObjNames( view.scene.cameras )
+	
 	
 	# signals
 	
@@ -66,10 +94,13 @@ public class GladeApp:
 	public def onButClear(o as object, args as System.EventArgs) as void:
 		view.scene = null
 		view.cam = null
+		selectPage(0)
 		gw.QueueDraw()
 		statusBar.Push(0, 'Cleared')
 	
 	public def onButOpen(o as object, args as System.EventArgs) as void:
+		if not kri.Ant.Inst:
+			return
 		rez = dOpen.Run()
 		dOpen.Hide()
 		if rez != 0:
@@ -86,9 +117,28 @@ public class GladeApp:
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]
 		# notify
+		selectPage(0)
 		flushJournal()
 		gw.QueueDraw()
 		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
+	
+	public def onSwitchPage(o as object, args as Gtk.SwitchPageArgs) as void:
+		tagList.Clear()
+		selectPage( args.PageNum )
+	
+	public def onSelectObj(o as object, args as System.EventArgs) as void:
+		iter = Gtk.TreeIter()
+		if not objTree.Selection.GetSelected(iter):
+			return
+		obj = objList.GetValue(iter,0)
+		ent = obj as kri.Entity
+		if ent:
+			tagList.Clear()
+			for tg in ent.tags:
+				tagList.AppendValues(tg)
+	
+	public def onSelectAni(o as object, args as System.EventArgs) as void:
+		x = 0
 	
 	# construction
 			
@@ -100,6 +150,26 @@ public class GladeApp:
 		conFlags  = GraphicsContextFlags.ForwardCompatible
 		if bug:	conFlags |= GraphicsContextFlags.Debug	
 		return Gtk.GLWidget(gm,3,ver,conFlags)
+	
+	private def objFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
+		obj = model.GetValue(iter,0) as kri.INoded
+		cr = cell as Gtk.CellRendererText
+		assert obj and cr
+		node = obj.Node
+		if node:	cr.Text = node.name
+		else:		cr.Text = null
+	
+	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
+		tag = model.GetValue(iter,0) as kri.ITag
+		cr = cell as Gtk.CellRendererText
+		assert tag and cr
+		cr.Text = tag.GetType().ToString()
+	
+	private def aniFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
+		str = model.GetValue(iter,0) as string
+		cr = cell as Gtk.CellRendererText
+		assert str and cr
+		cr.Text = str
 	
 	public def constructor():
 		Gtk.Application.Init()
@@ -119,12 +189,21 @@ public class GladeApp:
 		filter = Gtk.FileFilter( Name:'kri scenes' )
 		filter.AddPattern("*.scene")
 		dOpen.AddFilter(filter)
+		# make panel
+		objTree.AppendColumn('Objects:', Gtk.CellRendererText(), objFunc)
+		objTree.Model = objList
+		objTree.CursorChanged += onSelectObj
+		aniTree.AppendColumn('Animations:', Gtk.CellRendererText(), aniFunc)
+		aniTree.Model = aniList
+		aniTree.CursorChanged += onSelectAni
+		tagTree.AppendColumn('Tags:', Gtk.CellRendererText(), tagFunc)
+		tagTree.Model = tagList
+		noteBook.SwitchPage += onSwitchPage
 		# add gl widget
-		gw = makeWidget()
+		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit
 		gw.RenderFrame		+= onFrame
 		gw.SizeAllocated	+= onSize
-		hBox.PackStart(gw)
 		gw.Visible = true
 		# run
 		statusBar.Push(0, 'Started')

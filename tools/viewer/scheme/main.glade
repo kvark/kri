@@ -17,12 +17,10 @@
         <child>
           <widget class="GtkToolbar" id="toolBar">
             <property name="visible">True</property>
-            <property name="double_buffered">False</property>
             <property name="toolbar_style">both-horiz</property>
             <child>
               <widget class="GtkToolButton" id="butClear">
                 <property name="visible">True</property>
-                <property name="double_buffered">False</property>
                 <property name="is_important">True</property>
                 <property name="label" translatable="yes">Clear</property>
                 <property name="use_underline">True</property>
@@ -36,7 +34,6 @@
             <child>
               <widget class="GtkToolButton" id="butOpen">
                 <property name="visible">True</property>
-                <property name="double_buffered">False</property>
                 <property name="is_important">True</property>
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
@@ -56,12 +53,133 @@
         <child>
           <widget class="GtkHBox" id="hBox">
             <property name="visible">True</property>
-            <property name="double_buffered">False</property>
             <child>
-              <placeholder/>
+              <widget class="GtkVBox" id="drawBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </widget>
+              <packing>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <widget class="GtkVBox" id="panelBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <widget class="GtkNotebook" id="noteBook">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="homogeneous">True</property>
+                    <child>
+                      <widget class="GtkVBox" id="entBox">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <widget class="GtkTreeView" id="tagTree">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </widget>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="labEnt">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">entity</property>
+                      </widget>
+                      <packing>
+                        <property name="tab_fill">False</property>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label2">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">label</property>
+                      </widget>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="labLit">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">light</property>
+                      </widget>
+                      <packing>
+                        <property name="position">1</property>
+                        <property name="tab_fill">False</property>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">label</property>
+                      </widget>
+                      <packing>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="labCam">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">camera</property>
+                      </widget>
+                      <packing>
+                        <property name="position">2</property>
+                        <property name="tab_fill">False</property>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkTreeView" id="objTree">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </widget>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <widget class="GtkTreeView" id="aniTree">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </widget>
+                  <packing>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </widget>
           <packing>
@@ -71,7 +189,6 @@
         <child>
           <widget class="GtkStatusbar" id="statusBar">
             <property name="visible">True</property>
-            <property name="double_buffered">False</property>
             <property name="spacing">2</property>
           </widget>
           <packing>
