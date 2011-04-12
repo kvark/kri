@@ -98,6 +98,7 @@ public class Scene:
 	internal static current as Scene = null
 	public final name		as string
 	public pGravity			as kri.shade.par.Value[of Vector4]	= null
+	public backColor		= Graphics.Color4.Black
 	# content
 	public final entities	= List[of Entity]()
 	public final bodies		= List[of Body]()

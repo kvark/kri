@@ -49,6 +49,11 @@ public class GladeApp:
 			if not n: continue
 			objList.AppendValues(an)
 	
+	private def addAnims(pl as kri.ani.data.Player) as void:
+		if not pl:	return
+		for rec in pl.anims:
+			aniList.AppendValues( rec.name, rec.length )
+	
 	private def selectPage(id as byte) as void:
 		if not (view and view.scene):
 			return
@@ -135,16 +140,15 @@ public class GladeApp:
 		obj = objList.GetValue(iter,0)
 		# fill animations
 		aniList.Clear()
-		pl = obj as kri.ani.data.Player
-		if pl:
-			for rec in pl.anims:
-				aniList.AppendValues( rec.name, rec.length )
+		addAnims(obj)
 		# fill object-specific info	
 		ent = obj as kri.Entity
 		if ent:
 			tagList.Clear()
 			for tg in ent.tags:
 				tagList.AppendValues(tg)
+			skinTag = ent.seTag[of support.skin.Tag]()
+			addAnims( skinTag.skel )
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		x = 0
