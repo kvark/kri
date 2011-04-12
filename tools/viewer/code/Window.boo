@@ -111,7 +111,10 @@ public class GladeApp:
 		# load scene
 		kri.Ant.Inst.loaders.materials.prefix = fdir
 		loader = kri.load.Native()
-		at = loader.read(path)
+		try:
+			at = loader.read(path)
+		except e:
+			dialog.Text = e.StackTrace
 		view.scene = at.scene
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]

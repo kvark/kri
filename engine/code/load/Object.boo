@@ -21,22 +21,28 @@ public class ExObject( kri.IExtension ):
 
 	#---	Parse entity	---#
 	public def p_entity(r as Reader) as bool:
-		off,n = 0,0
+		off,n = 0,1
 		m = r.geData[of kri.Mesh]()
 		node = r.geData[of kri.Node]()
 		return false	if not m or not node
 		e = kri.Entity( node:node, mesh:m )
 		r.at.scene.entities.Add(e)
 		r.puData(e)
-		while true:
+		mDef = kri.Ant.Inst.loaders.materials.con.mDef
+		while n:
 			n = r.bin.ReadUInt16()
-			break	if not n
-			e.tags.Add( kri.TagMat( off:off, num:n,
-				mat: r.at.mats[ r.getString() ] ))
-			off += n
-		if (n = m.nPoly - off) > 0:
-			mdef = kri.Ant.Inst.loaders.materials.con.mDef
-			e.tags.Add( kri.TagMat(off:off, num:n, mat:mdef ))
+			tag = kri.TagMat( off:off, num:n )
+			if n:
+				mName = r.getString()
+				if not r.at.mats.TryGetValue( mName, tag.mat ):
+					kri.lib.Journal.Log("Loader: unregistered material (${mName})")
+					tag.mat = mDef
+				off += n
+			else:
+				tag.num = m.nPoly - off
+				tag.mat = mDef
+				if not tag.num:	break
+			e.tags.Add(tag)
 		return true
 	
 	#---	Parse spatial node	---#

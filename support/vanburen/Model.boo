@@ -361,7 +361,8 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 		data.register(swImage)
 
 	public def read(path as string) as kri.Entity:	#imp: kri.res.ILoaderGen
-		kri.data.Manager.Check(path)
+		if not kri.data.Manager.Check(path):
+			return null
 		rd = Reader(path)
 		assert rd.head.sign == Signature
 		port = Dictionary[of byte,callable(Reader) as bool]()

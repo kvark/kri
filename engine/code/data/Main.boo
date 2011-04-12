@@ -19,15 +19,16 @@ public class Manager:
 	private final loadMap	= Dictionary[of System.Type, ILoader]()
 	private final cache		= Dictionary[of string, object]()
 
-	public static def Check(path as string) as void:
-		return if IO.File.Exists(path)
-		print 'Unable to load ' + path
-		raise 'Resource not found'
+	public static def Check(path as string) as bool:
+		if IO.File.Exists(path):
+			return true
+		kri.lib.Journal.Log('Loader: Unable to locate ' + path)
+		return false
 	
 	public def register[of T](loader as ILoaderGen[of T]) as void:
 		loadMap[T] = loader
 	
-	public def load[of T](path as string) as T:
+	public def load[of T(class)](path as string) as T:
 		ob as object = null
 		if cache.TryGetValue(path,ob):
 			tob = ob as T
@@ -36,12 +37,14 @@ public class Manager:
 		loader as ILoader = null
 		if loadMap.TryGetValue( typeof(T), loader ):
 			loadgen = loader as ILoaderGen[of T]
-			assert loadgen and 'invalid loader type'
+			if not loadgen:
+				kri.lib.Journal.Log("Manager: invalid loader type (${loader.GetType()})")
+				return null
 			cache[path] = tob = loadgen.read(path)
 			return tob
-		return null as T
+		return null
 	
-	public def loadTo[of T](path as string, ref val as T) as void:
+	public def loadTo[of T(class)](path as string, ref val as T) as void:
 		val = load[of T](path)
 	
 	public def release(path as string) as object:

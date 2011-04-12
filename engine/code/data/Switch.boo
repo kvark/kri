@@ -11,7 +11,8 @@ public class Switch[of T(class)]( ILoaderGen[of T] ):
 	public final ext	= Dictionary[of string,ILoaderGen[of IGenerator[of T]]]()
 	
 	public def read(path as string) as T:	#imp: ILoaderGen
-		Manager.Check(path)
+		if not Manager.Check(path):
+			return null
 		for dd in ext:
 			if path.EndsWith(dd.Key):
 				raw = dd.Value.read(path)

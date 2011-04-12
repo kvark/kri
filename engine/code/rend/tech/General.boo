@@ -73,6 +73,7 @@ public class General( Basic ):
 			b.dict.Add( de.Key, de.Value )
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
+			if not m:	continue
 			b.num = tag.num
 			b.off = tag.off
 			prog as kri.shade.Bundle = null

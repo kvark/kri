@@ -47,8 +47,9 @@ public class Native( kri.data.ILoaderGen[of Atom] ):
 			ext.attach(self)
 	
 	public def read(path as string) as Atom:	#imp: kri.res.ILoaderGen
+		if not kri.data.Manager.Check(path):
+			return null
 		goodSign = false
-		kri.data.Manager.Check(path)
 		rd = Reader(path,resMan)
 		bs = rd.bin.BaseStream
 		while bs.Position != bs.Length:

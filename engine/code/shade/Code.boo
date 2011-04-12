@@ -37,7 +37,8 @@ public class Code(ICode):
 		if name.StartsWith('/'):
 			name = Folder + name
 		name += '.glsl'
-		kri.data.Manager.Check(name)
+		if not kri.data.Manager.Check(name):
+			return null
 		return File.OpenText(name).ReadToEnd()
 
 	[Getter(Text)]
@@ -49,9 +50,11 @@ public class Code(ICode):
 		text = cd.Text
 	
 	def ICode.getMethod(base as string) as string:
-		return null	if string.IsNullOrEmpty(text)
+		if string.IsNullOrEmpty(text):
+			return null
 		pos = text.IndexOf(base)
-		return null	if pos<0
+		if pos<0:
+			return null
 		p2 = text.IndexOf('()',pos)
 		assert p2>=0
 		return text.Substring(pos,p2+2-pos)

@@ -48,5 +48,4 @@ public class Object:
 		result as int
 		GL.GetShader(handle, ShaderParameter.CompileStatus, result)
 		if not result:
-			print 'Failed to compile ' + tag
-			raise info
+			kri.lib.Journal.Log("Shader: Failed to compile object (${tag}), message: ${info}")
