@@ -8,6 +8,8 @@ import OpenTK.Graphics.OpenGL
 public class Frame:
 	private final	handle	as uint
 	
+	# construction
+	
 	public static def CheckStatus() as void:
 		status = GL.CheckFramebufferStatus( FramebufferTarget.Framebuffer )
 		assert status = FramebufferErrorCode.FramebufferComplete
@@ -27,15 +29,28 @@ public class Frame:
 			tmp as int = handle
 			GL.DeleteFramebuffers(1,tmp)
 	
+	# size parameters
+	
 	public abstract def getInfo() as Plane:
 		pass
+	
 	public def getDimensions() as Drawing.Size:
 		pl = getInfo()
 		assert pl
 		return Drawing.Size( pl.wid, pl.het )
+	
 	public virtual def getOffsets() as Drawing.Point:
 		return Drawing.Point(0,0)
+	
+	public def getRect(rez as Drawing.Rectangle) as Plane:
+		pl = getInfo()
+		assert pl
+		rez.Location = getOffsets()
+		rez.Size = Drawing.Size( pl.wid, pl.het )
+		return pl
 
+	# binding
+	
 	public virtual def bind() as void:
 		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
 		GL.Viewport( getOffsets(), getDimensions() )
@@ -56,15 +71,16 @@ public class Frame:
 		fr.bind()
 		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
 		bindRead( what & ClearBufferMask.ColorBufferBit != 0 )
-		i0 = getInfo()
-		p0 = getOffsets()
-		i1 = fr.getInfo()
-		p1 = fr.getOffsets()
+		r0 = r1 = Drawing.Rectangle()
+		i0 = getRect(r0)
+		i1 = fr.getRect(r1)
 		assert i0.isCompatible(i1)
 		GL.BlitFramebuffer(
-			p0.X,p0.Y,i0.wid,i0.het,
-			p1.X,p1.Y,i1.wid,i1.het,
+			r0.Left, r0.Top, r0.Right, r0.Bottom,
+			r1.Left, r1.Top, r1.Right, r1.Bottom,
 			what, BlitFramebufferFilter.Linear )
+	
+	# reading
 	
 	public def readRaw[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle, ptr as IntPtr) as void:
 		noColorFormats = (PixelFormat.DepthComponent, PixelFormat.DepthStencil, PixelFormat.StencilIndex)
@@ -77,6 +93,7 @@ public class Frame:
 		ptr = GCHandle.Alloc( data, GCHandleType.Pinned )
 		readRaw[of T]( fm, rect, ptr.AddrOfPinnedObject() )
 		return data
+
 
 
 public class Screen(Frame):
