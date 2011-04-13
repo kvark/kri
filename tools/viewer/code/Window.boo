@@ -19,6 +19,7 @@ public class GladeApp:
 	[Glade.Widget]	objTree			as Gtk.TreeView
 	[Glade.Widget]	aniTree			as Gtk.TreeView
 	[Glade.Widget]	tagTree			as Gtk.TreeView
+	[Glade.Widget]	playBut			as Gtk.Button
 	
 	private	final	config	= kri.Config('kri.conf')
 	private	final	view	= kri.ViewScreen()
@@ -29,7 +30,9 @@ public class GladeApp:
 	private final	dialog	as Gtk.MessageDialog
 	private	final	objList		= Gtk.ListStore(kri.INoded)
 	private	final	tagList		= Gtk.ListStore(kri.ITag)
-	private	final	aniList		= Gtk.ListStore(string,single)
+	private	final	aniList		= Gtk.ListStore(kri.ani.data.Record)
+	private final	magicOffset	= 17
+	private	final	al		= kri.ani.Scheduler()
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -39,7 +42,7 @@ public class GladeApp:
 		dialog.Run()
 		dialog.Hide()
 		gw.Visible = true
-		#window.QueueDraw()
+		window.QueueDraw()
 		return true
 	
 	private def fillObjNames[of T(kri.INoded)](list as List[of T]) as void:
@@ -52,7 +55,7 @@ public class GladeApp:
 	private def addAnims(pl as kri.ani.data.Player) as void:
 		if not pl:	return
 		for rec in pl.anims:
-			aniList.AppendValues( rec.name, rec.length )
+			aniList.AppendValues(rec)
 	
 	private def selectPage(id as byte) as void:
 		if not (view and view.scene):
@@ -70,10 +73,11 @@ public class GladeApp:
 	public def onInit(o as object, args as System.EventArgs) as void:
 		ant = kri.Ant(config,true)
 		ant.extensions.Add( support.skin.Extra() )
+		ant.anim = al
 		rset = RenderSet()
 		view.ren = rset.gen( Scheme.Forward )
 		r = gw.Allocation
-		view.resize( r.Width, r.Height )
+		view.resize( 0, magicOffset, r.Width, r.Height )
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		rset = null
@@ -81,8 +85,8 @@ public class GladeApp:
 		Gtk.Application.Quit()
 	
 	public def onFrame(o as object, args as System.EventArgs) as void:
-		kri.Ant.Inst.update(1)
 		try:
+			kri.Ant.Inst.update(1)
 			view.update()
 		except e:
 			dialog.Text = e.StackTrace
@@ -92,15 +96,15 @@ public class GladeApp:
 		if not view.ren:
 			return
 		r = args.Allocation
-		view.resize( r.Width, r.Height )
-		toolBar.QueueDraw()	# temporary bug fix
+		view.resize( 0, magicOffset, r.Width, r.Height )
+		window.QueueDraw()	# temporary bug fix
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
 		view.scene = null
 		view.cam = null
 		selectPage(0)
-		gw.QueueDraw()
+		window.QueueDraw()
 		statusBar.Push(0, 'Cleared')
 	
 	public def onButOpen(o as object, args as System.EventArgs) as void:
@@ -138,10 +142,11 @@ public class GladeApp:
 		iter = Gtk.TreeIter()
 		if not objTree.Selection.GetSelected(iter):
 			return
-		obj = objList.GetValue(iter,0)
+		obj = objList.GetValue(iter,0) as kri.INoded
 		# fill animations
 		aniList.Clear()
-		addAnims(obj)
+		addAnims( obj as kri.ani.data.Player )
+		addAnims( obj.Node )
 		# fill object-specific info	
 		ent = obj as kri.Entity
 		if ent:
@@ -154,6 +159,15 @@ public class GladeApp:
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		x = 0
+	
+	public def onPlayAni(o as object, args as Gtk.RowActivatedArgs) as void:
+		iter = Gtk.TreeIter()
+		aniTree.Selection.GetSelected(iter)
+		rec = aniList.GetValue(iter,0)	as kri.ani.data.Record
+		objTree.Selection.GetSelected(iter)
+		obj = objList.GetValue(iter,0)	as kri.ani.data.Player
+		assert rec and obj
+		al.add( kri.ani.data.Anim(obj,rec) )
 	
 	# construction
 			
@@ -181,11 +195,10 @@ public class GladeApp:
 		cr.Text = tag.GetType().ToString()
 	
 	private def aniFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
-		str = model.GetValue(iter,0) as string
-		length = cast(single,model.GetValue(iter,0))
+		rec = model.GetValue(iter,0) as kri.ani.data.Record
 		cr = cell as Gtk.CellRendererText
-		assert str and cr
-		cr.Text = "${str} (${length})"
+		assert rec and cr
+		cr.Text = "${rec.name} (${rec.length})"
 	
 	public def constructor():
 		Gtk.Application.Init()
@@ -212,6 +225,7 @@ public class GladeApp:
 		aniTree.AppendColumn('Animations:', Gtk.CellRendererText(), aniFunc)
 		aniTree.Model = aniList
 		aniTree.CursorChanged += onSelectAni
+		aniTree.RowActivated += onPlayAni
 		tagTree.AppendColumn('Tags:', Gtk.CellRendererText(), tagFunc)
 		tagTree.Model = tagList
 		noteBook.SwitchPage += onSwitchPage

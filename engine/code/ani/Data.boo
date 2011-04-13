@@ -93,9 +93,10 @@ public abstract class Player(IPlayer):
 	public def play(name as string) as Anim:
 		rec = anims.Find({r| return r.name == name})
 		if rec:
-			assert rec.check() and 'Acton not fully supported'
-			return Anim(self,rec)
-		else: return null
+			if rec.check():
+				return Anim(self,rec)
+			kri.lib.Journal.Log("Acton: not supported (${name})")
+		return null
 
 
 #---------------------

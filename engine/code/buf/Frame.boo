@@ -53,7 +53,9 @@ public class Frame:
 	
 	public virtual def bind() as void:
 		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
-		GL.Viewport( getOffsets(), getDimensions() )
+		rect = Drawing.Rectangle()
+		getRect(rect)
+		GL.Viewport(rect)
 	
 	private abstract def getReadMode() as ReadBufferMode:
 		pass
@@ -69,7 +71,6 @@ public class Frame:
 		assert self != fr
 		bind()	# update attachments
 		fr.bind()
-		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
 		bindRead( (what & ClearBufferMask.ColorBufferBit) != 0 )
 		r0 = r1 = Drawing.Rectangle()
 		i0 = getRect(r0)
