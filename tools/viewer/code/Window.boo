@@ -148,7 +148,8 @@ public class GladeApp:
 			for tg in ent.tags:
 				tagList.AppendValues(tg)
 			skinTag = ent.seTag[of support.skin.Tag]()
-			addAnims( skinTag.skel )
+			if skinTag:
+				addAnims( skinTag.skel )
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		x = 0
