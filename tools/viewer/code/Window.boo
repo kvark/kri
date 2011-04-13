@@ -93,6 +93,7 @@ public class GladeApp:
 			return
 		r = args.Allocation
 		view.resize( r.Width, r.Height )
+		toolBar.QueueDraw()	# temporary bug fix
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:

@@ -42,7 +42,7 @@ public class Frame:
 	public virtual def getOffsets() as Drawing.Point:
 		return Drawing.Point(0,0)
 	
-	public def getRect(rez as Drawing.Rectangle) as Plane:
+	public def getRect(ref rez as Drawing.Rectangle) as Plane:
 		pl = getInfo()
 		assert pl
 		rez.Location = getOffsets()
@@ -70,11 +70,13 @@ public class Frame:
 		bind()	# update attachments
 		fr.bind()
 		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
-		bindRead( what & ClearBufferMask.ColorBufferBit != 0 )
+		bindRead( (what & ClearBufferMask.ColorBufferBit) != 0 )
 		r0 = r1 = Drawing.Rectangle()
 		i0 = getRect(r0)
 		i1 = fr.getRect(r1)
-		assert i0.isCompatible(i1)
+		if not i0.isCompatible(i1):
+			kri.lib.Journal.Log("Blit: incompatible framebuffers (${handle}->)")
+			return
 		GL.BlitFramebuffer(
 			r0.Left, r0.Top, r0.Right, r0.Bottom,
 			r1.Left, r1.Top, r1.Right, r1.Bottom,
