@@ -20,6 +20,9 @@ public class GladeApp:
 	[Glade.Widget]	aniTree			as Gtk.TreeView
 	[Glade.Widget]	tagTree			as Gtk.TreeView
 	[Glade.Widget]	playBut			as Gtk.Button
+	[Glade.Widget]	entBook			as Gtk.Notebook
+	[Glade.Widget]	matLabel		as Gtk.Label
+	[Glade.Widget]	metaBox			as Gtk.VBox
 	
 	private	final	config	= kri.Config('kri.conf')
 	private	final	view	= kri.ViewScreen()
@@ -67,6 +70,19 @@ public class GladeApp:
 		if id == 2:
 			fillObjNames( view.scene.cameras )
 	
+	private def selectMat(m as kri.Material) as void:
+		if not m:
+			entBook.Page = 1
+			return
+		entBook.Page = 0
+		matLabel.Text = 'Material: '+ m.name
+		for ch in metaBox.AllChildren:
+			metaBox.Remove(ch)
+		for meta in m.metaList:
+			lab = Gtk.Label(meta.Name)
+			lab.Visible = true
+			metaBox.Add(lab)
+		
 	
 	# signals
 	
@@ -78,6 +94,7 @@ public class GladeApp:
 		view.ren = rset.gen( Scheme.Forward )
 		r = gw.Allocation
 		view.resize( 0, magicOffset, r.Width, r.Height )
+		selectMat(null)
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		rset = null
@@ -160,6 +177,14 @@ public class GladeApp:
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		x = 0
 	
+	public def onSelectTag(o as object, args as System.EventArgs) as void:
+		iter = Gtk.TreeIter()
+		if not tagTree.Selection.GetSelected(iter):
+			return
+		tag = tagList.GetValue(iter,0) as kri.TagMat
+		if tag:
+			selectMat( tag.mat )
+	
 	public def onPlayAni(o as object, args as Gtk.RowActivatedArgs) as void:
 		iter = Gtk.TreeIter()
 		aniTree.Selection.GetSelected(iter)
@@ -221,14 +246,15 @@ public class GladeApp:
 		# make panel
 		objTree.AppendColumn('Objects:', Gtk.CellRendererText(), objFunc)
 		objTree.Model = objList
-		objTree.CursorChanged += onSelectObj
+		objTree.CursorChanged	+= onSelectObj
 		aniTree.AppendColumn('Animations:', Gtk.CellRendererText(), aniFunc)
 		aniTree.Model = aniList
-		aniTree.CursorChanged += onSelectAni
-		aniTree.RowActivated += onPlayAni
+		aniTree.CursorChanged	+= onSelectAni
+		aniTree.RowActivated	+= onPlayAni
 		tagTree.AppendColumn('Tags:', Gtk.CellRendererText(), tagFunc)
 		tagTree.Model = tagList
-		noteBook.SwitchPage += onSwitchPage
+		tagTree.CursorChanged	+= onSelectTag
+		noteBook.SwitchPage		+= onSwitchPage
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit
