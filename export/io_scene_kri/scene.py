@@ -95,7 +95,7 @@ def save_scene(filename, context):
 			save_actions( ob.data.shape_keys, '','v' )
 		elif ob.type == 'ARMATURE':
 			save_skeleton( ob.data )
-			save_actions( ob.data, None, 's' )
+			save_actions( ob, None, 's' )
 		elif ob.type == 'LAMP':
 			save_lamp( ob.data )
 			save_actions( ob.data, 'l','' )
