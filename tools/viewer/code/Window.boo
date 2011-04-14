@@ -39,9 +39,10 @@ public class GladeApp:
 	private	final	aniList		= Gtk.ListStore(kri.ani.data.Record)
 	private final	magicOffset	= 17
 	private	final	al		= kri.ani.Scheduler()
-	private	curEnt	as kri.Entity	= null
-	private curLit	as kri.Light	= null
-	private curCam	as kri.Camera	= null
+	private	curEnt	as kri.Entity		= null
+	private curLit	as kri.Light		= null
+	private curCam	as kri.Camera		= null
+	private curEmi	as kri.part.Emitter	= null
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -75,6 +76,8 @@ public class GladeApp:
 			fillObjNames( view.scene.lights )
 		if id == 2:
 			fillObjNames( view.scene.cameras )
+		if id == 3:
+			fillObjNames( view.scene.particles )
 	
 	private def selectMat(m as kri.Material) as void:
 		if not m:
@@ -94,7 +97,9 @@ public class GladeApp:
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		ant = kri.Ant(config,true)
-		ant.extensions.Add( support.skin.Extra() )
+		ant.extensions.AddRange((of kri.IExtension:
+			support.skin.Extra(), support.corp.Extra(), support.morph.Extra()
+			))
 		ant.anim = al
 		rset = RenderSet()
 		view.ren = rset.gen( Scheme.Forward )

@@ -148,6 +148,9 @@
                             <property name="label" translatable="yes">label</property>
                           </widget>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="padding">3</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -157,6 +160,9 @@
                             <property name="label" translatable="yes">label</property>
                           </widget>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="padding">3</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -168,6 +174,9 @@
                             <property name="receives_default">True</property>
                           </widget>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="padding">3</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -183,6 +192,26 @@
                       </widget>
                       <packing>
                         <property name="position">2</property>
+                        <property name="tab_fill">False</property>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label2x">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">particles</property>
+                      </widget>
+                      <packing>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="labPart">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">particle</property>
+                      </widget>
+                      <packing>
+                        <property name="position">3</property>
                         <property name="tab_fill">False</property>
                         <property name="type">tab</property>
                       </packing>
