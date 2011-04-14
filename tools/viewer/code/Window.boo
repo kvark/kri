@@ -23,6 +23,9 @@ public class GladeApp:
 	[Glade.Widget]	entBook			as Gtk.Notebook
 	[Glade.Widget]	matLabel		as Gtk.Label
 	[Glade.Widget]	metaBox			as Gtk.VBox
+	[Glade.Widget]	camFovLabel		as Gtk.Label
+	[Glade.Widget]	camAspectLabel	as Gtk.Label
+	[Glade.Widget]	camActiveBut	as Gtk.ToggleButton
 	
 	private	final	config	= kri.Config('kri.conf')
 	private	final	view	= kri.ViewScreen()
@@ -36,6 +39,9 @@ public class GladeApp:
 	private	final	aniList		= Gtk.ListStore(kri.ani.data.Record)
 	private final	magicOffset	= 17
 	private	final	al		= kri.ani.Scheduler()
+	private	curEnt	as kri.Entity	= null
+	private curLit	as kri.Light	= null
+	private curCam	as kri.Camera	= null
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -165,7 +171,7 @@ public class GladeApp:
 		addAnims( obj as kri.ani.data.Player )
 		addAnims( obj.Node )
 		# fill object-specific info	
-		ent = obj as kri.Entity
+		curEnt = ent = obj as kri.Entity
 		if ent:
 			tagList.Clear()
 			for tg in ent.tags:
@@ -173,6 +179,11 @@ public class GladeApp:
 			skinTag = ent.seTag[of support.skin.Tag]()
 			if skinTag:
 				addAnims( skinTag.skel )
+		curCam = cam = obj as kri.Camera
+		if cam:
+			camFovLabel.Text = 'Fov: ' + cam.fov
+			camAspectLabel.Text = 'Aspect: ' + cam.aspect
+			camActiveBut.Active = view.cam == cam
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		x = 0
@@ -255,6 +266,10 @@ public class GladeApp:
 		tagTree.Model = tagList
 		tagTree.CursorChanged	+= onSelectTag
 		noteBook.SwitchPage		+= onSwitchPage
+		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
+			if view.cam != curCam:
+				camActiveBut.Active = true
+				view.cam = curCam
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit

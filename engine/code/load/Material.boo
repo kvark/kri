@@ -228,7 +228,7 @@ public class ExMaterial( kri.IExtension ):
 		r.getReal()	# brightness
 		r.getReal()	# contrast
 		r.getReal()	# saturation
-		return false
+		return true
 	
 	#---	Texture: color ramp		---#
 	public def pt_ramp(r as Reader) as bool:
