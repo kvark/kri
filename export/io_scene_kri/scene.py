@@ -68,7 +68,7 @@ def save_scene(filename, context):
 	out.end()
 	
 	sc = context.scene
-	bDegrees = (sc.unit_settings.rotation_units == 'DEGREES')
+	bDegrees = (sc.unit_settings.system_rotation == 'DEGREES')
 	if not bDegrees:
 		#it's easier to convert on loading than here
 		print("\t(w)",'Radians are not supported')

@@ -71,9 +71,9 @@ def save_skeleton(skel):
 		if not (bone.use_inherit_scale and bone.use_deform):
 			print("\t\t(w)", 'weird bone', bone.name)
 		if par: # old variant (same result)
-			#pos = bone.head.copy() + par.matrix.copy().invert() * par.vector	
+			#pos = bone.head.copy() + par.matrix.copy().inverted() * par.vector	
 			parid = skel.bones.keys().index( par.name )
-			mx = par.matrix_local.copy().invert() * mx
+			mx = par.matrix_local.copy().inverted() * mx
 		out.text( bone.name )
 		out.pack('B', parid+1 )
 		save_matrix(mx)

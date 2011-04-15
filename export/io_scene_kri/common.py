@@ -26,13 +26,15 @@ class Writer:
 		array.array(tip,ar).tofile(self.fx)
 	def text(self,*args):
 		for s in args:
-			n = len(s)
-			assert n<256
-			self.pack("B%ds"%(n), n,s)
+			x = len(s)
+			assert x<256
+			bt = bytes(s,'ascii')
+			self.pack("B%ds"%(x),x,bt)
 	def begin(self,name):
 		import struct
 		assert len(name)<8 and not self.pos
-		self.fx.write( struct.pack('<8sL',name,0) )
+		bt = bytes(name,'ascii')
+		self.fx.write( struct.pack('<8sL',bt,0) )
 		self.pos = self.fx.tell()
 	def end(self):
 		import struct
@@ -51,9 +53,7 @@ def save_color(rgb):
 
 def save_matrix(mx):
 	import math
-	pos = mx.translation_part()
-	sca = mx.scale_part()
-	rot = mx.to_quat()
+	pos,rot,sca = mx.decompose()
 	scale = (sca.x + sca.y + sca.z)/3.0
 	if math.fabs(sca.x-sca.y) + math.fabs(sca.x-sca.z) > 0.01:
 		print("\t(w)",'non-uniform scale:',str(sca))

@@ -57,7 +57,7 @@ class Face:
 		self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
 		assert t.dot(t)>0.0 and\
 			'Try removing duplicated vertices and recalculating normals'
-		self.ta = t.normalize()
+		self.ta = t.normalized()
 		self.hand = hand
 
 
@@ -127,8 +127,8 @@ def save_mesh(mesh,armature,groups):
 		no.normalize()
 		bit = no.cross(tan) * v.face.hand   # using handness
 		tan = bit.cross(no) # handness will be applied in shader
-		tbn = mathutils.Matrix(tan,bit,no) # tbn is orthonormal, right-handed
-		v.quat = tbn.to_quat().normalize()
+		tbn = mathutils.Matrix((tan,bit,no)) # tbn is orthonormal, right-handed
+		v.quat = tbn.to_quaternion().normalized()
 		ar_vert.append(v)
 	print("\t(i) %.2f avg tangent accuracy" % (avg / len(ar_vert)))
 	del set_vert
@@ -155,7 +155,8 @@ def save_mesh(mesh,armature,groups):
 			dst = Vertex(src.vert)
 			dst.face = f
 			dst.tex = tuple( layer.copy() for layer in src.tex )
-			dst.quat = src.quat.copy().negate()
+			dst.quat = src.quat.copy()
+			dst.quat.negate()
 			dst.dual = f.vi[pos]
 			f.vi[pos] = src.dual = len(ar_vert)
 			ar_vert.append(dst)

@@ -283,4 +283,11 @@ public class GladeApp:
 		gw.Visible = true
 		# run
 		statusBar.Push(0, 'Started')
-		Gtk.Application.Run()
+		manual = false
+		if manual:
+			while window.Visible:
+				if not Gtk.Application.EventsPending():
+					onFrame(null,null)
+				Gtk.Application.RunIteration()
+		else:
+			Gtk.Application.Run()

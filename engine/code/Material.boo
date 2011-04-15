@@ -33,6 +33,7 @@ public class Material( ani.data.Player ):
 	public def link() as void:
 		dict.Clear()
 		lis = List[of meta.IBase]()
+		lis.Add(null)
 		def push(h as meta.IBase):
 			if h in lis:	return
 			h.link(dict)

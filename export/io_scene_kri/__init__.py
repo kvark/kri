@@ -1,7 +1,23 @@
+# <pep8 compliant>
+
+bl_info = {
+    'name': 'KRI Scene format (.scene)',
+    'author': 'Dzmitry Malyshau',
+    'version': (0, 1, 0),
+    'blender': (2, 5, 7),
+    'api': 36079,
+    'location': 'File > Export > Kri Scene (.scene)',
+    'description': 'Export KRI Scenes with meshes, armatures, particles and stuff.',
+    'warning': '',
+    'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Import-Export/Kri_Scene',
+    'tracker_url': '',
+    'category': 'Import-Export'}
+
 # To support reload properly, try to access a package var, if it's there, reload everything
-if "bpy" in locals():
-	import sys
-	reload(sys.modules.get("io_scene_kri.export_kri", sys))
+if 'bpy' in locals():
+	import imp
+	if 'export_kri' in locals():
+	        imp.reload(export_kri)
 
 
 import bpy
@@ -13,9 +29,9 @@ from io_scene_kri.common	import Settings
 
 class ExportKRI(bpy.types.Operator, ExportHelper):
 	'''Export to KRI scene format'''
-	bl_idname = 'export_scene.kri_scene'
-	bl_label = '-= KRI =- (.scene)'
-	filename_ext = '.scene'
+	bl_idname	= 'export_scene.kri_scene'
+	bl_label	= '-= KRI =- (.scene)'
+	filename_ext	= '.scene'
 
 	filepath	= StringProperty( name='File Path',
 		description='Filepath used for exporting the KRI scene',
@@ -42,14 +58,16 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 
 
 # Add to a menu
-def menu_func_export(self, context):
+def menu_func(self, context):
 	self.layout.operator( ExportKRI.bl_idname, text=ExportKRI.bl_label )
 
 def register():
-	bpy.types.INFO_MT_file_export.append(menu_func_export)
+	bpy.utils.register_module(__name__)
+	bpy.types.INFO_MT_file_export.append(menu_func)
 
 def unregister():
-	bpy.types.INFO_MT_file_export.remove(menu_func_export)
+	bpy.utils.unregister_module(__name__)
+	bpy.types.INFO_MT_file_export.remove(menu_func)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	register()
