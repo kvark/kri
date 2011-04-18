@@ -132,6 +132,8 @@ public class GladeApp:
 		view.scene = null
 		view.cam = null
 		selectPage(0)
+		for li in (of Gtk.ListStore: objList,tagList,aniList):
+			li.Clear()
 		window.QueueDraw()
 		statusBar.Push(0, 'Cleared')
 	

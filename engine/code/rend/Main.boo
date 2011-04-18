@@ -58,3 +58,15 @@ public class FilterCopy(Filter):
 	public def constructor():
 		bu.shader.add('/copy_v','/copy_f')
 
+
+#---------	RENDER GROUP	--------#
+
+public class Group(Basic):
+	public	abstract	All	as (Basic):
+		get: pass
+	public override def setup(pl as kri.buf.Plane) as bool:
+		return System.Array.TrueForAll(All) do(r as Basic):
+			return r.setup(pl)
+	public override def process(con as link.Basic) as void:
+		for r in All:
+			r.process(con)
