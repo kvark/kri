@@ -176,24 +176,25 @@ public class GladeApp:
 		if not objView.Selection.GetSelected(iter):
 			return
 		obj = objTree.GetValue(iter,0)
-		cam = obj as kri.Camera
-		if cam:
-			# select tab
+		if obj isa kri.Entity:
+			propertyBook.Page = 0
+		if obj isa kri.Node:
+			propertyBook.Page = 1
+		if obj isa kri.Material:
+			propertyBook.Page = 2
+		if obj isa kri.Camera:
+			propertyBook.Page = 3
+			cam = obj as kri.Camera
 			camFovLabel.Text = 'Fov: ' + cam.fov
 			camAspectLabel.Text = 'Aspect: ' + cam.aspect
 			camActiveBut.Active = view.cam == cam
+		if obj isa kri.Light:
+			propertyBook.Page = 4
+		if obj isa kri.ani.data.Record:
+			propertyBook.Page = 5
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		return
-	
-	public def onSelectTag(o as object, args as System.EventArgs) as void:
-		return
-		/*iter = Gtk.TreeIter()
-		if not tagTree.Selection.GetSelected(iter):
-			return
-		tag = tagList.GetValue(iter,0) as kri.TagMat
-		if tag:
-			selectMat( tag.mat )*/
 	
 	public def onPlayAni(o as object, args as Gtk.RowActivatedArgs) as void:
 		return
@@ -220,7 +221,26 @@ public class GladeApp:
 		obj = model.GetValue(iter,0)
 		cr = cell as Gtk.CellRendererText
 		assert obj and cr
+		iNoded = obj as kri.INoded
+		name = ''
+		if iNoded and iNoded.Node:
+			name = iNoded.Node.name
 		cr.Text = obj.GetType().ToString()
+		if obj isa kri.Camera:
+			cr.Text = '[cam] '+name
+		if obj isa kri.Light:
+			cr.Text = '[lit] '+name
+		if obj isa kri.Entity:
+			cr.Text = '[ent] '+name
+		if obj isa kri.part.Emitter:
+			cr.Text = '[par] '+name
+		if obj isa kri.Node:
+			cr.Text = 'node'
+		if obj isa kri.Material:
+			name = (obj as kri.Material).name
+			cr.Text = '[mat] ' + name
+		if obj isa kri.Skeleton:
+			cr.Text = 'sleleton'
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		tag = model.GetValue(iter,0) as kri.ITag
@@ -254,7 +274,13 @@ public class GladeApp:
 		dOpen.AddFilter(filter)
 		# make panel
 		propertyBook.ShowTabs = false
-		objView.AppendColumn('Objects:', Gtk.CellRendererText(), objFunc)
+		#col = Gtk.TreeViewColumn()
+		#col.AddAttribute( rPix = Gtk.CellRendererPixbuf(), 'Icon:', 0 )
+		#col.AddAttribute( rTex = Gtk.CellRendererText(), '0', 0 )
+		#col.Title = 'Object:'
+		#col.SetCellDataFunc( rTex, objFunc )
+		#objView.AppendColumn(col)
+		objView.AppendColumn( 'Object:', Gtk.CellRendererText(), objFunc )
 		objView.Model = objTree
 		objView.CursorChanged	+= onSelectObj
 		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
