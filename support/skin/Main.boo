@@ -6,7 +6,7 @@ import OpenTK.Graphics.OpenGL
 #----------------------------------------
 #	Skeleton binding, stored as an entity tag
 
-public class Tag( kri.ITag ):
+public class Tag( kri.ITagData ):
 	public skel		as kri.Skeleton	= null
 	private state	as int	 = 0
 	public Sync as bool:
@@ -14,6 +14,8 @@ public class Tag( kri.ITag ):
 		set: state = skel.State - (0 if value else 1)
 	public static def getAnim(e as kri.Entity, str as string) as kri.ani.data.Anim:
 		return e.seTag[of Tag]().skel.play(str)
+	kri.ITagData.Data as object:
+		get: return skel
 
 
 #----------------------------------------

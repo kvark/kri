@@ -96,11 +96,18 @@ public class Mesh( vb.Storage ):
 
 public interface ITag:
 	pass
+
+public interface ITagData(ITag):
+	Data as object:
+		get
 	
-public class TagMat(ITag):
+public class TagMat(ITagData):
 	public off	as uint	= 0
 	public num	as uint	= 0
 	public mat	as Material	= null
+	
+	ITagData.Data as object:
+		get: return mat
 
 
 #--------- Entity ---------#

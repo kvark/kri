@@ -1,7 +1,6 @@
 ﻿namespace viewer
 
 import OpenTK.Graphics
-import System.Collections.Generic
 
 [System.STAThread]
 public def Main(argv as (string)) as void:
@@ -15,34 +14,24 @@ public class GladeApp:
 	[Glade.Widget]	toolBar			as Gtk.Toolbar
 	[Glade.Widget]	butClear		as Gtk.ToolButton
 	[Glade.Widget]	butOpen			as Gtk.ToolButton
-	[Glade.Widget]	noteBook		as Gtk.Notebook
-	[Glade.Widget]	objTree			as Gtk.TreeView
-	[Glade.Widget]	aniTree			as Gtk.TreeView
-	[Glade.Widget]	tagTree			as Gtk.TreeView
-	[Glade.Widget]	playBut			as Gtk.Button
-	[Glade.Widget]	entBook			as Gtk.Notebook
-	[Glade.Widget]	matLabel		as Gtk.Label
-	[Glade.Widget]	metaBox			as Gtk.VBox
+	[Glade.Widget]	propertyBook	as Gtk.Notebook
+	[Glade.Widget]	objView			as Gtk.TreeView
 	[Glade.Widget]	camFovLabel		as Gtk.Label
 	[Glade.Widget]	camAspectLabel	as Gtk.Label
 	[Glade.Widget]	camActiveBut	as Gtk.ToggleButton
 	
 	private	final	config	= kri.Config('kri.conf')
+	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private rset	as RenderSet	= null
 	private final	gw		as Gtk.GLWidget
 	private	final	log		= kri.lib.Journal()
 	private final	dialog	as Gtk.MessageDialog
-	private	final	objList		= Gtk.ListStore(kri.INoded)
-	private	final	tagList		= Gtk.ListStore(kri.ITag)
-	private	final	aniList		= Gtk.ListStore(kri.ani.data.Record)
+	private	final	objTree		= Gtk.TreeStore(object)
 	private final	magicOffset	= 17
 	private	final	al		= kri.ani.Scheduler()
-	private	curEnt	as kri.Entity		= null
-	private curLit	as kri.Light		= null
-	private curCam	as kri.Camera		= null
-	private curEmi	as kri.part.Emitter	= null
+	private	curObj	as object	= null
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -55,32 +44,14 @@ public class GladeApp:
 		window.QueueDraw()
 		return true
 	
-	private def fillObjNames[of T(kri.INoded)](list as List[of T]) as void:
-		objList.Clear()
-		for an in list:
-			n = an.Node
-			if not n: continue
-			objList.AppendValues(an)
-	
 	private def addAnims(pl as kri.ani.data.Player) as void:
 		if not pl:	return
-		for rec in pl.anims:
-			aniList.AppendValues(rec)
-	
-	private def selectPage(id as byte) as void:
-		if not (view and view.scene):
-			return
-		if id == 0:
-			fillObjNames( view.scene.entities )
-		if id == 1:
-			fillObjNames( view.scene.lights )
-		if id == 2:
-			fillObjNames( view.scene.cameras )
-		if id == 3:
-			fillObjNames( view.scene.particles )
+		#for rec in pl.anims:
+		#	aniList.AppendValues(rec)
 	
 	private def selectMat(m as kri.Material) as void:
-		if not m:
+		return
+		/*if not m:
 			entBook.Page = 1
 			return
 		entBook.Page = 0
@@ -90,8 +61,41 @@ public class GladeApp:
 		for meta in m.metaList:
 			lab = Gtk.Label(meta.Name)
 			lab.Visible = true
-			metaBox.Add(lab)
+			metaBox.Add(lab)*/
+	
+	private def addPlayer(par as Gtk.TreeIter, ob as object) as void:
+		pl = ob as kri.ani.data.Player
+		if not pl: return
+		for ani in pl.anims:
+			objTree.AppendValues(par,ani)
+	
+	private def addObject(ob as object) as Gtk.TreeIter:
+		it = objTree.AppendValues(ob)
+		on = ob as kri.INoded
+		if on and on.Node:
+			itn = objTree.AppendValues(it, on.Node)
+			addPlayer(itn,on)
+		addPlayer(it,ob)
+		return it
 		
+	private def updateList() as void:
+		objTree.Clear()
+		if not view.scene:
+			return
+		for cam in view.scene.cameras:
+			addObject(cam)
+		for lit in view.scene.lights:
+			addObject(lit)
+		for ent in view.scene.entities:
+			it = addObject(ent)
+			for tag in ent.tags:
+				td = tag as kri.ITagData
+				if not td: continue
+				objTree.AppendValues(it, td.Data)
+		for par in view.scene.particles:
+			it = addObject(par)
+			if par.owner:
+				objTree.AppendValues(it, par.owner)
 	
 	# signals
 	
@@ -113,11 +117,16 @@ public class GladeApp:
 		Gtk.Application.Quit()
 	
 	public def onFrame(o as object, args as System.EventArgs) as void:
+		core = kri.Ant.Inst
+		if not core:	return
 		try:
-			kri.Ant.Inst.update(1)
+			core.update(1)
 			view.update()
 		except e:
 			dialog.Text = e.StackTrace
+		if fps.update(core.Time):
+			window.Title = fps.gen()
+		#window.QueueDraw()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
@@ -131,9 +140,7 @@ public class GladeApp:
 	public def onButClear(o as object, args as System.EventArgs) as void:
 		view.scene = null
 		view.cam = null
-		selectPage(0)
-		for li in (of Gtk.ListStore: objList,tagList,aniList):
-			li.Clear()
+		objTree.Clear()
 		window.QueueDraw()
 		statusBar.Push(0, 'Cleared')
 	
@@ -159,58 +166,44 @@ public class GladeApp:
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]
 		# notify
-		selectPage(0)
+		updateList()
 		flushJournal()
 		gw.QueueDraw()
 		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
 	
-	public def onSwitchPage(o as object, args as Gtk.SwitchPageArgs) as void:
-		tagList.Clear()
-		selectPage( args.PageNum )
-	
 	public def onSelectObj(o as object, args as System.EventArgs) as void:
 		iter = Gtk.TreeIter()
-		if not objTree.Selection.GetSelected(iter):
+		if not objView.Selection.GetSelected(iter):
 			return
-		obj = objList.GetValue(iter,0) as kri.INoded
-		# fill animations
-		aniList.Clear()
-		addAnims( obj as kri.ani.data.Player )
-		addAnims( obj.Node )
-		# fill object-specific info	
-		curEnt = ent = obj as kri.Entity
-		if ent:
-			tagList.Clear()
-			for tg in ent.tags:
-				tagList.AppendValues(tg)
-			skinTag = ent.seTag[of support.skin.Tag]()
-			if skinTag:
-				addAnims( skinTag.skel )
-		curCam = cam = obj as kri.Camera
+		obj = objTree.GetValue(iter,0)
+		cam = obj as kri.Camera
 		if cam:
+			# select tab
 			camFovLabel.Text = 'Fov: ' + cam.fov
 			camAspectLabel.Text = 'Aspect: ' + cam.aspect
 			camActiveBut.Active = view.cam == cam
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
-		x = 0
+		return
 	
 	public def onSelectTag(o as object, args as System.EventArgs) as void:
-		iter = Gtk.TreeIter()
+		return
+		/*iter = Gtk.TreeIter()
 		if not tagTree.Selection.GetSelected(iter):
 			return
 		tag = tagList.GetValue(iter,0) as kri.TagMat
 		if tag:
-			selectMat( tag.mat )
+			selectMat( tag.mat )*/
 	
 	public def onPlayAni(o as object, args as Gtk.RowActivatedArgs) as void:
-		iter = Gtk.TreeIter()
+		return
+		/*iter = Gtk.TreeIter()
 		aniTree.Selection.GetSelected(iter)
 		rec = aniList.GetValue(iter,0)	as kri.ani.data.Record
 		objTree.Selection.GetSelected(iter)
 		obj = objList.GetValue(iter,0)	as kri.ani.data.Player
 		assert rec and obj
-		al.add( kri.ani.data.Anim(obj,rec) )
+		al.add( kri.ani.data.Anim(obj,rec) )*/
 	
 	# construction
 			
@@ -224,12 +217,10 @@ public class GladeApp:
 		return Gtk.GLWidget(gm,3,ver,conFlags)
 	
 	private def objFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
-		obj = model.GetValue(iter,0) as kri.INoded
+		obj = model.GetValue(iter,0)
 		cr = cell as Gtk.CellRendererText
 		assert obj and cr
-		node = obj.Node
-		if node:	cr.Text = node.name
-		else:		cr.Text = null
+		cr.Text = obj.GetType().ToString()
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		tag = model.GetValue(iter,0) as kri.ITag
@@ -262,18 +253,12 @@ public class GladeApp:
 		filter.AddPattern("*.scene")
 		dOpen.AddFilter(filter)
 		# make panel
-		objTree.AppendColumn('Objects:', Gtk.CellRendererText(), objFunc)
-		objTree.Model = objList
-		objTree.CursorChanged	+= onSelectObj
-		aniTree.AppendColumn('Animations:', Gtk.CellRendererText(), aniFunc)
-		aniTree.Model = aniList
-		aniTree.CursorChanged	+= onSelectAni
-		aniTree.RowActivated	+= onPlayAni
-		tagTree.AppendColumn('Tags:', Gtk.CellRendererText(), tagFunc)
-		tagTree.Model = tagList
-		tagTree.CursorChanged	+= onSelectTag
-		noteBook.SwitchPage		+= onSwitchPage
+		propertyBook.ShowTabs = false
+		objView.AppendColumn('Objects:', Gtk.CellRendererText(), objFunc)
+		objView.Model = objTree
+		objView.CursorChanged	+= onSelectObj
 		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
+			curCam = curObj as kri.Camera
 			if view.cam != curCam:
 				camActiveBut.Active = true
 				view.cam = curCam

@@ -1,6 +1,7 @@
 syntax: glob
 
 archive
+history
 plugin
 blender
 export/scenes

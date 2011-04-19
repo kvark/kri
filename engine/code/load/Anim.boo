@@ -25,7 +25,7 @@ public class ExAnim( kri.IExtension ):
 	private def genBone		[of T(struct)](fun as callable(kri.NodeBone, ref T)):
 		return do(pl as IPlayer, v as T, i as byte):
 			bar = (pl as kri.Skeleton).bones
-			return if not i or i>bar.Length
+			if not i or i>bar.Length:	return
 			fun( bar[i-1], v )
 			bar[i-1].touch()
 	
