@@ -1,16 +1,15 @@
 namespace kri.meta
 
-import System
 import OpenTK
 import kri.shade
 
 
 #---	stand-alone meta interface	---#
 
-public interface IBase( par.INamed, ICloneable ):
+public interface IBase( par.INamed, System.ICloneable ):
 	def link(d as par.Dict) as void
 
-public interface ISlave( ICloneable ):
+public interface ISlave( System.ICloneable ):
 	def link(name as string, d as par.Dict) as void
 
 public interface IUnited:
@@ -33,7 +32,7 @@ public class Hermit(IBase,IShaded):
 		h.name = name
 		h.shader = shader
 		return h
-	def ICloneable.Clone() as object:
+	def System.ICloneable.Clone() as object:
 		return copyTo(Hermit())
 	def IBase.link(d as par.Dict) as void:
 		pass
@@ -43,7 +42,7 @@ public class Hermit(IBase,IShaded):
 public class Advanced(IUnited,Hermit):
 	[Property(Unit)]
 	private unit	as int	= -1
-	def ICloneable.Clone() as object:
+	def System.ICloneable.Clone() as object:
 		return copyTo( Advanced( Unit:unit ) )
 	
 
@@ -59,7 +58,7 @@ public class AdUnit( ISlave, par.ValuePure[of kri.buf.Texture] ):
 		pOffset	.Value = Vector4.Zero
 		pScale	.Value = Vector4.One
 	
-	def ICloneable.Clone() as object:
+	def System.ICloneable.Clone() as object:
 		return AdUnit( Value:Value, input:input, Offset:Offset, Scale:Scale )
 	
 	def ISlave.link(name as string, d as par.Dict) as void:

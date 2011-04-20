@@ -19,6 +19,8 @@ public class GladeApp:
 	[Glade.Widget]	camFovLabel		as Gtk.Label
 	[Glade.Widget]	camAspectLabel	as Gtk.Label
 	[Glade.Widget]	camActiveBut	as Gtk.ToggleButton
+	[Glade.Widget]	metaUnitLabel	as Gtk.Label
+	[Glade.Widget]	metaShaderLabel	as Gtk.Label
 	
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
@@ -176,22 +178,39 @@ public class GladeApp:
 		if not objView.Selection.GetSelected(iter):
 			return
 		obj = objTree.GetValue(iter,0)
+		propertyBook.Page = 0
+		meta = obj as kri.meta.Advanced
+		cam = obj as kri.Camera
 		if obj isa kri.Entity:
-			propertyBook.Page = 0
-		if obj isa kri.Node:
 			propertyBook.Page = 1
-		if obj isa kri.Material:
+		if obj isa kri.Node:
 			propertyBook.Page = 2
-		if obj isa kri.Camera:
+		if obj isa kri.Material:
 			propertyBook.Page = 3
-			cam = obj as kri.Camera
+		if cam:
+			propertyBook.Page = 4
 			camFovLabel.Text = 'Fov: ' + cam.fov
 			camAspectLabel.Text = 'Aspect: ' + cam.aspect
 			camActiveBut.Active = view.cam == cam
 		if obj isa kri.Light:
-			propertyBook.Page = 4
-		if obj isa kri.ani.data.Record:
 			propertyBook.Page = 5
+		if obj isa kri.ani.data.Record:
+			propertyBook.Page = 6
+		if meta:
+			metaUnitLabel.Text = 'Unit: ' + meta.Unit
+			if meta.Shader:
+				metaShaderLabel.Text = meta.Shader.Description
+			propertyBook.Page = 7
+	
+	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
+		it = Gtk.TreeIter()
+		assert objTree.GetIter(it, args.Path )
+		if not objTree.IterHasChild(it):
+			ox = objTree.GetValue(it,0)
+			if ox isa kri.Material:
+				for meta in (ox as kri.Material).metaList:
+					objTree.AppendValues(it,meta)
+		objView.ExpandRow( args.Path, true )
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
 		return
@@ -241,6 +260,8 @@ public class GladeApp:
 			cr.Text = '[mat] ' + name
 		if obj isa kri.Skeleton:
 			cr.Text = 'sleleton'
+		if obj isa kri.meta.Advanced:
+			cr.Text = (obj as kri.meta.Advanced).Name
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		tag = model.GetValue(iter,0) as kri.ITag
@@ -283,6 +304,7 @@ public class GladeApp:
 		objView.AppendColumn( 'Object:', Gtk.CellRendererText(), objFunc )
 		objView.Model = objTree
 		objView.CursorChanged	+= onSelectObj
+		objView.RowActivated	+= onActivateObj
 		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
 			curCam = curObj as kri.Camera
 			if view.cam != curCam:

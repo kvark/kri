@@ -9,6 +9,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Object:
 	public final handle		as int
+	[Getter(Description)]
 	private final tag		as string
 	public final type		as ShaderType
 
@@ -32,7 +33,6 @@ public class Object:
 	# delete
 	def destructor():
 		kri.Help.safeKill({ GL.DeleteShader(handle) })
-
 
 	private def compose(text as string) as int:
 		sid = GL.CreateShader(type)
