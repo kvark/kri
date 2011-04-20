@@ -243,40 +243,43 @@ public class GladeApp:
 	
 	private def objFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		obj = model.GetValue(iter,0)
-		cr = cell as Gtk.CellRendererText
-		assert obj and cr
+		ct = cell as Gtk.CellRendererText
+		cp = cell as Gtk.CellRendererPixbuf
 		iNoded = obj as kri.INoded
 		name = ''
 		if iNoded and iNoded.Node:
 			name = iNoded.Node.name
-		cr.Text = obj.GetType().ToString()
+		if ct: ct.Text = obj.GetType().ToString()
+		if cp: cp.StockId = 'gtk-file'
 		if obj isa kri.Camera:
-			cr.Text = '[cam] '+name
+			if ct:	ct.Text = '[cam] '+name
+			#if cp: 
 		if obj isa kri.Light:
-			cr.Text = '[lit] '+name
+			if ct:	ct.Text = '[lit] '+name
 		if obj isa kri.Entity:
-			cr.Text = '[ent] '+name
+			if ct:	ct.Text = '[ent] '+name
 		if obj isa kri.part.Emitter:
-			cr.Text = '[par] '+name
+			if ct:	ct.Text = '[par] '+name
 		if obj isa kri.Node:
-			cr.Text = 'node'
+			if ct:	ct.Text = 'node'
 		if obj isa kri.Skeleton:
-			cr.Text = 'sleleton'
+			if ct:	ct.Text = 'sleleton'
 		mat = obj as kri.Material
 		if mat:
-			cr.Text = '[mat] ' + mat.name
+			if ct:	ct.Text = '[mat] ' + mat.name
 		rec = obj as kri.ani.data.Record
 		if rec:
-			cr.Text = "[ani] ${rec.name} (${rec.length})"
+			if ct:	ct.Text = "[ani] ${rec.name} (${rec.length})"
 		mad = obj as kri.meta.Advanced
 		if mad:
-			cr.Text = mad.Name
+			if ct:	ct.Text = mad.Name
 		mun = obj as kri.meta.AdUnit
 		if mun:
-			cr.Text = '[unit] '
+			str = '[unit] '
 			tex = mun.Value
 			if tex:
-				cr.Text += tex.target.ToString()
+				str += tex.target.ToString()
+			if ct:	ct.Text = str
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		tag = model.GetValue(iter,0) as kri.ITag
@@ -289,6 +292,17 @@ public class GladeApp:
 		cr = cell as Gtk.CellRendererText
 		assert rec and cr
 		cr.Text = "${rec.name} (${rec.length})"
+	
+	private def makeColumn() as Gtk.TreeViewColumn:
+		col = Gtk.TreeViewColumn()
+		col.Title = 'Objects:'
+		rPix = Gtk.CellRendererPixbuf()
+		col.PackStart(rPix,false)
+		col.SetCellDataFunc( rPix, objFunc )
+		rTex = Gtk.CellRendererText()
+		col.PackEnd(rTex,true)
+		col.SetCellDataFunc( rTex, objFunc )
+		return col
 	
 	public def constructor():
 		Gtk.Application.Init()
@@ -310,13 +324,8 @@ public class GladeApp:
 		dOpen.AddFilter(filter)
 		# make panel
 		propertyBook.ShowTabs = false
-		#col = Gtk.TreeViewColumn()
-		#col.AddAttribute( rPix = Gtk.CellRendererPixbuf(), 'Icon:', 0 )
-		#col.AddAttribute( rTex = Gtk.CellRendererText(), '0', 0 )
-		#col.Title = 'Object:'
-		#col.SetCellDataFunc( rTex, objFunc )
-		#objView.AppendColumn(col)
-		objView.AppendColumn( 'Object:', Gtk.CellRendererText(), objFunc )
+		objView.AppendColumn( makeColumn() )
+		#objView.AppendColumn( 'Object:', Gtk.CellRendererText(), objFunc )
 		objView.Model = objTree
 		objView.CursorChanged	+= onSelectObj
 		objView.RowActivated	+= onActivateObj
