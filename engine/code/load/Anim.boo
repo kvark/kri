@@ -100,7 +100,7 @@ public class ExAnim( kri.IExtension ):
 	#---	Parse action	---#
 	public def p_action(r as Reader) as bool:
 		player = r.geData[of Player]()
-		return false	if not player
+		if not player:	return false
 		name = r.getString()
 		rec = Record( name, r.getReal() )
 		player.anims.Add(rec)

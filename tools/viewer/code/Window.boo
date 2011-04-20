@@ -71,12 +71,16 @@ public class GladeApp:
 		for ani in pl.anims:
 			objTree.AppendValues(par,ani)
 	
+	private def addObject(par as Gtk.TreeIter, ob as object) as Gtk.TreeIter:
+		if not ob:	return par
+		it = objTree.AppendValues(par,ob)
+		addPlayer(it,ob)
+		return it
+	
 	private def addObject(ob as object) as Gtk.TreeIter:
 		it = objTree.AppendValues(ob)
 		on = ob as kri.INoded
-		if on and on.Node:
-			itn = objTree.AppendValues(it, on.Node)
-			addPlayer(itn,on)
+		if on:	addObject(it,on.Node)
 		addPlayer(it,ob)
 		return it
 		
@@ -92,12 +96,10 @@ public class GladeApp:
 			it = addObject(ent)
 			for tag in ent.tags:
 				td = tag as kri.ITagData
-				if not td: continue
-				objTree.AppendValues(it, td.Data)
+				if td:	addObject(it,td.Data)
 		for par in view.scene.particles:
 			it = addObject(par)
-			if par.owner:
-				objTree.AppendValues(it, par.owner)
+			addObject( it, par.owner )
 	
 	# signals
 	
@@ -177,7 +179,7 @@ public class GladeApp:
 		iter = Gtk.TreeIter()
 		if not objView.Selection.GetSelected(iter):
 			return
-		obj = objTree.GetValue(iter,0)
+		curObj = obj = objTree.GetValue(iter,0)
 		propertyBook.Page = 0
 		meta = obj as kri.meta.Advanced
 		cam = obj as kri.Camera
@@ -207,8 +209,11 @@ public class GladeApp:
 		assert objTree.GetIter(it, args.Path )
 		if not objTree.IterHasChild(it):
 			ox = objTree.GetValue(it,0)
-			if ox isa kri.Material:
-				for meta in (ox as kri.Material).metaList:
+			mat = ox as kri.Material
+			if mat:
+				for unit in mat.unit:
+					objTree.AppendValues(it,unit)
+				for meta in mat.metaList:
 					objTree.AppendValues(it,meta)
 		objView.ExpandRow( args.Path, true )
 	
@@ -255,13 +260,23 @@ public class GladeApp:
 			cr.Text = '[par] '+name
 		if obj isa kri.Node:
 			cr.Text = 'node'
-		if obj isa kri.Material:
-			name = (obj as kri.Material).name
-			cr.Text = '[mat] ' + name
 		if obj isa kri.Skeleton:
 			cr.Text = 'sleleton'
-		if obj isa kri.meta.Advanced:
-			cr.Text = (obj as kri.meta.Advanced).Name
+		mat = obj as kri.Material
+		if mat:
+			cr.Text = '[mat] ' + mat.name
+		rec = obj as kri.ani.data.Record
+		if rec:
+			cr.Text = "[ani] ${rec.name} (${rec.length})"
+		mad = obj as kri.meta.Advanced
+		if mad:
+			cr.Text = mad.Name
+		mun = obj as kri.meta.AdUnit
+		if mun:
+			cr.Text = '[unit] '
+			tex = mun.Value
+			if tex:
+				cr.Text += tex.target.ToString()
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		tag = model.GetValue(iter,0) as kri.ITag
