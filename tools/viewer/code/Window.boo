@@ -51,20 +51,6 @@ public class GladeApp:
 		#for rec in pl.anims:
 		#	aniList.AppendValues(rec)
 	
-	private def selectMat(m as kri.Material) as void:
-		return
-		/*if not m:
-			entBook.Page = 1
-			return
-		entBook.Page = 0
-		matLabel.Text = 'Material: '+ m.name
-		for ch in metaBox.AllChildren:
-			metaBox.Remove(ch)
-		for meta in m.metaList:
-			lab = Gtk.Label(meta.Name)
-			lab.Visible = true
-			metaBox.Add(lab)*/
-	
 	private def addPlayer(par as Gtk.TreeIter, ob as object) as void:
 		pl = ob as kri.ani.data.Player
 		if not pl: return
@@ -100,7 +86,8 @@ public class GladeApp:
 		for par in view.scene.particles:
 			it = addObject(par)
 			addObject( it, par.owner )
-	
+
+	#--------------------	
 	# signals
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
@@ -113,7 +100,6 @@ public class GladeApp:
 		view.ren = rset.gen( Scheme.Forward )
 		r = gw.Allocation
 		view.resize( 0, magicOffset, r.Width, r.Height )
-		selectMat(null)
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		rset = null
@@ -181,15 +167,13 @@ public class GladeApp:
 			return
 		curObj = obj = objTree.GetValue(iter,0)
 		propertyBook.Page = 0
-		meta = obj as kri.meta.Advanced
-		cam = obj as kri.Camera
 		if obj isa kri.Entity:
 			propertyBook.Page = 1
 		if obj isa kri.Node:
 			propertyBook.Page = 2
 		if obj isa kri.Material:
 			propertyBook.Page = 3
-		if cam:
+		if (cam = obj as kri.Camera):
 			propertyBook.Page = 4
 			camFovLabel.Text = 'Fov: ' + cam.fov
 			camAspectLabel.Text = 'Aspect: ' + cam.aspect
@@ -198,7 +182,7 @@ public class GladeApp:
 			propertyBook.Page = 5
 		if obj isa kri.ani.data.Record:
 			propertyBook.Page = 6
-		if meta:
+		if (meta = obj as kri.meta.Advanced):
 			metaUnitLabel.Text = 'Unit: ' + meta.Unit
 			if meta.Shader:
 				metaShaderLabel.Text = meta.Shader.Description
@@ -209,12 +193,14 @@ public class GladeApp:
 		assert objTree.GetIter(it, args.Path )
 		if not objTree.IterHasChild(it):
 			ox = objTree.GetValue(it,0)
-			mat = ox as kri.Material
-			if mat:
+			if (mat = ox as kri.Material):
 				for unit in mat.unit:
 					objTree.AppendValues(it,unit)
 				for meta in mat.metaList:
 					objTree.AppendValues(it,meta)
+			if (rec = ox as kri.ani.data.Record):
+				for ch in rec.channels:
+					objTree.AppendValues(it,ch)
 		objView.ExpandRow( args.Path, true )
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
@@ -222,25 +208,10 @@ public class GladeApp:
 	
 	public def onPlayAni(o as object, args as Gtk.RowActivatedArgs) as void:
 		return
-		/*iter = Gtk.TreeIter()
-		aniTree.Selection.GetSelected(iter)
-		rec = aniList.GetValue(iter,0)	as kri.ani.data.Record
-		objTree.Selection.GetSelected(iter)
-		obj = objList.GetValue(iter,0)	as kri.ani.data.Player
-		assert rec and obj
-		al.add( kri.ani.data.Anim(obj,rec) )*/
 	
-	# construction
-			
-	private def makeWidget() as Gtk.GLWidget:
-		context	= config.ask('Context','0')
-		bug = context.EndsWith('d')
-		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
-		gm = GraphicsMode( ColorFormat(8), 24, 8 )
-		conFlags  = GraphicsContextFlags.ForwardCompatible
-		if bug:	conFlags |= GraphicsContextFlags.Debug	
-		return Gtk.GLWidget(gm,3,ver,conFlags)
-	
+	#--------------------
+	# visuals
+
 	private def objFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		obj = model.GetValue(iter,0)
 		text = obj.GetType().ToString()
@@ -248,6 +219,7 @@ public class GladeApp:
 		iNoded = obj as kri.INoded
 		if iNoded and iNoded.Node:
 			text = iNoded.Node.name
+		# select icon and tet
 		if obj isa kri.Camera:
 			icon = 'fullscreen'
 		if obj isa kri.Light:
@@ -262,29 +234,28 @@ public class GladeApp:
 		if obj isa kri.Skeleton:
 			text = 'sleleton'
 			icon = 'disconnect'
-		mat = obj as kri.Material
-		if mat:
+		if (mat = obj as kri.Material):
 			text = mat.name
 			icon = 'select-color'
-		rec = obj as kri.ani.data.Record
-		if rec:
+		if (rec = obj as kri.ani.data.Record):
 			text = "${rec.name} (${rec.length})"
 			icon = 'cdrom'
-		mad = obj as kri.meta.Advanced
-		if mad:
+		if (chan = obj as kri.ani.data.IChannel):
+			icon = 'execute'
+			text = chan.Tag
+		if (mad = obj as kri.meta.Advanced):
 			text = mad.Name
 			icon = 'color-picker'
-		mun = obj as kri.meta.AdUnit
-		if mun:
+		if (mun = obj as kri.meta.AdUnit):
 			text = '(empty)'
 			icon = 'harddisk'
-			tt = mun.Value
-			if tt:	text = tt.target.ToString()
+			if mun.Value:
+				text = mun.Value.target.ToString()
 		# set the result
-		ct = cell as Gtk.CellRendererText
-		if ct:	ct.Text = text
-		cp = cell as Gtk.CellRendererPixbuf
-		if cp:	cp.StockId = 'gtk-'+icon
+		if (ct = cell as Gtk.CellRendererText):
+			ct.Text = text
+		if (cp = cell as Gtk.CellRendererPixbuf):
+			cp.StockId = 'gtk-'+icon
 
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
@@ -298,6 +269,18 @@ public class GladeApp:
 		cr = cell as Gtk.CellRendererText
 		assert rec and cr
 		cr.Text = "${rec.name} (${rec.length})"
+	
+	#--------------------
+	# construction
+			
+	private def makeWidget() as Gtk.GLWidget:
+		context	= config.ask('Context','0')
+		bug = context.EndsWith('d')
+		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
+		gm = GraphicsMode( ColorFormat(8), 24, 8 )
+		conFlags  = GraphicsContextFlags.ForwardCompatible
+		if bug:	conFlags |= GraphicsContextFlags.Debug	
+		return Gtk.GLWidget(gm,3,ver,conFlags)
 	
 	private def makeColumn() as Gtk.TreeViewColumn:
 		col = Gtk.TreeViewColumn()
