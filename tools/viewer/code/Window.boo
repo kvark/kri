@@ -243,43 +243,49 @@ public class GladeApp:
 	
 	private def objFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		obj = model.GetValue(iter,0)
-		ct = cell as Gtk.CellRendererText
-		cp = cell as Gtk.CellRendererPixbuf
+		text = obj.GetType().ToString()
+		icon = 'file'
 		iNoded = obj as kri.INoded
-		name = ''
 		if iNoded and iNoded.Node:
-			name = iNoded.Node.name
-		if ct: ct.Text = obj.GetType().ToString()
-		if cp: cp.StockId = 'gtk-file'
+			text = iNoded.Node.name
 		if obj isa kri.Camera:
-			if ct:	ct.Text = '[cam] '+name
-			#if cp: 
+			icon = 'fullscreen'
 		if obj isa kri.Light:
-			if ct:	ct.Text = '[lit] '+name
+			icon = 'dialog-info'
 		if obj isa kri.Entity:
-			if ct:	ct.Text = '[ent] '+name
+			icon = 'orientation-portrait'
 		if obj isa kri.part.Emitter:
-			if ct:	ct.Text = '[par] '+name
+			icon = 'about'
 		if obj isa kri.Node:
-			if ct:	ct.Text = 'node'
+			text = 'node'
+			icon = 'sort-descending'
 		if obj isa kri.Skeleton:
-			if ct:	ct.Text = 'sleleton'
+			text = 'sleleton'
+			icon = 'disconnect'
 		mat = obj as kri.Material
 		if mat:
-			if ct:	ct.Text = '[mat] ' + mat.name
+			text = mat.name
+			icon = 'select-color'
 		rec = obj as kri.ani.data.Record
 		if rec:
-			if ct:	ct.Text = "[ani] ${rec.name} (${rec.length})"
+			text = "${rec.name} (${rec.length})"
+			icon = 'cdrom'
 		mad = obj as kri.meta.Advanced
 		if mad:
-			if ct:	ct.Text = mad.Name
+			text = mad.Name
+			icon = 'color-picker'
 		mun = obj as kri.meta.AdUnit
 		if mun:
-			str = '[unit] '
-			tex = mun.Value
-			if tex:
-				str += tex.target.ToString()
-			if ct:	ct.Text = str
+			text = '(empty)'
+			icon = 'harddisk'
+			tt = mun.Value
+			if tt:	text = tt.target.ToString()
+		# set the result
+		ct = cell as Gtk.CellRendererText
+		if ct:	ct.Text = text
+		cp = cell as Gtk.CellRendererPixbuf
+		if cp:	cp.StockId = 'gtk-'+icon
+
 	
 	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		tag = model.GetValue(iter,0) as kri.ITag
