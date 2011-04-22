@@ -90,6 +90,10 @@ public class GladeApp:
 	#--------------------	
 	# signals
 	
+	public def onException(args as GLib.UnhandledExceptionArgs) as void:
+		args.ExitApplication = true
+		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
+	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		ant = kri.Ant(config,true)
 		ant.extensions.AddRange((of kri.IExtension:
@@ -98,25 +102,32 @@ public class GladeApp:
 		ant.anim = al
 		rset = RenderSet()
 		view.ren = rset.gen( Scheme.Forward )
-		r = gw.Allocation
-		view.resize( 0, magicOffset, r.Width, r.Height )
+		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		rset = null
 		(kri.Ant.Inst as System.IDisposable).Dispose()
 		Gtk.Application.Quit()
 	
+	public def onIdle() as bool:
+		if kri.Ant.Inst:
+			kri.Ant.Inst.update(1)
+		/*core = kri.Ant.Inst
+		if not core:	return
+		core.update(1)
+		gw.Activate()
+		view.update()
+		gw.ShowNow()
+		if fps.update(core.Time):
+			window.Title = fps.gen()
+		*/return true
+	
 	public def onFrame(o as object, args as System.EventArgs) as void:
 		core = kri.Ant.Inst
 		if not core:	return
-		try:
-			core.update(1)
-			view.update()
-		except e:
-			dialog.Text = e.StackTrace
+		view.update()
 		if fps.update(core.Time):
 			window.Title = fps.gen()
-		#window.QueueDraw()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
@@ -124,7 +135,7 @@ public class GladeApp:
 			return
 		r = args.Allocation
 		view.resize( 0, magicOffset, r.Width, r.Height )
-		window.QueueDraw()	# temporary bug fix
+		window.QueueDraw()
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
@@ -148,10 +159,7 @@ public class GladeApp:
 		# load scene
 		kri.Ant.Inst.loaders.materials.prefix = fdir
 		loader = kri.load.Native()
-		try:
-			at = loader.read(path)
-		except e:
-			dialog.Text = e.StackTrace
+		at = loader.read(path)
 		view.scene = at.scene
 		if at.scene.cameras.Count:
 			view.cam = at.scene.cameras[0]
@@ -296,6 +304,8 @@ public class GladeApp:
 	public def constructor():
 		Gtk.Application.Init()
 		kri.lib.Journal.Inst = log
+		GLib.Idle.Add( onIdle )
+		GLib.ExceptionManager.UnhandledException += onException
 		# load scheme
 		scheme = Glade.XML('scheme/main.glade', 'window', null)
 		scheme.Autoconnect(self)
@@ -331,11 +341,4 @@ public class GladeApp:
 		gw.Visible = true
 		# run
 		statusBar.Push(0, 'Started')
-		manual = false
-		if manual:
-			while window.Visible:
-				if not Gtk.Application.EventsPending():
-					onFrame(null,null)
-				Gtk.Application.RunIteration()
-		else:
-			Gtk.Application.Run()
+		Gtk.Application.Run()

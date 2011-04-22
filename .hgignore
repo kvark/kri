@@ -11,6 +11,7 @@ demo/test
 demo/dude
 demo/vanburen
 demo/particle/res
+tools/viewer/exception.txt
 game_*
 sol
 

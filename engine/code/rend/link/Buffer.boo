@@ -45,6 +45,9 @@ public class Buffer(Basic):
 	Frame as Frame:
 		public override  get:
 			return buf
+	Ready as bool:
+		public get:
+			return buf.at.color[0] != null
 	
 	public def constructor(ns as byte, bc as byte, bd as byte):
 		texTarget = (TextureTarget.Texture2D, TextureTarget.Texture2DMultisample)[ns>0]

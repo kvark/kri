@@ -30,6 +30,8 @@ public class Chain(Basic):
 			return r.setup(pl)
 		
 	public override def process(con as link.Basic) as void:
+		if not ln.Ready:
+			return
 		for r in renders:
 			if r.active:
 				r.process(ln)

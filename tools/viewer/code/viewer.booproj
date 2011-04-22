@@ -62,6 +62,9 @@
     <Reference Include="glade-sharp">
       <HintPath>..\..\..\..\..\..\Program Files\Mono-2.10.1\lib\mono\gtk-sharp-2.0\glade-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="glib-sharp">
+      <HintPath>..\..\..\..\..\..\Program Files\Mono-2.10.1\lib\mono\gtk-sharp-2.0\glib-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="gtk-sharp">
       <HintPath>..\..\..\..\..\..\Program Files\Mono-2.10.1\lib\mono\gtk-sharp-2.0\gtk-sharp.dll</HintPath>
     </Reference>
