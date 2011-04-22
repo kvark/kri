@@ -283,6 +283,7 @@ public class GladeApp:
 			
 	private def makeWidget() as Gtk.GLWidget:
 		context	= config.ask('Context','0')
+		#return Gtk.GLWidget()	# for gl-2
 		bug = context.EndsWith('d')
 		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
 		gm = GraphicsMode( ColorFormat(8), 24, 8 )

@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>support</RootNamespace>
     <AssemblyName>support</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\dmitrym\Application Data\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <NoStdLib>False</NoStdLib>
     <Ducky>False</Ducky>
@@ -102,6 +102,7 @@
     <Folder Include="light" />
     <Folder Include="mirror" />
     <Folder Include="motion" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

@@ -15,9 +15,9 @@ public final class Capabilities:
 	public final textureLayers	as ushort
 	public final textureSize	as uint
 	public final renderBufSize	as uint
-	public final samplesColor	as ushort
-	public final samplesInt		as ushort
-	public final samplesDepth	as ushort
+	public final samplesColor	as ushort	= 0
+	public final samplesInt		as ushort	= 0
+	public final samplesDepth	as ushort	= 0
 	public final elemIndices	as uint
 	public final elemVertices	as uint
 	public final contextVersion	as string
@@ -29,7 +29,7 @@ public final class Capabilities:
 		GL.GetInteger(pn,val)
 		return val
 	
-	public def constructor():
+	public def constructor(gl3 as bool):
 		contextVersion	= GL.GetString( StringName.Version )
 		shadingVersion	= GL.GetString( StringName.ShadingLanguageVersion )
 		drawBuffers		= Var( GetPName.MaxDrawBuffers )
@@ -40,9 +40,10 @@ public final class Capabilities:
 		textureLayers	= Var( GetPName.MaxArrayTextureLayers )
 		textureSize		= Var( GetPName.MaxTextureSize )
 		renderBufSize	= Var( GetPName.MaxRenderbufferSize )
-		samplesColor	= Var( GetPName.MaxColorTextureSamples )
-		samplesInt		= Var( GetPName.MaxIntegerSamples )
-		samplesDepth	= Var( GetPName.MaxDepthTextureSamples )
+		if gl3:
+			samplesColor	= Var( GetPName.MaxColorTextureSamples )
+			samplesInt		= Var( GetPName.MaxIntegerSamples )
+			samplesDepth	= Var( GetPName.MaxDepthTextureSamples )
 		elemIndices		= Var( GetPName.MaxElementsIndices )
 		elemVertices	= Var( GetPName.MaxElementsVertices )
 		vertComponents	= Var( GetPName.MaxVertexUniformComponents )

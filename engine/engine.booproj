@@ -16,7 +16,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoWarn>BCW0014</NoWarn>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
@@ -195,6 +195,7 @@
     <Folder Include="shader\" />
     <Folder Include="shader\" />
     <Folder Include="shader\" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

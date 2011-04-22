@@ -129,7 +129,7 @@ public class ExAnim( kri.IExtension ):
 	public static def InterSingle(q as single, w as single, t as single) as single:
 		return (1-t)*q + t*w
 	
-	private static def FixChan2[of T(struct)](c as Channel[of T]) as void:
+	/*private static def FixChan2[of T(struct)](c as Channel[of T]) as void:
 		if T == Quaternion:
 			c.lerp = Quaternion.Slerp	as callable
 			c.bezier = false
@@ -143,7 +143,7 @@ public class ExAnim( kri.IExtension ):
 			c.lerp = InterColor			as callable
 		elif T == single:
 			c.lerp = InterSingle		as callable
-
+	*/
 
 	#---	Read Abstract Channel (rac) constructor	---#
 	

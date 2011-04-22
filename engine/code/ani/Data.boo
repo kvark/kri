@@ -31,6 +31,7 @@ public interface IChannel:
 
 # bypassing BOO-854
 [ext.spec.Class(( Vector2, Vector3, Vector4, Quaternion, Graphics.Color4, single ))]
+[ext.RemoveSource]
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	public final elid	as byte
