@@ -197,18 +197,29 @@ public class GladeApp:
 			propertyBook.Page = 7
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
-		it = Gtk.TreeIter()
-		assert objTree.GetIter(it, args.Path )
-		if not objTree.IterHasChild(it):
+		par = it = Gtk.TreeIter.Zero
+		objTree.GetIter(par,args.Path)
+		types = System.Collections.Generic.Dictionary[of System.Type, Gtk.TreeIter]()
+		while true:
+			if it == Gtk.TreeIter.Zero:
+				objTree.IterChildren(it,par)
+			else:
+				objTree.IterNext(it)
 			ox = objTree.GetValue(it,0)
-			if (mat = ox as kri.Material):
+			if not ox:	break
+			types[ox.GetType()] = it
+		ox = objTree.GetValue(par,0)
+		if (mat = ox as kri.Material):
+			if kri.meta.AdUnit not in types:
 				for unit in mat.unit:
-					objTree.AppendValues(it,unit)
+					objTree.AppendValues(par,unit)
+			if kri.meta.Advanced not in types:
 				for meta in mat.metaList:
-					objTree.AppendValues(it,meta)
-			if (rec = ox as kri.ani.data.Record):
+					objTree.AppendValues(par,meta)
+		if (rec = ox as kri.ani.data.Record):
+			if kri.ani.data.IChannel not in types:
 				for ch in rec.channels:
-					objTree.AppendValues(it,ch)
+					objTree.AppendValues(par,ch)
 		objView.ExpandRow( args.Path, true )
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
