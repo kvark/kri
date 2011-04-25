@@ -6,6 +6,11 @@ import OpenTK.Graphics
 public def Main(argv as (string)) as void:
 	GladeApp()
 
+private class AtBox:
+	public final info	as kri.vb.Info
+	public def constructor(ai as kri.vb.Info):
+		info = ai
+
 
 public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
@@ -64,6 +69,7 @@ public class GladeApp:
 		return it
 	
 	private def addObject(ob as object) as Gtk.TreeIter:
+		if not ob:	return
 		it = objTree.AppendValues(ob)
 		on = ob as kri.INoded
 		if on:	addObject(it,on.Node)
@@ -80,6 +86,8 @@ public class GladeApp:
 			addObject(lit)
 		for ent in view.scene.entities:
 			it = addObject(ent)
+			addObject( it, ent.mesh )
+			addObject( it, ent.store )
 			for tag in ent.tags:
 				td = tag as kri.ITagData
 				if td:	addObject(it,td.Data)
@@ -195,11 +203,15 @@ public class GladeApp:
 			if meta.Shader:
 				metaShaderLabel.Text = meta.Shader.Description
 			propertyBook.Page = 7
+		if (mesh = obj as kri.Mesh):
+			propertyBook.Page = 8
+		if (box = obj as AtBox):
+			propertyBook.Page = 9
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
 		par = it = Gtk.TreeIter.Zero
 		objTree.GetIter(par,args.Path)
-		types = System.Collections.Generic.Dictionary[of System.Type, Gtk.TreeIter]()
+		types = List[of System.Type]()
 		while true:
 			if it == Gtk.TreeIter.Zero:
 				objTree.IterChildren(it,par)
@@ -207,7 +219,7 @@ public class GladeApp:
 				objTree.IterNext(it)
 			ox = objTree.GetValue(it,0)
 			if not ox:	break
-			types[ox.GetType()] = it
+			types.Add(ox.GetType())
 		ox = objTree.GetValue(par,0)
 		if (mat = ox as kri.Material):
 			if kri.meta.AdUnit not in types:
@@ -216,10 +228,13 @@ public class GladeApp:
 			if kri.meta.Advanced not in types:
 				for meta in mat.metaList:
 					objTree.AppendValues(par,meta)
-		if (rec = ox as kri.ani.data.Record):
-			if kri.ani.data.IChannel not in types:
-				for ch in rec.channels:
-					objTree.AppendValues(par,ch)
+		if (rec = ox as kri.ani.data.Record) and kri.ani.data.IChannel not in types:
+			for ch in rec.channels:
+				objTree.AppendValues(par,ch)
+		if (vs = ox as kri.vb.Storage) and AtBox not in types:
+			for vat in vs.vbo:
+				for ai in vat.Semant:
+					objTree.AppendValues(par,AtBox(ai))
 		objView.ExpandRow( args.Path, true )
 	
 	public def onSelectAni(o as object, args as System.EventArgs) as void:
@@ -270,6 +285,12 @@ public class GladeApp:
 			icon = 'harddisk'
 			if mun.Value:
 				text = mun.Value.target.ToString()
+		if obj isa kri.vb.Storage:
+			text = ('store','mesh')[obj isa kri.Mesh]
+			icon = 'dnd-multiple'
+		if (box = obj as AtBox):
+			text = box.info.name
+			icon = 'preferences'
 		# set the result
 		if (ct = cell as Gtk.CellRendererText):
 			ct.Text = text

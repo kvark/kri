@@ -314,6 +314,46 @@
                     <property name="type">tab</property>
                   </packing>
                 </child>
+                <child>
+                  <widget class="GtkLabel" id="label8">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Mesh</property>
+                  </widget>
+                  <packing>
+                    <property name="position">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkLabel" id="tabMesh">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Mesh</property>
+                  </widget>
+                  <packing>
+                    <property name="position">9</property>
+                    <property name="tab_fill">False</property>
+                    <property name="type">tab</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkLabel" id="label9">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Attrib</property>
+                  </widget>
+                  <packing>
+                    <property name="position">9</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkLabel" id="tabAttrib">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Attrib</property>
+                  </widget>
+                  <packing>
+                    <property name="position">9</property>
+                    <property name="tab_fill">False</property>
+                    <property name="type">tab</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
                 <property name="expand">False</property>
