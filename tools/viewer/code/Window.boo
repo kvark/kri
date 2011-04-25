@@ -26,6 +26,11 @@ public class GladeApp:
 	[Glade.Widget]	camActiveBut	as Gtk.ToggleButton
 	[Glade.Widget]	metaUnitLabel	as Gtk.Label
 	[Glade.Widget]	metaShaderLabel	as Gtk.Label
+	[Glade.Widget]	meshModeLabel	as Gtk.Label
+	[Glade.Widget]	meshVertLabel	as Gtk.Label
+	[Glade.Widget]	meshPolyLabel	as Gtk.Label
+	[Glade.Widget]	attrTypeLabel	as Gtk.Label
+	[Glade.Widget]	attrSizeLabel	as Gtk.Label
 	
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
@@ -204,8 +209,13 @@ public class GladeApp:
 				metaShaderLabel.Text = meta.Shader.Description
 			propertyBook.Page = 7
 		if (mesh = obj as kri.Mesh):
+			meshModeLabel.Text = mesh.drawMode.ToString()
+			meshVertLabel.Text = 'nVert: ' + mesh.nVert
+			meshPolyLabel.Text = 'nPoly: ' + mesh.nPoly
 			propertyBook.Page = 8
 		if (box = obj as AtBox):
+			attrTypeLabel.Text = box.info.type.ToString()
+			attrSizeLabel.Text = 'Size: ' + box.info.size + ('','i')[box.info.integer]
 			propertyBook.Page = 9
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
