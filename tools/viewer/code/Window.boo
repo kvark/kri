@@ -32,6 +32,7 @@ public class GladeApp:
 	[Glade.Widget]	attrTypeLabel	as Gtk.Label
 	[Glade.Widget]	attrSizeLabel	as Gtk.Label
 	[Glade.Widget]	entVisibleBut	as Gtk.ToggleButton
+	[Glade.Widget]	aniPlayBut		as Gtk.Button
 	
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
@@ -45,6 +46,7 @@ public class GladeApp:
 	private final	magicOffset	= 17
 	private	final	al		= kri.ani.Scheduler()
 	private	curObj	as object	= null
+	private	curIter	= Gtk.TreeIter.Zero
 	
 	private def flushJournal() as bool:
 		all = log.flush()
@@ -56,11 +58,6 @@ public class GladeApp:
 		gw.Visible = true
 		window.QueueDraw()
 		return true
-	
-	private def addAnims(pl as kri.ani.data.Player) as void:
-		if not pl:	return
-		#for rec in pl.anims:
-		#	aniList.AppendValues(rec)
 	
 	private def addPlayer(par as Gtk.TreeIter, ob as object) as void:
 		pl = ob as kri.ani.data.Player
@@ -100,6 +97,7 @@ public class GladeApp:
 		for par in view.scene.particles:
 			it = addObject(par)
 			addObject( it, par.owner )
+
 
 	#--------------------	
 	# signals
@@ -184,10 +182,10 @@ public class GladeApp:
 		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
 	
 	public def onSelectObj(o as object, args as System.EventArgs) as void:
-		iter = Gtk.TreeIter()
-		if not objView.Selection.GetSelected(iter):
+		curIter = Gtk.TreeIter()
+		if not objView.Selection.GetSelected(curIter):
 			return
-		curObj = obj = objTree.GetValue(iter,0)
+		curObj = obj = objTree.GetValue(curIter,0)
 		propertyBook.Page = 0
 		if (ent = obj as kri.Entity):
 			entVisibleBut.Active = ent.visible
@@ -248,12 +246,7 @@ public class GladeApp:
 				for ai in vat.Semant:
 					objTree.AppendValues(par,AtBox(ai))
 		objView.ExpandRow( args.Path, true )
-	
-	public def onSelectAni(o as object, args as System.EventArgs) as void:
-		return
-	
-	public def onPlayAni(o as object, args as Gtk.RowActivatedArgs) as void:
-		return
+
 	
 	#--------------------
 	# visuals
@@ -309,19 +302,7 @@ public class GladeApp:
 		if (cp = cell as Gtk.CellRendererPixbuf):
 			cp.StockId = 'gtk-'+icon
 
-	
-	private def tagFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
-		tag = model.GetValue(iter,0) as kri.ITag
-		cr = cell as Gtk.CellRendererText
-		assert tag and cr
-		cr.Text = tag.GetType().ToString()
-	
-	private def aniFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
-		rec = model.GetValue(iter,0) as kri.ani.data.Record
-		cr = cell as Gtk.CellRendererText
-		assert rec and cr
-		cr.Text = "${rec.name} (${rec.length})"
-	
+
 	#--------------------
 	# construction
 			
@@ -381,6 +362,13 @@ public class GladeApp:
 			ent = curObj as kri.Entity
 			ent.visible = entVisibleBut.Active
 			window.QueueDraw()
+		aniPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
+			parIter = Gtk.TreeIter.Zero
+			objTree.IterParent(parIter,curIter)
+			pl = objTree.GetValue(parIter,0) as kri.ani.data.Player
+			rec = curObj as kri.ani.data.Record
+			al.add( kri.ani.data.Anim(pl,rec) )
+			statusBar.Push(0, "Animation '${rec.name}' started")
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit
@@ -388,5 +376,5 @@ public class GladeApp:
 		gw.SizeAllocated	+= onSize
 		gw.Visible = true
 		# run
-		statusBar.Push(0, 'Started')
+		statusBar.Push(0, 'Launched')
 		Gtk.Application.Run()

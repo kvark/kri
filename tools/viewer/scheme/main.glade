@@ -253,9 +253,11 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkLabel" id="label1">
+                  <widget class="GtkButton" id="aniPlayBut">
+                    <property name="label" translatable="yes">PLAY</property>
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">ANIMATION</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
                   </widget>
                   <packing>
                     <property name="position">6</property>
