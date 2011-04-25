@@ -114,9 +114,11 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkLabel" id="label5">
+                  <widget class="GtkToggleButton" id="entVisibleBut">
+                    <property name="label" translatable="yes">VISIBLE</property>
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">ENTITY</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
                   </widget>
                   <packing>
                     <property name="position">1</property>

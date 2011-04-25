@@ -31,6 +31,7 @@ public class GladeApp:
 	[Glade.Widget]	meshPolyLabel	as Gtk.Label
 	[Glade.Widget]	attrTypeLabel	as Gtk.Label
 	[Glade.Widget]	attrSizeLabel	as Gtk.Label
+	[Glade.Widget]	entVisibleBut	as Gtk.ToggleButton
 	
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
@@ -188,7 +189,8 @@ public class GladeApp:
 			return
 		curObj = obj = objTree.GetValue(iter,0)
 		propertyBook.Page = 0
-		if obj isa kri.Entity:
+		if (ent = obj as kri.Entity):
+			entVisibleBut.Active = ent.visible
 			propertyBook.Page = 1
 		if obj isa kri.Node:
 			propertyBook.Page = 2
@@ -367,15 +369,18 @@ public class GladeApp:
 		# make panel
 		propertyBook.ShowTabs = false
 		objView.AppendColumn( makeColumn() )
-		#objView.AppendColumn( 'Object:', Gtk.CellRendererText(), objFunc )
 		objView.Model = objTree
 		objView.CursorChanged	+= onSelectObj
 		objView.RowActivated	+= onActivateObj
 		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
-			curCam = curObj as kri.Camera
-			if view.cam != curCam:
-				camActiveBut.Active = true
-				view.cam = curCam
+			if not camActiveBut.Active:
+				return
+			view.cam = curObj as kri.Camera
+			window.QueueDraw()
+		entVisibleBut.Clicked	+= do(o as object, args as System.EventArgs):
+			ent = curObj as kri.Entity
+			ent.visible = entVisibleBut.Active
+			window.QueueDraw()
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit
