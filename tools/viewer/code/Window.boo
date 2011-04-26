@@ -43,7 +43,7 @@ public class GladeApp:
 	private	final	log		= kri.lib.Journal()
 	private final	dialog	as Gtk.MessageDialog
 	private	final	objTree		= Gtk.TreeStore(object)
-	private final	magicOffset	= 17
+	private final	magicOffset	= 0
 	private	final	al		= kri.ani.Scheduler()
 	private	curObj	as object	= null
 	private	curIter	= Gtk.TreeIter.Zero
@@ -219,29 +219,30 @@ public class GladeApp:
 			propertyBook.Page = 9
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
-		par = it = Gtk.TreeIter.Zero
+		par = it = Gtk.TreeIter()
+		inMat = inAni = inStore = true
 		objTree.GetIter(par,args.Path)
-		types = List[of System.Type]()
-		while true:
-			if it == Gtk.TreeIter.Zero:
-				objTree.IterChildren(it,par)
-			else:
-				objTree.IterNext(it)
+		rez = objTree.IterChildren(it,par)
+		while rez:
 			ox = objTree.GetValue(it,0)
-			if not ox:	break
-			types.Add(ox.GetType())
+			if (ox isa kri.meta.AdUnit) or (ox isa kri.meta.Advanced):
+				inMat = false
+			if ox isa kri.ani.data.IChannel:
+				inAni = false
+			if ox isa AtBox:
+				inStore = false
+			if not objTree.IterNext(it):
+				break
 		ox = objTree.GetValue(par,0)
-		if (mat = ox as kri.Material):
-			if kri.meta.AdUnit not in types:
-				for unit in mat.unit:
-					objTree.AppendValues(par,unit)
-			if kri.meta.Advanced not in types:
-				for meta in mat.metaList:
-					objTree.AppendValues(par,meta)
-		if (rec = ox as kri.ani.data.Record) and kri.ani.data.IChannel not in types:
+		if (mat = ox as kri.Material) and inMat:
+			for unit in mat.unit:
+				objTree.AppendValues(par,unit)
+			for meta in mat.metaList:
+				objTree.AppendValues(par,meta)
+		if (rec = ox as kri.ani.data.Record) and inAni:
 			for ch in rec.channels:
 				objTree.AppendValues(par,ch)
-		if (vs = ox as kri.vb.Storage) and AtBox not in types:
+		if (vs = ox as kri.vb.Storage) and inStore:
 			for vat in vs.vbo:
 				for ai in vat.Semant:
 					objTree.AppendValues(par,AtBox(ai))
