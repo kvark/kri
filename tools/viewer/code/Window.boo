@@ -19,6 +19,7 @@ public class GladeApp:
 	[Glade.Widget]	toolBar			as Gtk.Toolbar
 	[Glade.Widget]	butClear		as Gtk.ToolButton
 	[Glade.Widget]	butOpen			as Gtk.ToolButton
+	[Glade.Widget]	butDraw			as Gtk.ToolButton
 	[Glade.Widget]	propertyBook	as Gtk.Notebook
 	[Glade.Widget]	objView			as Gtk.TreeView
 	[Glade.Widget]	camFovLabel		as Gtk.Label
@@ -43,7 +44,6 @@ public class GladeApp:
 	private	final	log		= kri.lib.Journal()
 	private final	dialog	as Gtk.MessageDialog
 	private	final	objTree		= Gtk.TreeStore(object)
-	private final	magicOffset	= 0
 	private	final	al		= kri.ani.Scheduler()
 	private	curObj	as object	= null
 	private	curIter	= Gtk.TreeIter.Zero
@@ -67,17 +67,17 @@ public class GladeApp:
 	
 	private def addObject(par as Gtk.TreeIter, ob as object) as Gtk.TreeIter:
 		if not ob:	return par
-		it = objTree.AppendValues(par,ob)
-		addPlayer(it,ob)
-		return it
-	
-	private def addObject(ob as object) as Gtk.TreeIter:
-		if not ob:	return
-		it = objTree.AppendValues(ob)
+		if par == Gtk.TreeIter.Zero:
+			it = objTree.AppendValues(ob)
+		else:
+			it = objTree.AppendValues(par,ob)
 		on = ob as kri.INoded
 		if on:	addObject(it,on.Node)
 		addPlayer(it,ob)
 		return it
+	
+	private def addObject(ob as object) as Gtk.TreeIter:
+		return addObject( Gtk.TreeIter.Zero, ob )
 		
 	private def updateList() as void:
 		objTree.Clear()
@@ -146,7 +146,7 @@ public class GladeApp:
 		if not view.ren:
 			return
 		r = args.Allocation
-		view.resize( 0, magicOffset, r.Width, r.Height )
+		view.resize( 0, 0, r.Width, r.Height )
 		window.QueueDraw()
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
@@ -342,6 +342,8 @@ public class GladeApp:
 		# make toolbar
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen
+		butDraw.Clicked		+= do(o as object, args as System.EventArgs):
+			gw.QueueDraw()
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)

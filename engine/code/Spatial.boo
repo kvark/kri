@@ -157,11 +157,13 @@ public class NodeBone(Node):
 #	SKELETON
 #	manages bones
 
-public class Skeleton( ani.data.Player ):
+public class Skeleton( ani.data.Player, INoded ):
 	public final bones	as (NodeBone)
 	public final node	as Node
 	[getter(State)]
 	private state		as int	= 0
+	INoded.Node as Node:
+		get: return node
 	
 	public def constructor(n as Node, num as int):
 		node = n
@@ -171,10 +173,10 @@ public class Skeleton( ani.data.Player ):
 		bones = s.bones.Clone() as (NodeBone)
 		for i in range( bones.Length ):
 			par = bones[i].Parent
-			continue	if not par
+			if not par:	continue
 			ind = Array.IndexOf(s.bones, par)
 			#ind = Array.BinarySearch(s.nodes, par)
-			continue	if ind < 0
+			if ind<0:	continue
 			bones[i].Parent = bones[ind]
 
 	public def touch() as void:
