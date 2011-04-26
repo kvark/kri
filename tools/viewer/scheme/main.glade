@@ -47,7 +47,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkToolButton" id="butDraw">
+                  <widget class="GtkToggleToolButton" id="butDraw">
                     <property name="visible">True</property>
                     <property name="is_important">True</property>
                     <property name="label" translatable="yes">Draw</property>

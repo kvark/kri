@@ -19,7 +19,7 @@ public class GladeApp:
 	[Glade.Widget]	toolBar			as Gtk.Toolbar
 	[Glade.Widget]	butClear		as Gtk.ToolButton
 	[Glade.Widget]	butOpen			as Gtk.ToolButton
-	[Glade.Widget]	butDraw			as Gtk.ToolButton
+	[Glade.Widget]	butDraw			as Gtk.ToggleToolButton
 	[Glade.Widget]	propertyBook	as Gtk.Notebook
 	[Glade.Widget]	objView			as Gtk.TreeView
 	[Glade.Widget]	camFovLabel		as Gtk.Label
@@ -56,7 +56,6 @@ public class GladeApp:
 		dialog.Run()
 		dialog.Hide()
 		gw.Visible = true
-		window.QueueDraw()
 		return true
 	
 	private def addPlayer(par as Gtk.TreeIter, ob as object) as void:
@@ -122,21 +121,14 @@ public class GladeApp:
 		Gtk.Application.Quit()
 	
 	public def onIdle() as bool:
-		if kri.Ant.Inst:
-			kri.Ant.Inst.update(1)
-		/*core = kri.Ant.Inst
-		if not core:	return
-		core.update(1)
-		gw.Activate()
-		view.update()
-		gw.ShowNow()
-		if fps.update(core.Time):
-			window.Title = fps.gen()
-		*/return true
+		if butDraw.Active:
+			gw.QueueDraw()
+		return true
 	
 	public def onFrame(o as object, args as System.EventArgs) as void:
 		core = kri.Ant.Inst
 		if not core:	return
+		core.update(1)
 		view.update()
 		if fps.update(core.Time):
 			window.Title = fps.gen()
@@ -147,14 +139,13 @@ public class GladeApp:
 			return
 		r = args.Allocation
 		view.resize( 0, 0, r.Width, r.Height )
-		window.QueueDraw()
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
 		view.scene = null
 		view.cam = null
 		objTree.Clear()
-		window.QueueDraw()
+		gw.QueueDraw()
 		statusBar.Push(0, 'Cleared')
 	
 	public def onButOpen(o as object, args as System.EventArgs) as void:
@@ -342,14 +333,12 @@ public class GladeApp:
 		# make toolbar
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen
-		butDraw.Clicked		+= do(o as object, args as System.EventArgs):
-			gw.QueueDraw()
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)
-		filter = Gtk.FileFilter( Name:'kri scenes' )
-		filter.AddPattern("*.scene")
-		dOpen.AddFilter(filter)
+		filt = Gtk.FileFilter( Name:'kri scenes' )
+		filt.AddPattern("*.scene")
+		dOpen.AddFilter(filt)
 		# make panel
 		propertyBook.ShowTabs = false
 		objView.AppendColumn( makeColumn() )
@@ -360,11 +349,9 @@ public class GladeApp:
 			if not camActiveBut.Active:
 				return
 			view.cam = curObj as kri.Camera
-			window.QueueDraw()
 		entVisibleBut.Clicked	+= do(o as object, args as System.EventArgs):
 			ent = curObj as kri.Entity
 			ent.visible = entVisibleBut.Active
-			window.QueueDraw()
 		aniPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
 			parIter = Gtk.TreeIter.Zero
 			objTree.IterParent(parIter,curIter)
