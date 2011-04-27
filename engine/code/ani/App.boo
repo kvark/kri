@@ -24,9 +24,14 @@ public class Particle( IBase ):
 	public def constructor(ps as kri.part.Emitter):
 		pe = ps
 	def IBase.onFrame(time as double) as uint:
+		if not pe:	return 2
 		kri.Ant.Inst.params.parTime.Value.Y = time
-		if ready: pe.owner.opTick(pe)
-		else: ready = pe.owner.opInit(pe)
+		man = pe.owner
+		if not (man and man.Ready):
+			kri.lib.Journal.Log("Particle: invalid manager for animating '${pe.name}'")
+			return 1
+		if ready: man.opTick(pe)
+		else: ready = man.opInit(pe)
 		return 0
 
 

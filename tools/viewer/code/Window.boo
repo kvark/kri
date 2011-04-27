@@ -34,6 +34,7 @@ public class GladeApp:
 	[Glade.Widget]	attrSizeLabel	as Gtk.Label
 	[Glade.Widget]	entVisibleBut	as Gtk.ToggleButton
 	[Glade.Widget]	aniPlayBut		as Gtk.Button
+	[Glade.Widget]	emiStartBut		as Gtk.Button
 	
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
@@ -211,6 +212,8 @@ public class GladeApp:
 			attrTypeLabel.Text = box.info.type.ToString()
 			attrSizeLabel.Text = 'Size: ' + box.info.size + ('','i')[box.info.integer]
 			propertyBook.Page = 9
+		if obj isa kri.part.Emitter:
+			propertyBook.Page = 10
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
 		par = it = Gtk.TreeIter()
@@ -373,6 +376,10 @@ public class GladeApp:
 			rec = curObj as kri.ani.data.Record
 			al.add( kri.ani.data.Anim(pl,rec) )
 			statusBar.Push(0, "Animation '${rec.name}' started")
+		emiStartBut.Clicked		+= do(o as object, args as System.EventArgs):
+			emi = curObj as kri.part.Emitter
+			al.add( kri.ani.Particle(emi) )
+			statusBar.Push(0, "Particle '${emi.name}' started")
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit

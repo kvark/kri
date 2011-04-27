@@ -22,7 +22,7 @@ public class Manager( kri.IMeshed ):
 	public	Total	as uint:
 		get: return mesh.nVert
 	public	Ready	as bool:
-		get: return col_init.Ready and col_update.Ready
+		get: return mesh.vbo.Count==1 and col_init.Ready and col_update.Ready
 	
 	kri.IMeshed.Mesh as kri.Mesh:
 		get: return mesh
@@ -83,7 +83,7 @@ public class Manager( kri.IMeshed ):
 			col.compose( vob.Semant, dict, kri.Ant.Inst.dict )
 	
 	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
-		if not pe.update():
+		if not (Ready and pe.update()):
 			return false
 		tf.Bind( mesh.vbo[0] )
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
