@@ -31,14 +31,14 @@ public class Program:
 	
 	public static Zero	= Program(0)
 	
-	public def check(pp as ProgramParameter) as void:
+	public def check(pp as ProgramParameter) as bool:
 		GL.GetProgramInfoLog(handle,log)
 		result as int
 		GL.GetProgram(handle, pp, result)
-		return	if result
-		print "Check ${pp} failed for program ${handle}:\n${log}"
-		raise log
-	
+		if result:	return true
+		kri.lib.Journal.Log("Shader: Failed to compile program (${handle}), message: ${log}")
+		return false
+
 	public def validate() as void:
 		GL.ValidateProgram(handle)
 		check( ProgramParameter.ValidateStatus )
@@ -54,11 +54,11 @@ public class Program:
 		for s in names:
 			add( Object.Load(s) )
 	# link program
-	public virtual def link() as void:
+	public virtual def link() as bool:
 		#assert not linked
-		linked = true
 		GL.LinkProgram(handle)
-		check( ProgramParameter.LinkStatus )
+		linked = check( ProgramParameter.LinkStatus )
+		return linked
 	# activate program
 	public def bind() as void:
 		assert linked

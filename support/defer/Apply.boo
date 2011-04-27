@@ -8,7 +8,6 @@ import kri.shade
 public class ApplyBase( kri.rend.Basic ):
 	protected final bu		= Bundle()
 	protected final sphere	as kri.gen.Frame
-	protected final dict	= par.Dict()
 	private texDepth		as par.Texture	= null
 	# custom activation
 	private virtual def onInit() as void:
@@ -22,8 +21,8 @@ public class ApplyBase( kri.rend.Basic ):
 	# link
 	protected def relink(con as Context) as void:
 		texDepth = con.texDepth
-		bu.dicts.Add(con.dict)
-		bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f' )
+		bu.dicts.Add( con.dict )
+		bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f','/lib/math_f' )
 		bu.shader.add( con.sh_apply, con.sh_diff, con.sh_spec )
 		bu.link()
 	# work
@@ -50,14 +49,14 @@ public class Apply( ApplyBase ):
 	private final texLit	= par.Value[of kri.buf.Texture]('light')
 	private final context	as support.light.Context
 	# init
-	public def constructor(con as Context, lc as support.light.Context, qord as byte):
+	public def constructor(lc as support.light.Context, con as Context, qord as byte):
 		super(qord)
 		context = lc
 		bu.shader.add('/g/apply_v')
 		relink(con)
 		# fill shader
 		bv.shader.add( '/copy_v', '/g/init_f' )
-		bv.dicts.Add(dict)
+		bv.dicts.Add( con.dict )
 	# shadow
 	private def bindShadow(t as kri.buf.Texture) as void:
 		if t:
@@ -70,7 +69,9 @@ public class Apply( ApplyBase ):
 	private override def onInit() as void:
 		kri.Ant.Inst.quad.draw(bv)
 	private override def onDraw() as void:
-		for l in kri.Scene.Current.lights:
+		scene = kri.Scene.Current
+		if not scene:	return
+		for l in scene.lights:
 			bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
 			sphere.draw(bu)

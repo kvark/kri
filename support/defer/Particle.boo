@@ -6,14 +6,15 @@ public class Particle(ApplyBase):
 	# init
 	public def constructor(pc as kri.part.Context, con as Context, qord as byte):
 		super(qord)
-		# program link
-		dict.var(pHalo)
+		con.dict.var(pHalo)
 		bu.shader.add('/part/draw/light_v')
 		relink(con)
 	# work
 	private override def onDraw() as void:
+		scene = kri.Scene.Current
+		if not scene:	return
 		# draw particles
-		for pe in kri.Scene.Current.particles:
+		for pe in scene.particles:
 			#todo: add light particle meta
 			if not pe.mat:
 				continue

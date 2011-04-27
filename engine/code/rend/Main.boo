@@ -64,11 +64,13 @@ public class FilterCopy(Filter):
 #---------	RENDER GROUP	--------#
 
 public class Group(Basic):
-	public	abstract	All	as (Basic):
-		get: pass
+	private	final	renders	as (Basic)	= null
+	public def constructor(*ren as (Basic)):
+		renders = ren
 	public override def setup(pl as kri.buf.Plane) as bool:
-		return System.Array.TrueForAll(All) do(r as Basic):
+		return System.Array.TrueForAll(renders) do(r as Basic):
 			return r.setup(pl)
 	public override def process(con as link.Basic) as void:
-		for r in All:
-			r.process(con)
+		for r in renders:
+			if r.active:
+				r.process(con)

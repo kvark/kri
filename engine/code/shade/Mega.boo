@@ -15,28 +15,21 @@ public struct Uniform:
 			return null
 		it = iv.GetType().GetInterface('IBase`1')
 		T = object
-		if it:
-			T = it.GetGenericArguments()[0]
-		if T == int:
-			assert type in (ActiveUniformType.Int,ActiveUniformType.UnsignedInt)
-			return ParUni_int(loc,iv)
-		elif T == single:
-			assert type == ActiveUniformType.Float
-			return ParUni_single(loc,iv)
-		elif T == Vector4:
-			assert type == ActiveUniformType.FloatVec4
-			return ParUni_Vector4(loc,iv)
-		elif T == Quaternion:
-			assert type == ActiveUniformType.FloatVec4
-			return ParUni_Quaternion(loc,iv)
-		elif T == Graphics.Color4:
-			assert type == ActiveUniformType.FloatVec4
-			return ParUni_Color4(loc,iv)
-		elif T == kri.buf.Texture:
-			assert name.StartsWith( Mega.PrefixUnit )
+		if it:	T = it.GetGenericArguments()[0]
+		if T == kri.buf.Texture and name.StartsWith( Mega.PrefixUnit ):
 			tn = tun++
 			return ParTexture(loc,iv,tn)
-		kri.lib.Journal.Log("Alien uniform type (${iv.GetType()})")
+		elif T == int				and type in (ActiveUniformType.Int,ActiveUniformType.UnsignedInt):
+			return ParUni_int(loc,iv)
+		elif T == single			and type == ActiveUniformType.Float:
+			return ParUni_single(loc,iv)
+		elif T == Vector4			and type == ActiveUniformType.FloatVec4:
+			return ParUni_Vector4(loc,iv)
+		elif T == Quaternion		and type == ActiveUniformType.FloatVec4:
+			return ParUni_Quaternion(loc,iv)
+		elif T == Graphics.Color4	and type == ActiveUniformType.FloatVec4:
+			return ParUni_Color4(loc,iv)
+		kri.lib.Journal.Log("Uniform: '${name} doesn't match: ${type} for ${iv.GetType()}")
 		return null
 
 
@@ -77,9 +70,9 @@ public class Mega(Program):
 	public	final static PrefixAttrib	as string	= 'at_'
 	public	final static PrefixUnit		as string	= 'unit_'
 	
-	public override def link() as void:
-		super()
-		assert Ready
+	public override def link() as bool:
+		if not super():
+			return false
 		# read attribs
 		num = size = -1
 		GL.GetProgram( handle, ProgramParameter.ActiveAttributes, num )
@@ -98,6 +91,7 @@ public class Mega(Program):
 			uni = Uniform()
 			uni.name = GL.GetActiveUniform( handle, i, uni.size, uni.type )
 			uniforms.Add(uni)
+		return true
 	
 	public override def clear() as void:
 		super()

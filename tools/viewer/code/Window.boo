@@ -36,6 +36,7 @@ public class GladeApp:
 	[Glade.Widget]	aniPlayBut		as Gtk.Button
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	
+	private final	scheme	= Scheme.Deferred
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
@@ -109,12 +110,13 @@ public class GladeApp:
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		ant = kri.Ant(config,true)
-		ant.extensions.AddRange((of kri.IExtension:
-			support.skin.Extra(), support.corp.Extra(), support.morph.Extra()
-			))
+		eSkin	= support.skin.Extra()
+		eCorp	= support.corp.Extra()
+		eMorph	= support.morph.Extra()
+		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
-		rset = RenderSet()
-		view.ren = rset.gen( Scheme.Forward )
+		rset = RenderSet( eCorp.con )
+		view.ren = rset.gen( scheme )
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -342,8 +344,8 @@ public class GladeApp:
 		GLib.Idle.Add( onIdle )
 		GLib.ExceptionManager.UnhandledException += onException
 		# load scheme
-		scheme = Glade.XML('scheme/main.glade', 'window', null)
-		scheme.Autoconnect(self)
+		xml = Glade.XML('scheme/main.glade', 'window', null)
+		xml.Autoconnect(self)
 		window.DeleteEvent	+= onDelete
 		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
 			Gtk.MessageType.Warning, Gtk.ButtonsType.Ok, null )

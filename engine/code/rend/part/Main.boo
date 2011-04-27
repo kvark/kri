@@ -11,12 +11,14 @@ public class Basic( kri.rend.Basic ):
 	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Bundle:
 		pass
 	public def drawScene() as void:
+		scene = kri.Scene.Current
+		if not scene:	return
 		using blend = kri.Blender(),\
 		kri.Section( EnableCap.ClipPlane0 ),\
 		kri.Section( EnableCap.VertexProgramPointSize ):
 			if bAdd>0f:	blend.add()
 			else:		blend.alpha()
-			for pe in kri.Scene.Current.particles:
+			for pe in scene.particles:
 				nInst as uint = 1
 				bu = prepare(pe,nInst)
 				pe.draw(bu,nInst)

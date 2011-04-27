@@ -2,6 +2,8 @@
 //the '2' postfix is inserted for ATI compatibility
 //otherwise, you'll get Vertex Shader not supported by HW message
 
+vec3 qrot2(vec4,vec3);
+
 //---	TRANSFORMATIONS		--//
 struct Spatial	{ vec4 pos,rot; };
 

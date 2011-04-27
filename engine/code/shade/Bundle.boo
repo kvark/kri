@@ -45,6 +45,7 @@ public class Bundle:
 	public	final shader	as Mega
 	public	final dicts		= List[of par.Dict]((kri.Ant.Inst.dict,))
 	private	final params	= List[of Parameter]()
+	private	failed	= false
 	
 	public	final static Empty	= Bundle(null as Mega)
 	
@@ -76,10 +77,12 @@ public class Bundle:
 			kri.lib.Journal.Log('Shader params not bound: '+str)
 
 	public def link() as void:
-		shader.link()
-		fillParams()
+		if shader.link():
+			fillParams()
+		else:	failed = false
 
 	public def activate() as void:
+		if failed:	return
 		if not shader.Ready:
 			link()
 		shader.bind()
@@ -89,11 +92,14 @@ public class Bundle:
 			shader.validate()
 	
 	public def clear() as void:
+		failed = false
 		shader.clear()
 		dicts.Clear()
 		params.Clear()
 
 	public def pushAttribs(ind as kri.vb.Object, va as kri.vb.Array, dict as kri.vb.Dict) as bool:
+		if failed:
+			return false
 		if not shader.Ready:
 			link()
 		return va.pushAll( ind, shader.attribs, dict )

@@ -3,7 +3,7 @@
 //---	UNIFORMS	---//
 
 uniform sampler2D	unit_depth;
-uniform sampler2DArray	unit_gbuf;
+uniform sampler2D	unit_g0,unit_g1,unit_g2;
 uniform sampler2D	unit_light;
 
 uniform struct Spatial	{
@@ -42,9 +42,9 @@ void main()	{
 	vec3 p_light	= trans_inv2(p_world, s_light);
 	
 	//read G-buffer
-	vec4 g_diffuse	= texture(unit_gbuf, vec3(tc,0.0));
-	vec4 g_specular	= texture(unit_gbuf, vec3(tc,1.0));
-	vec4 g_normal	= texture(unit_gbuf, vec3(tc,2.0));
+	vec4 g_diffuse	= texture(unit_g0,tc);
+	vec4 g_specular	= texture(unit_g1,tc);
+	vec4 g_normal	= texture(unit_g2,tc);
 	// no normalization needed for 1-to-1 G-buffer
 	vec3 normal = 2.0*g_normal.xyz - vec3(1.0);	//world space
 	
