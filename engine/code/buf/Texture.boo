@@ -123,7 +123,7 @@ public class Texture(Surface):
 		return PixelType.UnsignedShort	if t==ushort
 		return PixelType.UnsignedInt	if t==uint
 		return PixelType.HalfFloat		if t in (Vector2h,Vector3h,Vector4h)
-		return PixelType.Float			if t in (single,Vector2,Vector3,Vector4)
+		return PixelType.Float			if t in (single,Vector2,Vector3,Vector4,Graphics.Color4)
 		return PixelType.UnsignedInt248	if t==double	# depth_stencil
 		assert not 'good type'
 		return PixelType.Bitmap

@@ -99,7 +99,7 @@ def save_mat_image(mtex):
 	elif it.type == 'BLEND':	# blend chunk
 		out.begin('t_blend')
 		out.text( it.progression )
-		out.pack('B', it.flip_axis == 'VERTICAL')
+		out.pack('B', it.use_flip_axis=='VERTICAL' )
 		out.end()
 		return
 	elif it.type == 'NOISE':	# noise chunk

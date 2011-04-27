@@ -97,7 +97,7 @@ public class Extra( kri.IExtension ):
 		r.getReal()		# jitter factor
 		ent = r.geData[of kri.Entity]()
 		pe = r.geData[of kri.part.Emitter]()
-		return false	if not pe
+		if not pe:	return false
 		pm = pe.owner
 		
 		ph = pm.seBeh[of support.hair.Behavior]()
@@ -133,7 +133,8 @@ public class Extra( kri.IExtension ):
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
 				tag = e.seTag[of support.bake.surf.Tag]()
-				return false	if not tag or not tag.Vert or not tag.Quat
+				if not (tag and tag.Vert and tag.Quat):
+					return false	
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat
 				return true
@@ -146,7 +147,7 @@ public class Extra( kri.IExtension ):
 	#---	Parse life data	(emitter)	---#
 	public def fp_life(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
-		return false	if not pm
+		if not pm:	return false
 		bh = beh.Standard(con)
 		pm.behos.Add( bh )
 		data = r.getVec4()	# start,end, life time, random
@@ -156,7 +157,7 @@ public class Extra( kri.IExtension ):
 	#---	Parse hair dynamics data	---#
 	public def fp_hair(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
-		return false	if not pm
+		if not pm:	return false
 		segs = r.getByte()
 		pm.behos.Add( support.hair.Behavior(con,segs) )
 		dyn = r.getVector()	# stiffness, mass, bending
@@ -170,7 +171,7 @@ public class Extra( kri.IExtension ):
 	#---	Parse velocity setup		---#
 	public def fp_vel(r as kri.load.Reader) as bool:
 		pe = r.geData[of kri.part.Emitter]()
-		return false	if not pe or not pe.owner
+		if not (pe and pe.owner):	return false
 		objFactor	= r.getVector()	# object-aligned factor
 		tanFactor	= r.getVector()	# normal, tangent, tan-phase
 		add			= r.getVec2()	# object speed, random
@@ -187,7 +188,9 @@ public class Extra( kri.IExtension ):
 			ph.layParam = magic * Vector4(tan,add.Y)
 			avgLen = tan.LengthFast + objFactor.LengthFast + 0.001f
 			ph.pSystem.Value.X = ph.layers / avgLen
-		else: return false
+		else:
+			kri.lib.Journal.Log("Particle loader: no behavior found for '${pe.name}'")
+			return false
 		return true
 	
 	public def fp_rot(r as kri.load.Reader) as bool:

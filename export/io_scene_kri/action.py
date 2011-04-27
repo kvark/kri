@@ -54,8 +54,11 @@ def save_actions(ob,sym,symInd):
 			if not attrib in rnas[bid]:
 				rnas[bid][attrib] = []
 			lis = rnas[bid][attrib]
-			assert f.array_index == len(lis)
-			lis.append(f)
+			if len(lis)<=f.array_index:
+				while len(lis)<f.array_index:
+					lis.append(None)
+				lis.append(f)
+			else:	lis[f.array_index] = f	
 		# write header or exit
 		if not len(rnas): continue
 		out.begin( 'action' )

@@ -130,8 +130,10 @@ public class GladeApp:
 		if not core:	return
 		core.update(1)
 		view.update()
-		if fps.update(core.Time):
-			window.Title = fps.gen()
+		if butDraw.Active:
+			if fps.update(core.Time):
+				window.Title = fps.gen()
+		else:	window.Title = 'Viewer'
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
@@ -257,8 +259,12 @@ public class GladeApp:
 			icon = 'dialog-info'
 		if obj isa kri.Entity:
 			icon = 'orientation-portrait'
-		if obj isa kri.part.Emitter:
+		if (emi = obj as kri.part.Emitter):
+			text = emi.name
 			icon = 'about'
+		if obj isa kri.part.Manager:
+			text = 'manager'
+			icon = 'directory'
 		if obj isa kri.Node:
 			text = 'node'
 			icon = 'sort-descending'

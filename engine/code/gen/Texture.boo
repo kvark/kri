@@ -43,8 +43,9 @@ public static class Texture:
 			while(j!=data.Length and data[j].pos<t):
 				j += 1
 			if j==0:
+				rt = t / data[j].pos
 				d2[i] = kri.load.ExAnim.InterColor(
-					border, data[j].col, t / data[j].pos)
+					border, data[j].col, (rt,1f)[single.IsNaN(rt)])
 			elif j==data.Length:
 				d2[i] = kri.load.ExAnim.InterColor(
 					data[j-1].col, border, 1f - (1f-t) / (1f-data[j-1].pos))

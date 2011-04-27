@@ -95,25 +95,25 @@ def save_particle(obj,part):
 	out.text( part.name, matname )
 	out.end()
 
-	if st.type == 'HAIR' and not part.use_hair_dynamics:
-		print("\t(w)",'hair dynamics has to be enabled')
-	elif st.type == 'HAIR' and part.use_hair_dynamics:
+	if st.type == 'HAIR':
 		if not mat.strand.use_blender_units:
-			print("\t(w)",'material strand size in units required')
-		cset = part.cloth.settings
+			print("\t\t(w)",'material strand size in units required')
 		print("\t\thair: %d segments" % (st.hair_step,) )
-		out.begin('p_hair')
-		out.pack('B3f2f', st.hair_step,
-			cset.pin_stiffness, cset.mass, cset.bending_stiffness,
-			cset.spring_damping, cset.air_damping )
-		out.end()
+		if part.cloth:
+			cset = part.cloth.settings
+			out.begin('p_hair')
+			out.pack('B3f2f', st.hair_step,
+				cset.pin_stiffness, cset.mass, cset.bending_stiffness,
+				cset.spring_damping, cset.air_damping )
+			out.end()
+		else:	print("\t\t(w)",'hair dynamics has to be enabled')
 	elif st.type == 'EMITTER':
 		print("\t\temitter: [%d-%d] life %d" % life)
 		out.begin('p_life')
 		out.array('f', [x * Settings.kFrameSec for x in life] )
 		out.pack('f', st.lifetime_random )
 		out.end()
-	
+
 	if st.render_type == 'OBJECT':
 		print("\t\t(i)", 'instanced', st.dupli_object )
 		out.begin('pr_inst')
@@ -124,8 +124,8 @@ def save_particle(obj,part):
 		out.pack('B2f', st.velocity_length,
 			st.line_length_tail, st.line_length_head )
 		out.end()
-	elif not st.render_type in ('HALO','PATH'):
-		print("\t\t(w)", 'render as unsupported:', st.ren_as )
+	elif st.render_type not in ('HALO','PATH'):
+		print("\t\t(w)", 'render as unsupported:', st.render_type )
 	
 	out.begin('p_vel')
 	out.array('f', st.object_align_factor )
