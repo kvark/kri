@@ -112,7 +112,11 @@ public class TagMat(ITagData):
 
 #--------- Entity ---------#
 
-public class Entity( kri.ani.data.Player, INoded ):
+public interface IMeshed:
+	Mesh as Mesh:
+		get
+
+public class Entity( kri.ani.data.Player, INoded, IMeshed ):
 	public node		as Node	= null
 	public mesh		as Mesh	= null
 	public visible	as bool	= true
@@ -122,6 +126,8 @@ public class Entity( kri.ani.data.Player, INoded ):
 	
 	INoded.Node as Node:
 		get: return node
+	IMeshed.Mesh as Mesh:
+		get: return mesh
 	
 	public CombinedAttribs as vb.Dict:
 		get: return vb.Dict(mesh,store)

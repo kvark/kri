@@ -71,7 +71,9 @@ public class GladeApp:
 		else:
 			it = objTree.AppendValues(par,ob)
 		on = ob as kri.INoded
-		if on:	addObject(it,on.Node)
+		if on:	addObject(it, on.Node)
+		me = ob as kri.IMeshed
+		if me:	addObject(it, me.Mesh)
 		addPlayer(it,ob)
 		return it
 	
@@ -88,14 +90,12 @@ public class GladeApp:
 			addObject(lit)
 		for ent in view.scene.entities:
 			it = addObject(ent)
-			addObject( it, ent.mesh )
 			addObject( it, ent.store )
 			for tag in ent.tags:
 				td = tag as kri.ITagData
 				if td:	addObject(it,td.Data)
 		for par in view.scene.particles:
 			it = addObject(par)
-			addObject( it, par.mesh )
 			addObject( it, par.owner )
 
 

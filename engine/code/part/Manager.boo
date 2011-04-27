@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 #	ABSTRACT PARTICLE MANAGER			#
 #---------------------------------------#
 
-public class Manager:
+public class Manager( kri.IMeshed ):
 	public	final tf	= kri.TransFeedback(1)
 	public	final va	= kri.vb.Array()
 	public	final behos	= List[of Behavior]()
@@ -23,6 +23,9 @@ public class Manager:
 		get: return mesh.nVert
 	public	Ready	as bool:
 		get: return col_init.Ready and col_update.Ready
+	
+	kri.IMeshed.Mesh as kri.Mesh:
+		get: return mesh
 	
 	public def constructor(num as uint):
 		mesh.nVert = num
