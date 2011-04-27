@@ -95,6 +95,7 @@ public class GladeApp:
 				if td:	addObject(it,td.Data)
 		for par in view.scene.particles:
 			it = addObject(par)
+			addObject( it, par.mesh )
 			addObject( it, par.owner )
 
 
@@ -213,7 +214,7 @@ public class GladeApp:
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
 		par = it = Gtk.TreeIter()
-		inMat = inAni = inStore = true
+		inMat = inAni = inStore = inOwner = true
 		objTree.GetIter(par,args.Path)
 		rez = objTree.IterChildren(it,par)
 		while rez:
@@ -224,6 +225,8 @@ public class GladeApp:
 				inAni = false
 			if ox isa AtBox:
 				inStore = false
+			if ox isa kri.part.Behavior:
+				inOwner = false
 			if not objTree.IterNext(it):
 				break
 		ox = objTree.GetValue(par,0)
@@ -239,6 +242,9 @@ public class GladeApp:
 			for vat in vs.vbo:
 				for ai in vat.Semant:
 					objTree.AppendValues(par,AtBox(ai))
+		if (own = ox as kri.part.Manager) and inOwner:
+			for beh in own.behos:
+				objTree.AppendValues(par,beh)
 		objView.ExpandRow( args.Path, true )
 
 	
@@ -265,21 +271,23 @@ public class GladeApp:
 		if obj isa kri.part.Manager:
 			text = 'manager'
 			icon = 'directory'
+		if obj isa kri.part.Behavior:
+			icon = 'add'
 		if obj isa kri.Node:
 			text = 'node'
 			icon = 'sort-descending'
 		if obj isa kri.Skeleton:
 			text = 'sleleton'
 			icon = 'disconnect'
-		if (mat = obj as kri.Material):
-			text = mat.name
-			icon = 'select-color'
 		if (rec = obj as kri.ani.data.Record):
 			text = "${rec.name} (${rec.length})"
 			icon = 'cdrom'
 		if (chan = obj as kri.ani.data.IChannel):
 			icon = 'execute'
 			text = chan.Tag
+		if (mat = obj as kri.Material):
+			text = mat.name
+			icon = 'select-color'
 		if (mad = obj as kri.meta.Advanced):
 			text = mad.Name
 			icon = 'color-picker'
