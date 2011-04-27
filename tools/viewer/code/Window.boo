@@ -45,7 +45,7 @@ public class GladeApp:
 	private final	gw		as Gtk.GLWidget
 	private	final	log		= kri.lib.Journal()
 	private final	dialog	as Gtk.MessageDialog
-	private	final	objTree		= Gtk.TreeStore(object)
+	private	final	objTree	= Gtk.TreeStore(object)
 	private	final	al		= kri.ani.Scheduler()
 	private	curObj	as object	= null
 	private	curIter	= Gtk.TreeIter.Zero

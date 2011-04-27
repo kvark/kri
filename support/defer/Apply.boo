@@ -9,6 +9,7 @@ public class ApplyBase( kri.rend.Basic ):
 	protected final bu		= Bundle()
 	protected final sphere	as kri.gen.Frame
 	private texDepth		as par.Texture	= null
+	public	initOnly		= false
 	# custom activation
 	private virtual def onInit() as void:
 		pass
@@ -30,6 +31,7 @@ public class ApplyBase( kri.rend.Basic ):
 		texDepth.Value = con.Depth
 		con.activate(false)
 		onInit()
+		if initOnly:	return
 		# enable depth check
 		con.activate( con.Target.Same, 0f, false )
 		GL.CullFace( CullFaceMode.Front )
