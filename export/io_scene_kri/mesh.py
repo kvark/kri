@@ -68,7 +68,7 @@ def save_mesh(mesh,armature,groups):
 	# 1: convert Mesh to Triangle Mesh
 	for layer in mesh.uv_textures:
 		if not len(layer.data):
-			print("\t(e)",'UV layer is locked by the user')
+			out.log(1,'e','UV layer is locked by the user')
 			return
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
@@ -85,10 +85,10 @@ def save_mesh(mesh,armature,groups):
 		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves,colors) )
 	n_bad_uv = len(list( f for f in ar_face if f.hand==0.0 ))
 	if n_bad_uv:
-		print("\t(w) %d pure vertices detected" % (n_bad_uv))
+		out.log(1,'w', '%d pure vertices detected' % (n_bad_uv))
 	else: print("\tconverted to tri-mesh")
 	if not len(ar_face):
-		print("\t(e)",'objects without faces are not supported')
+		out.log(1,'e','object has no faces')
 		return
 
 	# 2: fill sparsed vertex array
@@ -106,7 +106,7 @@ def save_mesh(mesh,armature,groups):
 			if not vs in set_vert:
 				set_vert[vs] = []
 			set_vert[vs].append(v)
-	print("\t(i) %.2f avg handness" % (avg / len(ar_face)))
+	out.log(1,'i', '%.2f avg handness' % (avg / len(ar_face)))
 	
 	# 3: update triangle indexes
 	avg,ar_vert = 0.0,[]
@@ -130,7 +130,7 @@ def save_mesh(mesh,armature,groups):
 		tbn = mathutils.Matrix((tan,bit,no)) # tbn is orthonormal, right-handed
 		v.quat = tbn.to_quaternion().normalized()
 		ar_vert.append(v)
-	print("\t(i) %.2f avg tangent accuracy" % (avg / len(ar_vert)))
+	out.log(1,'i','%.2f avg tangent accuracy' % (avg / len(ar_vert)))
 	del set_vert
 
 	# 4: unlock quaternions to make all the faces QI-friendly
@@ -216,8 +216,9 @@ def save_mesh(mesh,armature,groups):
 	face_num = (len(mesh.materials)+1) * [0]
 	for face in ar_face:
 		face_num[face.mat] += 1
-	print("\t(i) %d vertices, %d faces" % (len(ar_vert),len(ar_face)))
-	print("\t(i) %.2f avg vertex usage" % (3.0*len(ar_face)/len(ar_vert)))
+	print("\ttotal: %d vertices, %d faces" % (len(ar_vert),len(ar_face)))
+	avg_vu = 3.0 * len(ar_face) / len(ar_vert)
+	out.log(1,'i', '%.2f avg vertex usage' % (avg_vu))
 	out.begin('mesh')
 	out.pack('H', len(ar_vert) )
 	out.end()

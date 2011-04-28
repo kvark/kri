@@ -10,8 +10,8 @@ def gather_anim(ob):
 	ad = ob.animation_data
 	if not ad: return []
 	all = [ns.action for nt in ad.nla_tracks for ns in nt.strips]
-	if ad.action and not ad.action in all:
-		print("\t(w)",'current action is not finalized')
+	if ad.action and ad.action not in all:
+		Writer.inst.log(1,'w','current action (%s) is not finalized' % (ad.action.name))
 		all.append( ad.action )
 	return all
 
@@ -41,7 +41,7 @@ def save_actions(ob,sym,symInd):
 				if not indexator:
 					indexator = curArray
 				elif indexator != curArray:
-					print("\t\t(w)", 'unknown array:', mg[0])
+					out.log(2,'w', 'unknown array: %s' % (mg[0]))
 					continue
 				sub = mg[1].strip('"')
 				if sub == mg[1]: bid = 1 + int(sub)
@@ -67,7 +67,7 @@ def save_actions(ob,sym,symInd):
 		out.end()
 		print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 		if n_empty:
-			print("\t\t(w) %d empty curves detected" % (n_empty))
+			out.log(2,'w','%d empty curves detected' % (n_empty))
 		# write in packs
 		prefix = (sym,symInd)[indexator != None]
 		for elem,it in rnas.items():
@@ -88,12 +88,12 @@ def save_actions(ob,sym,symInd):
 def save_curve_pack(curves,offset):
 	out = Writer.inst
 	if not len(curves):
-		print("\t\t(w)",'invalid curve pack')
+		out.log(2,'w','zero length curve pack')
 		out.pack('H',0)
 		return
 	num = len( curves[0].keyframe_points )
 	extra = curves[0].extrapolation
-	#print "\t(i) %s, keys %d" %(curves,num)
+	#out.log(2,'i', "%s, keys %d" %(curves,num))
 	for c in curves:
 		assert len(c.keyframe_points) == num
 		assert c.extrapolation == extra

@@ -9,18 +9,18 @@ from io_scene_kri.common	import *
 def save_lamp(lamp):
 	out = Writer.inst
 	energy_threshold = 0.1
-	print("\t(i) %s type, %.1f distance" % (lamp.type, lamp.distance))
+	print("\t%s type, %.1f distance" % (lamp.type, lamp.distance))
 	out.begin('lamp')
 	save_color( lamp.color )
 	if not lamp.use_specular or not lamp.use_diffuse:
-		print("\t(w)",'specular/diffuse cant be disabled')
+		out.log(1,'w','specular/diffuse can not be disabled')
 	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0
 	# attenuation
 	kd = 1.0 / lamp.distance
 	q0,q1,q2,qs = lamp.energy, kd, kd*kd, 0.0
 	if lamp.type in ('POINT','SPOT'):
 		if lamp.use_sphere:
-			print("\t(i) spherical limit")
+			out.log(1,'i','spherical limit')
 			clip1 = lamp.distance
 			qs = kd
 		ft = lamp.falloff_type
@@ -30,7 +30,7 @@ def save_lamp(lamp):
 		elif ft == 'INVERSE_LINEAR': q2=0.0
 		elif ft == 'INVERSE_SQUARE': q1=0.0
 		elif ft == 'CONSTANT': q1=q2=0.0
-		else: print("\t(w) custom curve is not supported")
+		else:	out.log(1,'w', 'custom curve is not supported')
 		print("\tfalloff: %s, %.4f q1, %.4f q2" % (ft,q1,q2))
 	else: q1=q2=0.0
 	out.pack('4f', q0,q1,q2,qs)
@@ -43,11 +43,11 @@ def save_lamp(lamp):
 
 def save_camera(cam, is_cur):
 	out = Writer.inst
-	if is_cur: print("\t(i) active")
+	if is_cur:	out.log(1,'i','active')
 	fov = cam.angle
 	if cam.type == 'ORTHO':
 		scale = cam.ortho_scale
-		print("\t(i) ortho scale: %.2f" % (scale))
+		out.log(1,'i', 'ortho scale: %.2f' % (scale))
 		fov = -4.0 / scale	# will be scaled by 0.5 on reading
 	print("\t%s, dist: [%.2f-%.2f], fov: %.2f" % (
 		('A' if is_cur else '_'),
@@ -64,12 +64,12 @@ def save_skeleton(skel):
 	out = Writer.inst
 	out.begin('skel')
 	nbon = len(skel.bones)
-	print("\t(i)", nbon ,'bones')
+	print("\t",nbon,'bones')
 	out.pack('B', nbon)
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()
 		if not (bone.use_inherit_scale and bone.use_deform):
-			print("\t\t(w)", 'weird bone', bone.name)
+			out.log(2,'w','weird bone: %s' % (bone.name))
 		if par: # old variant (same result)
 			#pos = bone.head.copy() + par.matrix.copy().inverted() * par.vector	
 			parid = skel.bones.keys().index( par.name )
@@ -97,7 +97,7 @@ def save_particle(obj,part):
 
 	if st.type == 'HAIR':
 		if not mat.strand.use_blender_units:
-			print("\t\t(w)",'material strand size in units required')
+			out.log(2,'w','material strand size in units required')
 		print("\t\thair: %d segments" % (st.hair_step,) )
 		if part.cloth:
 			cset = part.cloth.settings
@@ -106,7 +106,7 @@ def save_particle(obj,part):
 				cset.pin_stiffness, cset.mass, cset.bending_stiffness,
 				cset.spring_damping, cset.air_damping )
 			out.end()
-		else:	print("\t\t(w)",'hair dynamics has to be enabled')
+		else:	out.log(2,'w','hair dynamics has to be enabled')
 	elif st.type == 'EMITTER':
 		print("\t\temitter: [%d-%d] life %d" % life)
 		out.begin('p_life')
@@ -115,7 +115,7 @@ def save_particle(obj,part):
 		out.end()
 
 	if st.render_type == 'OBJECT':
-		print("\t\t(i)", 'instanced', st.dupli_object )
+		out.log(2,'i', 'instanced from: %s' % (st.dupli_object))
 		out.begin('pr_inst')
 		out.text( st.dupli_object.name )
 		out.end()
@@ -125,7 +125,7 @@ def save_particle(obj,part):
 			st.line_length_tail, st.line_length_head )
 		out.end()
 	elif st.render_type not in ('HALO','PATH'):
-		print("\t\t(w)", 'render as unsupported:', st.render_type )
+		out.log(2,'w', 'render as unsupported: %s' % (st.render_type))
 	
 	out.begin('p_vel')
 	out.array('f', st.object_align_factor )
@@ -134,7 +134,7 @@ def save_particle(obj,part):
 	out.end()
 
 	if st.emit_from == 'FACE' and not len(obj.data.uv_textures):
-		print("\t\t(w)",'emitter surface does not have UV')
+		out.log(2,'w','emitter surface does not have UV')
 	out.begin('p_dist')
 	out.text( st.emit_from, st.distribution )
 	out.pack('f', st.jitter_factor )
@@ -150,7 +150,7 @@ def save_particle(obj,part):
 
 	if st.child_type == 'PARTICLES':
 		num = st.rendered_child_count
-		print("\t\tchildren: %d" %(num,) )
+		out.log(2,'i', 'children: %d' % (num))
 		out.begin('p_child')
 		out.pack('H2f2f', num,
 			st.child_radius, st.child_roundness,

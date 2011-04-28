@@ -12,10 +12,11 @@ class Settings:
 
 class Writer:
 	inst = None
-	__slots__= 'fx','pos'
+	__slots__= 'fx','pos','counter'
 	def __init__(self,path):
 		self.fx = open(path,'wb')
 		self.pos = 0
+		self.counter = {'i':0,'w':0,'e':0}
 	def pack(self,tip,*args):
 		import struct
 		assert self.pos
@@ -29,7 +30,7 @@ class Writer:
 			x = len(s)
 			assert x<256
 			bt = bytes(s,'ascii')
-			self.pack("B%ds"%(x),x,bt)
+			self.pack('B%ds'%(x),x,bt)
 	def begin(self,name):
 		import struct
 		assert len(name)<8 and not self.pos
@@ -44,6 +45,14 @@ class Writer:
 		self.fx.write( struct.pack('<L',off) )
 		self.fx.seek(+off+0,1)
 		self.pos = 0
+	def log(self,indent,level,message):
+		self.counter[level] += 1
+		inx = ('',"\t","\t\t","\t\t\t")
+		print('%s(%c) %s' % (inx[indent],level,message))
+	def conclude(self):
+		self.fx.close()
+		c = self.counter
+		print(c['e'],'errors,',c['w'],'warnings,',c['i'],'infos')
 
 
 def save_color(rgb):
@@ -55,8 +64,9 @@ def save_matrix(mx):
 	import math
 	pos,rot,sca = mx.decompose()
 	scale = (sca.x + sca.y + sca.z)/3.0
+	out = Writer.inst
 	if math.fabs(sca.x-sca.y) + math.fabs(sca.x-sca.z) > 0.01:
-		print("\t(w)",'non-uniform scale:',str(sca))
-	Writer.inst.pack('8f',
+		out.log(1,'w', 'non-uniform scale: (%.1f,%.1f,%.1f)' % sca.to_tuple(1))
+	out.pack('8f',
 		pos.x, pos.y, pos.z, scale,
 		rot.x, rot.y, rot.z, rot.w )

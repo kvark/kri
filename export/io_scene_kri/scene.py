@@ -36,7 +36,7 @@ def save_game(gob):
 			gob.damping, gob.rotation_damping )
 		out.end()
 	if gob.use_collision_bounds:
-		print("\t(i)", 'collision', gob.collision_bounds)
+		out.log(1,'i','collision: %s' % (gob.collision_bounds))
 		out.begin('collide')
 		out.pack('f', gob.collision_margin )
 		out.text( gob.collision_bounds )
@@ -71,9 +71,9 @@ def save_scene(filename, context):
 	bDegrees = (sc.unit_settings.system_rotation == 'DEGREES')
 	if not bDegrees:
 		#it's easier to convert on loading than here
-		print("\t(w)",'Radians are not supported')
+		out.log(1,'w','Radians are not supported')
 	if sc.use_gravity:
-		print("\tgravity:", sc.gravity)
+		out.log(1,'i', 'gravity: ' % (sc.gravity))
 		out.begin('grav')
 		out.array('f', sc.gravity)
 		out.end()
@@ -105,5 +105,5 @@ def save_scene(filename, context):
 		for p in ob.particle_systems:
 			save_particle(ob,p)
 	print('Done.')
-	out.fx.close()
+	out.conclude()
 	print('Export time:', time.clock()-timeStart, 'sec')

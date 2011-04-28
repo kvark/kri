@@ -40,14 +40,14 @@ public class GladeApp:
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
-	private	final	dOpen	as Gtk.FileChooserDialog
-	private rset	as RenderSet	= null
-	private final	gw		as Gtk.GLWidget
 	private	final	log		= kri.lib.Journal()
-	private final	dialog	as Gtk.MessageDialog
-	private	final	objTree	= Gtk.TreeStore(object)
 	private	final	al		= kri.ani.Scheduler()
-	private	curObj	as object	= null
+	private	final	objTree	= Gtk.TreeStore(object)
+	private	final	dOpen	as Gtk.FileChooserDialog
+	private final	gw		as Gtk.GLWidget
+	private final	dialog	as Gtk.MessageDialog
+	private rset	as RenderSet	= null
+	private	curObj	as object		= null
 	private	curIter	= Gtk.TreeIter.Zero
 	
 	private def flushJournal() as bool:

@@ -23,7 +23,7 @@ def save_mat_unit(mtex):
 	if tc == 'UV':	# dirty: resolving the UV layer ID
 		name = mtex.uv_layer
 		if not len(name):
-			print("\t\t(w)",'UV layer name is not set')
+			out.log(2,'w','UV layer name is not set')
 		primary = -1
 		for ent in bpy.context.scene.objects:
 			if ent.type != 'MESH': continue
@@ -33,16 +33,16 @@ def save_mat_unit(mtex):
 			if not mtex in mlist: continue
 			uves = [ut.name for ut in ent.data.uv_textures]
 			if not name in uves:
-				print("\t\t\t(w)",'entity has incorrect UV names')
+				out.log(2,'w','entity (%s) has incorrect UV names' % (ent.name))
 				cur = 0
 			else:	cur = uves.index( name )
 			if cur == primary: continue
 			primary = cur
 		if primary == -1:
-			print("\t\t(w)",'failed to resolve UV layer')
+			out.log(2,'w','failed to resolve UV layer')
 			primary = 0
 		else:
-			print("\t\t(i) layer: %s -> %d" % (mtex.uv_layer, primary))
+			print("\t\tlayer: %s -> %d" % (mtex.uv_layer, primary))
 		out.pack('B',primary)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	if tc == 'ORCO':	out.text( mp )
@@ -58,7 +58,7 @@ def save_mat_image(mtex):
 	# tex mapping
 	out.begin('t_map')
 	if mtex.mapping_x != 'X' or mtex.mapping_y != 'Y' or mtex.mapping_z != 'Z':
-		print("\t(w)",'tex coord swizzling not supported')
+		out.log(1,'w','tex coord swizzling not supported')
 	out.array('f', tuple(mtex.offset) + tuple(mtex.scale) )
 	out.end()
 	# colors
@@ -87,7 +87,7 @@ def save_mat_image(mtex):
 			print("\t\tenviron: %s [%.2f-%2.f]" % (env.mapping,clip[0],clip[1]))
 			view = ''
 			if not env.viewpoint_object:
-				print("\t\t(w)",'View point is not set')
+				out.log(2,'w','view point is not set')
 			else: view = env.viewpoint_object.name
 			out.begin('t_env')
 			out.pack('2BH3f', env.source=='ANIMATED',
@@ -106,7 +106,7 @@ def save_mat_image(mtex):
 		out.begin('t_noise')
 		out.end()
 	elif it.type != 'IMAGE':
-		print("\t\t(w)",'unknown texture type', it.type )
+		out.log(2,'w', 'unknown texture type (%s)' % (it.type))
 		return
 	# image path
 	img = it.image
@@ -117,7 +117,7 @@ def save_mat_image(mtex):
 	if Settings.cutPaths:
 		name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
-		print("\t\t(w) path cut to:", name)
+		out.log(2,'w', 'path cut to: %s' % (name))
 	out.text( name)
 	out.end()
 	if it.type == 'IMAGE':
@@ -134,7 +134,7 @@ def save_mat_image(mtex):
 		out.pack( '3H', user.frames, user.offset, user.start_frame )
 		out.end()
 	elif img.source != 'FILE':
-		print("\t\t(w)",'bad image source')
+		out.log(2,'w','unknown image source')
 
 
 ###  MATERIAL:CORE   ###
@@ -169,7 +169,7 @@ def save_mat(mat):
 		out.begin('m_halo')
 		halo = mat.halo
 		if halo.use_ring or halo.use_lines or halo.use_star:
-			print("\t(w)",'halo rights, lines & star modes are not supported')
+			out.log(1,'w', 'halo rings, lines & star modes are not supported')
 		data = (halo.size, halo.hardness, halo.add)
 		out.array('f', data)
 		out.pack('B', halo.use_texture)
@@ -203,7 +203,7 @@ def save_mat(mat):
 			save_color( mat.mirror_color )
 			out.pack('2f', 1.0, mirr.reflect_factor)
 			out.end()
-	else: print("\t(w)",'unsupported type')
+	else:	out.log(1,'w','unsupported type')
 	# texture units
 	for mt in mat.texture_slots:
 		if not mt: continue
