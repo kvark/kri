@@ -16,16 +16,16 @@ public class Particle(ApplyBase):
 		# draw particles
 		for pe in scene.particles:
 			#todo: add light particle meta
-			if not pe.mat:
+			if not (pe.mat and pe.Ready):
 				continue
 			halo = pe.mat.Meta['halo'] as kri.meta.Halo
 			if not halo:
 				continue
 			pHalo.Value = halo.Data
 			light.setLimit( pHalo.Value.X )
-			d = kri.vb.Dict(pe.mesh)
+			d = kri.vb.Dict( sphere.mesh, pe.mesh )
 			for s in ('sys','pos'):
-				en = kri.vb.Entry( pe.mesh, s )
+				en = kri.vb.Entry(pe,s)
 				en.divisor = 1
 				d['ghost_'+s] = en
 			kri.Ant.Inst.params.activate(light)

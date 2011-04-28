@@ -24,7 +24,7 @@ public class ExObject( kri.IExtension ):
 		off,n = 0,1
 		m = r.geData[of kri.Mesh]()
 		node = r.geData[of kri.Node]()
-		return false	if not m or not node
+		if not (m and node):	return false	
 		e = kri.Entity( node:node, mesh:m )
 		r.at.scene.entities.Add(e)
 		r.puData(e)
@@ -35,7 +35,7 @@ public class ExObject( kri.IExtension ):
 			if n:
 				mName = r.getString()
 				if not r.at.mats.TryGetValue( mName, tag.mat ):
-					kri.lib.Journal.Log("Loader: unregistered material (${mName})")
+					kri.lib.Journal.Log("Loader: entity (${node.name}) wants unregistered material (${mName})")
 					tag.mat = mDef
 				off += n
 			else:

@@ -3,7 +3,7 @@
 //---	UNIFORMS	---//
 
 uniform sampler2D	unit_depth;
-uniform sampler2D	unit_g0,unit_g1,unit_g2;
+uniform sampler2D	unit_g0, unit_g1, unit_g2;
 uniform sampler2D	unit_light;
 
 uniform struct Spatial	{
