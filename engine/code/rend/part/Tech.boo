@@ -67,7 +67,7 @@ public class Meta( Tech ):
 	public override def construct(pe as kri.part.Emitter) as Bundle:
 		assert pe.mat and pe.owner
 		sl = pe.mat.collect(geom,lMets)
-		return Bundle.Empty	if not sl
+		if not sl:	return Bundle.Empty
 		return factory.link( sl, pe.owner.dict, pe.mat.dict )
 	
 	public virtual def onManager(man as kri.part.Manager) as void:

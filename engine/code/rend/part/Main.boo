@@ -19,6 +19,8 @@ public class Basic( kri.rend.Basic ):
 			if bAdd>0f:	blend.add()
 			else:		blend.alpha()
 			for pe in scene.particles:
+				if not (pe.visible and pe.filled):
+					continue
 				nInst as uint = 1
 				bu = prepare(pe,nInst)
 				pe.draw(bu,nInst)

@@ -46,8 +46,10 @@ public class Update( kri.rend.tech.Basic ):
 		sa.fragout('re_vertex','re_quat')
 
 	public override def process(con as kri.rend.link.Basic) as void:
+		scene = kri.Scene.Current
+		if not scene:	return
 		con.DepthTest = false
-		for e in kri.Scene.Current.entities:
+		for e in scene.entities:
 			tag = e.seTag[of Tag]()
 			if not e.visible or not tag:
 				continue

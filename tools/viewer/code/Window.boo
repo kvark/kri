@@ -31,7 +31,7 @@ public class GladeApp:
 	[Glade.Widget]	aniPlayBut		as Gtk.Button
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	
-	private final	scheme	= Scheme.Deferred
+	private final	scheme	= Scheme.Forward
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
@@ -118,7 +118,7 @@ public class GladeApp:
 		eMorph	= support.morph.Extra()
 		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
-		rset = RenderSet( eCorp.con )
+		rset = RenderSet( eCorp.con, null )
 		view.ren = rset.gen( scheme )
 		gw.QueueResize()
 	
@@ -140,7 +140,7 @@ public class GladeApp:
 		if butDraw.Active:
 			if fps.update(core.Time):
 				window.Title = fps.gen()
-		else:	window.Title = 'Viewer'
+		else:	window.Title = fps.title
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:

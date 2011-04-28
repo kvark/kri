@@ -133,7 +133,7 @@ public class Extra( kri.IExtension ):
 			pe.onUpdate = def(e as kri.Entity):
 				upNode(e)
 				tag = e.seTag[of support.bake.surf.Tag]()
-				if not (tag and tag.Vert and tag.Quat):
+				if not (tag and tag.stamp>=0.0 and tag.Vert and tag.Quat):
 					return false	
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat

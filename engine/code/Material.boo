@@ -55,9 +55,13 @@ public class Material( ani.data.Player ):
 		# collect mets shaders & map inputs
 		din = Dictionary[of string,meta.Hermit]()
 		for str in melist:
+			reject = str.StartsWith('!')
+			if reject:
+				str = str.Substring(1)
 			m = Meta[str]
-			if not m:
+			if reject != (not m):
 				return null
+			if not m:	continue
 			push(m)
 			ud = m.Unit
 			if ud<0:

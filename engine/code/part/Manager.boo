@@ -88,7 +88,8 @@ public class Manager( kri.IMeshed ):
 		tf.Bind( mesh.vbo[0] )
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
 		using kri.Discarder(true):
-			mesh.render( va, bu, pe.entries, 0, tf )
+			if not mesh.render( va, bu, pe.entries, 0, tf ):
+				return false
 		if not 'Debug':
 			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
 			mesh.vbo[0].read(ar)
@@ -98,7 +99,8 @@ public class Manager( kri.IMeshed ):
 		pe.mesh.vbo[0] = data
 		return true
 
-	public def opInit(pe as Emitter) as bool:
-		return process( pe, col_init.bu )
-	public def opTick(pe as Emitter) as bool:
+	public def process(pe as Emitter) as bool:
+		if not pe.filled:
+			pe.filled = process( pe, col_init.bu )
+			return pe.filled
 		return process( pe, col_update.bu )

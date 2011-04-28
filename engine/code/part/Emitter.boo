@@ -11,6 +11,7 @@ import OpenTK.Graphics.OpenGL
 
 public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed ):
 	public	visible		as bool		= true
+	public	filled		as bool		= false
 	public	obj			as kri.Entity	= null
 	public	mat			as kri.Material	= null
 	public	final owner	as Manager
@@ -50,6 +51,6 @@ public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed ):
 		mesh.fillEntries(entries)
 	
 	public def draw(bu as kri.shade.Bundle, num as uint) as bool:
-		if not bu or not update():
+		if not (bu and update()):
 			return false
 		return mesh.render( owner.va, bu, entries, num, null )
