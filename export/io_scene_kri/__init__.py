@@ -36,6 +36,9 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 	filepath	= StringProperty( name='File Path',
 		description='Filepath used for exporting the KRI scene',
 		maxlen=1024, default='')
+	break_err	= BoolProperty( name='Break on error',
+		description='Stop the process on first error',
+		default=Settings.breakError )
 	quat_int	= BoolProperty( name='Process quaternions',
 		description='Prepare mesh quaternions for interpolation',
 		default=Settings.doQuatInt )
@@ -50,6 +53,7 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 		default=Settings.cutPaths )
 
 	def execute(self, context):
+		Settings.breakError	= self.properties.break_err
 		Settings.doQuatInt	= self.properties.quat_int
 		Settings.putUv		= self.properties.put_uv
 		Settings.putColor	= self.properties.put_color

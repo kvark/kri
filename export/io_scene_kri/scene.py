@@ -79,14 +79,15 @@ def save_scene(filename, context):
 		out.end()
 	
 	for mat in context.blend_data.materials:
+		if out.stop:	break
 		save_mat(mat)
 		save_actions( mat, 'm','t' )
 
 	for ob in sc.objects:
+		if out.stop:	break
 		save_node( ob )
 		save_actions( ob, 'n', None )
 		save_game( ob.game )
-
 		if ob.type == 'MESH':
 			arm = None
 			if ob.parent and ob.parent.type == 'ARMATURE':
@@ -104,6 +105,6 @@ def save_scene(filename, context):
 			save_actions( ob.data, 'c','' )
 		for p in ob.particle_systems:
 			save_particle(ob,p)
-	print('Done.')
+	print( ('Done.','Terminated')[out.stop] )
 	out.conclude()
 	print('Export time:', time.clock()-timeStart, 'sec')

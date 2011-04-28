@@ -2,6 +2,7 @@ __author__ = ['Dzmitry Malyshau']
 __bpydoc__ = 'Settings & Writing access for KRI exporter.'
 
 class Settings:
+	breakError	= False
 	doQuatInt	= True
 	putUv		= True
 	putColor	= False
@@ -12,11 +13,12 @@ class Settings:
 
 class Writer:
 	inst = None
-	__slots__= 'fx','pos','counter'
+	__slots__= 'fx','pos','counter','stop'
 	def __init__(self,path):
 		self.fx = open(path,'wb')
 		self.pos = 0
 		self.counter = {'i':0,'w':0,'e':0}
+		self.stop = False
 	def pack(self,tip,*args):
 		import struct
 		assert self.pos
@@ -49,6 +51,8 @@ class Writer:
 		self.counter[level] += 1
 		inx = ('',"\t","\t\t","\t\t\t")
 		print('%s(%c) %s' % (inx[indent],level,message))
+		if level=='e' and Settings.breakError:
+			self.stop = True
 	def conclude(self):
 		self.fx.close()
 		c = self.counter
