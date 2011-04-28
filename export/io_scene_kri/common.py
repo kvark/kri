@@ -2,6 +2,8 @@ __author__ = ['Dzmitry Malyshau']
 __bpydoc__ = 'Settings & Writing access for KRI exporter.'
 
 class Settings:
+	showInfo	= True
+	showWarning	= True
 	breakError	= False
 	doQuatInt	= True
 	putUv		= True
@@ -49,10 +51,14 @@ class Writer:
 		self.pos = 0
 	def log(self,indent,level,message):
 		self.counter[level] += 1
-		inx = ('',"\t","\t\t","\t\t\t")
-		print('%s(%c) %s' % (inx[indent],level,message))
+		if level=='i' and not Settings.showInfo:
+			return
+		if level=='w' and not Settings.showWarning:
+			return
 		if level=='e' and Settings.breakError:
 			self.stop = True
+		inx = ('',"\t","\t\t","\t\t\t")
+		print('%s(%c) %s' % (inx[indent],level,message))
 	def conclude(self):
 		self.fx.close()
 		c = self.counter

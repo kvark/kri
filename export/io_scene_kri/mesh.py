@@ -86,7 +86,7 @@ def save_mesh(mesh,armature,groups):
 	n_bad_uv = len(list( f for f in ar_face if f.hand==0.0 ))
 	if n_bad_uv:
 		out.log(1,'w', '%d pure vertices detected' % (n_bad_uv))
-	else: print("\tconverted to tri-mesh")
+	#else: print("\tconverted to tri-mesh")
 	if not len(ar_face):
 		out.log(1,'e','object has no faces')
 		return
