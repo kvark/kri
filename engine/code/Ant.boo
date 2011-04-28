@@ -163,6 +163,7 @@ public class Ant(IDisposable):
 		
 	def IDisposable.Dispose() as void:
 		inst = null
+		kri.TransFeedback.Bind()
 		dataMan.clear()
 		extensions.Clear()
 		sw.Stop()

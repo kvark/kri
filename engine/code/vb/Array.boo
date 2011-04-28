@@ -107,3 +107,15 @@ public class Array:
 				push(0,en)
 				break
 		return not isEmpty()
+
+	public def hasConflicts() as byte:
+		lx = List[of Object]()
+		if index:	lx.Add(index)
+		for sl in slots:
+			buf = sl.buffer
+			if buf:	lx.Add( buf.Data )
+		num = 0
+		for bx in kri.TransFeedback.Cache:
+			if bx and bx in lx:
+				++num
+		return num

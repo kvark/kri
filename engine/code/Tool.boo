@@ -172,13 +172,19 @@ public class CatcherFeed(Catcher):
 		GL.EndTransformFeedback()
 
 public class TransFeedback(Query):
-	public final mode	as BeginFeedbackMode
+	public final	mode	as BeginFeedbackMode
+	public static	final	Cache	= array[of vb.Object](8)
 	public def constructor(nv as byte):
 		super( QueryTarget.TransformFeedbackPrimitivesWritten )
 		mode = (BeginFeedbackMode.Points, BeginFeedbackMode.Lines, BeginFeedbackMode.Triangles)[nv-1]
 	public override def catch() as Catcher:
 		return CatcherFeed(self,mode)
-	public static def Bind(*buffers as (vb.Object)) as void:
+	public static def Bind(*buffers as (vb.Object)) as bool:
 		for i as uint in range( buffers.Length ):
-			assert buffers[i].Ready
-			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, buffers[i].handle )
+			bf = Cache[i] = buffers[i]
+			if not bf.Ready:
+				return false
+			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, bf.handle )
+		for i in range( buffers.Length, Cache.Length ):
+			Cache[i] = null
+		return true

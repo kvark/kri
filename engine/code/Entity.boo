@@ -51,6 +51,9 @@ public class Mesh( vb.Storage ):
 			return false
 		bu.activate()
 		if tf:
+			if vao.hasConflicts():
+				kri.lib.Journal.Log('Transform Feedback: loop detected')
+				return false
 			draw(tf)
 		elif nob>0:
 			draw(off,num,nob)

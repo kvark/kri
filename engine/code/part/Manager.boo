@@ -85,7 +85,8 @@ public class Manager( kri.IMeshed ):
 	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
 		if not (Ready and pe.update()):
 			return false
-		tf.Bind( mesh.vbo[0] )
+		if not tf.Bind( mesh.vbo[0] ):
+			return false
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
 		using kri.Discarder(true):
 			if not mesh.render( va, bu, pe.entries, 0, tf ):
@@ -94,6 +95,7 @@ public class Manager( kri.IMeshed ):
 			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
 			mesh.vbo[0].read(ar)
 		# swap data
+		mesh.fillEntries( pe.entries )
 		data = mesh.vbo[0]
 		mesh.vbo[0] = pe.mesh.vbo[0]
 		pe.mesh.vbo[0] = data

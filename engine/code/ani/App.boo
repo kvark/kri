@@ -28,7 +28,9 @@ public class Particle( IBase ):
 		if not (man and man.Ready):
 			kri.lib.Journal.Log("Particle: invalid manager for animating '${pe.name}'")
 			return 1
-		man.process(pe)
+		if not man.process(pe):
+			kri.lib.Journal.Log("Particle: failed to process '${pe.name}'")
+			return 2
 		return 0
 
 
