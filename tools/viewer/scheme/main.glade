@@ -59,6 +59,19 @@
                     <property name="homogeneous">True</property>
                   </packing>
                 </child>
+                <child>
+                  <widget class="GtkToolButton" id="butPlay">
+                    <property name="visible">True</property>
+                    <property name="is_important">True</property>
+                    <property name="label" translatable="yes">Play All</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-media-forward</property>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -125,7 +138,7 @@
                   </widget>
                 </child>
                 <child>
-                  <widget class="GtkLabel" id="tabZero">
+                  <widget class="GtkLabel" id="tabZero1">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Zero</property>
                   </widget>

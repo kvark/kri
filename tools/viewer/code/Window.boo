@@ -6,12 +6,6 @@ import OpenTK.Graphics
 public def Main(argv as (string)) as void:
 	GladeApp()
 
-private class AtBox:
-	public final info	as kri.vb.Info
-	public def constructor(ai as kri.vb.Info):
-		info = ai
-
-
 public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
 	[Glade.Widget]	drawBox			as Gtk.Container
@@ -20,6 +14,7 @@ public class GladeApp:
 	[Glade.Widget]	butClear		as Gtk.ToolButton
 	[Glade.Widget]	butOpen			as Gtk.ToolButton
 	[Glade.Widget]	butDraw			as Gtk.ToggleToolButton
+	[Glade.Widget]	butPlay			as Gtk.ToolButton
 	[Glade.Widget]	propertyBook	as Gtk.Notebook
 	[Glade.Widget]	objView			as Gtk.TreeView
 	[Glade.Widget]	camFovLabel		as Gtk.Label
@@ -59,6 +54,14 @@ public class GladeApp:
 		dialog.Hide()
 		gw.Visible = true
 		return true
+	
+	private def playRecord(it as Gtk.TreeIter) as kri.ani.data.Record:
+		par = Gtk.TreeIter.Zero
+		objTree.IterParent(par,it)
+		pl = objTree.GetValue(par,0) as kri.ani.data.Player
+		rec = objTree.GetValue(it,0) as kri.ani.data.Record
+		al.add( kri.ani.data.Anim(pl,rec) )
+		return rec
 	
 	private def addPlayer(par as Gtk.TreeIter, ob as object) as void:
 		pl = ob as kri.ani.data.Player
@@ -177,6 +180,22 @@ public class GladeApp:
 		flushJournal()
 		gw.QueueDraw()
 		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
+	
+	public def onButPlay(o as object, args as System.EventArgs) as void:
+		al.clear()
+		used = List[of object]()
+		tw = TreeWalker(objTree)
+		while tw.next():
+			ob = tw.Value
+			if ob as kri.ani.data.Record:
+				par = tw.Parent
+				if par not in used:
+					used.Add(par)
+					playRecord( tw.Iter )
+			emi = ob as kri.part.Emitter
+			if emi:
+				al.add( kri.ani.Particle(emi) )
+		statusBar.Push(0, 'Started all scene animations')
 	
 	public def onSelectObj(o as object, args as System.EventArgs) as void:
 		curIter = Gtk.TreeIter()
@@ -352,6 +371,7 @@ public class GladeApp:
 		# make toolbar
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen
+		butPlay.Clicked		+= onButPlay
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)
@@ -372,11 +392,7 @@ public class GladeApp:
 			ent = curObj as kri.Entity
 			ent.visible = entVisibleBut.Active
 		aniPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
-			parIter = Gtk.TreeIter.Zero
-			objTree.IterParent(parIter,curIter)
-			pl = objTree.GetValue(parIter,0) as kri.ani.data.Player
-			rec = curObj as kri.ani.data.Record
-			al.add( kri.ani.data.Anim(pl,rec) )
+			rec = playRecord(curIter)
 			statusBar.Push(0, "Animation '${rec.name}' started")
 		emiStartBut.Clicked		+= do(o as object, args as System.EventArgs):
 			emi = curObj as kri.part.Emitter

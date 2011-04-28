@@ -12,7 +12,8 @@ public class Scheduler(IBase):
 			anims.Clear()	if value
 	public def isPlaying(an as IBase) as bool:
 		for xa in anims:
-			return true	if xa.an == an
+			if xa.an == an:
+				return true	
 		return false
 
 	# data
@@ -31,6 +32,8 @@ public class Scheduler(IBase):
 		anims.Add( XAniData(an:an, rec:rec, tik:kri.Ant.Inst.Time, tag:tag) )
 	public def add(an as IBase) as void:
 		add(an,null,0)
+	public def clear() as void:
+		anims.Clear()
 	def IBase.onFrame(time as double) as uint:		#imp: IAnimation
 		anims.RemoveAll() do(ref xan as XAniData):
 			return xan.onTime(time) != 0
