@@ -30,6 +30,10 @@ public class Scheduler(IBase):
 	# methods
 	public def add(an as IBase, rec as callable(int), tag as int) as void:
 		anims.Add( XAniData(an:an, rec:rec, tik:kri.Ant.Inst.Time, tag:tag) )
+	public def remove(an as IBase) as bool:
+		anims.RemoveAll() do(ref xan as XAniData):
+			return xan.an == an
+		return true
 	public def add(an as IBase) as void:
 		add(an,null,0)
 	public def clear() as void:

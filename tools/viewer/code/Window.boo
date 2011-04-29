@@ -194,7 +194,8 @@ public class GladeApp:
 					playRecord( tw.Iter )
 			emi = ob as kri.part.Emitter
 			if emi:
-				al.add( kri.ani.Particle(emi) )
+				emi.filled = false
+				al.add(emi)
 		statusBar.Push(0, 'Started all scene animations')
 	
 	public def onSelectObj(o as object, args as System.EventArgs) as void:
@@ -396,7 +397,10 @@ public class GladeApp:
 			statusBar.Push(0, "Animation '${rec.name}' started")
 		emiStartBut.Clicked		+= do(o as object, args as System.EventArgs):
 			emi = curObj as kri.part.Emitter
-			al.add( kri.ani.Particle(emi) )
+			emi.filled = false
+			al.remove(emi)
+			emi.filled = false
+			al.add(emi)
 			statusBar.Push(0, "Particle '${emi.name}' started")
 		# add gl widget
 		drawBox.Child = gw = makeWidget()

@@ -9,7 +9,7 @@ import OpenTK.Graphics.OpenGL
 #	PARTICLE EMITTER 					#
 #---------------------------------------#
 
-public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed ):
+public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed, kri.ani.IBase ):
 	public	visible		as bool		= true
 	public	filled		as bool		= false
 	public	obj			as kri.Entity	= null
@@ -54,3 +54,13 @@ public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed ):
 		if not (bu and update()):
 			return false
 		return mesh.render( owner.va, bu, entries, num, null )
+
+	def kri.ani.IBase.onFrame(time as double) as uint:
+		kri.Ant.Inst.params.parTime.Value.Y = time
+		if not (owner and owner.Ready):
+			kri.lib.Journal.Log("Particle: invalid manager for animating '${name}'")
+			return 1
+		if not owner.process(self):
+			kri.lib.Journal.Log("Particle: failed to process '${name}'")
+			return 2
+		return 0

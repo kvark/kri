@@ -91,7 +91,7 @@ public class Manager( kri.IMeshed ):
 		using kri.Discarder(true):
 			if not mesh.render( va, bu, pe.entries, 0, tf ):
 				return false
-		if not 'Debug':
+		if 'Debug':
 			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
 			mesh.vbo[0].read(ar)
 		# swap data

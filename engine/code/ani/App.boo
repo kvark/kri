@@ -16,24 +16,6 @@ public class Counter(IBase):
 		return (2,1)[count>0]
 
 
-###		Update particles	###
-
-public class Particle( IBase ):
-	private final pe	as kri.part.Emitter
-	public def constructor(ps as kri.part.Emitter):
-		(pe=ps).filled = false
-	def IBase.onFrame(time as double) as uint:
-		kri.Ant.Inst.params.parTime.Value.Y = time
-		man = pe.owner
-		if not (man and man.Ready):
-			kri.lib.Journal.Log("Particle: invalid manager for animating '${pe.name}'")
-			return 1
-		if not man.process(pe):
-			kri.lib.Journal.Log("Particle: failed to process '${pe.name}'")
-			return 2
-		return 0
-
-
 ###		Compensate parent	###
 
 public class Compensate( Action ):
