@@ -70,5 +70,5 @@ def Main(argv as (string)):
 		wait = ag.init.append( kri.ani.Loop(lTime:3.0) )
 		wait.append( at.scene.lights[0].play('LampAction') )
 		#al.add( kri.ani.ControlMouse(ent.node,0.003f) )
-		wait.append( kri.ani.Particle(at.scene.particles[0]) )
+		wait.append( at.scene.particles[0] )
 		win.Run(30.0,30.0)

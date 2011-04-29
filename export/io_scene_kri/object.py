@@ -114,7 +114,10 @@ def save_particle(obj,part):
 		out.pack('f', st.lifetime_random )
 		out.end()
 
-	if st.render_type == 'OBJECT':
+	if st.render_type == 'HALO':
+		if mat.type != 'HALO':
+			out.log(2,'w', 'material does not have halo')
+	elif st.render_type == 'OBJECT':
 		out.log(2,'i', 'instanced from: %s' % (st.dupli_object))
 		out.begin('pr_inst')
 		out.text( st.dupli_object.name )
@@ -124,7 +127,7 @@ def save_particle(obj,part):
 		out.pack('B2f', st.velocity_length,
 			st.line_length_tail, st.line_length_head )
 		out.end()
-	elif st.render_type not in ('HALO','PATH'):
+	elif st.render_type != 'PATH':
 		out.log(2,'w', 'render as unsupported: %s' % (st.render_type))
 	
 	out.begin('p_vel')

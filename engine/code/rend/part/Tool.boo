@@ -6,5 +6,6 @@ public class Standard( Meta ):
 		shobs.Add( pc.sh_draw )
 		shade('/part/draw/load')
 	public override def process(con as kri.rend.link.Basic) as void:
-		con.activate( con.Target.Same, 0f, false )
+		#con.activate( con.Target.Same, 0f, false ) # !temporary!
+		con.activate(false)
 		drawScene()

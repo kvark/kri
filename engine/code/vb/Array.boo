@@ -67,12 +67,6 @@ public class Array:
 			slots[i] = Entry.Zero
 			GL.DisableVertexAttribArray(i)
 	
-	public def isEmpty() as bool:
-		for en in slots:
-			if en.buffer:
-				return false
-		return true
-	
 	public def push(slot as uint, ref e as Entry) as void:
 		if slots[slot] == e:
 			return
@@ -105,11 +99,11 @@ public class Array:
 			useMask |= 1<<i
 		# need at least one
 		Object.Index = index = ind
-		if isEmpty():
+		if not useMask:
 			for en in edic.Values:
 				push(0,en)
 				break
-		return not isEmpty()
+		return useMask + edic.Count > 0
 
 	public def hasConflicts() as byte:
 		lx = List[of Object]()

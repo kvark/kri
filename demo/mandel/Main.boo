@@ -60,7 +60,7 @@ def Main(argv as (string)):
 		
 		rlis.Add( kri.rend.Clear() )
 		rlis.Add( Render(pcon) )
-		win.core.anim = kri.ani.Particle(pe)
+		win.core.anim = pe
 		win.Run(30.0,30.0)
 		
 		

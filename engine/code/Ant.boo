@@ -174,7 +174,7 @@ public class Ant(IDisposable):
 		for i in range(ticks):
 			add = ((tc-cur)/ ticks, tc-cur)[i+1==ticks]
 			dt = 1f / Math.Max(0.001f, add)
-			params.parTime.Value = Vector4(add,cur,cur,dt)
 			cur += add
+			params.parTime.Value = Vector4(add,cur,cur,dt)
 			if anim and anim.onFrame(cur):
 				anim = null

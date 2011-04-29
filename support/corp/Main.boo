@@ -198,13 +198,13 @@ public class Extra( kri.IExtension ):
 		factor = r.getReal()
 		if mode == 'SPIN':
 			pm = r.geData[of kri.part.Manager]()
-			return false	if not pm
+			if not pm:	return false
 			pm.behos.Add( beh.Rotate(factor) )
 		return true
 	
 	public def fp_phys(r as kri.load.Reader) as bool:
 		pm = r.geData[of kri.part.Manager]()
-		return false	if not pm
+		if not pm:	return false
 		pg = r.at.scene.pGravity
 		if pg:
 			bgav = beh.Gravity(pg)
@@ -218,13 +218,15 @@ public class Extra( kri.IExtension ):
 	
 	public def getMaterial(r as kri.load.Reader) as kri.Material:
 		pe = r.geData[of kri.part.Emitter]()
-		return null	if not pe or not pe.mat
-		return null	if pe.mat == kri.Ant.Inst.loaders.materials.con.mDef
+		if not (pe and pe.mat):
+			return null	
+		if pe.mat == kri.Ant.Inst.loaders.materials.con.mDef:
+			return null	
 		return pe.mat
 	
 	public def fp_child(r as kri.load.Reader) as bool:
 		mat = getMaterial(r)
-		return false	if not mat
+		if not mat:	return false
 		meta = child.Meta( Name:'child' )
 		mat.metaList.Add(meta)
 		meta.num	= r.bin.ReadUInt16()
@@ -234,7 +236,7 @@ public class Extra( kri.IExtension ):
 	
 	public def fpr_inst(r as kri.load.Reader) as bool:
 		mat = getMaterial(r)
-		return false	if not mat
+		if not mat:	return false
 		meta = inst.Meta( Name:'inst' )
 		mat.metaList.Add(meta)
 		r.addResolve() do(n as kri.Node):
