@@ -61,4 +61,6 @@ public class Update( kri.rend.tech.Basic ):
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )
 				tag.clearTarget = false
-			e.render(va,bu)
+			if not e.render(va,bu):
+				kri.lib.Journal.Log("Bake: surface update failed for ${e.node.name}")
+				e.tags.Remove(tag)

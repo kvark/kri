@@ -6,6 +6,8 @@ class Settings:
 	showWarning	= True
 	breakError	= False
 	doQuatInt	= True
+	putNormal	= True
+	putQuat		= True
 	putUv		= True
 	putColor	= False
 	logInfo		= True

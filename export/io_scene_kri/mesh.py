@@ -9,7 +9,7 @@ def calc_TBN(verts, uvs):
 	va = verts[1].co - verts[0].co
 	vb = verts[2].co - verts[0].co
 	n0 = n1 = va.cross(vb)
-	tan,bit,hand = va,vb,1
+	tan,bit,hand = None,None,1
 	if len(uvs) and n1.dot(n1) > 0.0:
 		ta = uvs[0][1] - uvs[0][0]
 		tb = uvs[0][2] - uvs[0][0]
@@ -55,9 +55,11 @@ class Face:
 		self.color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
 		t,b,n,hand,nv = calc_TBN(self.v, self.uv)
 		self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
-		assert t.dot(t)>0.0 and\
-			'Try removing duplicated vertices and recalculating normals'
-		self.ta = t.normalized()
+		if t != None:
+			assert t.dot(t)>0.0 and\
+				'Try removing duplicated vertices and recalculating normals'
+			self.ta = t.normalized()
+		else:	self.ta = None
 		self.hand = hand
 
 
@@ -70,6 +72,7 @@ def save_mesh(mesh,armature,groups):
 		if not len(layer.data):
 			out.log(1,'e','UV layer is locked by the user')
 			return
+	hasQuat = len(mesh.uv_textures)>0 and Settings.putUv and Settings.putQuat
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
 		uves,colors,nvert = [],[],len(face.vertices)
@@ -118,19 +121,22 @@ def save_mesh(mesh,armature,groups):
 			ind = f.v.index(v2.vert)
 			f.vi[ind] = i
 			wes = f.wes[ind]
-			lensum += wes * f.ta.length
-			tan += wes * f.ta
-		assert lensum > 0.0
-		avg += tan.length / lensum
-		tan.normalize() # mean tangent
+			if f.ta:
+				lensum += wes * f.ta.length
+				tan += wes * f.ta
 		no = v.normal.copy()
 		no.normalize()
-		bit = no.cross(tan) * v.face.hand   # using handness
-		tan = bit.cross(no) # handness will be applied in shader
-		tbn = mathutils.Matrix((tan,bit,no)) # tbn is orthonormal, right-handed
-		v.quat = tbn.to_quaternion().normalized()
+		if hasQuat:
+			assert lensum>0.0
+			avg += tan.length / lensum
+			tan.normalize()		# mean tangent
+			bit = no.cross(tan) * v.face.hand	# using handness
+			tan = bit.cross(no)	# handness will be applied in shader
+			tbn = mathutils.Matrix((tan,bit,no))	# tbn is orthonormal, right-handed
+			v.quat = tbn.to_quaternion().normalized()
 		ar_vert.append(v)
-	out.log(1,'i','%.2f avg tangent accuracy' % (avg / len(ar_vert)))
+	if hasQuat:
+		out.log(1,'i','%.2f avg tangent accuracy' % (avg / len(ar_vert)))
 	del set_vert
 
 	# 4: unlock quaternions to make all the faces QI-friendly
@@ -141,7 +147,7 @@ def save_mesh(mesh,armature,groups):
 		v = ar_vert[ind]
 		if v.dual < 0: v.dual = ind
 	n_dup,ex_face = 0,[]
-	for f in (ar_face if Settings.doQuatInt else []):
+	for f in (ar_face if hasQuat else []):
 		vx,cs,pos,n_neg = (1,2,0),[0,0,0],0,0
 		def isGood(j):
 			ind = f.vi[j]
@@ -204,8 +210,8 @@ def save_mesh(mesh,armature,groups):
 		# mark as used
 		for ind in f.vi: mark_used(ind)
 
-	if Settings.doQuatInt:
-		print("\textra: %d vertices, %d faces" % (n_dup,len(ex_face)))
+	if Settings.doQuatInt and hasQuat:
+		out.log(1,'i', 'extra %d vertices, %d faces' % (n_dup,len(ex_face)))
 		ar_face += ex_face
 		# run a check
 		for f in ar_face: qi_check(f)
@@ -227,14 +233,20 @@ def save_mesh(mesh,armature,groups):
 	for v in ar_vert:
 		out.pack('4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
 	out.end()
-	out.begin('v_quat')
-	for v in ar_vert:
-		out.pack('4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
-	out.end()
+	if Settings.putNormal:
+		out.begin('v_nor')
+		for v in ar_vert:
+			out.pack('3f', v.normal.x, v.normal.y, v.normal.z)
+		out.end()
+	if hasQuat:
+		out.begin('v_quat')
+		for v in ar_vert:
+			out.pack('4f', v.quat.x, v.quat.y, v.quat.z, v.quat.w)
+		out.end()
 	
 	if Settings.putUv:
 		all = mesh.uv_textures
-		print("\t", 'UV layers:', len(all) )
+		out.log(1,'i', 'UV layers: %d' % (len(all)))
 		for i,layer in enumerate(all):
 			out.begin('v_uv')
 			out.text( layer.name )
@@ -244,7 +256,7 @@ def save_mesh(mesh,armature,groups):
 			out.end()
 	if Settings.putColor:
 		all = mesh.vertex_colors
-		print("\t", 'Color layers:', len(all) )
+		out.log(1,'i', 'Color layers: %d' % (len(all)))
 		for i,layer in enumerate(all):
 			out.begin('v_color')
 			out.text( layer.name )

@@ -31,24 +31,29 @@ public class Update( kri.rend.tech.Basic ):
 		par[0].activate(spat)
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		if not kri.Scene.Current:	return
-		for e in kri.Scene.Current.entities:
-			kri.Ant.Inst.params.modelView.activate( e.node )
+		scene = kri.Scene.Current
+		if not scene:	return
+		for e in scene.entities:
 			tag = e.seTag[of Tag]()
 			if not e.visible or not tag or tag.Sync:
 				continue
+			kri.Ant.Inst.params.modelView.activate( e.node )
 			# collect or create destination buffers
 			vos = array[of kri.vb.Attrib]( at_mod.Length )
 			for i in range( vos.Length ):
 				vos[i] = e.store.find(at_mod[i])
 				if vos[i]:	continue
 				orig = e.mesh.find(at_mod[i])
-				assert orig
+				if not orig:	break
 				ai = orig.Semant[0]
 				vos[i] = v = kri.vb.Attrib()
 				v.Semant.Add(ai)
 				v.init( e.mesh.nVert * ai.fullSize() )
 				e.store.vbo.Add(v)
+			if not vos[at_mod.Length-1]:
+				kri.lib.Journal.Log("Skin: insufficient input data for ${e.node.name}")
+				e.tags.Remove(tag)
+				continue
 			tf.Bind( *vos )
 			# run the transform
 			spa as kri.Spatial
