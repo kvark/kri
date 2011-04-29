@@ -5,11 +5,11 @@ class Settings:
 	showInfo	= True
 	showWarning	= True
 	breakError	= False
-	doQuatInt	= True
 	putNormal	= True
 	putQuat		= True
 	putUv		= True
-	putColor	= False
+	putColor	= True
+	doQuatInt	= True
 	logInfo		= True
 	cutPaths	= True
 	kFrameSec	= 1.0 / 25.0

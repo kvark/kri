@@ -65,11 +65,12 @@ public class Apply( kri.rend.tech.Meta ):
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	public override def process(con as kri.rend.link.Basic) as void:
-		if not kri.Scene.Current:	return
+		scene = kri.Scene.Current
+		if not scene:	return
 		con.activate( con.Target.Same, 0f, false )
 		butch.Clear()
 		#Texture.Slot(8)
-		for l in kri.Scene.Current.lights:
+		for l in scene.lights:
 			if l.fov != 0f:	continue
 			lit = l
 			#if l.depth:
@@ -77,7 +78,7 @@ public class Apply( kri.rend.tech.Meta ):
 			#	Texture.Shadow(false)
 			#	Texture.Filter(false,false);
 			# determine subset of affected objects
-			for e in kri.Scene.Current.entities:
+			for e in scene.entities:
 				addObject(e)
 		using blend = kri.Blender():
 			blend.add()

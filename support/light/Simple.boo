@@ -82,15 +82,16 @@ public class Apply( kri.rend.tech.Meta ):
 			return metaFun()
 	# work
 	public override def process(con as kri.rend.link.Basic) as void:
-		if not kri.Scene.Current:	return
+		scene = kri.Scene.Current
+		if not scene:	return
 		butch.Clear()
-		for l in kri.Scene.Current.lights:
+		for l in scene.lights:
 			if l.fov == 0f:
 				continue
 			lit = l
 			texLit.Value = l.depth
 			# determine subset of affected objects
-			for e in kri.Scene.Current.entities:
+			for e in scene.entities:
 				addObject(e)
 		butch.Sort( kri.rend.tech.Batch.cMat )
 		# draw

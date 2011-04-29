@@ -51,16 +51,18 @@ class Face:
 		self.v  = tuple( m.vertices[x]	for x in self.vi )
 		self.no = tuple( x.normal	for x in self.v  )
 		self.normal = ( face.normal, mathutils.Vector((0,0,0)) )[face.use_smooth]
-		self.uv		= tuple(tuple( layer[i]	for i in ind ) for layer in uves)
-		self.color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
-		t,b,n,hand,nv = calc_TBN(self.v, self.uv)
+		xuv	= tuple(tuple( layer[i]	for i in ind ) for layer in uves)
+		color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
+		t,b,n,hand,nv = calc_TBN(self.v, xuv)
 		self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
-		if t != None:
+		if Settings.putQuat and t != None:
 			assert t.dot(t)>0.0 and\
 				'Try removing duplicated vertices and recalculating normals'
 			self.ta = t.normalized()
 		else:	self.ta = None
 		self.hand = hand
+		self.uv		= ([],xuv)	[Settings.putUv]
+		self.color	= ([],color)	[Settings.putColor]
 
 
 ###  MESH   ###
@@ -72,15 +74,15 @@ def save_mesh(mesh,armature,groups):
 		if not len(layer.data):
 			out.log(1,'e','UV layer is locked by the user')
 			return
-	hasQuat = len(mesh.uv_textures)>0 and Settings.putUv and Settings.putQuat
+	hasQuat = len(mesh.uv_textures)>0 and Settings.putQuat
 	ar_face = []
 	for i,face in enumerate(mesh.faces):
 		uves,colors,nvert = [],[],len(face.vertices)
-		for layer in ( mesh.uv_textures		if Settings.putUv	else [] ):
+		for layer in mesh.uv_textures:
 			d = layer.data[i]
 			cur = tuple(mathutils.Vector(x) for x in (d.uv1,d.uv2,d.uv3,d.uv4))
 			uves.append(cur)
-		for layer in ( mesh.vertex_colors	if Settings.putColor	else [] ):
+		for layer in mesh.vertex_colors:
 			d = layer.data[i]
 			cur = tuple(mathutils.Vector(x) for x in (d.color1,d.color2,d.color3,d.color4))
 			colors.append(cur)
@@ -147,7 +149,7 @@ def save_mesh(mesh,armature,groups):
 		v = ar_vert[ind]
 		if v.dual < 0: v.dual = ind
 	n_dup,ex_face = 0,[]
-	for f in (ar_face if hasQuat else []):
+	for f in ([],ar_face)[hasQuat]:
 		vx,cs,pos,n_neg = (1,2,0),[0,0,0],0,0
 		def isGood(j):
 			ind = f.vi[j]
@@ -229,10 +231,11 @@ def save_mesh(mesh,armature,groups):
 	out.pack('H', len(ar_vert) )
 	out.end()
 	
-	out.begin('v_pos')
-	for v in ar_vert:
-		out.pack('4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
-	out.end()
+	if True:
+		out.begin('v_pos')
+		for v in ar_vert:
+			out.pack('4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
+		out.end()
 	if Settings.putNormal:
 		out.begin('v_nor')
 		for v in ar_vert:

@@ -45,9 +45,6 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 	break_err	= BoolProperty( name='Break on error',
 		description='Stop the process on first error',
 		default=Settings.breakError )
-	quat_int	= BoolProperty( name='Process quaternions',
-		description='Prepare mesh quaternions for interpolation',
-		default=Settings.doQuatInt )
 	put_normal	= BoolProperty( name='Put normals',
 		description='Export vertex normals',
 		default=Settings.putNormal )
@@ -60,6 +57,9 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 	put_color	= BoolProperty( name='Put color layers',
 		description='Export vertex colors',
 		default=Settings.putColor )
+	quat_int	= BoolProperty( name='Process quaternions',
+		description='Prepare mesh quaternions for interpolation',
+		default=Settings.doQuatInt )
 	cut_paths	= BoolProperty( name='Cut paths',
 		description='Force relative paths',
 		default=Settings.cutPaths )
@@ -68,11 +68,11 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 		Settings.showInfo	= self.properties.show_info
 		Settings.showWarning	= self.properties.show_warn
 		Settings.breakError	= self.properties.break_err
-		Settings.doQuatInt	= self.properties.quat_int
 		Settings.putNormal	= self.properties.put_normal
 		Settings.putQuat	= self.properties.put_quat
 		Settings.putUv		= self.properties.put_uv
 		Settings.putColor	= self.properties.put_color
+		Settings.doQuatInt	= self.properties.quat_int
 		save_scene(self.properties.filepath, context)
 		return {'FINISHED'}
 

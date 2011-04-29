@@ -69,6 +69,7 @@
     <Compile Include="light\Defer.boo" />
     <Compile Include="light\Group.boo" />
     <Compile Include="light\Kbuf.boo" />
+    <Compile Include="light\Normal.boo" />
     <Compile Include="light\Omni.boo" />
     <Compile Include="light\Simple.boo" />
     <Compile Include="motion\Main.boo" />

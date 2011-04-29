@@ -54,23 +54,27 @@ public class Emission( tech.Meta ):
 
 public class Color( tech.General ):
 	private final bu	= kri.shade.Bundle()
-	private final add	as bool
-	public def constructor(doAdd as bool):
+	public fillColor	= false
+	public fillDepth	= false
+	public def constructor():
 		super('color')
-		add = doAdd
 		bu.shader.add( '/color_v','/color_f', '/lib/quat_v','/lib/tool_v','/lib/fixed_v' )
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
 	public override def process(con as link.Basic) as void:
-		con.activate( con.Target.Same, 0f, false )
-		if add:
+		if fillDepth:
+			con.ClearDepth(1.0)
+			con.activate( con.Target.Same, 1f, true )
+		else:
+			con.activate( con.Target.Same, 0f, false )
+		if fillColor:
+			con.ClearColor()
+			drawScene()
+		else:
 			using blend = kri.Blender():
 				blend.add()
 				drawScene()
-		else:
-			con.ClearColor()
-			drawScene()
 
 
 #---------	RENDER SSAO	--------#

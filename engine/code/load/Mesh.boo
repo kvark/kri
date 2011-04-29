@@ -5,7 +5,6 @@ import OpenTK.Graphics.OpenGL
 
 public class ExMesh( kri.IExtension ):
 	def kri.IExtension.attach(nt as Native) as void:
-		# mesh
 		nt.readers['mesh']		= p_mesh
 		nt.readers['v_pos']		= pv_pos
 		nt.readers['v_nor']		= pv_nor
@@ -22,7 +21,7 @@ public class ExMesh( kri.IExtension ):
 	public static def LoadArray[of T(struct)](r as Reader, multi as uint,
 			ref ai as kri.vb.Info, fun as callable) as bool:
 		m = r.geData[of kri.Mesh]()
-		return false	if not m
+		if not m:	return false
 		ar = GetArray[of T]( multi * m.nVert, fun )
 		v = kri.vb.Attrib()
 		v.init(ar,false)
@@ -79,7 +78,7 @@ public class ExMesh( kri.IExtension ):
 	#---	Parse mesh vertex colors	---#
 	public def pv_color(r as Reader) as bool:
 		m = r.geData[of kri.Mesh]()
-		if not m: return false
+		if not m:	return false
 		slot = 0
 		for slot in range(4):
 			if not m.find('color'+slot):
@@ -96,11 +95,11 @@ public class ExMesh( kri.IExtension ):
 	#---	Parse mesh indexes	---#
 	public def pv_ind(r as Reader) as bool:
 		m = r.geData[of kri.Mesh]()
-		if not m: return false
+		if not m:	return false
 		m.nPoly = r.bin.ReadUInt16()
 		if m.nPoly:	# indexes
 			af = GetArray[of ushort]( m.nPoly*3, r.bin.ReadUInt16 )
 			m.ind = kri.vb.Object()
 			m.ind.init(af,false)
-		else: m.nPoly /= 3
+		else:	m.nPoly /= 3
 		return true
