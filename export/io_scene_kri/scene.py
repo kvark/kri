@@ -73,7 +73,8 @@ def save_scene(filename, context):
 		#it's easier to convert on loading than here
 		out.log(1,'w','Radians are not supported')
 	if sc.use_gravity:
-		out.log(1,'i', 'gravity: ' % (sc.gravity))
+		gv = sc.gravity
+		out.log(1,'i', 'gravity: (%.1f,%.1f,%.1f)' % (gv.x,gv.y,gv.z))
 		out.begin('grav')
 		out.array('f', sc.gravity)
 		out.end()

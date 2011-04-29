@@ -208,7 +208,7 @@ public class Extra( kri.IExtension ):
 		pg = r.at.scene.pGravity
 		if pg:
 			bgav = beh.Gravity(pg)
-			pm.behos.Insert(0,bgav)	//supposed to be first
+			pm.behos.Add(bgav)
 		biz = beh.Physics()
 		biz.pSize.Value = Vector4( r.getVec2() )
 		# forces: brownian, drag, damp
