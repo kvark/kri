@@ -11,3 +11,11 @@ public class Standard( Meta ):
 			con.activate( con.Target.Same, 0f, false )
 		else:	con.activate(false)
 		drawScene()
+
+
+public class Dummy( Simple ):
+	public def constructor(pc as kri.part.Context):
+		super.bAdd = 0f
+		bu.shader.add( pc.sh_draw )
+		bu.shader.add( *kri.Ant.Inst.libShaders )
+		bu.shader.add('/part/draw/simple_v','/part/draw/simple_f')
