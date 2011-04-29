@@ -37,9 +37,15 @@ public class Scheduler(IBase):
 			return xan.an == an
 		return true
 	public def clear() as void:
+		for xan in anims:
+			xan.an.onKill()
 		anims.Clear()
+
 	def IBase.onFrame(time as double) as uint:		#imp: IAnimation
 		anims.RemoveAll() do(ref xan as XAniData):
 			return xan.onTime(time) != 0
 		return 0
 		#return (0,1)[not anims.Count]
+	
+	def IBase.onKill() as void:
+		clear()

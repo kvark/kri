@@ -64,3 +64,6 @@ public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed, kri.ani.IBase )
 			kri.lib.Journal.Log("Particle: failed to process '${name}'")
 			return 2
 		return 0
+
+	def kri.ani.IBase.onKill() as void:
+		filled = false

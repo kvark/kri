@@ -5,7 +5,7 @@ import OpenTK
 
 ###		Counter		###
 
-public class Counter(IBase):
+public class Counter(Basic):
 	public final limit	as int
 	public count	= 0
 	public def constructor(lim as int):
@@ -44,7 +44,7 @@ public class Compensate( Action ):
 #	Rotate node with mouse		#
 #-------------------------------#
 
-public class ControlMouse(IBase):
+public class ControlMouse(Basic):
 	private final node	as kri.Node
 	private final sense	as single
 	private final mouse as Input.MouseDevice

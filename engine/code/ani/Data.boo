@@ -103,7 +103,7 @@ public abstract class Player(IPlayer):
 #---------------------
 #	ANIM: universal animation
 
-public class Anim( kri.ani.IBase ):
+public class Anim( kri.ani.Basic ):
 	public final player	as IPlayer
 	public final record	as Record
 	
@@ -111,8 +111,10 @@ public class Anim( kri.ani.IBase ):
 		player,record = pl,rec
 	
 	def kri.ani.IBase.onFrame(time as double) as uint:
-		return 2	if not record
-		return 1	if time > record.length
+		if not record:
+			return 2	
+		if time > record.length:
+			return 1
 		for c in record.channels:
 			c.update(player,time)
 		player.touch()

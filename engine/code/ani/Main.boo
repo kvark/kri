@@ -4,9 +4,16 @@
 public interface IBase:
 	# more onTick than onFrame, a legacy name
 	def onFrame(time as double) as uint
+	def onKill() as void
+
+public abstract class Basic(IBase):
+	def IBase.onKill() as void:
+		pass
+	def IBase.onFrame(time as double) as uint:
+		return 0
 
 
-public class Action(IBase):
+public class Action(Basic):
 	protected virtual def execute() as void:
 		pass
 	def IBase.onFrame(time as double) as uint:
@@ -14,7 +21,7 @@ public class Action(IBase):
 		return 1
 
 
-public class Delta(IBase):
+public class Delta(Basic):
 	private last	= 0.0
 	protected abstract def onDelta(delta as double) as uint:
 		pass
@@ -24,7 +31,7 @@ public class Delta(IBase):
 		return onDelta(d)
 
 
-public class Loop(IBase):
+public class Loop(Basic):
 	public lTime	as double = 1.0
 	private start	= double.MinValue
 	[getter(Loops)]

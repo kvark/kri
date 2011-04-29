@@ -63,3 +63,9 @@ public class Graph(IBase):
 			alist.Add(t)
 			t.onStart()	if t.onStart
 		return 0
+	
+	def IBase.onKill() as void:
+		for an in alist:
+			if an.anim:
+				an.anim.onKill()
+		alist.Clear()
