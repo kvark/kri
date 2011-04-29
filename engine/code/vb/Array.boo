@@ -40,6 +40,7 @@ public class Array:
 	public	static	Current		= Default
 	public	final	handle		as uint
 	private final	slots		= array[of Entry]( kri.Ant.Inst.caps.vertexAttribs )
+	private	useMask	as uint		= 0
 	private index	as Object	= null
 	
 	public def constructor():
@@ -54,6 +55,7 @@ public class Array:
 			GL.DeleteVertexArrays(1,tmp)
 	
 	public def bind() as void:
+		useMask = 0
 		if self == Current:
 			return
 		Current = self
@@ -100,6 +102,7 @@ public class Array:
 			if not sat[i].matches(ai):
 				return false
 			push(i,en)
+			useMask |= 1<<i
 		# need at least one
 		Object.Index = index = ind
 		if isEmpty():
@@ -111,9 +114,10 @@ public class Array:
 	public def hasConflicts() as byte:
 		lx = List[of Object]()
 		if index:	lx.Add(index)
-		for sl in slots:
-			buf = sl.buffer
-			if buf:	lx.Add( buf.Data )
+		for i in range(slots.Length):
+			buf = slots[i].buffer
+			if buf and ((1<<i)&useMask):
+				lx.Add( buf.Data )
 		num = 0
 		for bx in kri.TransFeedback.Cache:
 			if bx and bx in lx:
