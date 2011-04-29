@@ -8,6 +8,7 @@ public class ExMesh( kri.IExtension ):
 		# mesh
 		nt.readers['mesh']		= p_mesh
 		nt.readers['v_pos']		= pv_pos
+		nt.readers['v_nor']		= pv_nor
 		nt.readers['v_quat']	= pv_quat
 		nt.readers['v_uv']		= pv_uv
 		nt.readers['v_color']	= pv_color
@@ -44,6 +45,13 @@ public class ExMesh( kri.IExtension ):
 			integer:false )
 		return LoadArray[of Vector4]( r,1,ai, r.getVec4 )
 	
+	#---	Parse mesh normals 	---#
+	public def pv_nor(r as Reader) as bool:
+		ai = kri.vb.Info( name:'normal', size:3,
+			type: VertexAttribPointerType.Float,
+			integer:false )
+		return LoadArray[of Vector3]( r,1,ai, r.getVector )
+	
 	#---	Parse mesh quaternions 	---#
 	public def pv_quat(r as Reader) as bool:
 		ai = kri.vb.Info( name:'quat', size:4,
@@ -54,12 +62,14 @@ public class ExMesh( kri.IExtension ):
 	#---	Parse mesh texture coordinates (UV)	---#
 	public def pv_uv(r as Reader) as bool:
 		m = r.geData[of kri.Mesh]()
-		return false	if not m
+		if not m:	return false
 		slot = 0
 		for slot in range(4):
 			if not m.find('tex'+slot):
 				break
-		assert slot!=4
+		if slot == 4:
+			kri.lib.Journal.Log("Loader: mesh already has 4 UV, skipping another")
+			return false
 		r.getString()	# layer name, not used
 		ai = kri.vb.Info( name:'tex'+slot, size:2,
 			type:VertexAttribPointerType.Float,
@@ -74,7 +84,9 @@ public class ExMesh( kri.IExtension ):
 		for slot in range(4):
 			if not m.find('color'+slot):
 				break
-		assert slot!=4
+		if slot == 4:
+			kri.lib.Journal.Log("Loader: mesh already has 4 Colors, skipping another")
+			return false
 		r.getString()	# layer name, not used
 		ai = kri.vb.Info( name:'color'+slot, size:3,
 			type:VertexAttribPointerType.UnsignedByte,
