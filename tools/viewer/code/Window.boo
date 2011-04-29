@@ -4,7 +4,18 @@ import OpenTK.Graphics
 
 [System.STAThread]
 public def Main(argv as (string)) as void:
-	GladeApp()
+	Gtk.Application.Init()
+	ga = GladeApp()
+	for ar in argv:
+		if not ar.StartsWith('-'):
+			ga.load(ar)
+		elif ar == '-draw':
+			ga.setDraw()
+		elif ar == '-play':
+			ga.playAll()
+	# main loop
+	Gtk.Application.Run()
+
 
 public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
@@ -102,6 +113,41 @@ public class GladeApp:
 		for par in view.scene.particles:
 			it = addObject(par)
 			addObject( it, par.owner )
+	
+	public def load(path as string) as void:
+		pos = path.LastIndexOfAny((char('/'),char('\\')))
+		fdir = path.Substring(0,pos)
+		# load scene
+		kri.Ant.Inst.loaders.materials.prefix = fdir
+		loader = kri.load.Native()
+		at = loader.read(path)
+		view.scene = at.scene
+		if at.scene.cameras.Count:
+			view.cam = at.scene.cameras[0]
+		# notify
+		updateList()
+		flushJournal()
+		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
+	
+	public def playAll() as void:
+		al.clear()
+		used = List[of object]()
+		tw = TreeWalker(objTree)
+		while tw.next():
+			ob = tw.Value
+			if ob as kri.ani.data.Record:
+				par = tw.Parent
+				if par not in used:
+					used.Add(par)
+					playRecord( tw.Iter )
+			emi = ob as kri.part.Emitter
+			if emi:
+				emi.filled = false
+				al.add(emi)
+		statusBar.Push(0, 'Started all scene animations')
+	
+	public def setDraw() as void:
+		butDraw.Active = true
 
 
 	#--------------------	
@@ -165,38 +211,11 @@ public class GladeApp:
 		if rez != 0:
 			statusBar.Push(0, 'Load cancelled')
 			return
-		path = dOpen.Filename
-		pos = path.LastIndexOfAny((char('/'),char('\\')))
-		fdir = path.Substring(0,pos)
-		# load scene
-		kri.Ant.Inst.loaders.materials.prefix = fdir
-		loader = kri.load.Native()
-		at = loader.read(path)
-		view.scene = at.scene
-		if at.scene.cameras.Count:
-			view.cam = at.scene.cameras[0]
-		# notify
-		updateList()
-		flushJournal()
+		load( dOpen.Filename )
 		gw.QueueDraw()
-		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
 	
 	public def onButPlay(o as object, args as System.EventArgs) as void:
-		al.clear()
-		used = List[of object]()
-		tw = TreeWalker(objTree)
-		while tw.next():
-			ob = tw.Value
-			if ob as kri.ani.data.Record:
-				par = tw.Parent
-				if par not in used:
-					used.Add(par)
-					playRecord( tw.Iter )
-			emi = ob as kri.part.Emitter
-			if emi:
-				emi.filled = false
-				al.add(emi)
-		statusBar.Push(0, 'Started all scene animations')
+		playAll()
 	
 	public def onSelectObj(o as object, args as System.EventArgs) as void:
 		curIter = Gtk.TreeIter()
@@ -359,7 +378,6 @@ public class GladeApp:
 		return col
 	
 	public def constructor():
-		Gtk.Application.Init()
 		kri.lib.Journal.Inst = log
 		GLib.Idle.Add( onIdle )
 		GLib.ExceptionManager.UnhandledException += onException
@@ -410,4 +428,3 @@ public class GladeApp:
 		gw.Visible = true
 		# run
 		statusBar.Push(0, 'Launched')
-		Gtk.Application.Run()
