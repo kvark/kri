@@ -43,6 +43,8 @@ public class Fill( kri.rend.tech.General ):
 				t.target = TextureTarget.TextureCubeMap
 				t.wid = t.het = context.size
 				t.initCube()
+				t.shadow(false)
+				t.filt(false,false)
 			fbo.at.depth = l.depth
 			fbo.bind()
 			con.ClearDepth(1.0)
@@ -54,29 +56,33 @@ public class Fill( kri.rend.tech.General ):
 public class Apply( kri.rend.tech.Meta ):
 	private lit as kri.Light	= null
 	private final smooth	as bool
-	public def constructor(bSmooth as bool):
+	private final texLit	as kri.shade.par.Texture
+	
+	public def constructor(lc as support.light.Context, bSmooth as bool):
 		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
 		shade(('/light/omni/apply_v','/light/omni/apply_f','/light/common_f'))
 		smooth = bSmooth
+		dict.attach(lc.dict)
+		texLit = lc.texLit
 	protected override def getUpdater(mat as kri.Material) as Updater:
 		metaFun = super(mat).fun
 		curLight = lit
 		return Updater() do() as int:
+			texLit.Value = curLight.depth
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
+	
 	public override def process(con as kri.rend.link.Basic) as void:
 		scene = kri.Scene.Current
 		if not scene:	return
 		con.activate( con.Target.Same, 0f, false )
 		butch.Clear()
-		#Texture.Slot(8)
+		kri.buf.Texture.Slot(8)
 		for l in scene.lights:
 			if l.fov != 0f:	continue
 			lit = l
-			#if l.depth:
-			#	l.depth.bind()
-			#	Texture.Shadow(false)
-			#	Texture.Filter(false,false);
+			if not (l.depth and l.depth.target==TextureTarget.TextureCubeMap):
+				continue
 			# determine subset of affected objects
 			for e in scene.entities:
 				addObject(e)

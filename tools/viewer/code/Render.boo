@@ -3,6 +3,7 @@
 import OpenTK
 
 public enum Scheme:
+	Debug
 	Simple
 	Forward
 	Deferred
@@ -16,6 +17,7 @@ public class RenderSet:
 	public	final	rEmi	= kri.rend.Emission()
 	public	final	rSkin	= support.skin.Update(true)
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
+	public	final	rAttrib	= kri.rend.debug.Attrib()
 	public	final	rNormal		as support.light.normal.Apply
 	public	final	rDummy		as kri.rend.part.Dummy
 	public	final	rParticle	as kri.rend.part.Standard
@@ -34,7 +36,7 @@ public class RenderSet:
 		grDeferred	= support.defer.Group( 3, grForward.con, null )
 		rNormal		= support.light.normal.Apply( grForward.con )
 		rChain.renders.AddRange((rSkin,rClear,rZcull,rColor,rEmi,rSurfBake,rNormal,
-			grForward,grDeferred,rDummy,rParticle))
+			grForward,grDeferred,rDummy,rParticle,rAttrib))
 		if texFun:
 			proxy = kri.shade.par.UnitProxy(texFun)
 			rChain.renders.Add( kri.rend.debug.Map(false,false,-1,proxy))
@@ -42,6 +44,8 @@ public class RenderSet:
 	public def gen(sh as Scheme) as kri.rend.Basic:
 		for ren in rChain.renders:
 			ren.active = false
+		if sh == Scheme.Debug:
+			rAttrib.active = true
 		if sh == Scheme.Simple:
 			for ren in (rSkin,rZcull,rColor,rDummy,rNormal,rSurfBake):
 				ren.active = true

@@ -1,10 +1,11 @@
 #version 130
 
 uniform struct Spatial	{
-	vec4 pos,rot;
+	vec4	pos,rot;
 }s_model,s_cam;
 
-uniform vec4 proj_cam;
+uniform vec4	proj_cam;
+uniform	bool	use_normals;
 
 //lib_quat
 vec3 qrot(vec4,vec3);
@@ -17,9 +18,10 @@ vec4 get_projection(vec3,vec4);
 //mat
 void make_tex_coords();
 
-in vec4 at_vertex, at_quat;
-out vec4 quat;
-flat out float handness;
+in	vec4	at_vertex, at_quat;
+in	vec3	at_normal;
+out	vec4	quat;
+flat	out	float handness;
 
 
 void main()	{
@@ -29,9 +31,12 @@ void main()	{
 	vec3 v = trans_for(at_vertex.xyz, s_model);
 
 	// tangent->world transform
-	quat =  qmul( s_model.rot, at_quat );
 	handness = at_vertex.w;
-	
+	if (use_normals)	{
+		vec3 nr = qrot( s_model.rot, at_normal );
+		quat = vec4( nr, 1.0 );
+	}else	quat = qmul( s_model.rot, at_quat );
+		
 	// vertex in camera space
 	vec3 vc = trans_inv(v, s_cam);
 	gl_Position = get_projection(vc, proj_cam);

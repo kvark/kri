@@ -15,5 +15,5 @@ public class Forward( kri.rend.Group ):
 		rSpotFill	= Fill(con)
 		rSpotApply	= Apply(con)
 		rOmniFill	= omni.Fill(con)
-		rOmniApply	= omni.Apply(smooth)
+		rOmniApply	= omni.Apply(con,smooth)
 		super(rSpotFill,rOmniFill,rSpotApply,rOmniApply)

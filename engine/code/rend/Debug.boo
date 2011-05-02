@@ -49,9 +49,11 @@ public class Attrib( kri.rend.Basic ):
 		bu.shader.add( *kri.Ant.Inst.libShaders )
 		bu.link()
 	public override def process(con as kri.rend.link.Basic) as void:
+		scene = kri.Scene.Current
+		if not scene:	return
 		con.activate( con.Target.Same, 0f, true )
 		con.ClearColor()
 		con.ClearDepth(1f)
-		for e in kri.Scene.Current.entities:
+		for e in scene.entities:
 			kri.Ant.Inst.params.modelView.activate( e.node )
 			e.render(va,bu)

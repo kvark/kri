@@ -9,7 +9,7 @@ public class Parameter:
 		pass
 
 # Uniform param representor
-[ext.spec.Class(( int, single, Vector4, Quaternion, Graphics.Color4 ))]
+[ext.spec.Class(( bool, int, single, Vector4, Quaternion, Graphics.Color4 ))]
 [ext.RemoveSource]
 public class ParUni[of T(struct)](Parameter):
 	public final loc	as int

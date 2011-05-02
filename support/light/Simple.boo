@@ -89,7 +89,6 @@ public class Apply( kri.rend.tech.Meta ):
 			if l.fov == 0f:
 				continue
 			lit = l
-			texLit.Value = l.depth
 			# determine subset of affected objects
 			for e in scene.entities:
 				addObject(e)

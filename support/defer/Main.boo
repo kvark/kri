@@ -10,12 +10,15 @@ public class Context:
 	public final buf		= Holder( mask:7 )
 	public final dict		= par.Dict()
 	public final texDepth	= par.Texture('depth')
+	public final useNormals	= par.Value[of bool]('use_normals')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
 	
 	public def constructor():
 		dict.unit(texDepth)
+		dict.var(useNormals)
+		useNormals.Value = false
 		# diffuse, specular, world space normal
 		for i in range(3):
 			pt = par.Texture('g'+i)
@@ -48,6 +51,7 @@ public class Fill( kri.rend.tech.Meta ):
 		meta = kri.load.Meta.LightSet + ('emissive',)
 		super('g.make', false, ('c_diffuse','c_specular','c_normal'), *meta)
 		shade(('/g/make_v','/g/make_f','/light/common_f'))
+		dict.attach( con.dict )
 		buf = con.buf
 	# resize
 	public override def setup(pl as kri.buf.Plane) as bool:

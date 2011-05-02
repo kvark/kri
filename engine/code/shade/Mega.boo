@@ -21,6 +21,8 @@ public struct Uniform:
 			return ParTexture(loc,iv,tn)
 		elif T == int				and type in (ActiveUniformType.Int,ActiveUniformType.UnsignedInt):
 			return ParUni_int(loc,iv)
+		elif T == bool				and type == ActiveUniformType.Bool:
+			return ParUni_bool(loc,iv)
 		elif T == single			and type == ActiveUniformType.Float:
 			return ParUni_single(loc,iv)
 		elif T == Vector4			and type == ActiveUniformType.FloatVec4:
