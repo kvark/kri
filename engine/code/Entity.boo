@@ -119,7 +119,11 @@ public interface IMeshed:
 	Mesh as Mesh:
 		get
 
-public class Entity( kri.ani.data.Player, INoded, IMeshed ):
+public interface INamed:
+	Name as string:
+		get
+
+public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	public node		as Node	= null
 	public mesh		as Mesh	= null
 	public visible	as bool	= true
@@ -131,6 +135,8 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed ):
 		get: return node
 	IMeshed.Mesh as Mesh:
 		get: return mesh
+	INamed.Name as string:
+		get: return (node.name	if node else	'')
 	
 	public CombinedAttribs as vb.Dict:
 		get: return vb.Dict(mesh,store)

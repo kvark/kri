@@ -5,12 +5,12 @@
 public class Update( kri.rend.tech.Basic ):
 	private final va	= kri.vb.Array()
 	private final tf	= kri.TransFeedback(1)
-	private final bu	= kri.shade.Bundle()
+	private final bu1	= kri.shade.Bundle()
+	private final bu2	= kri.shade.Bundle()
 	private final par	= List[of kri.lib.par.spa.Shared](
 		kri.lib.par.spa.Shared("bone[${i}]")
 		for i in range(kri.Ant.Inst.caps.bones)
 		).ToArray()
-	public final at_mod	= ('vertex','quat')
 	public final at_all	as (int)
 
 	public def constructor(dq as bool):
@@ -18,14 +18,19 @@ public class Update( kri.rend.tech.Basic ):
 		dict = kri.shade.par.Dict()
 		for p as kri.meta.IBase in par:
 			p.link(dict)
-		# prepare shader
-		sa = bu.shader
+		# prepare quat-based shader
+		sa = bu1.shader
 		sa.add( '/lib/quat_v', '/skin/skin_v', '/skin/main_v' )
 		sa.add( ('/skin/simple_v','/skin/dual_v')[dq] )
 		#old: sa.add( '/skin/zcull_v', '/lib/tool_v', '/empty_f' )
 		sa.add( '/skin/empty_v' )
 		sa.feedback(true, 'to_vertex', 'to_quat')
-		bu.dicts.Add(dict)
+		bu1.dicts.Add(dict)
+		# prepare normal-based shader
+		sa = bu2.shader
+		sa.add( '/lib/quat_v', '/skin/skin_v', '/skin/normal_v' )
+		sa.feedback(true, 'to_vertex', 'to_normal')
+		bu2.dicts.Add(dict)
 		# finish
 		spat = kri.Spatial.Identity
 		par[0].activate(spat)
@@ -33,12 +38,25 @@ public class Update( kri.rend.tech.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
 		scene = kri.Scene.Current
 		if not scene:	return
+		buDic = { 'quat':bu1, 'normal':bu2 }
 		for e in scene.entities:
 			tag = e.seTag[of Tag]()
 			if not e.visible or not tag or tag.Sync:
 				continue
-			kri.Ant.Inst.params.modelView.activate( e.node )
 			# collect or create destination buffers
+			bu as kri.shade.Bundle = null
+			at_mod = ('vertex','')
+			for bx in buDic:
+				if e.mesh.find(bx.Key):
+					bu = bx.Value
+					at_mod[1] = bx.Key
+					break
+			if not (bu and e.mesh.find(at_mod[0])):
+				str = (e as kri.INamed).Name
+				kri.lib.Journal.Log("Skin: insufficient input data for '${str}'")
+				e.tags.Remove(tag)
+				continue
+			# bind outputs
 			vos = array[of kri.vb.Attrib]( at_mod.Length )
 			for i in range( vos.Length ):
 				vos[i] = e.store.find(at_mod[i])
@@ -50,12 +68,8 @@ public class Update( kri.rend.tech.Basic ):
 				v.Semant.Add(ai)
 				v.init( e.mesh.nVert * ai.fullSize() )
 				e.store.vbo.Add(v)
-			if not vos[at_mod.Length-1]:
-				kri.lib.Journal.Log("Skin: insufficient input data for ${e.node.name}")
-				e.tags.Remove(tag)
-				continue
 			tf.Bind( *vos )
-			# run the transform
+			# upload bone info
 			spa as kri.Spatial
 			for i in range( tag.skel.bones.Length ):
 				b = tag.skel.bones[i]	# model->pose
@@ -66,6 +80,8 @@ public class Update( kri.rend.tech.Basic ):
 				s1.inverse()
 				spa.combine(s0,s1)	# ->model
 				par[i+1].activate(spa)
+			# run the transform
+			kri.Ant.Inst.params.modelView.activate( e.node )
 			using kri.Discarder(true):
 				e.mesh.render(va,bu,tf)
 			tag.Sync = true

@@ -45,7 +45,8 @@ public class RenderSet:
 		if sh == Scheme.Simple:
 			for ren in (rSkin,rZcull,rColor,rDummy,rNormal,rSurfBake):
 				ren.active = true
-			rColor.fillColor = rColor.fillDepth = false
+			rColor.fillColor = true
+			rColor.fillDepth = false
 		if sh == Scheme.Forward:
 			for ren in (rSkin,rZcull,rEmi,rParticle,rSurfBake,grForward):
 				ren.active = true
