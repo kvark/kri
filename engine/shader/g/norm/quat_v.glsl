@@ -8,5 +8,5 @@ vec4 qmul(vec4,vec4);
 
 void put_norm(vec4 rot, float w)	{
 	handness = w;
-	quat = qmul( rot, at_quat );
+	quaternion = qmul( rot, at_quat );
 }

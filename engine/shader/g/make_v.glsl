@@ -16,10 +16,10 @@ vec3 trans_inv(vec3,Spatial);
 vec4 get_projection(vec3,vec4);
 //mat
 void make_tex_coords();
+//deferred
+void put_norm(vec4,float);
 
-in	vec4	at_vertex, at_quat;
-out	vec4	quat;
-flat	out	float handness;
+in	vec4	at_vertex;
 
 
 void main()	{
@@ -27,13 +27,9 @@ void main()	{
 
 	// vertex in world space
 	vec3 v = trans_for(at_vertex.xyz, s_model);
-
+	
 	// tangent->world transform
-	handness = at_vertex.w;
-	if (use_normals)	{
-		vec3 nr = qrot( s_model.rot, at_normal );
-		quat = vec4( nr, 1.0 );
-	}else	quat = qmul( s_model.rot, at_quat );
+	put_norm( s_model.rot, at_vertex.w );
 		
 	// vertex in camera space
 	vec3 vc = trans_inv(v, s_cam);

@@ -1,16 +1,13 @@
 #version 130
 
-uniform	bool	use_normals;
-
+//material
 vec4 get_bump();
 vec4 get_emissive();
 vec4 get_diffuse();
 vec4 get_specular();
 float get_glossiness();
-
-vec3 qrot(vec4 q, vec3 v)	{
-	return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
-}
+//deferrred
+vec3 get_norm();
 
 flat	in	float handness;
 in	vec4	quat;
@@ -22,13 +19,7 @@ out	vec4	c_normal;
 
 
 void main()	{
-	vec3 w_norm = vec3(0.0);
-	if (use_normals)	{
-		w_norm = normalize(quat.xyz);
-	}else	{
-		vec3 bump = get_bump().xyz * vec3(handness,1.0,1.0);
-		w_norm = qrot(normalize(quat), bump);
-	}
+	vec3 w_norm = get_norm();
 	float glossy = 0.01 * get_glossiness();
 	vec3 emi = get_emissive().xyz, diff = get_diffuse().xyz;
 	

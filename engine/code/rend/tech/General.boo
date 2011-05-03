@@ -40,9 +40,9 @@ public struct Batch:	# why struct?
 #---------	GENERAL TECHNIQUE	--------#
 
 public class General( Basic ):
-	public static comparer	as IComparer[of Batch]	= null
-	protected	final	extraDict	= kri.vb.Dict()
-	protected	final	butch		= List[of Batch]()
+	public	static	comparer	as IComparer[of Batch]	= null
+	public	final	extraDict	= kri.vb.Dict()
+	public	final	butch		= List[of Batch]()
 	
 	public struct Updater:
 		public final fun	as callable() as int
@@ -57,7 +57,7 @@ public class General( Basic ):
 		return Updater() do() as int:
 			return 1
 
-	protected def addObject(e as kri.Entity) as void:
+	public def addObject(e as kri.Entity) as void:
 		if not e.visible:
 			return
 		tempList = List[of Batch]()
