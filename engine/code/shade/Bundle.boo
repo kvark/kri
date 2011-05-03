@@ -35,7 +35,10 @@ public class ParTexture(Parameter):
 		slot = tun
 		kri.buf.Texture.Slot(slot)
 		Program.Param(loc,slot)
-		piv.Value.bind()
+		tex = piv.Value
+		if not tex:
+			tex = kri.buf.Texture.Zero
+		tex.bind()
 
 
 

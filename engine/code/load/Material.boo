@@ -39,6 +39,7 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['t_seq']		= pt_seq
 		nt.readers['t_color']	= pt_color
 		nt.readers['t_ramp']	= pt_ramp
+		nt.readers['t_zero']	= pt_zero
 		nt.readers['t_noise']	= pt_noise
 		nt.readers['t_blend']	= pt_blend
 	
@@ -243,6 +244,13 @@ public class ExMaterial( kri.IExtension ):
 			data[i].col.A = r.getReal()
 		u.Value = kri.gen.Texture.ofCurve(data)
 		return u.Value != null
+	
+	#---	Texture: zero		---#
+	public def pt_zero(r as Reader) as bool:
+		u = r.geData[of AdUnit]()
+		if not u:	return false
+		u.Value = kri.gen.Texture.color
+		return true
 
 	#---	Texture: noise		---#
 	public def pt_noise(r as Reader) as bool:

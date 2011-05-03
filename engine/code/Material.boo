@@ -42,7 +42,8 @@ public class Material( ani.data.Player ):
 			push(m)
 			if m.Unit<0:	continue
 			u = unit[m.Unit]
-			if not u.Value:	continue
+			if not u.Value:
+				kri.lib.Journal.Log("Material: texture is missing for ${name}:${m.Name}")
 			(u as meta.ISlave).link( m.Name, dict )
 		for u in unit:
 			push( u.input )
@@ -51,7 +52,7 @@ public class Material( ani.data.Player ):
 	public def collect(geom as bool, melist as (string)) as shade.Object*:
 		dd = Dictionary[of shade.Object,meta.IShaded]()
 		def push(m as meta.IShaded):
-			dd[m.Shader] = m	if m.Shader
+			if m.Shader:	dd[m.Shader] = m
 		# collect mets shaders & map inputs
 		din = Dictionary[of string,meta.Hermit]()
 		for str in melist:
