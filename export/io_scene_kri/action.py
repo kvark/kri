@@ -48,7 +48,7 @@ def save_actions(ob,sym,symInd):
 				else: bid = 1 + indexator.keys().index(sub)
 				attrib = mg[2]
 			elif not sym: continue
-			#print("\t\tpassed [%d].%s.%d" %(bid,attrib,f.array_index) )
+			#out.logu(2,"passed [%d].%s.%d" %(bid,attrib,f.array_index) )
 			if not bid in rnas:
 				rnas[bid] = {}
 			if not attrib in rnas[bid]:
@@ -65,7 +65,7 @@ def save_actions(ob,sym,symInd):
 		out.text( act.name )
 		out.pack('f', nf * Settings.kFrameSec )
 		out.end()
-		print("\t+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+		out.logu(1,"+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
 		if n_empty:
 			out.log(2,'w','%d empty curves detected' % (n_empty))
 		# write in packs
@@ -79,7 +79,7 @@ def save_actions(ob,sym,symInd):
 				out.pack('2B', len(sub), elem )
 				save_curve_pack( sub, offset )
 				out.end()
-		print("\t\t", ', '.join(curves) )
+		out.logu(2, ', '.join(curves))
 
 		
 

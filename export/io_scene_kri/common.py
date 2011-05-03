@@ -16,12 +16,13 @@ class Settings:
 
 
 class Writer:
+	tabs = ('',"\t","\t\t","\t\t\t")
 	inst = None
 	__slots__= 'fx','pos','counter','stop'
 	def __init__(self,path):
 		self.fx = open(path,'wb')
 		self.pos = 0
-		self.counter = {'i':0,'w':0,'e':0}
+		self.counter = {'':0,'i':0,'w':0,'e':0}
 		self.stop = False
 	def pack(self,tip,*args):
 		import struct
@@ -59,8 +60,9 @@ class Writer:
 			return
 		if level=='e' and Settings.breakError:
 			self.stop = True
-		inx = ('',"\t","\t\t","\t\t\t")
-		print('%s(%c) %s' % (inx[indent],level,message))
+		print('%s(%c) %s' % (Writer.tabs[indent],level,message))
+	def logu(self,indent,message):
+		print( "%s%s" % (Writer.tabs[indent],message) )
 	def conclude(self):
 		self.fx.close()
 		c = self.counter

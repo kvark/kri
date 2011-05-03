@@ -9,7 +9,7 @@ from io_scene_kri.common	import *
 def save_lamp(lamp):
 	out = Writer.inst
 	energy_threshold = 0.1
-	print("\t%s type, %.1f distance" % (lamp.type, lamp.distance))
+	out.logu(1,"%s type, %.1f distance" % (lamp.type, lamp.distance))
 	out.begin('lamp')
 	save_color( lamp.color )
 	if not lamp.use_specular or not lamp.use_diffuse:
@@ -31,7 +31,7 @@ def save_lamp(lamp):
 		elif ft == 'INVERSE_SQUARE': q1=0.0
 		elif ft == 'CONSTANT': q1=q2=0.0
 		else:	out.log(1,'w', 'custom curve is not supported')
-		print("\tfalloff: %s, %.4f q1, %.4f q2" % (ft,q1,q2))
+		out.logu(1, "falloff: %s, %.4f q1, %.4f q2" % (ft,q1,q2))
 	else: q1=q2=0.0
 	out.pack('4f', q0,q1,q2,qs)
 	if lamp.type == 'SPOT':
@@ -89,7 +89,7 @@ def save_particle(obj,part):
 	mat = obj.material_slots[ st.material-1 ].material
 	matname = (mat.name if mat else '')
 	info = (part.name, matname, st.count)
-	print("\t+particle: %s [%s], %d num" % info )
+	out.logu(1,"+particle: %s [%s], %d num" % info )
 	out.begin('part')
 	out.pack('L', st.count)
 	out.text( part.name, matname )
@@ -98,7 +98,7 @@ def save_particle(obj,part):
 	if st.type == 'HAIR':
 		if not mat.strand.use_blender_units:
 			out.log(2,'w','material strand size in units required')
-		print("\t\thair: %d segments" % (st.hair_step,) )
+		out.log(2,'i', "hair: %d segments" % (st.hair_step))
 		if part.cloth:
 			cset = part.cloth.settings
 			out.begin('p_hair')
@@ -108,7 +108,7 @@ def save_particle(obj,part):
 			out.end()
 		else:	out.log(2,'w','hair dynamics has to be enabled')
 	elif st.type == 'EMITTER':
-		print("\t\temitter: [%d-%d] life %d" % life)
+		out.log(2,'i', "emitter: [%d-%d] life %d" % life)
 		out.begin('p_life')
 		out.array('f', [x * Settings.kFrameSec for x in life] )
 		out.pack('f', st.lifetime_random )

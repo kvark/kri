@@ -15,10 +15,10 @@ def save_mat_unit(mtex):
 	flat = ['normal','mirror','hardness']
 	supported = flat + list('color_'+x for x in colored)
 	current = list(x for x in supported	if mtex.__getattribute__('use_map_'+x))
-	print("\t\t",'affect:', ','.join(current))
+	out.logu(2, 'affect: ' + ','.join(current))
 	out.text( *(current+['']) )
 	tc,mp = mtex.texture_coords, mtex.mapping
-	print("\t\t", tc,'input,', mp,'mapping')
+	out.logu(2, "%s input, %s mapping" % (tc,mp))
 	out.text(tc)
 	if tc == 'UV':	# dirty: resolving the UV layer ID
 		name = mtex.uv_layer
@@ -42,7 +42,7 @@ def save_mat_unit(mtex):
 			out.log(2,'w','failed to resolve UV layer')
 			primary = 0
 		else:
-			print("\t\tlayer: %s -> %d" % (mtex.uv_layer, primary))
+			out.logu(2, "layer: %s -> %d" % (mtex.uv_layer, primary))
 		out.pack('B',primary)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	if tc == 'ORCO':	out.text( mp )
@@ -55,10 +55,11 @@ def save_mat_image(mtex):
 	out = Writer.inst
 	it = mtex.texture
 	assert it
+	out.logu(2, 'type: ' + it.type)
 	# tex mapping
 	out.begin('t_map')
 	if mtex.mapping_x != 'X' or mtex.mapping_y != 'Y' or mtex.mapping_z != 'Z':
-		out.log(1,'w','tex coord swizzling not supported')
+		out.log(2,'w','tex coord swizzling not supported')
 	out.array('f', tuple(mtex.offset) + tuple(mtex.scale) )
 	out.end()
 	# colors
@@ -70,7 +71,7 @@ def save_mat_image(mtex):
 	if it.use_color_ramp:
 		ramp = it.color_ramp
 		num = len(ramp.elements)
-		print("\t\tramp: %d stages" % (num))
+		out.logu(2, 'ramp: %d stages' % (num))
 		out.begin('t_ramp')
 		out.text( ramp.interpolation )
 		out.pack('B',num)
@@ -84,7 +85,7 @@ def save_mat_image(mtex):
 		env = mtex.texture.environment_map
 		if env.source != 'IMAGE_FILE':
 			clip = (env.clip_start, env.clip_end)
-			print("\t\tenviron: %s [%.2f-%2.f]" % (env.mapping,clip[0],clip[1]))
+			out.logu(2, 'environ: %s [%.2f-%2.f]' % (env.mapping,clip[0],clip[1]))
 			view = ''
 			if not env.viewpoint_object:
 				out.log(2,'w','view point is not set')
@@ -105,15 +106,19 @@ def save_mat_image(mtex):
 	elif it.type == 'NOISE':	# noise chunk
 		out.begin('t_noise')
 		out.end()
+	elif it.type == 'NONE':
+		out.begin('t_zero')
+		out.end()
+		return
 	elif it.type != 'IMAGE':
-		out.log(2,'w', 'unknown texture type (%s)' % (it.type))
+		out.log(2,'w', 'unknown type')
 		return
 	# image path
 	img = it.image
 	assert img
 	out.begin('t_path')
 	fullname = img.filepath
-	print("\t\t", img.source, ':',fullname)
+	out.logu(2, "%s: %s" % (img.source,fullname))
 	if Settings.cutPaths:
 		name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if name != fullname:
@@ -173,7 +178,7 @@ def save_mat(mat):
 		data = (halo.size, halo.hardness, halo.add)
 		out.array('f', data)
 		out.pack('B', halo.use_texture)
-		print("\tsize: %.2f, hardness: %.0f, add: %.2f" % data)
+		out.log(1,'i', 'size: %.2f, hardness: %.0f, add: %.2f' % data)
 		out.end()
 		save_diffuse('')
 	# regular surface material
@@ -187,7 +192,7 @@ def save_mat(mat):
 		save_diff_intensity( mat.emit )
 		out.end()
 		sh = (mat.diffuse_shader, mat.specular_shader)
-		print("\tshading: %s %s" % sh)
+		out.log(1,'i', 'shading: %s %s' % sh)
 		save_diffuse(sh[0])
 		# specular
 		out.begin('m_spec')
@@ -198,7 +203,7 @@ def save_mat(mat):
 		out.end()
 		mirr = mat.raytrace_mirror
 		if mirr.use:
-			print("\tmirror: ", mirr.reflect_factor)
+			out.log(1,'i', 'mirror: ' + mirr.reflect_factor)
 			out.begin('m_mirr')
 			save_color( mat.mirror_color )
 			out.pack('2f', 1.0, mirr.reflect_factor)
@@ -207,6 +212,6 @@ def save_mat(mat):
 	# texture units
 	for mt in mat.texture_slots:
 		if not mt: continue
-		print("\t+map:", mt.name)
+		out.logu(1,'+map: ' + mt.name)
 		save_mat_unit(mt)
 		save_mat_image(mt)
