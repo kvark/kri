@@ -58,6 +58,7 @@
     <Compile Include="corp\Child.boo" />
     <Compile Include="corp\Inst.boo" />
     <Compile Include="defer\Apply.boo" />
+    <Compile Include="defer\Fill.boo" />
     <Compile Include="defer\Particle.boo" />
     <Compile Include="defer\Main.boo" />
     <Compile Include="hair\Draw.boo" />

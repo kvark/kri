@@ -62,8 +62,6 @@ public class Apply( kri.rend.tech.Meta ):
 		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
 		shade(('/light/omni/apply_v','/light/omni/apply_f','/light/common_f'))
 		smooth = bSmooth
-		dict.attach(lc.dict)
-		texLit = lc.texLit
 	protected override def getUpdater(mat as kri.Material) as Updater:
 		metaFun = super(mat).fun
 		curLight = lit

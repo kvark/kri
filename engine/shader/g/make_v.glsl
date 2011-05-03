@@ -5,7 +5,6 @@ uniform struct Spatial	{
 }s_model,s_cam;
 
 uniform vec4	proj_cam;
-uniform	bool	use_normals;
 
 //lib_quat
 vec3 qrot(vec4,vec3);
@@ -19,7 +18,6 @@ vec4 get_projection(vec3,vec4);
 void make_tex_coords();
 
 in	vec4	at_vertex, at_quat;
-in	vec3	at_normal;
 out	vec4	quat;
 flat	out	float handness;
 
