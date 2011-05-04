@@ -48,7 +48,7 @@ def save_actions(ob,sym,symInd):
 				else: bid = 1 + indexator.keys().index(sub)
 				attrib = mg[2]
 			elif not sym: continue
-			#out.logu(2,"passed [%d].%s.%d" %(bid,attrib,f.array_index) )
+			#out.logu(2, 'passed [%d].%s.%d' %(bid,attrib,f.array_index) )
 			if not bid in rnas:
 				rnas[bid] = {}
 			if not attrib in rnas[bid]:
@@ -65,14 +65,14 @@ def save_actions(ob,sym,symInd):
 		out.text( act.name )
 		out.pack('f', nf * Settings.kFrameSec )
 		out.end()
-		out.logu(1,"+anim: '%s', %d frames, %d groups" % ( act.name,nf,len(act.groups) ))
+		out.logu(1,'+anim: %s, %d frames, %d groups' % ( act.name,nf,len(act.groups) ))
 		if n_empty:
 			out.log(2,'w','%d empty curves detected' % (n_empty))
 		# write in packs
 		prefix = (sym,symInd)[indexator != None]
 		for elem,it in rnas.items():
 			for attrib,sub in it.items():
-				curves.add( "%s[%d]" % (attrib,len(sub)) )
+				curves.add( '%s[%d]' % (attrib,len(sub)) )
 				out.begin('curve')
 				assert elem<256 and len(attrib)<24
 				out.text( prefix+ '.'+attrib )
@@ -93,7 +93,7 @@ def save_curve_pack(curves,offset):
 		return
 	num = len( curves[0].keyframe_points )
 	extra = curves[0].extrapolation
-	#out.log(2,'i', "%s, keys %d" %(curves,num))
+	#out.log(2,'i', '%s, keys %d' %(curves,num))
 	for c in curves:
 		assert len(c.keyframe_points) == num
 		assert c.extrapolation == extra

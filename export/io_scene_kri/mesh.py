@@ -224,7 +224,7 @@ def save_mesh(mesh,armature,groups):
 	face_num = (len(mesh.materials)+1) * [0]
 	for face in ar_face:
 		face_num[face.mat] += 1
-	out.logu(1,"total: %d vertices, %d faces" % (len(ar_vert),len(ar_face)))
+	out.logu(1, 'total: %d vertices, %d faces' % (len(ar_vert),len(ar_face)))
 	avg_vu = 3.0 * len(ar_face) / len(ar_vert)
 	out.log(1,'i', '%.2f avg vertex usage' % (avg_vu))
 	out.begin('mesh')
@@ -281,14 +281,14 @@ def save_mesh(mesh,armature,groups):
 		out.pack('H', fn)
 		s = (m.name	if m else '')
 		out.text(s)
-		out.logu(1,"+entity: %d faces, [%s]" % (fn,s))
+		out.logu(1, '+entity: %d faces, [%s]' % (fn,s))
 	out.pack('H',0)
 	out.end()
 	
 	# 7: shape keys
 	shapes = mesh.shape_keys
 	for sk in (shapes.keys if shapes else []):
-		out.logu(1,"+shape: %.3f [%s]" % (sk.value,sk.name))
+		out.logu(1, '+shape: %.3f [%s]' % (sk.value,sk.name))
 		out.begin('v_shape')
 		out.text( sk.name )
 		rel_id = list(shapes.keys).index(sk.relative_key)
@@ -327,4 +327,4 @@ def save_mesh(mesh,armature,groups):
 			out.pack('2B', weight,bid)
 	avg /= len(ar_vert)
 	out.end()
-	out.logu(1,"bone weights: %d empty, %.1f avg" % (nempty,avg))
+	out.logu(1, 'bone weights: %d empty, %.1f avg' % (nempty,avg))

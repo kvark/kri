@@ -32,7 +32,7 @@ def save_mat_unit(mtex):
 	out.logu(2, 'affect: ' + ','.join(current))
 	out.text( *(current+['']) )
 	tc,mp = mtex.texture_coords, mtex.mapping
-	out.logu(2, "%s input, %s mapping" % (tc,mp))
+	out.logu(2, '%s input, %s mapping' % (tc,mp))
 	out.text(tc,mp)
 	if tc == 'UV':	# dirty: resolving the UV layer ID
 		lid,name = 0,mtex.uv_layer
@@ -41,7 +41,7 @@ def save_mat_unit(mtex):
 			if lid == -1:
 				out.log(2,'w','failed to resolve UV layer')
 				lid = 0
-			else:	out.logu(2, "layer: %s -> %d" % (name,lid))
+			else:	out.logu(2, 'layer: %s -> %d' % (name,lid))
 		else:	out.log(2,'w','UV layer name is not set')
 		out.pack('B',lid)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
@@ -118,7 +118,7 @@ def save_mat_image(mtex):
 	assert img
 	out.begin('t_path')
 	fullname = img.filepath
-	out.logu(2, "%s: %s" % (img.source,fullname))
+	out.logu(2, '%s: %s' % (img.source,fullname))
 	if Settings.cutPaths:
 		name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
 	if fullname.find(name) not in (0,1):
