@@ -67,7 +67,6 @@ public class ExMaterial( kri.IExtension ):
 		limDict['ORCO']		= do(r as Reader):
 			mat = r.geData[of kri.Material]()
 			if not mat:	return null
-			r.getString()	# mapping type, not supported
 			sh = (orcoVert,orcoHalo)[ mat.Meta['halo'] != null ]
 			return Hermit( Shader:sh, Name:'orco' )
 		limDict['OBJECT']	= do(r as Reader):
@@ -96,6 +95,9 @@ public class ExMaterial( kri.IExtension ):
 			me.Shader = targ.prog
 		# map inputs
 		name = r.getString()
+		proj = r.getString()
+		if proj != 'FLAT':
+			kri.lib.Journal.Log("Loader: projection (${proj}) not supported in material '${m.name}'")
 		fun as callable(Reader) as Hermit = null
 		if limDict.TryGetValue(name,fun):
 			u.input = fun(r)

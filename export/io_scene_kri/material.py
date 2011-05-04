@@ -19,7 +19,7 @@ def save_mat_unit(mtex):
 	out.text( *(current+['']) )
 	tc,mp = mtex.texture_coords, mtex.mapping
 	out.logu(2, "%s input, %s mapping" % (tc,mp))
-	out.text(tc)
+	out.text(tc,mp)
 	if tc == 'UV':	# dirty: resolving the UV layer ID
 		name = mtex.uv_layer
 		if not len(name):
@@ -45,7 +45,7 @@ def save_mat_unit(mtex):
 			out.logu(2, "layer: %s -> %d" % (mtex.uv_layer, primary))
 		out.pack('B',primary)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
-	if tc == 'ORCO':	out.text( mp )
+	if tc == 'ORCO':	out.log(2,'w','generated coords are not exported')
 	out.end()
 
 

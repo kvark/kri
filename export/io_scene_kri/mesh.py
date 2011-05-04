@@ -9,7 +9,7 @@ def calc_TBN(verts, uvs):
 	va = verts[1].co - verts[0].co
 	vb = verts[2].co - verts[0].co
 	n0 = n1 = va.cross(vb)
-	tan,bit,hand = None,None,1
+	tan,bit,hand = None,None,0.0
 	if len(uvs) and n1.dot(n1) > 0.0:
 		ta = uvs[0][1] - uvs[0][0]
 		tb = uvs[0][2] - uvs[0][0]
@@ -18,7 +18,7 @@ def calc_TBN(verts, uvs):
 			bit = vb*ta.x - va*tb.x
 			n0 = tan.cross(bit)
 			hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
-		else:	tan,hand = va,0.0
+		else:	tan = None
 	return (tan, bit, n0, hand, n1)
 
 
@@ -56,8 +56,6 @@ class Face:
 		t,b,n,hand,nv = calc_TBN(self.v, xuv)
 		self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
 		if Settings.putQuat and t != None:
-			assert t.dot(t)>0.0 and\
-				'Try removing duplicated vertices and recalculating normals'
 			self.ta = t.normalized()
 		else:	self.ta = None
 		self.hand = hand
@@ -88,10 +86,12 @@ def save_mesh(mesh,armature,groups):
 			colors.append(cur)
 		if nvert>=3:	ar_face.append( Face(face, mesh, (0,1,2), uves,colors) )
 		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves,colors) )
-	n_bad_uv = len(list( f for f in ar_face if f.hand==0.0 ))
-	if n_bad_uv:
-		out.log(1,'w', '%d pure vertices detected' % (n_bad_uv))
 	#else: out.logu(1,'converted to tri-mesh')
+	n_bad_face =	len(ar_face)
+	ar_face = list(filter( lambda f: f.ta!=None, ar_face ))
+	n_bad_face -=	len(ar_face)
+	if n_bad_face:
+		out.log(1,'w','%d pure faces detected' % (n_bad_face))
 	if not len(ar_face):
 		out.log(1,'e','object has no faces')
 		return
