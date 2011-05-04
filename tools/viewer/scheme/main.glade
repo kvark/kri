@@ -287,20 +287,38 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkButton" id="aniPlayBut">
-                    <property name="label" translatable="yes">PLAY</property>
+                  <widget class="GtkVBox" id="vbox5">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <widget class="GtkLabel" id="recNumLabel">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">NUMBER</property>
+                      </widget>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkButton" id="recPlayBut">
+                        <property name="label" translatable="yes">PLAY</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </widget>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
                     <property name="position">6</property>
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkLabel" id="tabAnimation2">
+                  <widget class="GtkLabel" id="tabRecord">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Animation</property>
+                    <property name="label" translatable="yes">Record</property>
                   </widget>
                   <packing>
                     <property name="position">6</property>

@@ -19,9 +19,11 @@ public interface IPlayer:
 
 public interface IChannel:
 	def update(pl as IPlayer, time as single) as void
-	Valid as bool:
+	ElemId	as byte:
 		get
-	Tag	as string:
+	Valid	as bool:
+		get
+	Tag		as string:
 		get
 		set
 
@@ -43,7 +45,9 @@ public class Channel[of T(struct)](IChannel):
 	[Property(Tag)]
 	private tag	as string	= ''
 	
-	IChannel.Valid as bool:
+	IChannel.ElemId	as byte:
+		get: return elid
+	IChannel.Valid	as bool:
 		get: return fup!=null and lerp!=null
 
 	public def constructor(num as int, id as byte, f as callable):

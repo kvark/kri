@@ -24,7 +24,8 @@ public class GladeApp:
 	[Glade.Widget]	attrTypeLabel	as Gtk.Label
 	[Glade.Widget]	attrSizeLabel	as Gtk.Label
 	[Glade.Widget]	entVisibleBut	as Gtk.ToggleButton
-	[Glade.Widget]	aniPlayBut		as Gtk.Button
+	[Glade.Widget]	recNumLabel		as Gtk.Label
+	[Glade.Widget]	recPlayBut		as Gtk.Button
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	
 	private final	scheme	= Scheme.Deferred
@@ -216,13 +217,14 @@ public class GladeApp:
 		if obj isa kri.Material:
 			propertyBook.Page = 3
 		if (cam = obj as kri.Camera):
-			propertyBook.Page = 4
 			camFovLabel.Text = 'Fov: ' + cam.fov
 			camAspectLabel.Text = 'Aspect: ' + cam.aspect
 			camActiveBut.Active = view.cam == cam
+			propertyBook.Page = 4
 		if obj isa kri.Light:
 			propertyBook.Page = 5
-		if obj isa kri.ani.data.Record:
+		if (rec = obj as kri.ani.data.Record):
+			recNumLabel.Text = 'Channels: ' + rec.channels.Count
 			propertyBook.Page = 6
 		if (meta = obj as kri.meta.Advanced):
 			metaUnitLabel.Text = 'Unit: ' + meta.Unit
@@ -313,7 +315,7 @@ public class GladeApp:
 			icon = 'cdrom'
 		if (chan = obj as kri.ani.data.IChannel):
 			icon = 'execute'
-			text = chan.Tag
+			text = "[${chan.ElemId}] ${chan.Tag}"
 		if (mat = obj as kri.Material):
 			text = mat.name
 			icon = 'select-color'
@@ -395,7 +397,7 @@ public class GladeApp:
 		entVisibleBut.Clicked	+= do(o as object, args as System.EventArgs):
 			ent = curObj as kri.Entity
 			ent.visible = entVisibleBut.Active
-		aniPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
+		recPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
 			rec = playRecord(curIter)
 			statusBar.Push(0, "Animation '${rec.name}' started")
 		emiStartBut.Clicked		+= do(o as object, args as System.EventArgs):

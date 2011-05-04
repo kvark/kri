@@ -102,7 +102,9 @@ public class ExMaterial( kri.IExtension ):
 		if limDict.TryGetValue(name,fun):
 			u.input = fun(r)
 			return true
-		return false
+		else:
+			kri.lib.Journal.Log("Loader: mapping (${name}) not supported in material '${m.name}'")
+			return false
 
 
 	#---	Parse material	---#
@@ -168,7 +170,7 @@ public class ExMaterial( kri.IExtension ):
 			'LAMBERT':	con.slib.lambert
 			}[model]
 		if not sh:
-			kri.lib.Journal.Log("Unknown diffuse lighting model (${model})")
+			kri.lib.Journal.Log("Loader: Unknown diffuse lighting model (${model})")
 			return false
 		m.metaList.Add(Advanced( Name:'comp_diff', Shader:sh ))
 		return true
@@ -188,7 +190,7 @@ public class ExMaterial( kri.IExtension ):
 			'BLINN':	con.slib.phong	#fake
 			}[model]
 		if not sh:
-			kri.lib.Journal.Log("Unknown specular lighting model (${model})")
+			kri.lib.Journal.Log("Loader: Unknown specular lighting model (${model})")
 			return false
 		m.metaList.Add( Advanced( Name:'comp_spec', Shader:sh ))
 		return true
@@ -241,9 +243,9 @@ public class ExMaterial( kri.IExtension ):
 		num = r.getByte()
 		data = array[of kri.gen.Texture.Key](num)
 		for i in range(num):
-			data[i].pos = r.getReal()
-			data[i].col = r.getColor()
-			data[i].col.A = r.getReal()
+			data[i].pos		= r.getReal()
+			data[i].col		= r.getColor()
+			data[i].col.A	= r.getReal()
 		u.Value = kri.gen.Texture.ofCurve(data)
 		return u.Value != null
 	
