@@ -63,6 +63,7 @@ public class ExMaterial( kri.IExtension ):
 		# non-trivial sources
 		limDict['UV']		= do(r as Reader):
 			lid = r.getByte()
+			if lid>=uvShaders.Count:	return null
 			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
 		limDict['ORCO']		= do(r as Reader):
 			mat = r.geData[of kri.Material]()

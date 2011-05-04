@@ -57,7 +57,8 @@ def Main(argv as (string)):
 		rlis.Add( rem = kri.rend.Emission(fillDepth:true) )
 		rem.pBase.Value = Graphics.Color4.Black
 		
-		rlis.Add( support.light.omni.Apply(false) )
+		licon = support.light.Context(0,8)
+		rlis.Add( support.light.omni.Apply(licon,false) )
 		#rlis.Add( stand = kri.rend.part.Standard(cex.pcon) )
 		rlis.Add( stand = Render(cex.con) )
 		stand.bAdd = 1f

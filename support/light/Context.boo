@@ -10,8 +10,8 @@ public enum LiType:
 #---------	LIGHT CONTEXT	--------#
 
 public class Context:
-	public final size	as uint
-	public final layers	as uint
+	public final size	as uint	= 0
+	public final layers	as uint	= 0
 	public bits	as uint	= 0
 	public final texLit	= par.Texture('light')
 	public final pDark	= par.Value[of single]('k_dark')
@@ -25,10 +25,12 @@ public class Context:
 	public final defShadow		= kri.gen.Texture.depth
 	public final dummyShader	= Object.Load('/light/shadow/dummy_f')
 	# init
-	public def constructor(nlay as uint, qlog as uint):
+	public def constructor():
 		dict.var(pDark,pOff,pHemi)
 		dict.var(pX)
 		dict.unit(texLit)
+	public def constructor(nlay as uint, qlog as uint):
+		self()
 		layers,size	= nlay,1<<qlog
 	# exponential
 	public def setExpo(darkness as single, kernel as single) as void:

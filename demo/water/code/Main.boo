@@ -76,7 +76,8 @@ def Main(argv as (string)):
 		rlis = rc.renders
 		rlis.Add( rt = Town() )
 		rlis.Add( kri.rend.Emission( fillDepth:true ) )
-		rlis.Add( support.light.omni.Apply(false) )
+		licon = support.light.Context(0,8)
+		rlis.Add( support.light.omni.Apply(licon,false) )
 		rlis.Add( wat = Draw(con) )
 		wat.pTownTex.Value = rt.Result
 		wat.pTownPos.Value = Vector4(1f,1f,0f,0f)

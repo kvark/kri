@@ -81,7 +81,7 @@ private class Update( kri.ani.Delta ):
 
 
 
-public class Touch( kri.ani.IBase ):
+public class Touch( kri.ani.Basic ):
 	public	final point	= kri.gen.Point()
 	private	final va	= kri.vb.Array()
 	private	final bu	= kri.shade.Bundle()
