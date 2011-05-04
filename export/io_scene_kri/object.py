@@ -64,7 +64,7 @@ def save_skeleton(skel):
 	out = Writer.inst
 	out.begin('skel')
 	nbon = len(skel.bones)
-	print("\t",nbon,'bones')
+	out.logu(1,'%d bones' % (nbon))
 	out.pack('B', nbon)
 	for bone in skel.bones:
 		parid,par,mx = -1, bone.parent, bone.matrix_local.copy()

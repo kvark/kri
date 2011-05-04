@@ -7,6 +7,20 @@ from io_scene_kri.common	import *
 
 ###  MATERIAL:UNIT   ###
 
+def find_uv_layer(name):
+	for ent in bpy.context.scene.objects:
+		if ent.type != 'MESH': continue
+		mlist = []	# need 'flat' function
+		for ms in ent.material_slots:
+			mlist.extend( ms.material.texture_slots )
+		if not mtex in mlist: continue
+		uves = [ut.name for ut in ent.data.uv_textures]
+		if name in uves:
+			return uves.index( name )
+		out.log(2,'w','entity (%s) has incorrect UV names' % (ent.name))
+	return -1
+
+
 def save_mat_unit(mtex):
 	out = Writer.inst
 	# map input chunk
@@ -21,29 +35,15 @@ def save_mat_unit(mtex):
 	out.logu(2, "%s input, %s mapping" % (tc,mp))
 	out.text(tc,mp)
 	if tc == 'UV':	# dirty: resolving the UV layer ID
-		name = mtex.uv_layer
-		if not len(name):
-			out.log(2,'w','UV layer name is not set')
-		primary = -1
-		for ent in bpy.context.scene.objects:
-			if ent.type != 'MESH': continue
-			mlist = []	# need 'flat' function
-			for ms in ent.material_slots:
-				mlist.extend( ms.material.texture_slots )
-			if not mtex in mlist: continue
-			uves = [ut.name for ut in ent.data.uv_textures]
-			if not name in uves:
-				out.log(2,'w','entity (%s) has incorrect UV names' % (ent.name))
-				cur = 0
-			else:	cur = uves.index( name )
-			if cur == primary: continue
-			primary = cur
-		if primary == -1:
-			out.log(2,'w','failed to resolve UV layer')
-			primary = 0
-		else:
-			out.logu(2, "layer: %s -> %d" % (mtex.uv_layer, primary))
-		out.pack('B',primary)
+		lid,name = 0,mtex.uv_layer
+		if len(name):
+			lid = find_uv_layer(name)
+			if lid == -1:
+				out.log(2,'w','failed to resolve UV layer')
+				lid = 0
+			else:	out.logu(2, "layer: %s -> %d" % (name,lid))
+		else:	out.log(2,'w','UV layer name is not set')
+		out.pack('B',lid)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	if tc == 'ORCO':	out.log(2,'w','generated coords are not exported')
 	out.end()
@@ -121,7 +121,7 @@ def save_mat_image(mtex):
 	out.logu(2, "%s: %s" % (img.source,fullname))
 	if Settings.cutPaths:
 		name = '/'+fullname.rpartition('\\')[2].rpartition('/')[2]
-	if name != fullname:
+	if fullname.find(name) not in (0,1):
 		out.log(2,'w', 'path cut to: %s' % (name))
 	out.text( name)
 	out.end()
