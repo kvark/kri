@@ -34,7 +34,8 @@ public class Update( kri.rend.Basic ):
 				if not tag:	continue
 				#tex.init( SizedInternalFormat.Rgba32f, tag.buf )
 				fbo.bind()
-				con.ClearColor()
+				v = single.PositiveInfinity
+				GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
 				e.render( va,bu, kri.TransFeedback.Dummy )
 				kri.vb.Object.Pack = tag.buf
 				tex.read( PixelType.Float )

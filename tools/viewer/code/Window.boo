@@ -91,6 +91,7 @@ public class GladeApp:
 		for lit in view.scene.lights:
 			addObject(lit)
 		for ent in view.scene.entities:
+			#ent.tags.Add( kri.rend.box.Tag() )
 			it = addObject(ent)
 			addObject( it, ent.store )
 			for tag in ent.tags:

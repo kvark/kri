@@ -63,8 +63,6 @@ public class Holder(Frame):
 			surface = old.color[i]	# Boo bug workaround
 			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,		at.color[i] )
 			old.color[i] = surface
-		# check
-		checkStatus()
 		# set mask
 		if mask != oldMask:
 			assert mask>=0
@@ -73,6 +71,8 @@ public class Holder(Frame):
 				for i in range(4)	if (mask>>i)&1)
 			GL.DrawBuffers( drawList.Count, drawList.ToArray() )
 			oldMask = mask
+		# check
+		checkStatus()
 	
 	private override def getReadMode() as ReadBufferMode:
 		return ReadBufferMode.ColorAttachment0
