@@ -6,8 +6,11 @@ import kri.shade
 
 #---	stand-alone meta interface	---#
 
-public interface IBase( par.INamed, System.ICloneable ):
+public interface IBase( par.INamed ):
 	def link(d as par.Dict) as void
+
+public interface IBaseMat( IBase, System.ICloneable ):
+	pass
 
 public interface ISlave( System.ICloneable ):
 	def link(name as string, d as par.Dict) as void
@@ -22,7 +25,7 @@ public interface IShaded:
 
 
 #---	Named meta-data with shader		---#
-public class Hermit(IBase,IShaded):
+public class Hermit(IBaseMat,IShaded):
 	[Property(Name)]
 	private name	as string	= ''
 	[Property(Shader)]

@@ -22,8 +22,7 @@ public struct Batch:	# why struct?
 
 	public def draw() as void:
 		nob = up()
-		kri.Ant.Inst.params.modelView.activate( e.node )
-		#e.render(va,bu,off,num,nob)
+		kri.Ant.Inst.params.activate(e)
 		e.mesh.render(va,bu,dict,off,num,nob,null)
 		
 	#public static cMat	= CompMat()

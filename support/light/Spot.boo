@@ -1,7 +1,8 @@
-﻿namespace support.light
+﻿namespace support.light.spot
 
 import System
 import OpenTK.Graphics.OpenGL
+import support.light
 
 	
 #---------	LIGHT MAP FILL	--------#
@@ -15,7 +16,7 @@ public class Fill( kri.rend.tech.General ):
 		super('lit.bake')
 		licon = lc
 		# buffer init
-		if lc.type == LiType.VARIANCE:
+		if lc.type == Type.VARIANCE:
 			fbo.mask = 1
 			fbo.at.depth = kri.buf.Texture.Depth(0)
 			fbo.at.color[1] = kri.buf.Texture(
@@ -37,7 +38,7 @@ public class Fill( kri.rend.tech.General ):
 		for l in kri.Scene.Current.lights:
 			if l.fov == 0f: continue
 			kri.Ant.Inst.params.activate(l)
-			index = (-1,0)[licon.type == LiType.VARIANCE]
+			index = (-1,0)[licon.type == Type.VARIANCE]
 			if not l.depth:
 				ask = kri.rend.link.Buffer.FmDepth[licon.bits>>3]
 				pif = (ask, PixelInternalFormat.Rg16)[index+1]
@@ -57,7 +58,7 @@ public class Fill( kri.rend.tech.General ):
 			kri.buf.Texture.Slot(8)
 			l.depth.genLevels()	if licon.mipmap
 			l.depth.filt( licon.smooth, licon.mipmap )
-			l.depth.shadow( licon.type == LiType.SIMPLE )
+			l.depth.shadow( licon.type == Type.SIMPLE )
 
 
 #---------	LIGHT MAP APPLY	--------#

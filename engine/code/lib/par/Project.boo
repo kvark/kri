@@ -30,7 +30,5 @@ public final class Shared( IBase ):
 		else:	# the last parameter sign shows orthogonality
 			data.Value = Vector4(-p.fov, -p.fov * p.aspect, 2f*div, -dad)
 	
-	def ICloneable.Clone() as object:
-		return self	# stub
 	def IBase.link(d as par.Dict) as void:
 		d.var(data,range)

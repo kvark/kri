@@ -3,6 +3,15 @@ namespace kri
 import System
 import OpenTK
 
+
+public struct Box:
+	public	center	as Vector3
+	public	hsize	as Vector3
+	public def constructor(x as single):
+		center	= Vector3(0f)
+		hsize	= Vector3(x)
+
+
 #------------------------------------------
 #	DUAL QUATERNION
 #	effectively represents spatial data for the interpolation

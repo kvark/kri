@@ -72,7 +72,7 @@
     <Compile Include="light\Kbuf.boo" />
     <Compile Include="light\Normal.boo" />
     <Compile Include="light\Omni.boo" />
-    <Compile Include="light\Simple.boo" />
+    <Compile Include="light\Spot.boo" />
     <Compile Include="motion\Main.boo" />
     <Compile Include="mirror\Main.boo" />
     <Compile Include="morph\Main.boo" />

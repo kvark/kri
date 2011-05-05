@@ -28,7 +28,7 @@ public class GladeApp:
 	[Glade.Widget]	recPlayBut		as Gtk.Button
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	
-	private final	scheme	= Scheme.Deferred
+	private final	scheme	= Scheme.Forward
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()

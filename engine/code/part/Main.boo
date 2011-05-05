@@ -8,7 +8,7 @@ import kri.shade
 #	PARTICLE GENERIC BEHAVIOR			#
 #---------------------------------------#
 
-public class Behavior( kri.meta.IBase, kri.meta.IShaded, kri.vb.ISemanted, Code ):
+public class Behavior( kri.meta.IBaseMat, kri.meta.IShaded, kri.vb.ISemanted, Code ):
 	private final semantics	= List[of kri.vb.Info]()
 	private final sh		as Object
 	

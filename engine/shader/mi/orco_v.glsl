@@ -1,8 +1,11 @@
 #version 130
 
+uniform	struct BBox	{
+	vec4	center, hsize;
+} bb_model;
+
 in vec4 at_vertex;
 
 vec3 mi_orco()	{
-	//That's rough: an actual ORCO implementation is unknown
-	return at_vertex.xyz;
+	return ((at_vertex - bb_model.center) / bb_model.hsize).xyz;
 }

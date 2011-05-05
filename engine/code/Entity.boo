@@ -127,6 +127,7 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	public node		as Node	= null
 	public mesh		as Mesh	= null
 	public visible	as bool	= true
+	public localBox	= Box(1f)
 	public final store	= vb.Storage()
 	public final va		= Dictionary[of string,vb.Array]()
 	public final tags	= List[of ITag]()

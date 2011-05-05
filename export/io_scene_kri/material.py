@@ -8,6 +8,7 @@ from io_scene_kri.common	import *
 ###  MATERIAL:UNIT   ###
 
 def find_uv_layer(name):
+	# dirty: resolving the UV layer ID
 	for ent in bpy.context.scene.objects:
 		if ent.type != 'MESH': continue
 		mlist = []	# need 'flat' function
@@ -34,7 +35,7 @@ def save_mat_unit(mtex):
 	tc,mp = mtex.texture_coords, mtex.mapping
 	out.logu(2, '%s input, %s mapping' % (tc,mp))
 	out.text(tc,mp)
-	if tc == 'UV':	# dirty: resolving the UV layer ID
+	if tc == 'UV':
 		lid,name = 0,mtex.uv_layer
 		if len(name):
 			lid = find_uv_layer(name)
@@ -45,7 +46,6 @@ def save_mat_unit(mtex):
 		else:	out.log(2,'w','UV layer name is not set')
 		out.pack('B',lid)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
-	if tc == 'ORCO':	out.log(2,'w','generated coords are not exported')
 	out.end()
 
 

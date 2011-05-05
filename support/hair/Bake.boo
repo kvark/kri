@@ -43,7 +43,7 @@ public class Bake( kri.rend.Basic ):
 			if not tCur: continue
 			assert tCur.Pixels
 			pInit.Value = tCur.param
-			kri.Ant.Inst.params.modelView.activate( e.node )
+			kri.Ant.Inst.params.activate(e)
 			tBake	= e.seTag[of support.bake.surf.Tag]()
 			bu as Bundle	= null
 			if tBake:	# emit from face

@@ -33,9 +33,10 @@ public class Fill( kri.rend.tech.General ):
 		pDist.Value = Vector4(k, l.rangeIn+l.rangeOut, 0f, 0f)
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		if not kri.Scene.Current:	return
+		scene = kri.Scene.Current
+		if not scene:	return
 		con.SetDepth(1f, true)	# offset for HW filtering
-		for l in kri.Scene.Current.lights:
+		for l in scene.lights:
 			if l.fov != 0f:	continue
 			setLight(l)
 			if not l.depth:
@@ -62,6 +63,7 @@ public class Apply( kri.rend.tech.Meta ):
 		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
 		shade(('/light/omni/apply_v','/light/omni/apply_f','/light/common_f'))
 		smooth = bSmooth
+		texLit = lc.texLit
 	protected override def getUpdater(mat as kri.Material) as Updater:
 		metaFun = super(mat).fun
 		curLight = lit
@@ -75,11 +77,10 @@ public class Apply( kri.rend.tech.Meta ):
 		if not scene:	return
 		con.activate( con.Target.Same, 0f, false )
 		butch.Clear()
-		kri.buf.Texture.Slot(8)
 		for l in scene.lights:
 			if l.fov != 0f:	continue
-			lit = l
-			if not (l.depth and l.depth.target==TextureTarget.TextureCubeMap):
+			d = (lit=l).depth
+			if not (d and d.target==TextureTarget.TextureCubeMap):
 				continue
 			# determine subset of affected objects
 			for e in scene.entities:

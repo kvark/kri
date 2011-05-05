@@ -55,7 +55,7 @@ public class Render( kri.rend.Basic ):
 		ents = List[of kri.Entity](e for e in kri.Scene.Current.entities if e.seTag[of Tag]()).ToArray()
 		for i in range(ents.Length):
 			pInd.Value = (i+1f) / ((1<<16)-1)
-			kri.Ant.Inst.params.modelView.activate( ents[i].node )
+			kri.Ant.Inst.params.activate(ents[i])
 			ents[i].render(va,bu)
 		if not 'Debug':
 			con.activate( con.Target.Same, 0f, false )

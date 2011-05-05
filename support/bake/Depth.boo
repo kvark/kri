@@ -41,7 +41,7 @@ public class Update( kri.rend.Basic ):
 			fbo.bind()
 			con.ClearDepth(1f)
 			par.pLit.activate( tag.proj )
-			par.modelView.activate( e.node )
+			par.activate(e)
 			q = kri.Query( QueryTarget.SamplesPassed )
 			using q.catch():
 				e.render(va,bu)

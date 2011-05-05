@@ -6,6 +6,28 @@ import OpenTK.Graphics
 import kri.shade
 import kri.meta
 
+
+# box
+public final class Box( IBase ):
+	public final name	as string
+	public final center	as par.Value[of Vector4]
+	public final hsize	as par.Value[of Vector4]
+	
+	public def constructor(str as string):
+		name = str
+		center	= par.Value[of Vector4](name+'.center')
+		hsize	= par.Value[of Vector4](name+'.hsize')
+	
+	public def activate(ref b as kri.Box) as void:
+		center	.Value = Vector4(b.center,1f)
+		hsize	.Value = Vector4(b.hsize,0f)
+	
+	par.INamed.Name as string:
+		get: return name
+	def IBase.link(d as par.Dict) as void:
+		d.var(center,hsize)
+
+
 # light settings
 public final class Light( IBase ):
 	public final color	= par.Value[of Color4]('lit_color')
@@ -20,8 +42,6 @@ public final class Light( IBase ):
 
 	par.INamed.Name as string:
 		get: return 'Light'
-	def ICloneable.Clone() as object:
-		return self	# stub
 	def IBase.link(d as par.Dict) as void:
 		d.var(color)
 		d.var(attenu,data)
@@ -41,8 +61,6 @@ public final class Project( IBase ):
 	
 	par.INamed.Name as string:
 		get: return project.Name
-	def ICloneable.Clone() as object:
-		return self	# stub
 	def IBase.link(d as par.Dict) as void:
 		for ib as IBase in (project,spatial):
 			ib.link(d)

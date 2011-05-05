@@ -67,7 +67,7 @@ public class Extra( kri.IExtension ):
 	
 	private def upNode(e as kri.Entity):
 		assert e
-		kri.Ant.Inst.params.modelView.activate( e.node )
+		kri.Ant.Inst.params.activate(e)
 		return true
 
 

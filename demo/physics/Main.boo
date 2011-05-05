@@ -5,7 +5,7 @@ import OpenTK
 import OpenTK.Input
 
 
-private class AniKey( kri.ani.IBase ):
+private class AniKey( kri.ani.Basic ):
 	private final kb	as KeyboardDevice
 	private final body	as kri.Body
 	public def constructor(keyDevice as KeyboardDevice, b as kri.Body):
@@ -59,8 +59,8 @@ def Main(argv as (string)):
 			
 			al.add( kri.ani.ControlMouse( win.Mouse,n,0.01f ))
 			lic = support.light.Context(2,2)
-			rlis.Add( support.light.Fill(lic) )
-			rlis.Add( support.light.Apply(lic) )
+			rlis.Add( support.light.spot.Fill(lic) )
+			rlis.Add( support.light.spot.Apply(lic) )
 			view.scene.lights.Add( kri.Light() )
 		
 		size = Vector3(1f,1f,1f)

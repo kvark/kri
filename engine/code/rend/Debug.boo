@@ -55,5 +55,5 @@ public class Attrib( kri.rend.Basic ):
 		con.ClearColor()
 		con.ClearDepth(1f)
 		for e in scene.entities:
-			kri.Ant.Inst.params.modelView.activate( e.node )
+			kri.Ant.Inst.params.activate(e)
 			e.render(va,bu)

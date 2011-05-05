@@ -24,8 +24,8 @@ def Main(argv as (string)):
 		#rm.add('skin',	1,	kri.kit.skin.Update(true) )
 		rm.add('emi',	3,	rem)
 		rm.add('pick',	3,	support.pick.Render(win,2,8), 'emi')
-		rm.add('fill',	2,	support.light.Fill(licon) )
-		rm.add('app',	4,	support.light.Apply(licon), 'emi','fill')
+		rm.add('fill',	2,	support.light.spot.Fill(licon) )
+		rm.add('app',	4,	support.light.spot.Apply(licon), 'emi','fill')
 		#rm.add('tex',	2,	rd)
 		#rm.add('xxx',	2,	kri.rend.debug.Attrib(), 'app')
 		

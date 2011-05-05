@@ -81,7 +81,7 @@ public class Update( kri.rend.tech.Basic ):
 				spa.combine(s0,s1)	# ->model
 				par[i+1].activate(spa)
 			# run the transform
-			kri.Ant.Inst.params.modelView.activate( e.node )
+			kri.Ant.Inst.params.activate(e)
 			using kri.Discarder(true):
 				e.mesh.render(va,bu,tf)
 			tag.Sync = true

@@ -23,12 +23,7 @@ public class Shared(IBase):
 	public def activate(n as kri.Node) as void:
 		sp = kri.Node.SafeWorld(n)
 		activate(sp)
-	
-	def ICloneable.Clone() as object:
-		sh = Shared(name)
-		sh.position.Value = position.Value
-		sh.rotation.Value = rotation.Value
-		return sh
+
 	def IBase.link(d as par.Dict) as void:
 		d.var(position,rotation)
 
@@ -46,7 +41,7 @@ public class TransVal( par.IBase[of Vector4] ):
 		fun = f
 
 
-#---	Linked spatial to a concrete node, doesn't online interaction	---#
+#---	Linked spatial to a concrete node, doesn't interact online	---#
 public class Linked(IBase):
 	[Getter(Name)]
 	private final name	as string
@@ -60,10 +55,6 @@ public class Linked(IBase):
 	public def extract() as kri.Node:
 		return position.node
 
-	def ICloneable.Clone() as object:
-		ln = Linked(name)
-		ln.activate( extract() )
-		return ln
 	def IBase.link(d as par.Dict) as void:
 		d[Name+'.pos']	= position
 		d[Name+'.rot']	= rotation
