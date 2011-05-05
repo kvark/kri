@@ -50,7 +50,9 @@ public class Mesh( vb.Storage ):
 			kri.lib.Journal.Log("Failed to render mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
 			return false
 		bu.activate()
-		if tf:
+		if tf == TransFeedback.Dummy:
+			draw(null)
+		elif tf:
 			if kri.Ant.Inst.debug and vao.hasConflicts():
 				kri.lib.Journal.Log('Transform Feedback: loop detected')
 				return false
@@ -88,11 +90,19 @@ public class Mesh( vb.Storage ):
 	# draw all polygons once
 	protected def draw(nob as uint) as void:
 		draw(0,NumElements,nob)
+	# draw all points
+	private def draw() as void:
+		GL.DrawArrays( BeginMode.Points, 0, nVert )
 	# transform points with feedback
 	protected def draw(tf as TransFeedback) as void:
+		if not tf:
+			draw()
+			return
 		using tf.catch():
 			GL.DrawArrays( BeginMode.Points, 0, nVert )
-		assert tf.result() == nVert
+		nr = tf.result()
+		if nr != nVert:
+			kri.lib.Journal.Log("TransFeedback: bad result size (${nr}) for input (${nVert})")
 
 
 #--------- Tag ---------#
@@ -185,6 +195,8 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 				ml.Add(m)
 		return ml
 	
-	public def render(vao as vb.Array, bu as shade.Bundle) as bool:
+	public def render(vao as vb.Array, bu as shade.Bundle, tf as kri.TransFeedback) as bool:
 		assert mesh and store
-		return mesh.render( vao,bu, CombinedAttribs, 1,null )
+		return mesh.render( vao,bu, CombinedAttribs, 1,tf )
+	public def render(vao as vb.Array, bu as shade.Bundle) as bool:
+		return render(vao,bu,null)

@@ -25,16 +25,18 @@ public class Object:
 	
 	# create from source
 	public def constructor(tip as ShaderType, label as string, text as string):
-		assert text.Length
 		tag,type = label,tip
 		handle = compose(text)
-		check()
+		if handle:	check()
 	
 	# delete
 	def destructor():
 		kri.Help.safeKill({ GL.DeleteShader(handle) })
 
 	private def compose(text as string) as int:
+		if string.IsNullOrEmpty(text):
+			kri.lib.Journal.Log("Shader: attempt to load an empty code (${tag})")
+			return 0
 		sid = GL.CreateShader(type)
 		GL.ShaderSource(sid,text)
 		GL.CompileShader(sid)

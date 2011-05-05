@@ -23,6 +23,7 @@ public class RenderSet:
 	public	final	rParticle	as kri.rend.part.Standard
 	public	final	grForward	as support.light.group.Forward
 	public	final	grDeferred	as support.defer.Group	= null
+	public	final	rBox	= kri.rend.box.Update()
 
 	public	BaseColor 	as Graphics.Color4:
 		set:	rEmi.pBase.Value = value
@@ -36,7 +37,7 @@ public class RenderSet:
 		grDeferred	= support.defer.Group( 3, grForward.con, null )
 		rNormal		= support.light.normal.Apply( grForward.con )
 		rChain.renders.AddRange((rSkin,rClear,rZcull,rColor,rEmi,rSurfBake,rNormal,
-			grForward,grDeferred,rDummy,rParticle,rAttrib))
+			grForward,grDeferred,rDummy,rParticle,rAttrib,rBox))
 		if texFun:
 			proxy = kri.shade.par.UnitProxy(texFun)
 			rChain.renders.Add( kri.rend.debug.Map(false,false,-1,proxy))
@@ -44,6 +45,7 @@ public class RenderSet:
 	public def gen(sh as Scheme) as kri.rend.Basic:
 		for ren in rChain.renders:
 			ren.active = false
+		rBox.active = true
 		if sh == Scheme.Debug:
 			rAttrib.active = true
 		if sh == Scheme.Simple:

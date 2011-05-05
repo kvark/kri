@@ -10,9 +10,12 @@ public class Frame:
 	
 	# construction
 	
-	public static def CheckStatus() as void:
+	public def checkStatus() as bool:
 		status = GL.CheckFramebufferStatus( FramebufferTarget.Framebuffer )
-		assert status = FramebufferErrorCode.FramebufferComplete
+		if status != FramebufferErrorCode.FramebufferComplete:
+			kri.lib.Journal.Log("FBO: id ${handle} is incomplete (${status})")
+			return false
+		return true
 	
 	public def constructor():
 		id = -1
@@ -46,7 +49,8 @@ public class Frame:
 		pl = getInfo()
 		assert pl
 		rez.Location = getOffsets()
-		rez.Size = Drawing.Size( pl.wid, pl.het )
+		het = Math.Max(1, cast(int, pl.het ))
+		rez.Size = Drawing.Size( pl.wid, het )
 		return pl
 
 	# binding

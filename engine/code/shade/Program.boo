@@ -48,7 +48,12 @@ public class Program:
 		assert not linked
 		blocks.Extend(shads)
 		for sh in shads:
-			if sh:	GL.AttachShader(handle, sh.handle)
+			if sh and sh.handle:
+				GL.AttachShader(handle, sh.handle)
+			else:
+				str = ''
+				if sh:	str = "(${sh.Description})"
+				kri.lib.Journal.Log('Shader: attaching invalid object '+str)
 	# add object from library
 	public def add(*names as (string)) as void:
 		for s in names:

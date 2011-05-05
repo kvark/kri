@@ -178,8 +178,12 @@ public class Texture(Surface):
 		bind()
 		pt = GetPixelType(T)
 		data = array[of T](wid*het)
-		GL.GetTexImage(target,level,pixFormat,pt,data)
+		GL.GetTexImage( target,level,pixFormat,pt, data )
 		return data
+	
+	public def read(pt as PixelType) as void:
+		bind()
+		GL.GetTexImage( target,level,pixFormat,pt, IntPtr.Zero )
 
 	# state routines
 	

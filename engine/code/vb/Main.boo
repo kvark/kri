@@ -14,10 +14,14 @@ public class Object:
 	private	filled			as bool	= false
 	public	static Bind[targ as BufferTarget] as Object:
 		set: GL.BindBuffer( targ, (value.handle if value else cast(uint,0)) )
-	public	static Index as Object:
-		set: Bind[BufferTarget.ElementArrayBuffer] = value
-	public	static Vertex as Object:
-		set: Bind[BufferTarget.ArrayBuffer] = value
+	public	static Index	as Object:
+		set: Bind[BufferTarget.ElementArrayBuffer	] = value
+	public	static Vertex	as Object:
+		set: Bind[BufferTarget.ArrayBuffer			] = value
+	public	static Pack		as Object:
+		set: Bind[BufferTarget.PixelPackBuffer		] = value
+	public	static Unpack	as Object:
+		set: Bind[BufferTarget.PixelUnpackBuffer	] = value
 	public	static final DefTarget	= BufferTarget.ArrayBuffer
 	# creating
 	public def constructor():

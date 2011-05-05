@@ -33,7 +33,7 @@ public class Surface(Plane):
 	public abstract def init() as void:
 		pass
 	public def init(w as uint, h as uint) as void:
-		dirty = wid!=h or het!=h
+		dirty = wid!=w or het!=h
 		wid,het = w,h
 		if dirty:	init()
 	# retrieve GL state

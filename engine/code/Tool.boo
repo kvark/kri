@@ -96,8 +96,12 @@ public class SectionOff(IDisposable):
 public class Blender(Section):
 	public def constructor():
 		super( EnableCap.Blend )
+		GL.BlendEquation( BlendEquationMode.FuncAdd )
 	public Alpha as single:
 		set: GL.BlendColor(0f,0f,0f, value)
+	public static def min() as void:
+		GL.BlendEquation( BlendEquationMode.Min )
+		GL.BlendFunc( BlendingFactorSrc.One,			BlendingFactorDest.One )
 	public static def alpha() as void:
 		GL.BlendFunc( BlendingFactorSrc.SrcAlpha,		BlendingFactorDest.OneMinusSrcAlpha )
 	public static def add() as void:
@@ -172,13 +176,17 @@ public class CatcherFeed(Catcher):
 		GL.EndTransformFeedback()
 
 public class TransFeedback(Query):
-	public final	mode	as BeginFeedbackMode
-	public static	final	Cache	= array[of vb.Object](8)
+	public			final	mode	as BeginFeedbackMode
+	public	static	final	Cache	= array[of vb.Object](8)
+	public	static	final	Dummy	= TransFeedback(1)
+
 	public def constructor(nv as byte):
 		super( QueryTarget.TransformFeedbackPrimitivesWritten )
 		mode = (BeginFeedbackMode.Points, BeginFeedbackMode.Lines, BeginFeedbackMode.Triangles)[nv-1]
+	
 	public override def catch() as Catcher:
 		return CatcherFeed(self,mode)
+	
 	public static def Bind(*buffers as (vb.Object)) as bool:
 		for i as uint in range( buffers.Length ):
 			bf = Cache[i] = buffers[i]

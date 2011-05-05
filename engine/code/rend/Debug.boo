@@ -45,9 +45,8 @@ public class Attrib( kri.rend.Basic ):
 	private final bu	= kri.shade.Bundle()
 	private final va	= kri.vb.Array()
 	public def constructor():
-		bu.shader.add( '/attrib_v', '/attrib_f' )
+		bu.shader.add( '/attrib_v', '/color_f' )
 		bu.shader.add( *kri.Ant.Inst.libShaders )
-		bu.link()
 	public override def process(con as kri.rend.link.Basic) as void:
 		scene = kri.Scene.Current
 		if not scene:	return

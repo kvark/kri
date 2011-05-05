@@ -29,7 +29,7 @@ public class Holder(Frame):
 		oldMask = -1
 	
 	private def addSurface(fa as FramebufferAttachment, ref cur as Surface, nex as Surface) as void:
-		return	if cur==nex
+		if cur==nex:	return
 		cur = nex
 		(Render.Zero,nex)[nex!=null].attachTo(fa)
 	
@@ -64,7 +64,7 @@ public class Holder(Frame):
 			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,		at.color[i] )
 			old.color[i] = surface
 		# check
-		CheckStatus()
+		checkStatus()
 		# set mask
 		if mask != oldMask:
 			assert mask>=0
