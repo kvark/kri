@@ -48,11 +48,11 @@ public class Attrib( kri.rend.Basic ):
 		bu.shader.add( '/attrib_v', '/color_f' )
 		bu.shader.add( *kri.Ant.Inst.libShaders )
 	public override def process(con as kri.rend.link.Basic) as void:
-		scene = kri.Scene.Current
-		if not scene:	return
 		con.activate( con.Target.Same, 0f, true )
 		con.ClearColor()
 		con.ClearDepth(1f)
+		scene = kri.Scene.Current
+		if not scene:	return
 		for e in scene.entities:
 			kri.Ant.Inst.params.activate(e)
 			e.render(va,bu)

@@ -27,8 +27,8 @@ public class GladeApp:
 	[Glade.Widget]	recNumLabel		as Gtk.Label
 	[Glade.Widget]	recPlayBut		as Gtk.Button
 	[Glade.Widget]	emiStartBut		as Gtk.Button
+	[Glade.Widget]	renderCombo		as Gtk.ComboBox
 	
-	private final	scheme	= Scheme.Forward
 	private	final	config	= kri.Config('kri.conf')
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
@@ -135,6 +135,20 @@ public class GladeApp:
 	
 	public def setDraw() as void:
 		butDraw.Active = true
+	
+	public def setPipe(str as string) as void:
+		cur = 0
+		it as Gtk.TreeIter
+		md = renderCombo.Model
+		rez = md.GetIterFirst(it)
+		while rez:
+			sx = md.GetValue(it,0) as string
+			if sx == str:
+				renderCombo.Active = cur
+				break
+			rez = md.IterNext(it)
+			++cur
+		kri.lib.Journal.Log("Viewer: pipeline '${str}' not found");
 
 
 	#--------------------	
@@ -152,7 +166,7 @@ public class GladeApp:
 		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
 		rset = RenderSet( eCorp.con, null )
-		view.ren = rset.gen( scheme )
+		renderCombo.Active = 0
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -408,6 +422,14 @@ public class GladeApp:
 			emi.filled = false
 			al.add(emi)
 			statusBar.Push(0, "Particle '${emi.name}' started")
+		renderCombo.Changed		+= do(o as object, args as System.EventArgs):
+			str = renderCombo.ActiveText
+			sh as Scheme
+			if str=='Debug':	sh = Scheme.Debug
+			if str=='Simple':	sh = Scheme.Simple
+			if str=='Forward':	sh = Scheme.Forward
+			if str=='Deferred':	sh = Scheme.Deferred
+			view.ren = rset.gen(sh)
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit

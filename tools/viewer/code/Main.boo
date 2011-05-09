@@ -11,5 +11,7 @@ public def Main(argv as (string)) as void:
 			ga.setDraw()
 		elif ar == '-play':
 			ga.playAll()
+		elif ar.StartsWith('-pipe='):
+			ga.setPipe( ar.Substring(5) )
 	# main loop
 	Gtk.Application.Run()

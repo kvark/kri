@@ -47,6 +47,19 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="GtkToolButton" id="butPlay">
+                    <property name="visible">True</property>
+                    <property name="is_important">True</property>
+                    <property name="label" translatable="yes">Play All</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-media-forward</property>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="GtkToggleToolButton" id="butDraw">
                     <property name="visible">True</property>
                     <property name="is_important">True</property>
@@ -60,12 +73,17 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkToolButton" id="butPlay">
+                  <widget class="GtkToolItem" id="menuRender">
                     <property name="visible">True</property>
-                    <property name="is_important">True</property>
-                    <property name="label" translatable="yes">Play All</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-media-forward</property>
+                    <child>
+                      <widget class="GtkComboBox" id="renderCombo">
+                        <property name="visible">True</property>
+                        <property name="items" translatable="yes">Debug
+Simple
+Forward
+Deferred</property>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
