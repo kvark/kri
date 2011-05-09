@@ -424,12 +424,7 @@ public class GladeApp:
 			statusBar.Push(0, "Particle '${emi.name}' started")
 		renderCombo.Changed		+= do(o as object, args as System.EventArgs):
 			str = renderCombo.ActiveText
-			sh as Scheme
-			if str=='Debug':	sh = Scheme.Debug
-			if str=='Simple':	sh = Scheme.Simple
-			if str=='Forward':	sh = Scheme.Forward
-			if str=='Deferred':	sh = Scheme.Deferred
-			view.ren = rset.gen(sh)
+			view.ren = rset.gen(str)
 			statusBar.Push(0, 'Pipeline switched to '+str)
 			gw.QueueDraw()
 		# add gl widget

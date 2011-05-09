@@ -2,13 +2,6 @@
 
 import OpenTK
 
-public enum Scheme:
-	Debug
-	Simple
-	Forward
-	Deferred
-
-
 public class RenderSet:
 	public	final	rChain	= kri.rend.Chain()
 	public	final	rClear	= kri.rend.Clear()
@@ -42,22 +35,22 @@ public class RenderSet:
 			proxy = kri.shade.par.UnitProxy(texFun)
 			rChain.renders.Add( kri.rend.debug.Map(false,false,-1,proxy))
 	
-	public def gen(sh as Scheme) as kri.rend.Basic:
+	public def gen(str as string) as kri.rend.Basic:
 		for ren in rChain.renders:
 			ren.active = false
 		rBox.active = true
-		if sh == Scheme.Debug:
+		if str == 'Debug':
 			rAttrib.active = true
-		if sh == Scheme.Simple:
+		if str == 'Simple':
 			for ren in (rSkin,rZcull,rColor,rDummy,rNormal,rSurfBake):
 				ren.active = true
 			rColor.fillColor = true
 			rColor.fillDepth = false
-		if sh == Scheme.Forward:
+		if str == 'Forward':
 			for ren in (rSkin,rZcull,rEmi,rParticle,rSurfBake,grForward):
 				ren.active = true
 			rEmi.fillDepth = false
-		if sh == Scheme.Deferred:
+		if str == 'Deferred':
 			for ren in (rSkin,rZcull,grDeferred,rParticle,rNormal,rSurfBake):
 				ren.active = true
 		return rChain
