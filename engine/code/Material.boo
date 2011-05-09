@@ -65,9 +65,9 @@ public class Material( ani.data.Player ):
 			if not m:	continue
 			push(m)
 			ud = m.Unit
-			if ud<0:
-				continue
+			if ud<0:	continue
 			u = unit[ud]
+			if not u.input:	continue
 			push( u.input )
 			din.Add( m.Name, u.input )
 		# check geometry shaders
@@ -78,7 +78,7 @@ public class Material( ani.data.Player ):
 					return null
 		# generate coords
 		mapins = load.Meta.MakeTexCoords(geom,din)
-		return null	if not mapins
+		if not mapins:	return null	
 		for sh in mapins:
 			dd[sh] = null
 		return dd.Keys
