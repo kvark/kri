@@ -75,6 +75,7 @@ public class Native( kri.data.ILoaderGen[of Atom] ):
 				blocks[name] = status
 				bs.Seek( size, IO.SeekOrigin.Begin )
 			if not goodSign:
+				kri.lib.Journal.Log("Loader: invalid signature (${path})")
 				break
 		return rd.finish()
 	

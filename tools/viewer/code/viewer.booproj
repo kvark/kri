@@ -18,7 +18,7 @@
     <StartWorkingDirectory>..\</StartWorkingDirectory>
     <NoWin32Manifest>True</NoWin32Manifest>
     <BaseIntermediateOutputPath>..\obj\</BaseIntermediateOutputPath>
-    <StartArguments>-draw</StartArguments>
+    <StartArguments>-draw -pipe=Deferred</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

@@ -36,8 +36,8 @@ public class GladeApp:
 	private	final	al		= kri.ani.Scheduler()
 	private	final	objTree	= Gtk.TreeStore(object)
 	private	final	dOpen	as Gtk.FileChooserDialog
-	private final	gw		as Gtk.GLWidget
 	private final	dialog	as Gtk.MessageDialog
+	public	final	gw		as Gtk.GLWidget
 	private rset	as RenderSet	= null
 	private	curObj	as object		= null
 	private	curIter	= Gtk.TreeIter.Zero
@@ -136,7 +136,7 @@ public class GladeApp:
 	public def setDraw() as void:
 		butDraw.Active = true
 	
-	public def setPipe(str as string) as void:
+	public def setPipe(str as string) as int:
 		cur = 0
 		it as Gtk.TreeIter
 		md = renderCombo.Model
@@ -145,10 +145,11 @@ public class GladeApp:
 			sx = md.GetValue(it,0) as string
 			if sx == str:
 				renderCombo.Active = cur
-				break
+				return cur
 			rez = md.IterNext(it)
 			++cur
 		kri.lib.Journal.Log("Viewer: pipeline '${str}' not found");
+		return -1
 
 
 	#--------------------	
@@ -166,7 +167,6 @@ public class GladeApp:
 		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
 		rset = RenderSet( eCorp.con, null )
-		renderCombo.Active = 0
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -430,6 +430,8 @@ public class GladeApp:
 			if str=='Forward':	sh = Scheme.Forward
 			if str=='Deferred':	sh = Scheme.Deferred
 			view.ren = rset.gen(sh)
+			statusBar.Push(0, 'Pipeline switched to '+str)
+			gw.QueueDraw()
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit
