@@ -23,7 +23,7 @@ public class RenderSet:
 	public	ClearColor	as Graphics.Color4:
 		set:	rClear.backColor = rEmi.backColor = value
 	
-	public def constructor(pc as kri.part.Context, texFun as callable() as kri.buf.Texture):
+	public def constructor(profile as bool, pc as kri.part.Context, texFun as callable() as kri.buf.Texture):
 		rDummy		= kri.rend.part.Dummy(pc)
 		rParticle	= kri.rend.part.Standard(pc)
 		grForward	= support.light.group.Forward( 8, false )
@@ -31,6 +31,7 @@ public class RenderSet:
 		rNormal		= support.light.normal.Apply( grForward.con )
 		rChain.renders.AddRange((rSkin,rClear,rZcull,rColor,rEmi,rSurfBake,rNormal,
 			grForward,grDeferred,rDummy,rParticle,rAttrib,rBox))
+		rChain.doProfile = profile
 		if texFun:
 			proxy = kri.shade.par.UnitProxy(texFun)
 			rChain.renders.Add( kri.rend.debug.Map(false,false,-1,proxy))

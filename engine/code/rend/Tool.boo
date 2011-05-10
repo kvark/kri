@@ -1,6 +1,5 @@
 ﻿namespace kri.rend
 
-import System
 import OpenTK.Graphics
 
 #---------	COLOR CLEAR	--------#

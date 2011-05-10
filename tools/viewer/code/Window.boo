@@ -11,6 +11,7 @@ public class GladeApp:
 	[Glade.Widget]	butOpen			as Gtk.ToolButton
 	[Glade.Widget]	butDraw			as Gtk.ToggleToolButton
 	[Glade.Widget]	butPlay			as Gtk.ToolButton
+	[Glade.Widget]	butProfile		as Gtk.ToolButton
 	[Glade.Widget]	propertyBook	as Gtk.Notebook
 	[Glade.Widget]	objView			as Gtk.TreeView
 	[Glade.Widget]	camFovLabel		as Gtk.Label
@@ -42,13 +43,17 @@ public class GladeApp:
 	private	curObj	as object		= null
 	private	curIter	= Gtk.TreeIter.Zero
 	
+	private def showMessage(mType as Gtk.MessageType, text as string) as void:
+		dialog.MessageType = mType
+		dialog.Text = text
+		dialog.Run()
+		dialog.Hide()
+	
 	private def flushJournal() as bool:
 		all = log.flush()
 		if not all: return false
 		gw.Visible = false
-		dialog.Text = all
-		dialog.Run()
-		dialog.Hide()
+		showMessage( Gtk.MessageType.Warning, all )
 		gw.Visible = true
 		return true
 	
@@ -166,7 +171,7 @@ public class GladeApp:
 		eMorph	= support.morph.Extra()
 		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
-		rset = RenderSet( eCorp.con, null )
+		rset = RenderSet( false, eCorp.con, null )
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -393,6 +398,8 @@ public class GladeApp:
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen
 		butPlay.Clicked		+= onButPlay
+		butProfile.Clicked	+= do(o as object, args as System.EventArgs):
+			showMessage( Gtk.MessageType.Info, rset.rChain.genReport() )
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)

@@ -232,7 +232,7 @@ def save_mesh(mesh,armature,groups):
 	out.pack('H', len(ar_vert) )
 	out.end()
 	
-	if True:
+	if 'putVertex':
 		out.begin('v_pos')
 		for v in ar_vert:
 			out.pack('4f', v.coord.x, v.coord.y, v.coord.z, v.face.hand)
@@ -267,6 +267,14 @@ def save_mesh(mesh,armature,groups):
 			for v in ar_vert:
 				assert i<len(v.color)
 				save_color(v.color[i])
+			out.end()
+	if not 'putSticky':
+		all = mesh.sticky
+		out.log(1,'i', 'Sticky layers: %d' % (len(all)))
+		for i in range(len(all)):
+			out.begin('v_sticky')
+			for v in ar_vert:
+				pass
 			out.end()
 
 	out.begin('v_ind')
