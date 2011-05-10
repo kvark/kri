@@ -63,7 +63,7 @@ public class Render( kri.rend.Basic ):
 			kri.Ant.Inst.quad.draw(bv)
 			return
 		# react, todo: use PBO and actually read on demand
-		GL.BindBuffer( BufferTarget.PixelPackBuffer, 0 )
+		kri.vb.Object.Pack = null
 		rect = System.Drawing.Rectangle(coord[0],coord[1], 1,1)
 		index = fbo.read[of ushort]( PixelFormat.Red, rect )
 		active = false
@@ -74,10 +74,10 @@ public class Render( kri.rend.Basic ):
 		point = kri.Camera.Current.toWorld(vin)
 		# call the react method
 		e = ents[ index[0]-1 ]
-		sp = (e.node.World if e.node else kri.Spatial.Identity)
+		sp = kri.Node.SafeWorld( e.node )
 		sp.inverse()
 		fun = e.seTag[of Tag]().pick
-		fun( e, sp.byPoint(point) )	if fun
+		if fun:	fun(e, sp.byPoint(point))
 
 	public def ev(ob as object, arg as OpenTK.Input.MouseButtonEventArgs) as void:
 		active = true

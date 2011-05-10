@@ -89,6 +89,8 @@ def save_scene(filename, context):
 		save_node( ob )
 		save_actions( ob, 'n', None )
 		save_game( ob.game )
+		if len(ob.modifiers):
+			out.log(1,'w','unapplied modifiers detected')
 		if ob.type == 'MESH':
 			arm = None
 			if ob.parent and ob.parent.type == 'ARMATURE':

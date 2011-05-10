@@ -82,7 +82,7 @@ public class Bundle:
 	public def link() as void:
 		if shader.link():
 			fillParams()
-		else:	failed = false
+		else:	failed = true
 
 	public def activate() as void:
 		if failed:	return

@@ -61,7 +61,8 @@ public class Apply( kri.rend.tech.Meta ):
 	
 	public def constructor(lc as support.light.Context, bSmooth as bool):
 		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
-		shade(('/light/omni/apply_v','/light/omni/apply_f','/light/common_f'))
+		shobs.Add( lc.commonShader )
+		shade('/light/omni/apply')
 		smooth = bSmooth
 		texLit = lc.texLit
 	protected override def getUpdater(mat as kri.Material) as Updater:

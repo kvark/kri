@@ -32,7 +32,8 @@ private struct Launcher:
 		# create app
 		ga = GladeApp()
 		ga.gw.Initialized += onInit
-	
+
+
 
 [System.STAThread]
 public def Main(argv as (string)) as void:

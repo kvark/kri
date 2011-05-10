@@ -24,6 +24,7 @@ public class Context:
 	public type 	= Type.SIMPLE
 	public final defShadow		= kri.gen.Texture.depth
 	public final dummyShader	= Object.Load('/light/shadow/dummy_f')
+	public final commonShader	= Object.Load('/light/common_f')
 	# init
 	public def constructor():
 		dict.var(pDark,pOff,pHemi)

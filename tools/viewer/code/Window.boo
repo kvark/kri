@@ -426,7 +426,7 @@ public class GladeApp:
 			str = renderCombo.ActiveText
 			view.ren = rset.gen(str)
 			statusBar.Push(0, 'Pipeline switched to '+str)
-			gw.QueueDraw()
+			gw.QueueResize()
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit

@@ -1,14 +1,9 @@
 ﻿#version 130
 
 uniform	vec4 lit_color, lit_data, proj_lit;
-uniform	vec4 mat_diffuse, mat_specular;
-uniform	float mat_glossiness;
 
 float	get_shadow(vec4);
-
-float comp_diffuse(vec3,vec3);
-float comp_specular(vec3,vec3,vec3,float);
-
+vec4	get_lighting(vec3,vec3,vec3);
 
 in	vec3	v2lit, v2cam, v2nor;
 in	vec4	v_shadow;
@@ -29,7 +24,6 @@ void main()	{
 	float intensity = rad * lit_int * get_shadow(vs);
 	if(intensity < 0.01) discard;
 
-	vec4 lit = comp_diffuse(v_nor,v_lit) * mat_diffuse +
-		comp_specular(v_nor,v_lit,v_cam,mat_glossiness) * mat_specular;
-	rez_color = intensity*lit_color *lit;
+	vec4 lit = get_lighting(v_nor,v_lit,v_cam);
+	rez_color = intensity * lit_color * lit;
 }

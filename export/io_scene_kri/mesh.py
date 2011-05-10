@@ -87,11 +87,12 @@ def save_mesh(mesh,armature,groups):
 		if nvert>=3:	ar_face.append( Face(face, mesh, (0,1,2), uves,colors) )
 		if nvert>=4:	ar_face.append( Face(face, mesh, (0,2,3), uves,colors) )
 	#else: out.logu(1,'converted to tri-mesh')
-	n_bad_face =	len(ar_face)
-	ar_face = list(filter( lambda f: f.ta!=None, ar_face ))
-	n_bad_face -=	len(ar_face)
-	if n_bad_face:
-		out.log(1,'w','%d pure faces detected' % (n_bad_face))
+	if not 'ClearNonUV':
+		n_bad_face =	len(ar_face)
+		ar_face = list(filter( lambda f: f.ta!=None, ar_face ))
+		n_bad_face -=	len(ar_face)
+		if n_bad_face:
+			out.log(1,'w','%d pure faces detected' % (n_bad_face))
 	if not len(ar_face):
 		out.log(1,'e','object has no faces')
 		return

@@ -8,10 +8,10 @@ public class Apply( kri.rend.tech.Meta ):
 	private final defTex	as kri.buf.Texture
 
 	public def constructor(lc as support.light.Context):
-		super('lit.normal.apply', false, null, 'comp_diff','comp_spec')
+		super('lit.normal.apply', false, null, *kri.load.Meta.LightSet)
 		defTex = lc.defShadow
 		#shobs.Add( lc.getApplyShader() )
-		shobs.Add( lc.dummyShader )
+		shobs.Extend(( lc.dummyShader, lc.commonShader ))
 		shade('/light/normal/apply')
 		dict.attach(lc.dict)
 		texLit = lc.texLit
