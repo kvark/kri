@@ -19,16 +19,16 @@ public class Catcher( System.IDisposable ):
 
 public class Query:
 	public	final handle	as int
-	private	static	final	state	= Dictionary[of QueryTarget,Query]()
+	private	static	final	State	= Dictionary[of QueryTarget,Query]()
 	public	static	def Assign(tg as QueryTarget, val as Query) as void:
 		q as Query = null
-		state.TryGetValue(tg,q)
+		State.TryGetValue(tg,q)
 		if val:	
 			assert not q
-			state[tg] = val
+			State[tg] = val
 			GL.BeginQuery( tg, val.handle )
 		elif q:
-			state[tg] = null
+			State[tg] = null
 			GL.EndQuery(tg)
 	
 	public def constructor():

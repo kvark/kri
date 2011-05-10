@@ -20,9 +20,10 @@ public class Tag( kri.ITag ):
 #	Update render		#
 
 public class Update( kri.rend.Basic ):
-	public final bu		= kri.shade.Bundle()
-	public final fbo	= kri.buf.Holder(mask:0)
-	public final va		= kri.vb.Array()
+	public	final	bu	= kri.shade.Bundle()
+	public	final	fbo	= kri.buf.Holder(mask:0)
+	public	final	va	= kri.vb.Array()
+	private	final	q	= kri.Query()
 
 	public def constructor():
 		fbo.at.depth = kri.buf.Texture.Depth(0)
@@ -30,19 +31,20 @@ public class Update( kri.rend.Basic ):
 		bu.link()
 
 	public override def process(con as kri.rend.link.Basic) as void:
+		scene = kri.Scene.Current
+		if not scene:	return
 		par = kri.Ant.Inst.params
 		par.light.data.Value = Vector4(0f,1f,0f,0f)
 		con.SetDepth(0f,true)
-		for e in kri.Scene.Current.entities:
+		for e in scene.entities:
 			tag = e.seTag[of Tag]()
-			continue	if not tag
+			if not tag:	continue
 			assert tag.proj
 			fbo.at.depth = tag.tex
 			fbo.bind()
 			con.ClearDepth(1f)
 			par.pLit.activate( tag.proj )
 			par.activate(e)
-			q = kri.Query()
 			using q.catch( QueryTarget.SamplesPassed ):
 				e.render(va,bu)
 			r = q.result()

@@ -60,6 +60,15 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="GtkSeparatorToolItem" id="toolbutton3">
+                    <property name="visible">True</property>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="GtkToggleToolButton" id="butDraw">
                     <property name="visible">True</property>
                     <property name="is_important">True</property>
@@ -97,6 +106,15 @@ Deferred</property>
                     <property name="label" translatable="yes">Profile</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-zoom-fit</property>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkSeparatorToolItem" id="toolbutton5">
+                    <property name="visible">True</property>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
