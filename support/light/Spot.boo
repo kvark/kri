@@ -70,7 +70,7 @@ public class Apply( kri.rend.tech.Meta ):
 	public def constructor(lc as Context):
 		super('lit.apply', false, null, *kri.load.Meta.LightSet)
 		shobs.Extend(( lc.getApplyShader(), lc.commonShader ))
-		shade('/light/apply')
+		shade('/light/spot/apply')
 		dict.attach(lc.dict)
 		texLit = lc.texLit
 	# prepare
