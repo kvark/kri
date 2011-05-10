@@ -42,8 +42,8 @@ public class Update( kri.rend.Basic ):
 			con.ClearDepth(1f)
 			par.pLit.activate( tag.proj )
 			par.activate(e)
-			q = kri.Query( QueryTarget.SamplesPassed )
-			using q.catch():
+			q = kri.Query()
+			using q.catch( QueryTarget.SamplesPassed ):
 				e.render(va,bu)
 			r = q.result()
 			r = 0

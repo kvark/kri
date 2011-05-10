@@ -62,6 +62,7 @@
     <Compile Include="code\buf\Holder.boo" />
     <Compile Include="code\buf\Texture.boo" />
     <Compile Include="code\Entity.boo" />
+    <Compile Include="code\Feedback.boo" />
     <Compile Include="code\gen\Complex.boo" />
     <Compile Include="code\gen\Main.boo" />
     <Compile Include="code\gen\Noise.boo" />

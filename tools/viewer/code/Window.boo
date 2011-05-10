@@ -171,7 +171,7 @@ public class GladeApp:
 		eMorph	= support.morph.Extra()
 		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
-		rset = RenderSet( false, eCorp.con, null )
+		rset = RenderSet( true, eCorp.con, null )
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -394,6 +394,7 @@ public class GladeApp:
 		window.DeleteEvent	+= onDelete
 		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
 			Gtk.MessageType.Warning, Gtk.ButtonsType.Ok, null )
+		dialog.WidthRequest = 400
 		# make toolbar
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen
@@ -433,7 +434,7 @@ public class GladeApp:
 			str = renderCombo.ActiveText
 			view.ren = rset.gen(str)
 			statusBar.Push(0, 'Pipeline switched to '+str)
-			gw.QueueResize()
+			gw.QueueDraw()
 		# add gl widget
 		drawBox.Child = gw = makeWidget()
 		gw.Initialized		+= onInit

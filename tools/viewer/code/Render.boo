@@ -52,6 +52,6 @@ public class RenderSet:
 				ren.active = true
 			rEmi.fillDepth = false
 		if str == 'Deferred':
-			for ren in (rSkin,rZcull,grDeferred,rParticle,rNormal,rSurfBake):
+			for ren in (rSkin,rZcull,grDeferred,rParticle,rSurfBake):
 				ren.active = true
 		return rChain
