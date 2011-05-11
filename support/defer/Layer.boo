@@ -20,6 +20,7 @@ public class Fill( kri.rend.tech.General ):
 	private final	pDic	= par.Dict()
 	private final	pZero	= par.Value[of single]('zero')
 	private final	pTex	= par.Texture('texture')
+	private final	pColor	= par.Value[of Vector4]('user_color')
 	private final	mDiff	= par.Value[of Vector4]('mask_diffuse')
 	private final	mSpec	= par.Value[of Vector4]('mask_specular')
 	private final	mNorm	= par.Value[of Vector4]('mask_normal')
@@ -28,7 +29,7 @@ public class Fill( kri.rend.tech.General ):
 	public def constructor(con as support.defer.Context):
 		super('g.layer.fill')
 		fbo = con.buf
-		pDic.var(mDiff,mSpec,mNorm)
+		pDic.var(pColor,mDiff,mSpec,mNorm)
 		pDic.var(pZero)
 		pDic.unit(pTex)
 	
@@ -37,18 +38,27 @@ public class Fill( kri.rend.tech.General ):
 	
 	private def setBlend(str as string) as bool:
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
-		if str == 'MIX':	
+		if str == 'MIX':
+			pZero.Value = 1f	
 			GL.BlendFunc( BlendingFactorSrc.DstColor, BlendingFactorDest.Zero )
 		elif str == 'ADD':
+			pZero.Value = 0f
 			GL.BlendFunc( BlendingFactorSrc.One, BlendingFactorDest.One )
 		else:	return false
 		return true
 	
 	private def setParams(app as kri.meta.UnitApp) as void:
-		pZero.Value = 1f
-		mDiff.Value = Vector4(1f,1f,1f,0f)
+		mDiff.Value = Vector4(0f)
 		mSpec.Value = Vector4(0f)
 		mNorm.Value = Vector4(0f)
+		for inf in app.affects:
+			if inf == 'color_diffuse':
+				mDiff.Value.Xyz = Vector3(1f)
+			if inf == 'color_spec':
+				mSpec.Value.Xyz = Vector3(1f)
+		c = app.color
+		flag = (0f,1f)[app.doIntencity]
+		pColor.Value = Vector4( c.R, c.G, c.B, flag )
 
 	# construct
 	public override def construct(mat as kri.Material) as Bundle:

@@ -27,7 +27,7 @@ def save_mat_unit(mtex):
 	# map input chunk
 	out.begin('unit')
 	colored = ('diffuse','emission','spec','reflection')
-	flat = ['normal','mirror','hardness']
+	flat = ['normal','mirror','hardness','diffuse','specular','emit']
 	supported = flat + list('color_'+x for x in colored)
 	current = list(x for x in supported	if mtex.__getattribute__('use_map_'+x))
 	out.logu(2, 'affects: ' + ','.join(current))
