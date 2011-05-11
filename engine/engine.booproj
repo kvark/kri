@@ -104,6 +104,7 @@
     <Compile Include="code\rend\tech\Fork.boo" />
     <Compile Include="code\rend\tech\General.boo" />
     <Compile Include="code\rend\tech\Main.boo" />
+    <Compile Include="code\rend\tech\Sorted.boo" />
     <Compile Include="code\rend\Tool.boo" />
     <Compile Include="code\rend\Manager.boo" />
     <Compile Include="code\data\Main.boo" />

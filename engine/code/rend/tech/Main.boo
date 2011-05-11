@@ -14,7 +14,7 @@ public class Basic( kri.rend.Basic ):
 
 #---------	META TECHNIQUE	--------#
 
-public class Meta(General):
+public class Meta(Sorted):
 	private final lMets	as (string)
 	private final lOuts	as (string)
 	private final geom	as bool

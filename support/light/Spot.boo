@@ -7,7 +7,7 @@ import support.light
 	
 #---------	LIGHT MAP FILL	--------#
 
-public class Fill( kri.rend.tech.General ):
+public class Fill( kri.rend.tech.Sorted ):
 	public final fbo		= kri.buf.Holder()
 	protected final bu		= kri.shade.Bundle()
 	protected final licon	as Context

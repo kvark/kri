@@ -34,3 +34,9 @@ public class DictProxy(Dict):
 			iv = uni.genProxy()
 			Add( uni.name, iv )
 		return iv
+	public def link(dict as Dict) as void:
+		for p in dict:
+			iv as IBaseRoot = null
+			TryGetValue( p.Key, iv )
+			if not iv:	continue
+			(iv as IProxy).Base = p.Value

@@ -42,8 +42,14 @@ public class Texture(Value[of kri.buf.Texture]):
 		super(s)
 
 
-public class Proxy[of T](IBase[of T]):
+public interface IProxy:
+	Base	as IBaseRoot:
+		set
+
+public class Proxy[of T](IBase[of T],IProxy):
 	public base	as IBase[of T]	= null
+	IProxy.Base as IBaseRoot:
+		set: base = value as IBase[of T]
 	public Value as T:
 		get: return base.Value
 

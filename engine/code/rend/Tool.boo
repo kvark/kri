@@ -13,7 +13,7 @@ public class Clear( Basic ):
 
 #---------	EARLY Z FILL	--------#
 
-public class EarlyZ( tech.General ):
+public class EarlyZ( tech.Sorted ):
 	public final bu	= kri.shade.Bundle()
 	public def constructor():
 		super('zcull')
@@ -51,7 +51,7 @@ public class Emission( tech.Meta ):
 
 #---------	ADD COLOR	--------#
 
-public class Color( tech.General ):
+public class Color( tech.Sorted ):
 	private final bu	= kri.shade.Bundle()
 	public fillColor	= false
 	public fillDepth	= false
@@ -81,7 +81,7 @@ public class Color( tech.General ):
 
 #---------	RENDER EVERYTHING AT ONCE	--------#
 
-public class All( tech.General ):
+public class All( tech.Sorted ):
 	public def constructor():
 		super('all')
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:

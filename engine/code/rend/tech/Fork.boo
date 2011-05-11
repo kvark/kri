@@ -3,7 +3,7 @@
 import System.Collections.Generic
 
 public class Fork( kri.rend.Basic ):
-	public	final	dict	= Dictionary[of string,General]()
+	public	final	dict	= Dictionary[of string,Sorted]()
 	public def constructor():
 		pass
 	public override def setup(pl as kri.buf.Plane) as bool:

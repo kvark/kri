@@ -29,5 +29,10 @@ public class Fill( kri.rend.Basic ):
 		link.ClearColor()
 		scene = kri.Scene.Current
 		if not scene:	return
-		for ent in scene.entities:
-			ent.render(vao,buInit)
+		for e in scene.entities:
+			for tag in e.tags:
+				tm = tag as kri.TagMat
+				if not tm:	continue
+				dInit.link( tm.mat.dict )
+				kri.Ant.Inst.params.activate(e)
+				e.mesh.render( vao, buInit, e.CombinedAttribs, tm.off, tm.num, 1, null )

@@ -7,7 +7,7 @@ import OpenTK.Graphics.OpenGL
 
 #---------	LIGHT OMNI FILL	--------#
 
-public class Fill( kri.rend.tech.General ):
+public class Fill( kri.rend.tech.Sorted ):
 	protected final fbo		= kri.buf.Holder(mask:0)
 	protected final bu		= kri.shade.Bundle()
 	protected final context	as support.light.Context
