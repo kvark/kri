@@ -20,13 +20,12 @@ public class Meta(Sorted):
 	private final geom	as bool
 	protected shobs			= List[of kri.shade.Object]()
 	protected final dict	= kri.shade.par.Dict()
-	private final factory	= kri.shade.Linker(dict)
+	private final factory	= kri.shade.Linker(onLink)
 	
 	protected def constructor(name as string, gs as bool, outs as (string), *mets as (string)):
 		super(name)
 		lMets,lOuts = mets,outs
 		geom = gs
-		factory.onLink = onLink
 	
 	protected def shade(prefix as string) as void:
 		shade( prefix+s for s in ('_v','_f') )
@@ -43,4 +42,4 @@ public class Meta(Sorted):
 		sl = mat.collect(geom,lMets)
 		if not sl:
 			return kri.shade.Bundle.Empty
-		return factory.link( sl, mat.dict )
+		return factory.link( sl, dict, mat.dict )

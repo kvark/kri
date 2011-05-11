@@ -7,5 +7,5 @@ out vec4 rez_color;
 
 void main()	{
 	vec4 diff = texture( unit_g0, tex_coord );
-	rez_color = diff.w * diff / max(0.01, dot(diff,diff) );
+	rez_color = diff.w * diff;
 }

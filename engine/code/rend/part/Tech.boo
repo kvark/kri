@@ -48,12 +48,11 @@ public class Meta( Tech ):
 	private final geom		as bool
 	protected shobs			= List[of Object]()
 	protected final dict	= par.Dict()
-	private final factory	= Linker(dict)
+	private final factory	= Linker(setup)
 	
 	public def constructor(name as string, gs as bool, *mets as (string)):
 		super(name)
 		lMets,geom = mets,gs
-		factory.onLink = setup
 	
 	protected def shade(prefix as string) as void:
 		shade( prefix+s	for s in('_v','_f') )
@@ -68,7 +67,7 @@ public class Meta( Tech ):
 		assert pe.mat and pe.owner
 		sl = pe.mat.collect(geom,lMets)
 		if not sl:	return Bundle.Empty
-		return factory.link( sl, pe.owner.dict, pe.mat.dict )
+		return factory.link( sl, dict, pe.owner.dict, pe.mat.dict )
 	
 	public virtual def onManager(man as kri.part.Manager) as void:
 		pass
