@@ -24,6 +24,6 @@ void main()	{
 	vec3 emi = get_emissive().xyz, diff = get_diffuse().xyz;
 	
 	c_diffuse	= vec4( diff, dot(diff,emi) );
-	c_specular	= get_specular();
-	c_normal	= vec4(vec3(0.5) + 0.5*w_norm, glossy);
+	c_specular	= vec4( get_specular().xyz, glossy );
+	c_normal	= vec4(vec3(0.5) + 0.5*w_norm, 0.0);
 }

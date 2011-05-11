@@ -53,11 +53,11 @@ void main()	{
 	vec3 v2lit = normalize( v_lit );
 	vec3 v2cam = normalize( s_cam.pos.xyz - p_world );
 	float diff = comp_diffuse(  normal, v2lit );
-	float spec = comp_specular( normal, v2lit, v2cam, 100.0*g_normal.w );
+	float spec = comp_specular( normal, v2lit, v2cam, 100.0*g_specular.w );
 	
 	//write attenuated color
 	float intensity = get_attenuation2( length(v_lit) );
 	//no need for discard, because we are drawing a sphere with depth test
 	//if( intensity*(diff+spec) < 0.01 ) discard;
-	rez_color = intensity*lit_color * (diff * g_diffuse + spec * g_specular);
+	rez_color = intensity*lit_color * (diff*g_diffuse + spec*g_specular);
 }
