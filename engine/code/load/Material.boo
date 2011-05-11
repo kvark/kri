@@ -29,7 +29,6 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['m_hair']	= pm_hair
 		nt.readers['m_halo']	= pm_halo
 		nt.readers['m_surf']	= pm_surf
-		nt.readers['m_emis']	= pm_emis
 		nt.readers['m_diff']	= pm_diff
 		nt.readers['m_spec']	= pm_spec
 		nt.readers['unit']		= pm_unit
@@ -166,22 +165,14 @@ public class ExMaterial( kri.IExtension ):
 		r.getReal()	# translucency
 		return true
 	
-	#---	Meta: emissive	---#
-	public def pm_emis(r as Reader) as bool:
-		m = r.geData[of kri.Material]()
-		if not m:	return false
-		color = r.getColorFull()
-		m.metaList.Add( Data[of Color4]('emissive',
-			con.slib.emissive_u, color ))
-		return true
-	
 	#---	Meta: diffuse	---#
 	public def pm_diff(r as Reader) as bool:
 		m = r.geData[of kri.Material]()
 		if not m:	return false
-		color = r.getColorFull()
 		m.metaList.Add( Data[of Color4]('diffuse',
-			con.slib.diffuse_u,	color ))
+			con.slib.diffuse_u,		r.getColorFull() ))
+		m.metaList.Add( Data[of single]('emissive',
+			con.slib.emissive_u,	r.getReal() ))
 		model = r.getString()
 		sh = { '':		con.slib.lambert,
 			'LAMBERT':	con.slib.lambert

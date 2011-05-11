@@ -1,7 +1,8 @@
 ﻿namespace support.defer.layer
 
-import kri.shade
+import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
+import kri.shade
 
 
 public class Fill( kri.rend.tech.General ):
@@ -9,7 +10,9 @@ public class Fill( kri.rend.tech.General ):
 	private final	factory	= kri.shade.Linker()
 	private	mesh	as kri.Mesh		= null
 	private	dict	as kri.vb.Dict	= null
-	
+	private final	din		= Dictionary[of string,kri.meta.Hermit]()
+	private	final	sVert	= Object.Load('/g/layer/pass_v')
+	private final	sFrag	= Object.Load('/g/layer/pass_f')
 
 	# init
 	public def constructor(con as support.defer.Context):
@@ -41,11 +44,16 @@ public class Fill( kri.rend.tech.General ):
 			return
 		GL.Enable( EnableCap.Blend )
 		for un in tm.mat.unit:
-			continue
+			if 'True':	continue
 			app = un.application
 			if not app.prog:
-				sl as Object* = null
-				app.prog = factory.link( sl, tm.mat.dict )
+				din['unit'] = un.input
+				mapins = kri.load.Meta.MakeTexCoords(false,din)
+				if mapins:
+					sall = List[of Object](mapins)
+					sall.AddRange((sVert,sFrag))
+					app.prog = factory.link( sall, tm.mat.dict )
+				else:	app.prog = Bundle.Empty
 			if app.prog and app.prog.Failed:
 				continue
 			if not setBlend( app.blend ):

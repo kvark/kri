@@ -4,11 +4,11 @@
 uniform sampler2DArray unit_light;
 
 // material data
-vec4 get_bump();
-vec4 get_emissive();
-vec4 get_diffuse();
-vec4 get_specular();
-float get_glossiness();
+vec4	get_bump();
+vec4	get_diffuse();
+float	get_emissive();
+vec4	get_specular();
+float	get_glossiness();
 
 // deferred funcs
 vec4 get_harmonics(vec3);
@@ -77,9 +77,9 @@ void main()	{
 		get_light(cc,normal,reflected)
 		);
 	const vec2 ax = vec2(0.0,1.0);
-	rez_color = get_emissive()
-		+ (lit[0][0]*ax.yxxx + lit[1][0]*ax.xyxx + lit[2][0]*ax.xxyx) * get_diffuse()
-		+ (lit[0][1]*ax.yxxx + lit[1][1]*ax.xyxx + lit[2][1]*ax.xxyx) * get_specular();
+	rez_color = get_diffuse() *
+		(lit[0][0]*ax.yxxx + lit[1][0]*ax.xyxx + lit[2][0]*ax.xxyx + vec4(get_emissive()) ) +
+		(lit[0][1]*ax.yxxx + lit[1][1]*ax.xyxx + lit[2][1]*ax.xxyx) * get_specular();
 #	else
 	const float Pi = 3.1415926;
 	vec4 kn = get_weighted(normal, Pi/6.0, 1.0/3.0);
@@ -89,8 +89,7 @@ void main()	{
 	vec4 kr = get_weighted(reflected, ang, w0);
 	
 	rez_color =
-		+ (kn*cm) * get_diffuse()
-		+ (kr*cm) * get_specular()
-		+ get_emissive();
+		+ (kn*cm + vec4(get_emissive())) * get_diffuse()
+		+ (kr*cm) * get_specular();
 #	endif
 }

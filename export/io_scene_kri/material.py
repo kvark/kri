@@ -158,12 +158,16 @@ def save_mat(mat):
 	out.text( mat.name )
 	out.end()
 	# diffuse subroutine
-	def save_diff_intensity(val):
-		save_color( mat.diffuse_color )
-		out.pack('2f', mat.alpha, val )
 	def save_diffuse(model):
 		out.begin('m_diff')
-		save_diff_intensity( mat.diffuse_intensity )
+		save_color( mat.diffuse_color )
+		out.pack('3f', mat.alpha, mat.diffuse_intensity, mat.emit)
+		out.text(model)
+		out.end()
+	def save_specular(model):
+		out.begin('m_spec')
+		save_color( mat.specular_color )
+		out.pack('3f', mat.specular_alpha, mat.specular_intensity, mat.specular_hardness)
 		out.text(model)
 		out.end()
 	if mat.strand:	# hair strand
@@ -195,19 +199,10 @@ def save_mat(mat):
 		out.pack('B3f', mat.use_shadeless, parallax,
 			mat.ambient, mat.translucency )
 		out.end()
-		out.begin('m_emis')
-		save_diff_intensity( mat.emit )
-		out.end()
 		sh = (mat.diffuse_shader, mat.specular_shader)
 		out.log(1,'i', 'shading: %s %s' % sh)
 		save_diffuse(sh[0])
-		# specular
-		out.begin('m_spec')
-		save_color( mat.specular_color )
-		out.pack('3f', mat.specular_alpha,\
-			mat.specular_intensity, mat.specular_hardness)
-		out.text( sh[1] )
-		out.end()
+		save_specular(sh[1])
 		mirr = mat.raytrace_mirror
 		if mirr.use:
 			out.log(1,'i', 'mirror: ' + mirr.reflect_factor)

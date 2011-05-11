@@ -57,6 +57,7 @@ public class Bundle:
 		shader = Mega()
 	public def constructor(sh as Mega):
 		shader = sh
+		failed = sh == null
 	public def constructor(bu as Bundle):
 		shader = bu.shader
 	

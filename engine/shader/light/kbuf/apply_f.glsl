@@ -3,11 +3,11 @@
 uniform sampler2DMS unit_dir, unit_color;
 
 // material data
-vec4 get_bump();
-vec4 get_emissive();
-vec4 get_diffuse();
-vec4 get_specular();
-float get_glossiness();
+vec4	get_bump();
+vec4	get_diffuse();
+float	get_emissive();
+vec4	get_specular();
+float	get_glossiness();
 
 
 in vec4 tan2cam;	// tangent->camera rotation
@@ -43,7 +43,7 @@ void main()	{
 	// apply glossiness
 	ks = pow( ks, vec4(get_glossiness()) );
 
-	rez_color = get_emissive() + (
-		(color*kd) * get_diffuse() +
+	rez_color =
+		(color*kd + vec4(get_emissive())) * get_diffuse() +
 		(color*ks) * get_specular() );
 }

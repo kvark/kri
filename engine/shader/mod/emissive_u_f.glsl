@@ -1,7 +1,7 @@
 #version 130
 
-uniform vec4 mat_emissive;
+uniform	float	mat_emissive;
 
-vec4 get_emissive()	{
+float get_emissive()	{
 	return mat_emissive;
 }
