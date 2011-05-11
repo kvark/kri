@@ -43,6 +43,13 @@ public class Texture(Value[of kri.buf.Texture]):
 	public def constructor(s as string):
 		super(s)
 
+
+public class Proxy[of T](IBase[of T]):
+	public base	as IBase[of T]	= null
+	public Value as T:
+		get: return base.Value
+
+
 /*	gives Failed to create 'kri.shade.par.Value2[of T]' type.. (BCE0055)
 public class Value2[of T](ValueBase[of T]):
 	[property(Value)]
@@ -61,6 +68,8 @@ public class UnitProxy( IBase[of kri.buf.Texture] ):
 
 # Standard uniform dictionary
 public class Dict( SortedDictionary[of string,IBaseRoot] ):
+	public virtual def find(ref uni as kri.shade.Uniform) as IBaseRoot:
+		return null
 	# copy contents of another dictionary
 	public def attach(d as Dict) as void:
 		for u in d:

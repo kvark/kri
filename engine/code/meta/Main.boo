@@ -47,15 +47,26 @@ public class Advanced(IUnited,Hermit):
 	private unit	as int	= -1
 	def System.ICloneable.Clone() as object:
 		return copyTo( Advanced( Unit:unit ) )
-	
+
+
+public class UnitApp:
+	public affects	= List[of string]()
+	public blend	= ''
+	public color	= Graphics.Color4.White
+	public defValue	= 1f
+	public doIntencity	= false
+	public doInvert		= false
+	public doStencil	= false
+
 
 #---	Unit Slave meta data	---#
 public class AdUnit( ISlave, par.ValuePure[of kri.buf.Texture] ):
 	public input	as Hermit	= null
-	public final pOffset	= par.ValuePure[of Vector4]()
-	public final pScale		= par.ValuePure[of Vector4]()
+	public final	pOffset		= par.ValuePure[of Vector4]()
+	public final	pScale		= par.ValuePure[of Vector4]()
 	portal Offset	as Vector4	= pOffset.Value
 	portal Scale	as Vector4	= pScale.Value
+	public final	application	= UnitApp()
 	
 	public def constructor():
 		pOffset	.Value = Vector4.Zero

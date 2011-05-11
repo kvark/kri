@@ -1,0 +1,1 @@
+﻿namespace kri.shade.par

@@ -112,6 +112,7 @@
     <Compile Include="code\shade\Code.boo" />
     <Compile Include="code\shade\Linker.boo" />
     <Compile Include="code\shade\Mega.boo" />
+    <Compile Include="code\shade\par\Dict.boo" />
     <Compile Include="code\shade\par\Main.boo" />
     <Compile Include="code\shade\Object.boo" />
     <Compile Include="code\shade\Program.boo" />

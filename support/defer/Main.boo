@@ -32,6 +32,7 @@ public class Group( kri.rend.Group ):
 		cx = Context()
 		rl = List[of kri.rend.Basic]()
 		rl.Add( fill.Fork(cx) )
+		#rl.Add( layer.Fill(cx) )
 		if lc:	rl.Add( Apply	(lc,cx,qord) )
 		if pc:	rl.Add( Particle(pc,cx,qord) )
 		super( *rl.ToArray() )

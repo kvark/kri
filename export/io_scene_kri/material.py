@@ -30,7 +30,7 @@ def save_mat_unit(mtex):
 	flat = ['normal','mirror','hardness']
 	supported = flat + list('color_'+x for x in colored)
 	current = list(x for x in supported	if mtex.__getattribute__('use_map_'+x))
-	out.logu(2, 'affect: ' + ','.join(current))
+	out.logu(2, 'affects: ' + ','.join(current))
 	out.text( *(current+['']) )
 	tc,mp = mtex.texture_coords, mtex.mapping
 	out.logu(2, '%s input, %s mapping' % (tc,mp))
@@ -47,6 +47,13 @@ def save_mat_unit(mtex):
 		out.pack('B',lid)
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	out.end()
+	out.begin('u_apply')
+	out.text( mtex.blend_type )
+	out.pack('3B', mtex.use_rgb_to_intensity, mtex.invert, mtex.use_stencil )
+	save_color( mtex.color )
+	out.pack('f', mtex.default_value )
+	out.end()
+
 
 
 ###  MATERIAL:TEXTURE TYPES   ###
