@@ -182,6 +182,8 @@ public class GladeApp:
 	public def onIdle() as bool:
 		if butDraw.Active:
 			gw.QueueDraw()
+		elif window.Title != fps.title:
+			window.Title = fps.title
 		return true
 	
 	public def onFrame(o as object, args as System.EventArgs) as void:
@@ -189,10 +191,8 @@ public class GladeApp:
 		if not core:	return
 		core.update(1)
 		view.update()
-		if butDraw.Active:
-			if fps.update(core.Time):
-				window.Title = fps.gen()
-		else:	window.Title = fps.title
+		if butDraw.Active and fps.update(core.Time):
+			window.Title = fps.gen()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:

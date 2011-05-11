@@ -1,24 +1,22 @@
 ﻿namespace support.defer.layer
 
-import OpenTK.Graphics
 import kri.shade
 
 public class Fill( kri.rend.Basic ):
 	private final	fbo		as kri.buf.Holder
 	private final	vao		= kri.vb.Array()
+	private final	dInit	= par.DictProxy()
 	public	final	buInit	= Bundle()
 	public	final	buApply	= Bundle()
-	private	final	proEmi	= par.Proxy[of Color4]()
-	private final	proDiff	= par.Proxy[of Color4]()
-	private final	proSpec	= par.Proxy[of Color4]()
-	private final	proGlos	= par.Proxy[of single]()
 	# init
 	public def constructor(con as support.defer.Context):
 		fbo = con.buf
+		buInit.dicts.Add(dInit)
 		sa = buInit.shader
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( '/g/layer/make_v', '/g/layer/make_f' )
 		sa.fragout('c_diffuse','c_specular','c_normal')
+		buInit.link()
 	# resize
 	public override def setup(pl as kri.buf.Plane) as bool:
 		fbo.resize( pl.wid, pl.het )

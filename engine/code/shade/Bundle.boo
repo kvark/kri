@@ -67,7 +67,7 @@ public class Bundle:
 		for uni in shader.uniforms:
 			iv	as par.IBaseRoot = null
 			for d in dicts:
-				d.TryGetValue( uni.name, iv )
+				iv = d.find(uni)
 				if iv: break
 			if not iv:
 				badNames.Add(uni.name)

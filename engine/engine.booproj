@@ -110,6 +110,7 @@
     <Compile Include="code\data\Switch.boo" />
     <Compile Include="code\shade\Bundle.boo" />
     <Compile Include="code\shade\Code.boo" />
+    <Compile Include="code\shade\Uniform.boo" />
     <Compile Include="code\shade\Linker.boo" />
     <Compile Include="code\shade\Mega.boo" />
     <Compile Include="code\shade\par\Dict.boo" />
