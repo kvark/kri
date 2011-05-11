@@ -48,7 +48,8 @@ public class Bundle:
 	public	final shader	as Mega
 	public	final dicts		= List[of par.Dict]((kri.Ant.Inst.dict,))
 	private	final params	= List[of Parameter]()
-	private	failed	= false
+	[Getter(Failed)]
+	private	failed			as bool	= false
 	
 	public	final static Empty	= Bundle(null as Mega)
 	
