@@ -31,8 +31,8 @@ public class Group( kri.rend.Group ):
 	public def constructor(qord as byte, lc as support.light.Context, pc as kri.part.Context):
 		cx = Context()
 		rl = List[of kri.rend.Basic]()
-		rl.Add( fill.Fork(cx) )
-		#rl.Add( layer.Fill(cx) )
+		#rl.Add( fill.Fork(cx) )
+		rl.Add( layer.Fill(cx) )
 		if lc:	rl.Add( Apply	(lc,cx,qord) )
 		if pc:	rl.Add( Particle(pc,cx,qord) )
 		super( *rl.ToArray() )

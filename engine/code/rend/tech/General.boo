@@ -5,9 +5,9 @@
 public class General( Basic ):
 	protected def constructor(name as string):
 		super(name)
+	
 	public abstract def construct(mat as kri.Material) as kri.shade.Bundle:
 		pass
-
 	protected abstract def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as kri.shade.Bundle) as void:
 		pass
 

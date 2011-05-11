@@ -2,25 +2,35 @@
 
 import kri.shade
 
-public class Fill( kri.rend.Basic ):
+public class Fill( kri.rend.tech.General ):
 	private final	fbo		as kri.buf.Holder
-	private final	vao		= kri.vb.Array()
-	private final	dInit	= par.DictProxy()
-	public	final	buInit	= Bundle()
-	public	final	buApply	= Bundle()
+	private	mesh	as kri.Mesh		= null
+	private	dict	as kri.vb.Dict	= null
+
 	# init
 	public def constructor(con as support.defer.Context):
+		super('g.layer.fill')
 		fbo = con.buf
-		buInit.dicts.Add(dInit)
-		sa = buInit.shader
+
+	# construct
+	public override def construct(mat as kri.Material) as Bundle:
+		bu = Bundle()
+		bu.dicts.Add( mat.dict )
+		sa = bu.shader
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( '/g/layer/make_v', '/g/layer/make_f' )
 		sa.fragout('c_diffuse','c_specular','c_normal')
-		buInit.link()
+		return bu
+	
+	# draw
+	protected override def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as Bundle) as void:
+		mesh.render( va, bu, dict, tm.off, tm.num, 1, null )
+
 	# resize
 	public override def setup(pl as kri.buf.Plane) as bool:
 		fbo.resize( pl.wid, pl.het )
-		return true
+		return super(pl)
+
 	# work	
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.at.depth = link.Depth
@@ -30,9 +40,7 @@ public class Fill( kri.rend.Basic ):
 		scene = kri.Scene.Current
 		if not scene:	return
 		for e in scene.entities:
-			for tag in e.tags:
-				tm = tag as kri.TagMat
-				if not tm:	continue
-				dInit.link( tm.mat.dict )
-				kri.Ant.Inst.params.activate(e)
-				e.mesh.render( vao, buInit, e.CombinedAttribs, tm.off, tm.num, 1, null )
+			kri.Ant.Inst.params.activate(e)
+			dict = e.CombinedAttribs
+			mesh = e.mesh
+			addObject(e)
