@@ -115,6 +115,7 @@ public class ExMaterial( kri.IExtension ):
 		if not u:	return false
 		ap = u.application
 		ap.blend		= r.getString()
+		ap.bumpSpace	= r.getString()
 		ap.doIntencity	= r.getByte()>0
 		ap.doInvert		= r.getByte()>0
 		ap.doStencil	= r.getByte()>0

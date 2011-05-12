@@ -5,11 +5,12 @@ import kri.shade
 
 
 public class UnitApp:
-	public final	affects	= List[of string]()
-	public prog		as Bundle = null
-	public blend	= ''
-	public color	= Graphics.Color4.White
-	public defValue	= 1f
+	public final	affects		= List[of string]()
+	public prog		as Bundle	= null
+	public blend		= ''
+	public bumpSpace	= ''
+	public color		= Graphics.Color4.White
+	public defValue		= 1f
 	public doIntencity	= false
 	public doInvert		= false
 	public doStencil	= false

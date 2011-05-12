@@ -48,7 +48,7 @@ def save_mat_unit(mtex):
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	out.end()
 	out.begin('u_apply')
-	out.text( mtex.blend_type )
+	out.text( mtex.blend_type, mtex.bump_objectspace )
 	out.pack('3B', mtex.use_rgb_to_intensity, mtex.invert, mtex.use_stencil )
 	save_color( mtex.color )
 	out.pack('f', mtex.default_value )

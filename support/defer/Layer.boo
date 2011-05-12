@@ -38,8 +38,11 @@ public class Fill( kri.rend.tech.General ):
 	
 	private def setBlend(str as string) as bool:
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
-		if str == 'MIX':
-			pZero.Value = 1f	
+		if str == '':
+			pZero.Value = 0f
+			GL.BlendFunc( BlendingFactorSrc.One, BlendingFactorDest.Zero )
+		elif str == 'MIX':
+			pZero.Value = 1f
 			GL.BlendFunc( BlendingFactorSrc.DstColor, BlendingFactorDest.Zero )
 		elif str == 'ADD':
 			pZero.Value = 0f
@@ -56,6 +59,9 @@ public class Fill( kri.rend.tech.General ):
 				mDiff.Value.Xyz = Vector3(1f)
 			if inf == 'color_spec':
 				mSpec.Value.Xyz = Vector3(1f)
+			if inf == 'normal':
+				app.blend = ''
+				break
 		c = app.color
 		flag = (0f,1f)[app.doIntencity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
@@ -78,24 +84,26 @@ public class Fill( kri.rend.tech.General ):
 		GL.Enable( EnableCap.Blend )
 		for un in tm.mat.unit:
 			app = un.application
+			if not un.input:	continue
 			if not app.prog:
 				uname = 'unit'
 				din[uname] = un.input
 				mapins = kri.load.Meta.MakeTexCoords(false,din)
 				if mapins:
 					(un as kri.meta.ISlave).link(uname,pDic)	# add offset and scale under proper names
+					(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
 					sall = List[of Object](mapins)
 					sall.AddRange(( sVert, sFrag, un.input.Shader ))	# core shaders
 					sall.AddRange( kri.Ant.Inst.libShaders )			# standard shaders
-					app.prog = factory.link( sall, pDic, tm.mat.dict )	# generate program
+					app.prog = factory.link( sall, pDic )	# generate program
 				else:	app.prog = Bundle.Empty
 			if app.prog and app.prog.Failed:
 				continue
-			if not setBlend( app.blend ):
-				kri.lib.Journal.Log("Blend: unknown mode (${app.blend})")
-				app.blend = 'MIX'
 			pTex.Value = un.Value
 			setParams(app)
+			if not setBlend( app.blend ):
+				kri.lib.Journal.Log("Blend: unknown mode (${app.blend})")
+				app.blend = ''
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
 		GL.Disable( EnableCap.Blend )
 
