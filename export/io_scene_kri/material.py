@@ -7,7 +7,7 @@ from io_scene_kri.common	import *
 
 ###  MATERIAL:UNIT   ###
 
-def find_uv_layer(name):
+def find_uv_layer(mtex,name):
 	# dirty: resolving the UV layer ID
 	for ent in bpy.context.scene.objects:
 		if ent.type != 'MESH': continue
@@ -38,7 +38,7 @@ def save_mat_unit(mtex):
 	if tc == 'UV':
 		lid,name = 0,mtex.uv_layer
 		if len(name):
-			lid = find_uv_layer(name)
+			lid = find_uv_layer(mtex,name)
 			if lid == -1:
 				out.log(2,'w','failed to resolve UV layer')
 				lid = 0

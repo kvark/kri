@@ -36,7 +36,7 @@ public class Program:
 		result as int
 		GL.GetProgram(handle, pp, result)
 		if result:	return true
-		kri.lib.Journal.Log("Shader: Failed to compile program (${handle}), message: ${log}")
+		kri.lib.Journal.Log("Shader: Failed to link program (${handle}), message: ${log}")
 		return false
 
 	public def validate() as void:

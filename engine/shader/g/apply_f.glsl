@@ -52,7 +52,7 @@ void main()	{
 	vec3 v_lit = s_light.pos.xyz - p_world;
 	vec3 v2lit = normalize( v_lit );
 	vec3 v2cam = normalize( s_cam.pos.xyz - p_world );
-	float diff = comp_diffuse(  normal, v2lit );
+	float diff = comp_diffuse(  normal, v2lit ) + g_diffuse.w;
 	float spec = comp_specular( normal, v2lit, v2cam, 100.0*g_specular.w );
 	
 	//write attenuated color

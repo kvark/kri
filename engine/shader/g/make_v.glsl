@@ -7,9 +7,6 @@ uniform struct Spatial	{
 uniform vec4	proj_cam;
 
 //lib_quat
-vec3 qrot(vec4,vec3);
-vec4 qmul(vec4,vec4);
-vec4 qinv(vec4);
 vec3 trans_for(vec3,Spatial);
 vec3 trans_inv(vec3,Spatial);
 //lib_tool

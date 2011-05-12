@@ -18,7 +18,7 @@ public class Context:
 		# diffuse, specular, world space normal
 		for i in range(3):
 			pt = par.Texture('g'+i)
-			tex = kri.buf.Texture(0, PixelInternalFormat.Rgb10A2, PixelFormat.Rgba )
+			tex = kri.buf.Texture(0, PixelInternalFormat.Rgba8, PixelFormat.Rgba )
 			buf.at.color[i] = pt.Value = tex
 			#pt.Value.filt(false,false)	# not valid with MS
 			dict.unit(pt)

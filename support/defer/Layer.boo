@@ -7,14 +7,18 @@ import kri.shade
 
 
 public class Fill( kri.rend.tech.General ):
+	state	Blend
 	public	shadeUnits		= true
 	private final	fbo		as kri.buf.Holder
 	private final	factory	= kri.shade.Linker(onLink)
+	private	doNormal		= false
 	private	mesh	as kri.Mesh		= null
 	private	vDict	as kri.vb.Dict	= null
 	private final	din		= Dictionary[of string,kri.meta.Hermit]()
+	private final	sDefer	= Object.Load('/lib/defer_f')
 	private	final	sVert	= Object.Load('/g/layer/pass_v')
 	private final	sFrag	= Object.Load('/g/layer/pass_f')
+	private final	sNorm	= Object.Load('/g/layer/normal_f')
 	private final	fout	= ('c_diffuse','c_specular','c_normal')
 	# params
 	private final	pDic	= par.Dict()
@@ -34,7 +38,20 @@ public class Fill( kri.rend.tech.General ):
 		pDic.unit(pTex)
 	
 	private def onLink(sa as Mega) as void:
-		sa.fragout(*fout)
+		if doNormal:
+			sa.fragout(fout[2])
+		else:
+			sa.fragout(fout[0],fout[1])
+	
+	private def getSpaceShader(str as string) as Object:
+		x = { ''				: 'zero',
+			'BUMP_TEXTURESPACE'	: 'tangent',
+			'BUMP_OBJECTSPACE'	: 'object'
+			}[str]
+		if not x:
+			kri.lib.Journal.Log("Deferred layer: unknow normal space (${str})")
+			x = 'zero'
+		return Object.Load("/g/layer/norm/${x}_v")
 	
 	private def setBlend(str as string) as bool:
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
@@ -59,9 +76,6 @@ public class Fill( kri.rend.tech.General ):
 				mDiff.Value.Xyz = Vector3(1f)
 			if inf == 'color_spec':
 				mSpec.Value.Xyz = Vector3(1f)
-			if inf == 'normal':
-				app.blend = ''
-				break
 		c = app.color
 		flag = (0f,1f)[app.doIntencity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
@@ -78,32 +92,42 @@ public class Fill( kri.rend.tech.General ):
 	
 	# draw
 	protected override def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as Bundle) as void:
+		fbo.setMask(7)
 		if not mesh.render( va, bu, vDict, tm.off, tm.num, 1, null ):
 			return
 		if not shadeUnits:	return
-		GL.Enable( EnableCap.Blend )
 		for un in tm.mat.unit:
 			app = un.application
 			if not un.input:	continue
+			doNormal = ('normal' in app.affects)
 			if not app.prog:
 				uname = 'unit'
 				din[uname] = un.input
 				mapins = kri.load.Meta.MakeTexCoords(false,din)
-				if mapins:
-					(un as kri.meta.ISlave).link(uname,pDic)	# add offset and scale under proper names
-					(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
-					sall = List[of Object](mapins)
-					sall.AddRange(( sVert, sFrag, un.input.Shader ))	# core shaders
-					sall.AddRange( kri.Ant.Inst.libShaders )			# standard shaders
-					app.prog = factory.link( sall, pDic )	# generate program
-				else:	app.prog = Bundle.Empty
+				if not mapins:
+					app.prog = Bundle.Empty
+					continue
+				(un as kri.meta.ISlave).link(uname,pDic)	# add offset and scale under proper names
+				(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
+				sall = List[of Object](mapins)
+				sall.Add( (sFrag,sNorm)[doNormal] )	# normal space shader
+				sall.Add( getSpaceShader(('',app.bumpSpace)[doNormal]) )
+				sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
+				sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders
+				app.prog = factory.link( sall, pDic )		# generate program
 			if app.prog and app.prog.Failed:
 				continue
 			pTex.Value = un.Value
 			setParams(app)
-			if not setBlend( app.blend ):
-				kri.lib.Journal.Log("Blend: unknown mode (${app.blend})")
-				app.blend = ''
+			if doNormal:
+				Blend = false
+				fbo.setMask(4)
+			else:
+				Blend = true
+				fbo.setMask(3)
+				if not setBlend( app.blend ):
+					kri.lib.Journal.Log("Blend: unknown mode (${app.blend})")
+					app.blend = ''
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
 		GL.Disable( EnableCap.Blend )
 
@@ -115,6 +139,7 @@ public class Fill( kri.rend.tech.General ):
 	# work	
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.at.depth = link.Depth
+		fbo.mask = 7
 		fbo.bind()
 		link.SetDepth(0f, false)
 		link.ClearColor()

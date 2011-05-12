@@ -51,6 +51,14 @@ public class Holder(Frame):
 			pl.het	= Math.Min( pl.het,	sf.het )
 		return pl
 	
+	public def setMask(m as byte) as void:
+		if (mask=m) == oldMask:	return
+		drawList = List[of DrawBuffersEnum](
+			DrawBuffersEnum.ColorAttachment0+i
+			for i in range(4)	if (mask>>i)&1)
+		GL.DrawBuffers( drawList.Count, drawList.ToArray() )
+		oldMask = mask
+	
 	public override def bind() as void:
 		# bind with viewport
 		super()
@@ -63,15 +71,8 @@ public class Holder(Frame):
 			surface = old.color[i]	# Boo bug workaround
 			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,		at.color[i] )
 			old.color[i] = surface
-		# set mask
-		if mask != oldMask:
-			assert mask>=0
-			drawList = List[of DrawBuffersEnum](
-				DrawBuffersEnum.ColorAttachment0+i
-				for i in range(4)	if (mask>>i)&1)
-			GL.DrawBuffers( drawList.Count, drawList.ToArray() )
-			oldMask = mask
 		# check
+		setMask(mask)
 		checkStatus()
 	
 	private override def getReadMode() as ReadBufferMode:
