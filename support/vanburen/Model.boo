@@ -191,7 +191,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 		alpha	= rd.getReal()
 		assert con
 		m = kri.Material(name)
-		con.fillMat(m, emi,diff,spec,glossy)
+		con.fillMat(m, diff,emi.R,spec,glossy)
 		m.link()
 		# read the rest
 		blend = rd.getString()
@@ -290,7 +290,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 				spec	= rd.getColor()
 				glossy	= rd.getReal()
 				amb.A = 0f
-				con.fillMat(tm.mat, emi,diff,spec,glossy)
+				con.fillMat(tm.mat, diff,emi.R,spec,glossy)
 				blend = rd.getString()
 				mtype = rd.getString()
 				blend = mtype

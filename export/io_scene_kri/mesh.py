@@ -115,7 +115,7 @@ def save_mesh(mesh,armature,groups):
 	out.log(1,'i', '%.2f avg handness' % (avg / len(ar_face)))
 	
 	# 3: update triangle indexes
-	avg,ar_vert = 0.0,[]
+	avg,ar_vert,bad_vert = 0.0,[],0
 	for i,vgrup in enumerate(set_vert.values()):
 		v = vgrup[0]
 		tan,lensum = mathutils.Vector((0,0,0)),0.0
@@ -129,15 +129,19 @@ def save_mesh(mesh,armature,groups):
 				tan += wes * f.ta
 		no = v.normal.copy()
 		no.normalize()
-		if hasQuat:
-			assert lensum>0.0
+		if hasQuat and lensum>0.0:
 			avg += tan.length / lensum
 			tan.normalize()		# mean tangent
 			bit = no.cross(tan) * v.face.hand	# using handness
 			tan = bit.cross(no)	# handness will be applied in shader
 			tbn = mathutils.Matrix((tan,bit,no))	# tbn is orthonormal, right-handed
 			v.quat = tbn.to_quaternion().normalized()
+		elif hasQuat:
+			bad_vert += 1
+			v.quat = mathutils.Quaternion((0,0,0,1))
 		ar_vert.append(v)
+	if bad_vert:
+		out.log(1,'w','%d pure vertices detected' % (bad_vert))
 	if hasQuat:
 		out.log(1,'i','%.2f avg tangent accuracy' % (avg / len(ar_vert)))
 	del set_vert
