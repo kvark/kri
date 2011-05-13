@@ -67,17 +67,17 @@ public class Fill( kri.rend.tech.General ):
 		else:	return false
 		return true
 	
-	private def setParams(app as kri.meta.UnitApp) as void:
+	private def setParams(pa as kri.meta.Pass) as void:
 		mDiff.Value = Vector4(0f)
 		mSpec.Value = Vector4(0f)
 		mNorm.Value = Vector4(0f)
-		for inf in app.affects:
+		for inf in pa.affects:
 			if inf == 'color_diffuse':
 				mDiff.Value.Xyz = Vector3(1f)
 			if inf == 'color_spec':
 				mSpec.Value.Xyz = Vector3(1f)
-		c = app.color
-		flag = (0f,1f)[app.doIntencity]
+		c = pa.color
+		flag = (0f,1f)[pa.doIntencity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
 
 	# construct
@@ -97,8 +97,9 @@ public class Fill( kri.rend.tech.General ):
 			return
 		if not shadeUnits:	return
 		for un in tm.mat.unit:
-			app = un.application
-			if not un.input:	continue
+			app = un.layer
+			if not (un.input and app and app.enable):
+				continue
 			doNormal = ('normal' in app.affects)
 			if not app.prog:
 				uname = 'unit'

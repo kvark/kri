@@ -86,7 +86,7 @@ public class ExMaterial( kri.IExtension ):
 		m.unit.Add(u)
 		r.puData(u)
 		while (name = r.getString()) != '':
-			u.application.affects.Add(name)
+			u.layer.affects.Add(name)
 			targ as MapTarget
 			if not tarDict.TryGetValue(name,targ):
 				continue
@@ -113,14 +113,14 @@ public class ExMaterial( kri.IExtension ):
 	public def pu_apply(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		if not u:	return false
-		ap = u.application
-		ap.blend		= r.getString()
-		ap.bumpSpace	= r.getString()
-		ap.doIntencity	= r.getByte()>0
-		ap.doInvert		= r.getByte()>0
-		ap.doStencil	= r.getByte()>0
-		ap.color		= r.getColorByte()
-		ap.defValue		= r.getReal()
+		pa = u.layer
+		pa.blend		= r.getString()
+		pa.bumpSpace	= r.getString()
+		pa.doIntencity	= r.getByte()>0
+		pa.doInvert		= r.getByte()>0
+		pa.doStencil	= r.getByte()>0
+		pa.color		= r.getColorByte()
+		pa.defValue		= r.getReal()
 		return true
 
 

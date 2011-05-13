@@ -4,9 +4,10 @@ import OpenTK
 import kri.shade
 
 
-public class UnitApp:
+public class Pass:
 	public final	affects		= List[of string]()
 	public prog		as Bundle	= null
+	public enable		= true
 	public blend		= ''
 	public bumpSpace	= ''
 	public color		= Graphics.Color4.White
@@ -23,7 +24,7 @@ public class AdUnit( ISlave, par.ValuePure[of kri.buf.Texture] ):
 	public final	pScale		= par.ValuePure[of Vector4]()
 	portal Offset	as Vector4	= pOffset.Value
 	portal Scale	as Vector4	= pScale.Value
-	public final	application	= UnitApp()
+	public final	layer		= Pass()
 	
 	public def constructor():
 		pOffset	.Value = Vector4.Zero

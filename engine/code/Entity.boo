@@ -13,6 +13,7 @@ public class Mesh( vb.Storage ):
 	public ind		as vb.Object	= null
 	public final drawMode	as BeginMode
 	public final polySize	as uint
+	public final blockList	= List[of shade.Bundle]()
 	public NumElements as uint:
 		get: return (nVert,nPoly)[ind!=null]
 	
@@ -46,8 +47,10 @@ public class Mesh( vb.Storage ):
 	#---	render functions	---#
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, off as uint, num as uint, nob as uint, tf as TransFeedback) as bool:
+		if bu in blockList:	return
 		if not bu.pushAttribs(ind,vao,dict):
-			#kri.lib.Journal.Log("Failed to render mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
+			kri.lib.Journal.Log("Failed to render mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
+			blockList.Add(bu)
 			return false
 		bu.activate()
 		if tf == TransFeedback.Dummy:
@@ -55,6 +58,7 @@ public class Mesh( vb.Storage ):
 		elif tf:
 			if kri.Ant.Inst.debug and vao.hasConflicts():
 				kri.lib.Journal.Log('Transform Feedback: loop detected')
+				blockList.Add(bu)
 				return false
 			draw(tf)
 		elif nob>0:
