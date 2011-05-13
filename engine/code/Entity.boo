@@ -49,20 +49,24 @@ public class Mesh( vb.Storage ):
 	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, off as uint, num as uint, nob as uint, tf as TransFeedback) as bool:
 		if bu in blockList:	return
 		if not bu.pushAttribs(ind,vao,dict):
-			kri.lib.Journal.Log("Failed to render mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
+			kri.lib.Journal.Log("Render: failed to load mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
 			blockList.Add(bu)
 			return false
 		bu.activate()
+		rez = true
 		if tf == TransFeedback.Dummy:
-			draw(null)
+			rez = draw(null)
 		elif tf:
 			if kri.Ant.Inst.debug and vao.hasConflicts():
-				kri.lib.Journal.Log('Transform Feedback: loop detected')
+				kri.lib.Journal.Log("Transform Feedback: loop detected on shader ${bu}")
 				blockList.Add(bu)
 				return false
-			draw(tf)
+			rez = draw(tf)
 		elif nob>0:
-			draw(off,num,nob)
+			rez = draw(off,num,nob)
+		if not rez:
+			kri.lib.Journal.Log("Render: mesh limitations check failed (v=${nVert},p=${nPoly})")
+			return false
 		return true
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, nob as uint, tf as TransFeedback) as bool:
@@ -73,14 +77,13 @@ public class Mesh( vb.Storage ):
 	
 	#---	internal drawing functions	---#
 	
-	protected def draw(off as uint, num as uint, nob as uint) as void:
-		assert off>=0 and num>=0
+	protected def draw(off as uint, num as uint, nob as uint) as bool:
 		if ind:
-			assert num+off<=nPoly
-			assert num*polySize <= kri.Ant.Inst.caps.elemIndices
-		else:
-			assert num+off<=nVert
-		assert nVert <= kri.Ant.Inst.caps.elemVertices
+			if num+off>nPoly or num*polySize > kri.Ant.Inst.caps.elemIndices:
+				return false
+		elif num+off>nVert:	return false
+		if nVert>kri.Ant.Inst.caps.elemVertices:
+			return false
 		# works for ushort indices only
 		if ind and nob != 1:
 			GL.DrawElementsInstanced( drawMode, polySize*num,
@@ -90,23 +93,28 @@ public class Mesh( vb.Storage ):
 		elif nob != 1:
 			GL.DrawArraysInstanced( drawMode, polySize*off, polySize*num, nob)
 		else:	GL.DrawArrays(		drawMode, polySize*off, polySize*num )
+		return true
 
 	# draw all polygons once
-	protected def draw(nob as uint) as void:
-		draw(0,NumElements,nob)
+	protected def draw(nob as uint) as bool:
+		return draw(0,NumElements,nob)
 	# draw all points
-	private def draw() as void:
+	private def draw() as bool:
+		if nVert>kri.Ant.Inst.caps.elemVertices:
+			return false
 		GL.DrawArrays( BeginMode.Points, 0, nVert )
+		return true
 	# transform points with feedback
-	protected def draw(tf as TransFeedback) as void:
+	protected def draw(tf as TransFeedback) as bool:
 		if not tf:
-			draw()
-			return
+			return draw()
 		using tf.catch():
-			GL.DrawArrays( BeginMode.Points, 0, nVert )
+			draw()
 		nr = tf.result()
 		if nr != nVert:
 			kri.lib.Journal.Log("TransFeedback: bad result size (${nr}) for input (${nVert})")
+			return false
+		return true
 
 
 #--------- Tag ---------#

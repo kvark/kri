@@ -116,7 +116,7 @@ public class Fill( kri.rend.tech.General ):
 				sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
 				sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders
 				app.prog = factory.link( sall, pDic )		# generate program
-			if app.prog and app.prog.Failed:
+			if (not app.prog) or app.prog.LinkFail:
 				continue
 			pTex.Value = un.Value
 			setParams(app)

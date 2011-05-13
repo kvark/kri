@@ -48,8 +48,13 @@ public class Bundle:
 	public	final shader	as Mega
 	public	final dicts		= List[of par.Dict]((kri.Ant.Inst.dict,))
 	private	final params	= List[of Parameter]()
-	[Getter(Failed)]
 	private	failed			as bool	= false
+	
+	public	LinkFail		as bool:
+		get:
+			if not (failed or shader.Ready):
+				link()
+			return failed
 	
 	public	final static Empty	= Bundle(null as Mega)
 	
@@ -62,7 +67,7 @@ public class Bundle:
 		shader = bu.shader
 	
 	public def fillParams() as void:
-		assert shader.Ready
+		if LinkFail:	return
 		params.Clear()
 		tun = 0
 		badNames = List[of string]()
@@ -86,15 +91,14 @@ public class Bundle:
 			fillParams()
 		else:	failed = true
 
-	public def activate() as void:
-		if failed:	return
-		if not shader.Ready:
-			link()
+	public def activate() as bool:
+		if LinkFail:	return false
 		shader.bind()
 		for p in params:
 			p.upload()
 		if kri.Ant.Inst.debug:
-			shader.validate()
+			return shader.validate()
+		return true
 	
 	public def clear() as void:
 		failed = false
@@ -103,8 +107,4 @@ public class Bundle:
 		params.Clear()
 
 	public def pushAttribs(ind as kri.vb.Object, va as kri.vb.Array, dict as kri.vb.Dict) as bool:
-		if failed:
-			return false
-		if not shader.Ready:
-			link()
-		return va.pushAll( ind, shader.attribs, dict )
+		return (not LinkFail) and va.pushAll( ind, shader.attribs, dict )

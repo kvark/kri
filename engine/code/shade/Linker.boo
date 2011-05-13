@@ -29,6 +29,5 @@ public class Linker:
 			bu.dicts.AddRange(dc)
 			if onLink:
 				onLink( bu.shader )
-			bu.link()
 			samap.Add(key,bu)
 		return bu

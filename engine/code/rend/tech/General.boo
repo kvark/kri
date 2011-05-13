@@ -31,8 +31,7 @@ public class General( Basic ):
 					# force attribute order
 					prog.shader.attribAll( e.mesh.gatherAttribs() )
 					prog.link()
-			if prog == kri.shade.Bundle.Empty:
-				continue
+			if prog.LinkFail:	continue
 			if atar:	# merge attribs
 				ats = prog.shader.attribs
 				for i in range(atar.Length):

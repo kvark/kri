@@ -39,9 +39,9 @@ public class Program:
 		kri.lib.Journal.Log("Shader: Failed to link program (${handle}), message: ${log}")
 		return false
 
-	public def validate() as void:
+	public def validate() as bool:
 		GL.ValidateProgram(handle)
-		check( ProgramParameter.ValidateStatus )
+		return check( ProgramParameter.ValidateStatus )
 	
 	# add specific objects
 	public def add(*shads as (Object)) as void:
