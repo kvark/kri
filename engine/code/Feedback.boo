@@ -70,11 +70,14 @@ public class TransFeedback(Query):
 		return CatcherFeed(self,mode)
 	
 	public static def Bind(*buffers as (vb.Object)) as bool:
-		for i as uint in range( buffers.Length ):
+		for i in range( buffers.Length ):
 			bf = Cache[i] = buffers[i]
-			if not bf.Ready:
-				return false
-			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, bf.handle )
+			hid = 0
+			if bf:
+				hid = bf.handle
+				if not bf.Ready:
+					return false
+			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, hid )
 		for i in range( buffers.Length, Cache.Length ):
 			Cache[i] = null
 		return true

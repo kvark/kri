@@ -5,14 +5,14 @@ uniform	float	mat_emissive;
 uniform	vec4	mat_specular;
 uniform	float	mat_glossiness;
 
-in	vec4	normal;
+in	vec3	normal;
 out	vec4	c_diffuse;
 out	vec4	c_specular;
 out	vec4	c_normal;
 
 
 void main()	{
-	vec3 norm = vec3(0.5) + 0.5*normalize(normal.xyz);
+	vec3 norm = vec3(0.5) + 0.5*normalize(normal);
 	float glossy = mat_glossiness / 256.0;
 	
 	c_diffuse	= vec4( mat_diffuse.xyz, mat_emissive );

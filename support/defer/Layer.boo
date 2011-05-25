@@ -74,12 +74,12 @@ public class Fill( kri.rend.tech.General ):
 		for inf in pa.affects:
 			if inf == 'color_diffuse':
 				mDiff.Value.Xyz = Vector3(1f)
-			#if inf == 'color_emission':
-			#	mDiff.Value.W = 1f
+			if inf == 'color_emission':
+				mDiff.Value.W = 1f
 			if inf == 'color_spec':
 				mSpec.Value.Xyz = Vector3(1f)
-			#if inf == 'hardness':
-			#	mSpec.Value.W = 1f
+			if inf == 'hardness':
+				mSpec.Value.W = 1f
 		c = pa.color
 		flag = (0f,1f)[pa.doIntencity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
@@ -87,10 +87,12 @@ public class Fill( kri.rend.tech.General ):
 	# construct: fill
 	public override def construct(mat as kri.Material) as Bundle:
 		bu = Bundle()
+		nShader = ('quat','norm')['normal' in vDict]
 		bu.dicts.Add( mat.dict )
 		sa = bu.shader
 		sa.add( *kri.Ant.Inst.libShaders )
 		sa.add( '/g/layer/make_v', '/g/layer/make_f' )
+		sa.add( "/g/layer/get_${nShader}_v" )
 		sa.fragout(*fout)
 		return bu
 	
