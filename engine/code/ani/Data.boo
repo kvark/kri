@@ -18,7 +18,7 @@ public interface IPlayer:
 	def touch() as void
 
 public interface IChannel:
-	def update(pl as IPlayer, time as single) as void
+	def update(pl as IPlayer, time as single) as bool
 	ElemId	as byte:
 		get
 	Valid	as bool:
@@ -56,9 +56,12 @@ public class Channel[of T(struct)](IChannel):
 		kar = array[of Key[of T]](num)
 		elid,fup = id,f
 
-	def IChannel.update(pl as IPlayer, time as single) as void:
-		return	if not Valid
+	def IChannel.update(pl as IPlayer, time as single) as bool:
+		if not Valid:
+			kri.lib.Journal.Log("Animation: Failed to play channel (${tag}) of player (${pl})")
+			return false
 		fup(pl, moment(time), elid)
+		return true
 		
 	public def moment(time as single) as T:
 		assert lerp and kar.Length
@@ -116,10 +119,11 @@ public class Anim( kri.ani.Basic ):
 	
 	def kri.ani.IBase.onFrame(time as double) as uint:
 		if not record:
-			return 2	
+			return 2
 		if time > record.length:
 			return 1
 		for c in record.channels:
-			c.update(player,time)
+			if not c.update(player,time):
+				return 3
 		player.touch()
 		return 0

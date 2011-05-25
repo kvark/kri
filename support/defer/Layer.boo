@@ -114,7 +114,6 @@ public class Fill( kri.rend.tech.General ):
 		fbo.setMask(7)
 		if not mesh.render( va, bu, vDict, tm.off, tm.num, 1, null ):
 			return
-		return
 		if not shadeUnits:	return
 		for un in tm.mat.unit:
 			app = un.layer

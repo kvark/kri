@@ -38,8 +38,11 @@ public class ExAnim( kri.IExtension ):
 			n.touch()
 	
 	private static def RacMatColor(name as string):
-		return Rac(getColor)		do(pl as IPlayer, v as Color4, i as byte):
+		return Rac(getColor)	do(pl as IPlayer, v as Color4, i as byte):
 			((pl as kri.Material).Meta[name] as kri.meta.Data[of Color4]).Value = v
+	private static def RacMatValue(name as string):
+		return Rac(getReal)		do(pl as IPlayer, v as single, i as byte):
+			((pl as kri.Material).Meta[name] as kri.meta.Data[of single]).Value = v
 	private static def RacTexUnit(fun as callable(kri.meta.AdUnit) as kri.shade.par.ValuePure[of Vector4]):
 		return Rac(getVector)	do(pl as IPlayer, v as Vector3, i as byte):
 			fun((pl as kri.Material).unit[i-1]).Value = Vector4(v)
@@ -80,6 +83,7 @@ public class ExAnim( kri.IExtension ):
 		# material
 		anid['m.diffuse_color']		= RacMatColor('diffuse')
 		anid['m.specular_color']	= RacMatColor('specular')
+		anid['m.specular_hardness']	= RacMatValue('glossiness') 
 		anid['m.halo.size']			= Rac(getReal) do(pl as IPlayer, v as single, i as byte):
 			((pl as kri.Material).Meta['halo'] as kri.meta.Halo).Data.X = v
 		# texture unit
