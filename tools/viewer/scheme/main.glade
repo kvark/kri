@@ -90,7 +90,8 @@
                         <property name="items" translatable="yes">Debug
 Simple
 Forward
-Deferred</property>
+Deferred
+Layered</property>
                       </widget>
                     </child>
                   </widget>

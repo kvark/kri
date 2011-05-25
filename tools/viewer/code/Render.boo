@@ -51,7 +51,8 @@ public class RenderSet:
 			for ren in (rSkin,rZcull,rEmi,rParticle,rSurfBake,grForward):
 				ren.active = true
 			rEmi.fillDepth = false
-		if str == 'Deferred':
+		if str in ('Deferred','Layered'):
 			for ren in (rSkin,rZcull,grDeferred,rParticle,rSurfBake):
 				ren.active = true
+			grDeferred.Layered = (str == 'Layered')
 		return rChain

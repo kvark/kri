@@ -27,13 +27,27 @@ public class Context:
 #---------	GROUP	--------#
 
 public class Group( kri.rend.Group ):
-	public	final con	as Context
+	public	final	con		as Context
+	public	final	rFill		as fill.Fork	= null
+	public	final	rLayer		as layer.Fill	= null
+	public	final	rApply		as Apply		= null
+	public	final	rParticle	as Particle		= null
+	public	Layered	as bool:
+		get: return rLayer.active
+		set:
+			rLayer.active = value
+			rFill.active = not value
+	
 	public def constructor(qord as byte, lc as support.light.Context, pc as kri.part.Context):
-		cx = Context()
+		con = cx = Context()
+		rFill	= fill.Fork(cx)
+		rLayer	= layer.Fill(cx)
 		rl = List[of kri.rend.Basic]()
-		#rl.Add( fill.Fork(cx) )
-		rl.Add( layer.Fill(cx) )
-		if lc:	rl.Add( Apply	(lc,cx,qord) )
-		if pc:	rl.Add( Particle(pc,cx,qord) )
+		rl.Extend(( rFill, rLayer ))
+		if lc:
+			rApply = Apply(lc,cx,qord)
+			rl.Add(rApply)
+		if pc:
+			rParticle = Particle(pc,cx,qord)
+			rl.Add(rParticle)
 		super( *rl.ToArray() )
-		con = cx
