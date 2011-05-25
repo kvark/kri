@@ -18,10 +18,11 @@ void main()	{
 	vec4	value	= texture( unit_texture, tc.xy );
 	if (value.w<0.01)	discard;
 
-	vec4	alt	= vec4(user_color.xyz,1.0) * dot(value.xyz,luminance);
-	vec4	color	= mix( value, alt, user_color.w );
-	color.w	= dot(color.xyz,color.xyz);
+	float	single	= dot(value.xyz,luminance);
+	vec3	alt	= single * user_color.xyz;
+	vec3	color	= mix( value.xyz, alt, user_color.w );
+	vec4	rez	= vec4( color, single );
 	
-	c_diffuse	= mix( z4, color, mask_diffuse );
-	c_specular	= mix( z4, color, mask_specular );
+	c_diffuse	= mix( z4, rez, mask_diffuse );
+	c_specular	= mix( z4, rez, mask_specular );
 }

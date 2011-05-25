@@ -83,6 +83,7 @@ public class Reader:
 		c = getColorByte()
 		c.A = getReal()	# alpha
 		v = getReal()	# intensity
+		#v *= v			# squared
 		c.R *= v; c.G *= v; c.B *= v
 		return c
 

@@ -20,7 +20,6 @@ float comp_specular(vec3,vec3,vec3,float);
 
 //---	TRANSFORM	---//
 vec3 trans_for2(vec3,Spatial);
-vec3 trans_inv2(vec3,Spatial);
 
 //---	TOOLS		---//
 vec3 unproject(vec3,vec4);
@@ -39,7 +38,6 @@ void main()	{
 	float depth = texture(unit_depth,tc).r;
 	vec3 p_camera	= unproject( vec3(tc,depth), proj_cam );
 	vec3 p_world	= trans_for2(p_camera, s_cam);
-	vec3 p_light	= trans_inv2(p_world, s_light);
 	
 	//read G-buffer
 	vec4 g_diffuse	= texture(unit_g0,tc);
@@ -50,14 +48,14 @@ void main()	{
 	
 	//compute light contribution
 	vec3 v_lit = s_light.pos.xyz - p_world;
-	vec3 v2lit = normalize( v_lit );
+	float len  = length(v_lit);
+	vec3 v2lit = v_lit / len;
 	vec3 v2cam = normalize( s_cam.pos.xyz - p_world );
-	float diff = comp_diffuse(  normal, v2lit ) + g_diffuse.w;
-	float spec = comp_specular( normal, v2lit, v2cam, 100.0*g_specular.w );
+	float diff = comp_diffuse(  normal, v2lit );	//no emissive
+	float spec = comp_specular( normal, v2lit, v2cam, 256.0*g_specular.w );
 	
 	//write attenuated color
-	float intensity = get_attenuation2( length(v_lit) );
-	//no need for discard, because we are drawing a sphere with depth test
-	//if( intensity*(diff+spec) < 0.01 ) discard;
+	float intensity = get_attenuation2(len);
+	if( intensity*(diff+spec) < 0.01 ) discard;
 	rez_color = intensity*lit_color * (diff*g_diffuse + spec*g_specular);
 }

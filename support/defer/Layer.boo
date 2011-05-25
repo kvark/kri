@@ -12,8 +12,8 @@ public class Fill( kri.rend.tech.General ):
 	private final	fbo		as kri.buf.Holder
 	private final	factory	= kri.shade.Linker(onLink)
 	private	doNormal		= false
-	private	mesh	as kri.Mesh		= null
-	private	vDict	as kri.vb.Dict	= null
+	private	mesh		as kri.Mesh		= null
+	private	vDict		as kri.vb.Dict	= null
 	private final	din		= Dictionary[of string,kri.meta.Hermit]()
 	private final	sDefer	= Object.Load('/lib/defer_f')
 	private	final	sVert	= Object.Load('/g/layer/pass_v')
@@ -74,13 +74,17 @@ public class Fill( kri.rend.tech.General ):
 		for inf in pa.affects:
 			if inf == 'color_diffuse':
 				mDiff.Value.Xyz = Vector3(1f)
+			#if inf == 'color_emission':
+			#	mDiff.Value.W = 1f
 			if inf == 'color_spec':
 				mSpec.Value.Xyz = Vector3(1f)
+			#if inf == 'hardness':
+			#	mSpec.Value.W = 1f
 		c = pa.color
 		flag = (0f,1f)[pa.doIntencity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
 
-	# construct
+	# construct: fill
 	public override def construct(mat as kri.Material) as Bundle:
 		bu = Bundle()
 		bu.dicts.Add( mat.dict )
@@ -90,11 +94,27 @@ public class Fill( kri.rend.tech.General ):
 		sa.fragout(*fout)
 		return bu
 	
+	# construct: layer
+	private def makeLayerProgram(un as kri.meta.AdUnit, space as string) as Bundle:
+		uname = 'unit'
+		din[uname] = un.input
+		mapins = kri.load.Meta.MakeTexCoords(false,din)
+		if not mapins:	return Bundle.Empty
+		(un as kri.meta.ISlave).link(uname,pDic)	# add offset and scale under proper names
+		(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
+		sall = List[of Object](mapins)
+		sall.Add( (sFrag,sNorm)[doNormal] )			# normal space shader
+		sall.Add( getSpaceShader(('',space)[doNormal]) )
+		sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
+		sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders
+		return factory.link( sall, pDic )			# generate program
+	
 	# draw
 	protected override def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as Bundle) as void:
 		fbo.setMask(7)
 		if not mesh.render( va, bu, vDict, tm.off, tm.num, 1, null ):
 			return
+		return
 		if not shadeUnits:	return
 		for un in tm.mat.unit:
 			app = un.layer
@@ -102,21 +122,8 @@ public class Fill( kri.rend.tech.General ):
 				continue
 			doNormal = ('normal' in app.affects)
 			if not app.prog:
-				uname = 'unit'
-				din[uname] = un.input
-				mapins = kri.load.Meta.MakeTexCoords(false,din)
-				if not mapins:
-					app.prog = Bundle.Empty
-					continue
-				(un as kri.meta.ISlave).link(uname,pDic)	# add offset and scale under proper names
-				(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
-				sall = List[of Object](mapins)
-				sall.Add( (sFrag,sNorm)[doNormal] )	# normal space shader
-				sall.Add( getSpaceShader(('',app.bumpSpace)[doNormal]) )
-				sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
-				sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders
-				app.prog = factory.link( sall, pDic )		# generate program
-			if (not app.prog) or app.prog.LinkFail:
+				app.prog = makeLayerProgram( un, app.bumpSpace )
+			if app.prog.LinkFail:
 				continue
 			pTex.Value = un.Value
 			setParams(app)
@@ -130,7 +137,7 @@ public class Fill( kri.rend.tech.General ):
 					kri.lib.Journal.Log("Blend: unknown mode (${app.blend})")
 					app.blend = ''
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
-		GL.Disable( EnableCap.Blend )
+		Blend = false
 
 	# resize
 	public override def setup(pl as kri.buf.Plane) as bool:

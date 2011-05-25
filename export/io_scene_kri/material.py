@@ -156,6 +156,7 @@ def save_mat(mat):
 	print("[%s] %s" % (mat.name,mat.type))
 	out.begin('mat')
 	out.text( mat.name )
+	out.pack('2B', mat.use_shadeless, mat.use_tangent_shading)
 	out.end()
 	# diffuse subroutine
 	def save_diffuse(model):

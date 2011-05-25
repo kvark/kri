@@ -20,7 +20,7 @@ out	vec4	c_normal;
 
 void main()	{
 	vec3 w_norm = get_norm();
-	float glossy = 0.01 * get_glossiness();
+	float glossy = get_glossiness() / 256.0;
 	vec3 diff = get_diffuse().xyz;
 	
 	c_diffuse	= vec4( diff, get_emissive() );
