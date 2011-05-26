@@ -30,7 +30,7 @@ public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed, kri.ani.IBase )
 	kri.vb.ISemanted.Semant	as List[of kri.vb.Info]:
 		get: return (mesh.vbo[0].Semant	if mesh.vbo.Count	else null)
 	public	Ready as bool:
-		get: return mesh.vbo.Count>0 and Data.Ready
+		get: return mesh.vbo.Count>0 and Data.Allocated>0
 
 	public def constructor(pm as Manager, str as string):
 		owner,name = pm,str

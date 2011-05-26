@@ -72,12 +72,9 @@ public class TransFeedback(Query):
 	public static def Bind(*buffers as (vb.Object)) as bool:
 		for i in range( buffers.Length ):
 			bf = Cache[i] = buffers[i]
-			hid = 0
-			if bf:
-				hid = bf.handle
-				if not bf.Ready:
-					return false
-			GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, i, hid )
+			if not bf:	bf = vb.Object.Zero
+			if not bf.Allocated:	return false
+			bf.bindAsDestination(i)
 		for i in range( buffers.Length, Cache.Length ):
 			Cache[i] = null
 		return true

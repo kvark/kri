@@ -10,8 +10,13 @@ import OpenTK.Graphics.OpenGL
 
 public class Object:
 	public	final handle	as uint
-	[getter(Ready)]
-	private	filled			as bool	= false
+	[Getter(TimeStamp)]
+	private	timeStamp		as uint	= 0
+	[Getter(Allocated)]
+	private	allocated		as uint = 0
+	
+	public	static	final	Zero = Object(0)
+	
 	public	static Bind[targ as BufferTarget] as Object:
 		set: GL.BindBuffer( targ, (value.handle if value else cast(uint,0)) )
 	public	static Index	as Object:
@@ -23,31 +28,44 @@ public class Object:
 	public	static Unpack	as Object:
 		set: Bind[BufferTarget.PixelUnpackBuffer	] = value
 	public	static final DefTarget	= BufferTarget.ArrayBuffer
+	
 	# creating
 	public def constructor():
 		tmp = 0
 		GL.GenBuffers(1,tmp)
 		handle = tmp
+	private def constructor(hid as uint):
+		handle = hid
+		allocated = 1
 	def destructor():
 		tmp = handle
 		kri.Help.safeKill({ GL.DeleteBuffers(1,tmp) })
+	
 	# binding
 	public def bind() as void:
 		Bind[DefTarget] = self
+	public def bindAsDestination(id as uint) as void:
+		GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, id, handle )
+		timeStamp += 1
+	
 	# filling
 	private static def GetHint(dyn as bool) as BufferUsageHint:
 		return (BufferUsageHint.StreamDraw if dyn else BufferUsageHint.StaticDraw)
 	public def init(size as uint) as void:
 		bind()
+		allocated = size
 		GL.BufferData(DefTarget, IntPtr(size), IntPtr.Zero, GetHint(true))
-		filled = true
+		timeStamp += 1
 	public def init[of T(struct)](ptr as (T), dyn as bool) as void:
 		bind()
-		GL.BufferData(DefTarget, IntPtr(ptr.Length * kri.Sizer[of T].Value), ptr, GetHint(dyn))
-		filled = true
+		allocated = ptr.Length * kri.Sizer[of T].Value
+		GL.BufferData(DefTarget, IntPtr(allocated), ptr, GetHint(dyn))
+		timeStamp += 1
+	
 	# mapping
 	public def tomap(ba as BufferAccess) as IntPtr:
 		bind()
+		timeStamp += (0,1)[ba != BufferAccess.ReadOnly]
 		return GL.MapBuffer(DefTarget,ba)
 	public def unmap() as bool:
 		return GL.UnmapBuffer(DefTarget)

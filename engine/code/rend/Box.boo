@@ -5,9 +5,23 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Tag( kri.ITag ):
-	public final	buf	= kri.vb.Object()
+	public	final	buf	= kri.vb.Object()
+	private	animated	= false
+	private	stamp		as uint	= 0
+	
+	public def check(e as kri.Entity) as bool:
+		bv = e.findAny('vertex')
+		if animated != (bv!=null):
+			animated = not animated
+			stamp = 0
+		if stamp == bv.TimeStamp:
+			return false
+		stamp = bv.TimeStamp
+		return true
+	
 	public def constructor():
 		buf.init( 2*4*sizeof(single) )
+
 
 
 public class Update( kri.rend.Basic ):
@@ -31,7 +45,8 @@ public class Update( kri.rend.Basic ):
 			blend.min()
 			for e in scene.entities:
 				tag = e.seTag[of Tag]()
-				if not tag:	continue
+				if not (tag and tag.check(e)):
+					continue
 				#tex.init( SizedInternalFormat.Rgba32f, tag.buf )
 				fbo.bind()
 				v = single.PositiveInfinity
@@ -39,9 +54,7 @@ public class Update( kri.rend.Basic ):
 				e.render( va,bu, kri.TransFeedback.Dummy )
 				kri.vb.Object.Pack = tag.buf
 				tex.read( PixelType.Float )
-			for e in scene.entities:
-				tag = e.seTag[of Tag]()
-				if not tag:	continue
+				# read back
 				tag.buf.read(d)
 				v0 = Vector3(d[0],d[1],d[2])
 				v1 = Vector3(d[4],d[5],d[6])
