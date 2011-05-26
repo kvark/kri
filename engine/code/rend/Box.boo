@@ -9,8 +9,7 @@ public class Tag( kri.ITag ):
 	private	animated	= false
 	private	stamp		as uint	= 0
 	
-	public def check(e as kri.Entity) as bool:
-		bv = e.findAny('vertex')
+	public def check(bv as kri.vb.Object) as bool:
 		if animated != (bv!=null):
 			animated = not animated
 			stamp = 0
@@ -45,7 +44,8 @@ public class Update( kri.rend.Basic ):
 			blend.min()
 			for e in scene.entities:
 				tag = e.seTag[of Tag]()
-				if not (tag and tag.check(e)):
+				bv = e.findAny('vertex')
+				if not (tag and tag.check(bv)):
 					continue
 				#tex.init( SizedInternalFormat.Rgba32f, tag.buf )
 				fbo.bind()

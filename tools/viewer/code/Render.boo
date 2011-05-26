@@ -8,7 +8,7 @@ public class RenderSet:
 	public	final	rZcull	= kri.rend.EarlyZ()
 	public	final	rColor	= kri.rend.Color()
 	public	final	rEmi	= kri.rend.Emission()
-	public	final	rSkin	= support.skin.Update(true)
+	public	final	rSkin	= support.skin.Universal()
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
 	public	final	rAttrib	= kri.rend.debug.Attrib()
 	public	final	rNormal		as support.light.normal.Apply

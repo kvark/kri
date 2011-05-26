@@ -85,6 +85,7 @@
     <Compile Include="reflect\Main.boo" />
     <Compile Include="skin\App.boo" />
     <Compile Include="skin\Main.boo" />
+    <Compile Include="skin\Uni.boo" />
     <Compile Include="vanburen\Model.boo" />
   </ItemGroup>
   <ItemGroup>
