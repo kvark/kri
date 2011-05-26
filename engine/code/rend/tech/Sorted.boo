@@ -64,13 +64,13 @@ public abstract class Sorted(General):
 		bat.off = tm.off
 		tempList.Add(bat)
 	
-	public override def addObject(e as kri.Entity) as bool:
+	public override def addObject(e as kri.Entity, vd as kri.vb.Dict) as bool:
 		tempList.Clear()
 		bat.dict = e.CombinedAttribs
 		bat.e = e
 		for de in extraDict:
 			bat.dict.Add( de.Key, de.Value )
-		if super(e):
+		if super(e,vd):
 			butch.AddRange(tempList)
 			return true
 		return false
@@ -82,7 +82,7 @@ public abstract class Sorted(General):
 			return
 		butch.Clear()
 		for e in scene.entities:
-			addObject(e)
+			addObject(e,null)
 		if comparer:
 			butch.Sort(comparer)
 		for b in butch:

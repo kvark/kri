@@ -23,6 +23,7 @@ public class Fill( kri.rend.tech.General ):
 	# params
 	private final	pDic	= par.Dict()
 	private final	pZero	= par.Value[of single]('zero')
+	private	final	pHas	= par.Value[of int]('has_data')
 	private final	pTex	= par.Texture('texture')
 	private final	pColor	= par.Value[of Vector4]('user_color')
 	private final	mDiff	= par.Value[of Vector4]('mask_diffuse')
@@ -35,6 +36,7 @@ public class Fill( kri.rend.tech.General ):
 		fbo = con.buf
 		pDic.var(pColor,mDiff,mSpec,mNorm)
 		pDic.var(pZero)
+		pDic.var(pHas)
 		pDic.unit(pTex)
 	
 	private def onLink(sa as Mega) as void:
@@ -87,12 +89,10 @@ public class Fill( kri.rend.tech.General ):
 	# construct: fill
 	public override def construct(mat as kri.Material) as Bundle:
 		bu = Bundle()
-		nShader = ('quat','norm')['normal' in vDict]
-		bu.dicts.Add( mat.dict )
+		bu.dicts.AddRange(( mat.dict, pDic ))
 		sa = bu.shader
 		sa.add( *kri.Ant.Inst.libShaders )
-		sa.add( '/g/layer/make_v', '/g/layer/make_f' )
-		sa.add( "/g/layer/get_${nShader}_v" )
+		sa.add( '/g/layer/make_v', '/g/layer/get_uni_v', '/g/layer/make_f' )
 		sa.fragout(*fout)
 		return bu
 	
@@ -158,4 +158,5 @@ public class Fill( kri.rend.tech.General ):
 			kri.Ant.Inst.params.activate(e)
 			vDict = e.CombinedAttribs
 			mesh = e.mesh
-			addObject(e)
+			pHas.Value = vDict.fake('vertex','normal','quat')
+			addObject(e,vDict)

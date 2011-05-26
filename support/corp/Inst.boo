@@ -38,6 +38,6 @@ public class Rend( kri.rend.tech.Meta ):
 				extraDict['ghost_'+s] = en
 			if ent:
 				cur = pe
-				addObject(ent)
+				addObject(ent,null)
 		for b in butch:
 			b.draw()

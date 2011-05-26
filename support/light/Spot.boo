@@ -92,7 +92,7 @@ public class Apply( kri.rend.tech.Meta ):
 			lit = l
 			# determine subset of affected objects
 			for e in scene.entities:
-				addObject(e)
+				addObject(e,null)
 		butch.Sort( kri.rend.tech.Batch.cMat )
 		# draw
 		con.activate( con.Target.Same, 0f, false )

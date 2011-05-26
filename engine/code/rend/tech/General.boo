@@ -11,7 +11,7 @@ public class General( Basic ):
 	protected abstract def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as kri.shade.Bundle) as void:
 		pass
 
-	public virtual def addObject(e as kri.Entity) as bool:
+	public virtual def addObject(e as kri.Entity, vd as kri.vb.Dict) as bool:
 		if not e.visible:
 			return false
 		atar	as (kri.shade.Attrib)	= null
@@ -40,7 +40,8 @@ public class General( Basic ):
 					assert not atar[i].name
 					atar[i] = ats[i]
 			onPass(vao,tag,prog)
-		if atar and not vao.pushAll( e.mesh.ind, atar, e.CombinedAttribs ):
+		if atar and not vd:	vd = e.CombinedAttribs
+		if atar and not vao.pushAll( e.mesh.ind, atar, vd ):
 			e.va[name] = kri.vb.Array.Default
 			return false
 		return true

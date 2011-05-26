@@ -40,14 +40,12 @@ public class Universal( kri.rend.tech.Basic ):
 			vDict = kri.vb.Dict( e.mesh )
 			vos = (of kri.vb.Attrib: null,null,null)
 			names = (of string: 'vertex','normal','quat')
+			pHas.Value = vDict.fake(*names)
 			for i in range( vos.Length ):
 				vos[i] = e.store.find(names[i])
 				if vos[i]:		continue
 				orig = e.mesh.find(names[i])
-				if not orig:
-					vDict[names[i]] = vDict[names[0]]
-					pHas.Value ^= 1<<i
-					continue
+				if not orig:	continue
 				assert orig.Semant.Count==1
 				ai = orig.Semant[0]
 				vos[i] = v = kri.vb.Attrib()

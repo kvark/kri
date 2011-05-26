@@ -21,6 +21,14 @@ public class Dict( Dictionary[of string,Entry] ):
 		super()
 		for st in stores:
 			if st: st.fillEntries(self)
+	public def fake(*names as (string)) as byte:
+		mask = 0
+		for i in range(names.Length):
+			if names[i]	in Keys:
+				mask |= 1<<i
+			else:
+				self[names[i]] = self[names[0]]
+		return mask
 
 
 

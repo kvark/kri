@@ -28,7 +28,7 @@ public class Fork( kri.rend.Basic ):
 						good = false
 						break
 				if good:
-					d.Value.addObject(e)
+					d.Value.addObject(e,null)
 		for r in dict.Values:
 			for b in r.butch:
 				b.draw()
