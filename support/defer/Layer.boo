@@ -22,20 +22,15 @@ public class Fill( kri.rend.tech.General ):
 	private final	fout	= ('c_diffuse','c_specular','c_normal')
 	# params
 	private final	pDic	= par.Dict()
-	private final	pZero	= par.Value[of single]('zero')
 	private	final	pHas	= par.Value[of int]('has_data')
 	private final	pTex	= par.Texture('texture')
 	private final	pColor	= par.Value[of Vector4]('user_color')
-	private final	mDiff	= par.Value[of Vector4]('mask_diffuse')
-	private final	mSpec	= par.Value[of Vector4]('mask_specular')
-	private final	mNorm	= par.Value[of Vector4]('mask_normal')
 
 	# init
 	public def constructor(con as support.defer.Context):
 		super('g.layer.fill')
 		fbo = con.buf
-		pDic.var(pColor,mDiff,mSpec,mNorm)
-		pDic.var(pZero)
+		pDic.var(pColor)
 		pDic.var(pHas)
 		pDic.unit(pTex)
 	
@@ -58,33 +53,39 @@ public class Fill( kri.rend.tech.General ):
 	private def setBlend(str as string) as bool:
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
 		if str == '':
-			pZero.Value = 0f
-			GL.BlendFunc( BlendingFactorSrc.One, BlendingFactorDest.Zero )
+			GL.BlendFunc( BlendingFactorSrc.One, 		BlendingFactorDest.Zero )
 		elif str == 'MIX':
-			pZero.Value = 1f
-			GL.BlendFunc( BlendingFactorSrc.DstColor, BlendingFactorDest.Zero )
+			GL.BlendFunc( BlendingFactorSrc.DstColor,	BlendingFactorDest.Zero )
 		elif str == 'ADD':
-			pZero.Value = 0f
-			GL.BlendFunc( BlendingFactorSrc.One, BlendingFactorDest.One )
+			GL.BlendFunc( BlendingFactorSrc.One, 		BlendingFactorDest.One )
 		else:	return false
 		return true
 	
 	private def setParams(pa as kri.meta.Pass) as void:
-		mDiff.Value = Vector4(0f)
-		mSpec.Value = Vector4(0f)
-		mNorm.Value = Vector4(0f)
+		# set blending
+		if not setBlend( pa.blend ):
+			kri.lib.Journal.Log("Blend: unknown mode (${pa.blend})")
+			pa.blend = ''
+		# set mask
+		afDiff = afEmis = false
+		afSpec = afHard = false
 		for inf in pa.affects:
 			if inf == 'color_diffuse':
-				mDiff.Value.Xyz = Vector3(1f)
+				afDiff = true
 			if inf == 'color_emission':
-				mDiff.Value.W = 1f
+				afEmis = true
 			if inf == 'color_spec':
-				mSpec.Value.Xyz = Vector3(1f)
+				afSpec = true
 			if inf == 'hardness':
-				mSpec.Value.W = 1f
+				afHard = true
+		GL.ColorMask(false,false,false,false)	# ATI workaround
+		GL.ColorMask(0, afDiff,afDiff,afDiff, afEmis)
+		GL.ColorMask(1, afSpec,afSpec,afSpec, afHard)
+		# set manual color
 		c = pa.color
-		flag = (0f,1f)[pa.doIntencity]
+		flag = (0f,1f)[pa.doIntensity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
+		
 
 	# construct: fill
 	public override def construct(mat as kri.Material) as Bundle:
@@ -114,6 +115,7 @@ public class Fill( kri.rend.tech.General ):
 	# draw
 	protected override def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as Bundle) as void:
 		fbo.setMask(7)
+		GL.ColorMask(true,true,true,true)
 		if not mesh.render( va, bu, vDict, tm.off, tm.num, 1, null ):
 			return
 		if not shadeUnits:	return
@@ -127,16 +129,14 @@ public class Fill( kri.rend.tech.General ):
 			if app.prog.LinkFail:
 				continue
 			pTex.Value = un.Value
-			setParams(app)
 			if doNormal:
 				Blend = false
 				fbo.setMask(4)
+				GL.ColorMask(0,true,true,true,true)
 			else:
 				Blend = true
 				fbo.setMask(3)
-				if not setBlend( app.blend ):
-					kri.lib.Journal.Log("Blend: unknown mode (${app.blend})")
-					app.blend = ''
+				setParams(app)
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
 		Blend = false
 
@@ -160,3 +160,4 @@ public class Fill( kri.rend.tech.General ):
 			mesh = e.mesh
 			pHas.Value = vDict.fake('vertex','normal','quat')
 			addObject(e,vDict)
+		GL.ColorMask(true,true,true,true)

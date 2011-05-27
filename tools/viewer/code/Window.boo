@@ -404,8 +404,8 @@ public class GladeApp:
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)
-		filt = Gtk.FileFilter( Name:'kri scenes' )
-		filt.AddPattern("*.scene")
+		filt = Gtk.FileFilter( Name:'KRI Scenes' )
+		filt.AddPattern('.scene')
 		dOpen.AddFilter(filt)
 		# make panel
 		propertyBook.ShowTabs = false

@@ -116,7 +116,7 @@ public class ExMaterial( kri.IExtension ):
 		pa = u.layer
 		pa.blend		= r.getString()
 		pa.bumpSpace	= r.getString()
-		pa.doIntencity	= r.getByte()>0
+		pa.doIntensity	= r.getByte()>0
 		pa.doInvert		= r.getByte()>0
 		pa.doStencil	= r.getByte()>0
 		pa.color		= r.getColorByte()
