@@ -58,34 +58,41 @@ public class Frame:
 	public virtual def bind() as void:
 		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
 		rect = Drawing.Rectangle()
-		getRect(rect)
+		pl = getRect(rect)
 		GL.Viewport(rect)
+		kri.Ant.Inst.params.activate(pl)
 	
 	private abstract def getReadMode() as ReadBufferMode:
 		pass
 	
-	public def bindRead(color as bool) as void:
+	public def bindRead(color as bool) as bool:
 		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
 		rm = cast(ReadBufferMode,0)
 		if color:
 			rm = getReadMode()
+			if not rm:	return false
 		GL.ReadBuffer(rm)
+		return true
 	
-	public def copyTo(fr as Frame, what as ClearBufferMask) as void:
+	public def copyTo(fr as Frame, what as ClearBufferMask) as bool:
 		assert self != fr
 		bind()	# update attachments
 		fr.bind()
-		bindRead( (what & ClearBufferMask.ColorBufferBit) != 0 )
+		doColor = (what & ClearBufferMask.ColorBufferBit) != 0 
+		if not bindRead(doColor):
+			kri.lib.Journal.Log("Blit: failed to bind read buffer (${handle})")
+			return false
 		r0 = r1 = Drawing.Rectangle()
 		i0 = getRect(r0)
 		i1 = fr.getRect(r1)
 		if not i0.isCompatible(i1):
 			kri.lib.Journal.Log("Blit: incompatible framebuffers (${handle}->)")
-			return
+			return false
 		GL.BlitFramebuffer(
 			r0.Left, r0.Top, r0.Right, r0.Bottom,
 			r1.Left, r1.Top, r1.Right, r1.Bottom,
 			what, BlitFramebufferFilter.Linear )
+		return true
 	
 	# reading
 	

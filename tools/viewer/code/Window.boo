@@ -171,7 +171,7 @@ public class GladeApp:
 		eMorph	= support.morph.Extra()
 		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
 		ant.anim = al
-		rset = RenderSet( true, eCorp.con, null )
+		rset = RenderSet( true, eCorp.con )
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -405,7 +405,7 @@ public class GladeApp:
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)
 		filt = Gtk.FileFilter( Name:'KRI Scenes' )
-		filt.AddPattern('.scene')
+		filt.AddPattern('*.scene')
 		dOpen.AddFilter(filt)
 		# make panel
 		propertyBook.ShowTabs = false

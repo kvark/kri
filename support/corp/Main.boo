@@ -81,7 +81,10 @@ public class Extra( kri.IExtension ):
 		pe.obj = r.geData[of kri.Entity]()
 		r.at.scene.particles.Add(pe)
 		# link to material
-		pe.mat = r.at.mats[ r.getString() ]
+		matName = r.getString()
+		if not r.at.mats.TryGetValue(matName, pe.mat):
+			kri.lib.Journal.Log("Loader: particle material not found (${matName})");
+			pe.mat = null
 		if not pe.mat:
 			pe.mat = kri.Ant.Inst.loaders.materials.con.mDef
 		# post-process

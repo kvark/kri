@@ -76,7 +76,10 @@ public class Holder(Frame):
 		checkStatus()
 	
 	private override def getReadMode() as ReadBufferMode:
-		return ReadBufferMode.ColorAttachment0
+		if not mask:	return cast(ReadBufferMode,0)
+		i = 0
+		while (mask>>i)&1 == 0: i+=1
+		return ReadBufferMode.ColorAttachment0+i
 
 	public def resize(wid as uint, het as uint) as void:
 		for sf in at.All:

@@ -81,8 +81,8 @@ public class Window( GameWindow ):
 	
 	public override def OnResize(e as EventArgs) as void:
 		for v in views:
-			continue	if v.resize(Width,Height)
-			raise 'View resize fail!'
+			if v.resize(Width,Height): continue
+			lib.Journal.Log("Resize: failed on view (${v})")
 	
 	public override def OnUpdateFrame(e as FrameEventArgs) as void:
 		core.update( (1,0)[ticks] )

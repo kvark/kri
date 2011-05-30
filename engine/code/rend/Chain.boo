@@ -47,6 +47,7 @@ public class Chain(Basic):
 					r.process(ln)
 			else:	r.process(ln)
 		if con:
+			con.activate(false)
 			ln.blitTo(con)
 	
 	public def genReport() as string:

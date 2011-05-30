@@ -26,12 +26,27 @@ public class Context:
 
 #---------	GROUP	--------#
 
+public class BugLayer( kri.rend.Basic ):
+	public	final fbo	as kri.buf.Holder
+	public	layer		as int	= -1
+	public def constructor(con as Context):
+		fbo = con.buf
+	public override def process(link as kri.rend.link.Basic) as void:
+		if layer<0: return
+		link.activate(false)
+		fbo.mask = 1<<layer
+		fbo.copyTo( link.Frame, ClearBufferMask.ColorBufferBit )
+
+
+#---------	GROUP	--------#
+
 public class Group( kri.rend.Group ):
-	public	final	con		as Context
+	public	final	con			as Context
 	public	final	rFill		as fill.Fork	= null
 	public	final	rLayer		as layer.Fill	= null
 	public	final	rApply		as Apply		= null
 	public	final	rParticle	as Particle		= null
+	public	final	rBug		as BugLayer		= null
 	public	Layered	as bool:
 		get: return rLayer.active
 		set:
@@ -50,4 +65,11 @@ public class Group( kri.rend.Group ):
 		if pc:
 			rParticle = Particle(pc,cx,qord)
 			rl.Add(rParticle)
+		rBug = BugLayer(cx)
+		rl.Add(rBug)
+		if not 'DebugTexture':
+			pt = kri.shade.par.UnitProxy() do():
+				return cx.buf.at.color[0] as kri.buf.Texture
+			rMapX = kri.rend.debug.Map(false,false,0,pt)
+			rl.Add(rMapX)
 		super( *rl.ToArray() )

@@ -127,6 +127,8 @@ public class ExMaterial( kri.IExtension ):
 	#---	Parse material	---#
 	public def p_mat(r as Reader) as bool:
 		m = kri.Material( r.getString() )
+		r.getByte()	# shadeless
+		r.getByte()	# tangent shading
 		r.at.mats[m.name] = m
 		r.puData(m)
 		r.addPostProcess() do(n as kri.Node):

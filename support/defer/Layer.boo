@@ -160,4 +160,5 @@ public class Fill( kri.rend.tech.General ):
 			mesh = e.mesh
 			pHas.Value = vDict.fake('vertex','normal','quat')
 			addObject(e,vDict)
+		fbo.setMask(7)
 		GL.ColorMask(true,true,true,true)

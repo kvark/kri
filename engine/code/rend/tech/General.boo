@@ -28,15 +28,16 @@ public class General( Basic ):
 			if not m.tech.TryGetValue(name,prog):
 				m.tech[name] = prog = construct(m)
 				if prog.shader and not prog.shader.Ready:
-					# force attribute order
 					prog.shader.attribAll( e.mesh.gatherAttribs() )
-					prog.link()
+					prog.link()	# force attribute order
 			if prog.LinkFail:	continue
 			if atar:	# merge attribs
 				ats = prog.shader.attribs
 				for i in range(atar.Length):
 					if atar[i].name == ats[i].name:
 						continue
+					if atar[i].name:	# pretty bad!
+						atar[i].name = null
 					assert not atar[i].name
 					atar[i] = ats[i]
 			onPass(vao,tag,prog)

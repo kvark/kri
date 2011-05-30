@@ -67,7 +67,6 @@ public class Buffer(Basic):
 	
 	public override def activate(ct as Target, offset as single, toDepth as bool) as void:
 		assert Input
-		kri.Ant.Inst.params.activate( buf.getInfo() )
 		t as Surface = null
 		# prepare depth
 		if SetDepth(offset,toDepth) and not Depth:
