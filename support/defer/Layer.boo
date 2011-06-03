@@ -131,7 +131,6 @@ public class Fill( kri.rend.tech.General ):
 			if doNormal:
 				Blend = false
 				fbo.setMask(4)
-				GL.ColorMask(0,true,true,true,true)
 			else:
 				Blend = true
 				fbo.setMask(3)
@@ -162,4 +161,3 @@ public class Fill( kri.rend.tech.General ):
 			pHas.Value = vDict.fake('vertex','normal','quat')
 			addObject(e,vDict)
 		fbo.setMask(7)
-		GL.ColorMask(true,true,true,true)

@@ -1,7 +1,6 @@
 namespace kri
 
 import System
-import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
 # Generic structures size calculator
@@ -51,9 +50,8 @@ public static class Help:
 		a,b = b,a
 	# provides skipping of resource unloading errors on exit
 	public def safeKill(fun as callable() as void) as void:
-		try: fun()
-		except e as GraphicsContextMissingException:
-			pass
+		if OpenTK.Graphics.GraphicsContext.CurrentContext:
+			fun()
 	# semantics fill helper
 	public def enrich(ob as vb.ISemanted, size as byte, *names as (string)) as void:
 		for str in names:
