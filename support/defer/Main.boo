@@ -20,7 +20,7 @@ public class Context:
 			pt = par.Texture('g'+i)
 			tex = kri.buf.Texture(0, PixelInternalFormat.Rgba8, PixelFormat.Rgba )
 			buf.at.color[i] = pt.Value = tex
-			#pt.Value.filt(false,false)	# not valid with MS
+			pt.Value.filt(false,false)
 			dict.unit(pt)
 
 

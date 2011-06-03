@@ -59,11 +59,7 @@ public class Holder(Frame):
 		GL.DrawBuffers( drawList.Count, drawList.ToArray() )
 		oldMask = mask
 	
-	public override def bind() as void:
-		# bind with viewport
-		super()
-		assert getSamples()>=0
-		# update surfaces
+	public def updateSurfaces() as void:
 		if 'ds':
 			addSurface( FramebufferAttachment.DepthStencilAttachment,	old.stencil,	at.stencil )
 			addSurface( FramebufferAttachment.DepthAttachment,			old.depth,		at.depth )
@@ -71,7 +67,15 @@ public class Holder(Frame):
 			surface = old.color[i]	# Boo bug workaround
 			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,		at.color[i] )
 			old.color[i] = surface
-		# check
+	
+	public override def bind() as void:
+		# bind with viewport
+		super()
+		if getSamples()<0:
+			kri.lib.Journal.Log("FBO: failed to resolve samples number for binding (${handle})")
+			return
+		# attachments and check
+		updateSurfaces()
 		setMask(mask)
 		checkStatus()
 	

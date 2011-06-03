@@ -78,7 +78,6 @@ public class Fill( kri.rend.tech.General ):
 				afSpec = true
 			if inf == 'hardness':
 				afHard = true
-		GL.ColorMask(false,false,false,false)	# ATI workaround
 		GL.ColorMask(0, afDiff,afDiff,afDiff, afEmis)
 		GL.ColorMask(1, afSpec,afSpec,afSpec, afHard)
 		# set manual color
@@ -138,6 +137,8 @@ public class Fill( kri.rend.tech.General ):
 				fbo.setMask(3)
 				setParams(app)
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
+			GL.ColorMask(0, true,true,true,true)
+			GL.ColorMask(1, true,true,true,true)
 		Blend = false
 
 	# resize

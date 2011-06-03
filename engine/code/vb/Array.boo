@@ -97,8 +97,9 @@ public class Array:
 				return false
 			push(i,en)
 			useMask |= 1<<i
+		if index != ind:
+			Object.Index = index = ind
 		# need at least one
-		Object.Index = index = ind
 		if not useMask:
 			for en in edic.Values:
 				push(0,en)

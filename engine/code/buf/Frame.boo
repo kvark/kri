@@ -6,7 +6,7 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Frame:
-	private final	handle	as uint
+	public final	handle	as uint
 	
 	# construction
 	
@@ -123,3 +123,6 @@ public class Screen(Frame):
 		return Drawing.Point(ofx,ofy)
 	private override def getReadMode() as ReadBufferMode:
 		return ReadBufferMode.Back
+	public override def bind() as void:
+		super()
+		GL.DrawBuffer( DrawBufferMode.Back )
