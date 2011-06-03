@@ -38,6 +38,8 @@ public class ParTexture(Parameter):
 		tex = piv.Value
 		if not tex:
 			tex = kri.buf.Texture.Zero
+		if not tex.CanSample:
+			kri.lib.Journal.Log("Texture: not ready to sample (${tex.handle})")
 		tex.bind()
 
 

@@ -33,9 +33,9 @@ public class Surface(Plane):
 	public abstract def init() as void:
 		pass
 	public def init(w as uint, h as uint) as void:
-		dirty = wid!=w or het!=h
+		if wid==w and het==h: return
 		wid,het = w,h
-		if dirty:	init()
+		init()
 	# retrieve GL state
 	public abstract def syncBack() as void:
 		pass

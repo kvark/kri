@@ -67,13 +67,13 @@ public class Buffer(Basic):
 	
 	public override def activate(ct as Target, offset as single, toDepth as bool) as void:
 		assert Input
-		t as Surface = null
 		# prepare depth
 		if SetDepth(offset,toDepth) and not Depth:
 			pf = (PixelFormat.DepthComponent,PixelFormat.DepthStencil)[bitDepth==8]
-			Depth = t = Texture( target:texTarget, samples:nSamples,
+			Depth = td = Texture( target:texTarget, samples:nSamples,
 				pixFormat:pf, intFormat:FmDepth[bitDepth>>3] )
-			t.init( Input.wid, Input.het )
+			td.init( Input.wid, Input.het )
+			td.filt( false, false )
 		# prepare color
 		if ct == Target.New:
 			t = buf.at.color[1]

@@ -8,7 +8,8 @@ import OpenTK.Graphics.OpenGL
 public class Texture(Surface):
 	public	final	handle	as uint
 	private static	bound	as uint	= 0
-	private			ready	= false
+	private			allocated	= false
+	private			filtered	= false
 	private			fullWidth	as uint	= 0
 	private			fullHeight	as uint	= 0
 	public			target		= TextureTarget.Texture2D
@@ -17,6 +18,9 @@ public class Texture(Surface):
 	public			dep		as uint	= 0		# depth (z-dimension)
 	public			level	as byte = 0		# active mip level
 	public 			layer	as int	= -1	# active layer for Cube/Array textures
+	
+	public	CanSample	as bool:
+		get: return allocated and filtered
 
 	public def constructor():
 		handle = GL.GenTexture()	
@@ -35,7 +39,7 @@ public class Texture(Surface):
 		return Texture( sm, PixelInternalFormat.DepthStencil,	PixelFormat.DepthStencil )
 
 	private def constructor(manId as uint):
-		ready = true
+		allocated = true
 		handle = manId
 	public static final	Zero	= Texture(0)
 	def destructor():
@@ -54,8 +58,8 @@ public class Texture(Surface):
 	# virtual routines
 
 	public override def attachTo(fa as FramebufferAttachment) as void:
-		init()	if not ready
-		assert ready
+		if not allocated:	init()
+		assert allocated
 		if layer>=0:
 			GL.FramebufferTextureLayer(	FramebufferTarget.Framebuffer, fa, handle, level, layer)
 		else:	# let GL decide
@@ -87,7 +91,7 @@ public class Texture(Surface):
 		assert not level
 		target = TextureTarget.TextureBuffer
 		bind()
-		ready = true
+		allocated = true
 		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.handle )
 		#syncBack()	# produces InvalidEnum when asking for width
 	
@@ -110,7 +114,7 @@ public class Texture(Surface):
 		assert het <= caps.textureSize
 		assert dep <= caps.textureSize
 		tams = cast( TextureTargetMultisample, cast(int,target) )
-		ready = true
+		allocated = true
 		if dep:
 			assert target == TextureTarget.Texture2DMultisampleArray	
 			GL.TexImage3DMultisample( tams, samples, intFormat, wid, het, dep, fixedLoc )
@@ -136,7 +140,7 @@ public class Texture(Surface):
 		assert wid <= caps.textureSize
 		assert het <= caps.textureSize
 		assert dep <= caps.textureSize
-		ready = true
+		allocated = true
 		pt = GetPixelType(T)
 		if dep:
 			GL.TexImage3D( tg, level, intFormat, wid, het, dep,	0, pixFormat, pt, data )
@@ -175,6 +179,7 @@ public class Texture(Surface):
 		het = ((fullHeight-1)>>val)+1
 	
 	public def read[of T(struct)]() as (T):
+		assert allocated
 		bind()
 		pt = GetPixelType(T)
 		data = array[of T](wid*het)
@@ -182,6 +187,7 @@ public class Texture(Surface):
 		return data
 	
 	public def read(pt as PixelType) as void:
+		assert allocated
 		bind()
 		GL.GetTexImage( target,level,pixFormat,pt, IntPtr.Zero )
 
@@ -198,6 +204,7 @@ public class Texture(Surface):
 		bind()
 		GL.TexParameter( target, TextureParameterName.TextureMinFilter, val[0] )
 		GL.TexParameter( target, TextureParameterName.TextureMagFilter, val[1] )
+		filtered = true
 	
 	# set wrapping mode: clamp/repeat
 	public def wrap(mode as TextureWrapMode, dim as int) as void:
