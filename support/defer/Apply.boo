@@ -6,19 +6,14 @@ import kri.shade
 #---------	DEFERRED BASE APPLY		--------#
 
 public class ApplyBase( kri.rend.Basic ):
-	protected final bu		= Bundle()
-	protected final sphere	as kri.gen.Frame
-	private texDepth		as par.Texture	= null
-	public	initOnly		= false
+	protected	final	bu		= Bundle()
+	private		texDepth		as par.Texture	= null
+	public		initOnly		= false
 	# custom activation
 	private virtual def onInit() as void:
 		pass
 	private virtual def onDraw() as void:
 		pass
-	# init
-	public def constructor(qord as byte):
-		sh = kri.gen.Sphere( qord, OpenTK.Vector3.One )
-		sphere = kri.gen.Frame(sh)
 	# link
 	protected def relink(con as Context) as void:
 		texDepth = con.texDepth
@@ -50,9 +45,13 @@ public class Apply( ApplyBase ):
 	private final bv		= Bundle()
 	private final texLit	= par.Value[of kri.buf.Texture]('light')
 	private final context	as support.light.Context
+	private final sphere	as kri.gen.Frame
+	private final cone		as kri.gen.Frame
 	# init
-	public def constructor(lc as support.light.Context, con as Context, qord as byte):
-		super(qord)
+	public def constructor(lc as support.light.Context, con as Context):
+		super()
+		sphere = con.sphere
+		cone = con.cone
 		context = lc
 		bu.shader.add('/g/apply_v')
 		relink(con)

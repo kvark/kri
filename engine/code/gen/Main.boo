@@ -1,7 +1,23 @@
 ﻿namespace kri.gen
 
 import OpenTK
+import OpenTK.Graphics.OpenGL
 import System.Runtime.InteropServices
+
+
+#---------	FRAME	---------#
+
+public class Frame:
+	public	final mesh	as kri.Mesh
+	public	final va	= kri.vb.Array()
+	private	final dict	= kri.vb.Dict()
+	public def constructor(m as kri.Mesh):
+		mesh = m
+		m.fillEntries(dict)
+	public def draw(bu as kri.shade.Bundle) as bool:
+		return mesh.render(va,bu,dict,1,null)
+	public def draw(sa as kri.shade.Mega) as bool:
+		return mesh.render( va, kri.shade.Bundle(sa), null )
 
 
 #----	COMMON DATA STORING & CREATION	----#
@@ -19,12 +35,23 @@ public struct VertexUV:
 	public rot	as Quaternion
 	public uv	as Vector2
 
+[StructLayout(LayoutKind.Sequential)]
+public struct VertexNormal:
+	public pos	as Vector4
+	public nor	as Vector3
+
 
 #----	RAW MESH DATA	----#
 
 public struct Constructor:
 	public v	as (Vertex)
 	public i	as (ushort)
+	public	static	final	InfoVertex	= kri.vb.Info( name:'vertex',
+		size:4, type:VertexAttribPointerType.Float, integer:false )
+	public	static	final	InfoQuat	= kri.vb.Info( name:'quat',
+		size:4, type:VertexAttribPointerType.Float, integer:false )
+	public	static	final	InfoNormal	= kri.vb.Info( name:'normal',
+		size:3, type:VertexAttribPointerType.Float, integer:false )
 	
 	# fill up the mesh data
 	public def apply(m as kri.Mesh) as void:
@@ -34,7 +61,7 @@ public struct Constructor:
 			m.nPoly = m.nVert / m.polySize
 			vbo = kri.vb.Attrib()
 			vbo.init( v, false )
-			kri.Help.enrich(vbo, 4, 'vertex','quat')
+			vbo.Semant.AddRange((InfoVertex,InfoQuat))
 			m.vbo.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize

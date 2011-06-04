@@ -7,13 +7,21 @@ import kri.shade
 
 public class Context:
 	public final buf		= kri.buf.Holder( mask:7 )
+	public final sphere		as kri.gen.Frame
+	public final cone		as kri.gen.Frame
 	public final dict		= par.Dict()
 	public final texDepth	= par.Texture('depth')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
 	
-	public def constructor():
+	public def constructor(qord as byte, ncone as byte):
+		# light volumes
+		sh = kri.gen.Sphere( qord,	OpenTK.Vector3.One )
+		sphere	= kri.gen.Frame(sh)
+		cn = kri.gen.Cone( ncone,	OpenTK.Vector3.One )
+		cone	= kri.gen.Frame(cn)
+		# dictionary
 		dict.unit(texDepth)
 		# diffuse, specular, world space normal
 		for i in range(3):
@@ -53,17 +61,17 @@ public class Group( kri.rend.Group ):
 			rLayer.active = value
 			rFill.active = not value
 	
-	public def constructor(qord as byte, lc as support.light.Context, pc as kri.part.Context):
-		con = cx = Context()
+	public def constructor(qord as byte, ncone as uint, lc as support.light.Context, pc as kri.part.Context):
+		con = cx = Context(qord,ncone)
 		rFill	= fill.Fork(cx)
 		rLayer	= layer.Fill(cx)
 		rl = List[of kri.rend.Basic]()
 		rl.Extend(( rFill, rLayer ))
 		if lc:
-			rApply = Apply(lc,cx,qord)
+			rApply = Apply(lc,cx)
 			rl.Add(rApply)
 		if pc:
-			rParticle = Particle(pc,cx,qord)
+			rParticle = Particle(pc,cx)
 			rl.Add(rParticle)
 		rBug = BugLayer(cx)
 		rl.Add(rBug)

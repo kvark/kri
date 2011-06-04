@@ -78,6 +78,33 @@ public class Sphere(Mesh):
 		super( BeginMode.Triangles, con )
 
 
+#----	CONE OBJECT	----#
+# param: radius, length
+public class Cone(kri.Mesh):	
+	public def constructor(num as uint, scale as Vector3):
+		super( BeginMode.Triangles )
+		.nVert = 2+num
+		.nPoly = num*2
+		v = array[of VertexNormal](nVert)
+		v[0] = VertexNormal( pos:Vector4(Vector3.Multiply(scale,Vector3.Zero),1f), nor:-Vector3.UnitZ )
+		v[1] = VertexNormal( pos:Vector4(Vector3.Multiply(scale,Vector3.UnitZ),1f), nor:Vector3.UnitZ )
+		ix = array[of ushort]( 6*num )
+		for i in range(num):
+			angle = i * 2f * PI / num
+			p = Vector3( Sin(angle), Cos(angle), 1f )
+			n = -Vector3.UnitZ
+			v[i+2] = VertexNormal( pos:Vector4(Vector3.Multiply(scale,p),1f), nor:n )
+			ix[i*6+0] = ix[i*6+4] = 2 + i
+			ix[i*6+2] = ix[i*6+5] = 2 + (i+1)%num
+			ix[i*6+1] = 0
+			ix[i*6+3] = 1
+		vo = kri.vb.Attrib()
+		vo.init( v, false )
+		vo.Semant.AddRange(( Constructor.InfoVertex, Constructor.InfoNormal ))
+		vbo.Add(vo)
+		.ind = kri.vb.Object()
+		ind.init( ix, false )
+
 
 #----	LANDSCAPE	----#
 # param: height map
