@@ -13,5 +13,5 @@ vec4 fixed_proj(Spatial,vec4);
 
 void main()	{
 	gl_Position = fixed_proj(s_cam,proj_cam);
-	color = vec4(at_normal,1.0);
+	color = vec4(0.5*(at_normal+vec3(1.0)),1.0);
 }

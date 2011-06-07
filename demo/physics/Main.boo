@@ -43,7 +43,7 @@ def Main(argv as (string)):
 		rlis.Add( rem )
 		mesh as kri.Mesh = null
 		
-		if 'TestLandscape':
+		if not 'TestLandscape':
 			hm = matrix(single,3,3)	# matrix[of single](2,2)
 			for i in range(3):
 				for j in range(3):

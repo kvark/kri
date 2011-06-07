@@ -52,7 +52,10 @@ public class Mesh( vb.Storage ):
 			kri.lib.Journal.Log("Render: failed to load mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
 			blockList.Add(bu)
 			return false
-		bu.activate()
+		if not bu.activate():
+			kri.lib.Journal.Log("Render: failed to activate shader (${bu})")
+			blockList.Add(bu)
+			return false
 		rez = true
 		if tf == TransFeedback.Dummy:
 			rez = draw(null)

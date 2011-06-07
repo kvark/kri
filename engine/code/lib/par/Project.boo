@@ -22,13 +22,14 @@ public final class Shared( IBase ):
 	public def activate(p as kri.Projector) as void:
 		div = 1f / (p.rangeIn - p.rangeOut)
 		dad = div *(p.rangeIn + p.rangeOut)
-		range.Value = Vector4(p.rangeIn, p.rangeOut, div, 0f)
+		tn = 1f
 		if p.fov > 0f:
-			tn = 1f / System.Math.Tan(p.fov)
-			data.Value = Vector4(tn, tn * p.aspect, dad,
+			tn = System.Math.Tan(p.fov)
+			data.Value = Vector4(1f / tn, p.aspect / tn, dad,
 				2f*div*(p.rangeIn*p.rangeOut) )
 		else:	# the last parameter sign shows orthogonality
 			data.Value = Vector4(-p.fov, -p.fov * p.aspect, 2f*div, -dad)
+		range.Value = Vector4(p.rangeIn, p.rangeOut, div, tn)
 	
 	def IBase.link(d as par.Dict) as void:
 		d.var(data,range)

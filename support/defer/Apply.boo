@@ -73,6 +73,15 @@ public class Apply( ApplyBase ):
 		scene = kri.Scene.Current
 		if not scene:	return
 		for l in scene.lights:
+			frame as kri.gen.Frame = null
+			tip = l.getType()
+			if tip == kri.Light.Type.Omni:
+				frame = sphere
+			if tip == kri.Light.Type.Spot:
+				frame = cone
+			if not frame:
+				kri.lib.Journal.Log("Light: no volume found for light (${l})")
+				continue
 			bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
-			sphere.draw(bu)
+			frame.draw(bu)

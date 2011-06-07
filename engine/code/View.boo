@@ -50,8 +50,11 @@ public class Camera(Projector):
 
 
 public class Light(Projector,IColored):
-	# fov == 0 for omni type
-	# fov < 0 for directional
+	public enum Type:
+		Omni
+		Directed
+		Spot
+	# attributes
 	public softness	= 0f
 	[Property(Color)]
 	private color	as Color4	= Color4(1f,1f,1f,1f)
@@ -65,6 +68,10 @@ public class Light(Projector,IColored):
 		rangeIn = 1
 		rangeOut = radius
 		sphere = 1f / radius
+	public def getType() as Type:
+		if fov<0f:	return Type.Directed
+		if fov>0f:	return Type.Spot
+		return Type.Omni
 
 
 
@@ -126,7 +133,7 @@ public class View:
 		return ren.setup( kri.buf.Plane(wid:wid,het:het) )
 	public def update() as void:
 		Scene.current = scene
-		if cam:
+		if cam and Link:
 			cam.aspect = Link.Frame.getInfo().Aspect
 			Ant.Inst.params.activate(cam)
 		if ren and ren.active:

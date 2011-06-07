@@ -60,10 +60,10 @@ def Main(argv as (string)):
 		licon = support.light.Context(0,8)
 		rlis.Add( support.light.omni.Apply(licon,false) )
 		#rlis.Add( stand = kri.rend.part.Standard(cex.pcon) )
-		rlis.Add( stand = Render(cex.con) )
-		stand.bAdd = 1f
+		#rlis.Add( stand = Render(cex.con) )
+		#stand.bAdd = 1f
 		#rlis.Add( support.hdr.Render( support.hdr.Context() ))
-		rlis.Add( kri.rend.FilterCopy() )
+		#rlis.Add( kri.rend.FilterCopy() )
 		#pTex = kri.shade.par.UnitProxy({ return pTag.tex })
 		#rlis.Add( kri.rend.debug.Map(false,false,-1,pTex) )
 		
