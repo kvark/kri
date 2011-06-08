@@ -43,16 +43,19 @@ public class ApplyBase( kri.rend.Basic ):
 
 public class Apply( ApplyBase ):
 	private final bv		= Bundle()
-	private final texLit	= par.Value[of kri.buf.Texture]('light')
-	private final context	as support.light.Context
+	private final texShadow	as par.Texture
 	private final sphere	as kri.gen.Frame
 	private final cone		as kri.gen.Frame
+	private final noShadow	as kri.buf.Texture
 	# init
 	public def constructor(lc as support.light.Context, con as Context):
 		super()
 		sphere = con.sphere
 		cone = con.cone
-		context = lc
+		texShadow = lc.texLit
+		noShadow = lc.defShadow
+		bu.dicts.Add( lc.dict )
+		bu.shader.add( lc.getApplyShader() )
 		bu.shader.add('/g/apply_v')
 		relink(con)
 		# fill shader
@@ -61,11 +64,11 @@ public class Apply( ApplyBase ):
 	# shadow
 	private def bindShadow(t as kri.buf.Texture) as void:
 		if t:
-			texLit.Value = t
+			texShadow.Value = t
 			t.filt(false,false)
 			t.shadow(false)
 		else:
-			texLit.Value = context.defShadow
+			texShadow.Value = noShadow
 	# work
 	private override def onInit() as void:
 		kri.Ant.Inst.quad.draw(bv)

@@ -19,12 +19,15 @@ public static class Texture:
 	
 	public def ofColor(*data as (byte)) as kri.buf.Texture:
 		tex = kri.buf.Texture( wid:1, het:1 )
+		tex.setState(1,false,false)
 		tex.init(data)
 		return tex
 	public def ofDepth(val as single) as kri.buf.Texture:
 		tex = kri.buf.Texture( wid:1, het:1,
 			intFormat:PixelInternalFormat.DepthComponent,
 			pixFormat:PixelFormat.DepthComponent )
+		tex.setState(1,false,false)
+		tex.shadow(true)
 		tex.init((val,))
 		return tex
 
@@ -54,7 +57,7 @@ public static class Texture:
 					data[j-1].col, data[j].col,
 					(t-data[j-1].pos) / (data[j].pos - data[j-1].pos))
 		tex = kri.buf.Texture( target:TextureTarget.Texture1D, wid:d2.Length )
-		tex.setState(0,true,true)
+		tex.setState(1,true,true)
 		tex.init(d2)
 		return tex
 

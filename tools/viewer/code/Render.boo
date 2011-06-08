@@ -28,6 +28,7 @@ public class RenderSet:
 		rParticle	= kri.rend.part.Standard(pc)
 		grForward	= support.light.group.Forward( 8, false )
 		grDeferred	= support.defer.Group( 3, 10, grForward.con, null )
+		grDeferred.Shadow = 1
 		rNormal		= support.light.normal.Apply( grForward.con )
 		rChain.renders.AddRange((rSkin,rClear,rZcull,rColor,rEmi,rSurfBake,rNormal,
 			grForward,grDeferred,rDummy,rParticle,rAttrib,rBox))

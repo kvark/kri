@@ -11,6 +11,7 @@ public class Context:
 	public final cone		as kri.gen.Frame
 	public final dict		= par.Dict()
 	public final texDepth	= par.Texture('depth')
+	public final doShadow	= par.Value[of int]('use_shadow')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
@@ -23,6 +24,7 @@ public class Context:
 		cone	= kri.gen.Frame(cn)
 		# dictionary
 		dict.unit(texDepth)
+		dict.var(doShadow)
 		# diffuse, specular, world space normal
 		for i in range(3):
 			pt = par.Texture('g'+i)
@@ -55,6 +57,7 @@ public class Group( kri.rend.Group ):
 	public	final	rApply		as Apply		= null
 	public	final	rParticle	as Particle		= null
 	public	final	rBug		as BugLayer		= null
+	portal	Shadow	as int		= con.doShadow.Value
 	public	Layered	as bool:
 		get: return rLayer.active
 		set:
@@ -75,9 +78,4 @@ public class Group( kri.rend.Group ):
 			rl.Add(rParticle)
 		rBug = BugLayer(cx)
 		rl.Add(rBug)
-		if not 'DebugTexture':
-			pt = kri.shade.par.UnitProxy() do():
-				return cx.buf.at.color[0] as kri.buf.Texture
-			rMapX = kri.rend.debug.Map(false,false,0,pt)
-			rl.Add(rMapX)
 		super( *rl.ToArray() )
