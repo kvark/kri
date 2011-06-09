@@ -26,9 +26,10 @@ public class Context:
 		dict.unit(texDepth)
 		dict.var(doShadow)
 		# diffuse, specular, world space normal
+		pif = (PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba16)
 		for i in range(3):
 			pt = par.Texture('g'+i)
-			tex = kri.buf.Texture(0, PixelInternalFormat.Rgba8, PixelFormat.Rgba )
+			tex = kri.buf.Texture(0, pif[i], PixelFormat.Rgba )
 			buf.at.color[i] = pt.Value = tex
 			pt.Value.filt(false,false)
 			dict.unit(pt)
