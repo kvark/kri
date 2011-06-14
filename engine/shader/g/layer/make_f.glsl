@@ -14,9 +14,8 @@ out	vec4	c_normal;
 void main()	{
 	vec3 norm = vec3(0.5) + 0.5*normalize(normal);
 	float glossy = mat_glossiness / 256.0;
-	const float parallax = 1.0;
 	
 	c_diffuse	= vec4( mat_diffuse.xyz, mat_emissive );
 	c_specular	= vec4( mat_specular.xyz, glossy );
-	c_normal	= vec4( norm, parallax );
+	c_normal	= vec4( norm, 0.5 );
 }

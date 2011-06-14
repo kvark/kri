@@ -86,7 +86,8 @@ public class ExMaterial( kri.IExtension ):
 		m.unit.Add(u)
 		r.puData(u)
 		while (name = r.getString()) != '':
-			u.layer.affects.Add(name)
+			factor = r.getReal()
+			u.layer.affects[name] = factor
 			targ as MapTarget
 			if not tarDict.TryGetValue(name,targ):
 				continue

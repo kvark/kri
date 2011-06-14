@@ -2,17 +2,17 @@
 
 import OpenTK
 import kri.shade
+import System.Collections.Generic
 
 
 public class Pass:
-	public final	affects		= List[of string]()
+	public final	affects		= Dictionary[of string,single]()
 	public prog		as Bundle	= null
 	public enable		= true
 	public blend		= ''
 	public bumpSpace	= ''
 	public color		= Graphics.Color4.White
 	public defValue		= 1f
-	public parallax		= 0f
 	public doIntensity	= false
 	public doInvert		= false
 	public doStencil	= false

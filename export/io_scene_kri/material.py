@@ -27,11 +27,25 @@ def save_mat_unit(mtex):
 	# map input chunk
 	out.begin('unit')
 	colored = ('diffuse','emission','spec','reflection')
-	flat = ['normal','mirror','hardness','diffuse','specular','emit']
-	supported = flat + list('color_'+x for x in colored)
-	current = list(x for x in supported	if mtex.__getattribute__('use_map_'+x))
-	out.logu(2, 'affects: ' + ','.join(current))
-	out.text( *(current+['']) )
+	flat = ['normal','warp','displacement','mirror','hardness','diffuse','specular','emit']
+	xcolor = 'color_'
+	supported = flat + list(xcolor + x for x in colored)
+	current = {}
+	#list(x for x in supported	if mtex.__getattribute__('use_map_'+x))
+	#out.text( *(current+['']) )
+	infoStr = 'affects:'
+	for x in supported:
+		enabled = mtex.__getattribute__('use_map_'+x)
+		if not enabled: continue
+		if x.startswith(xcolor):
+			fname = x.replace(xcolor,'') + '_' + xcolor
+		else:	fname = x+'_'
+		factor = mtex.__getattribute__(fname+'factor')
+		out.text(x)
+		out.pack('f',factor)
+		infoStr += " %s(%.2f)," % (x,factor)
+	out.text('')	# terminator
+	out.logu(2, infoStr)
 	tc,mp = mtex.texture_coords, mtex.mapping
 	out.logu(2, '%s input, %s mapping' % (tc,mp))
 	out.text(tc,mp)

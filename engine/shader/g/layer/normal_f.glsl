@@ -17,5 +17,5 @@ void main()	{
 	vec3	normal	= normalize(value.xyz*2.0 - vec3(1.0));
 	vec4	quat	= normalize(n_space);
 	vec3	n	= qrot2(quat,normal) * vec3(handiness,1.0,1.0);
-	c_normal	= vec4( 0.5*n+vec3(0.5), 1.0 );
+	c_normal	= 0.5*vec4(n,0.0)+vec4(0.5);
 }

@@ -8,8 +8,8 @@ import kri.shade
 
 public class Fill( kri.rend.tech.General ):
 	state	Blend
+	portal	Parallax	as single	= pPax.Value
 	public	shadeUnits		= true
-	public	fixParallax		= 0.03f
 	private final	fbo		as kri.buf.Holder
 	private final	factory	= kri.shade.Linker(onLink)
 	private	doNormal		= false
@@ -75,7 +75,8 @@ public class Fill( kri.rend.tech.General ):
 		# set mask
 		afDiff = afEmis = false
 		afSpec = afHard = false
-		for inf in pa.affects:
+		for aff in pa.affects:
+			inf = aff.Key
 			if inf == 'color_diffuse':
 				afDiff = true
 			if inf == 'color_emission':
@@ -90,9 +91,6 @@ public class Fill( kri.rend.tech.General ):
 		c = pa.color
 		flag = (0f,1f)[pa.doIntensity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
-		# set parallax
-		pPax.Value = (pa.parallax,fixParallax)[fixParallax!=0f]
-		
 
 	# construct: fill
 	public override def construct(mat as kri.Material) as Bundle:
@@ -115,7 +113,7 @@ public class Fill( kri.rend.tech.General ):
 		sall = List[of Object](mapins)
 		sall.Add( (sFrag,sNorm)[doNormal] )			# normal space shader
 		sall.Add( getSpaceShader(('',space)[doNormal]) )
-		if not doNormal:	sall.Add(sParax)
+		if not doNormal:	sall.Add(sParax)		# parallax
 		sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
 		sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders
 		return factory.link( sall, pDic )			# generate program
@@ -131,7 +129,7 @@ public class Fill( kri.rend.tech.General ):
 			app = un.layer
 			if not (un.input and app and app.enable):
 				continue
-			doNormal = ('normal' in app.affects)
+			doNormal = ('normal' in app.affects.Keys)
 			if not app.prog:
 				app.prog = makeLayerProgram( un, app.bumpSpace )
 			if app.prog.LinkFail:
@@ -141,7 +139,7 @@ public class Fill( kri.rend.tech.General ):
 				Blend = false
 				fbo.setMask(4)
 			else:
-				Blend = true
+				Blend = false
 				fbo.setMask(3)
 				setParams(app)
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
