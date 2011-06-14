@@ -3,6 +3,7 @@
 uniform sampler2D	unit_bump;
 uniform	float		parallax;
 uniform int		has_data;
+uniform vec4		screen_size;
 
 in	vec3	view;
 in	vec4	var_quat;
@@ -14,7 +15,8 @@ vec3	qrot2(vec4,vec3);
 
 vec2 make_offset(vec2 tc)	{
 	if(parallax == 0.0)	return tc;
-	vec4 bump = 2.0*texture( unit_bump, tc ) - vec4(1.0);
+	vec2 tscreen = gl_FragCoord.xy / screen_size.xy;
+	vec4 bump = 2.0*texture( unit_bump, tscreen ) - vec4(1.0);
 	vec3 bt = bump.xyz;
 	vec3 vt = normalize(view);
 	if((has_data & 4) != 0)	{

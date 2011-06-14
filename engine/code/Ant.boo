@@ -62,8 +62,8 @@ public class Window( GameWindow ):
 		conFlags |= GraphicsContextFlags.Debug	if bug
 		gameFlags  = GameWindowFlags.Default
 		gameFlags |= GameWindowFlags.Fullscreen	if wid+het==0
-		wid = dd.Width	if not wid
-		het = dd.Height	if not het
+		if not wid:	wid = dd.Width
+		if not het:	het = dd.Height
 
 		# start
 		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)

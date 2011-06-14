@@ -139,7 +139,7 @@ public class Fill( kri.rend.tech.General ):
 				Blend = false
 				fbo.setMask(4)
 			else:
-				Blend = false
+				Blend = true
 				fbo.setMask(3)
 				setParams(app)
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
@@ -158,7 +158,7 @@ public class Fill( kri.rend.tech.General ):
 		fbo.mask = 7
 		fbo.bind()
 		link.SetDepth(0f, false)
-		link.ClearColor()
+		link.ClearColor( Graphics.Color4(0f,0f,0f,0.5f) )
 		scene = kri.Scene.Current
 		if not scene:	return
 		for e in scene.entities:
