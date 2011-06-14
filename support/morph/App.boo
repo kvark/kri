@@ -9,15 +9,15 @@ public class Anim( kri.ani.Loop ):
 	public final k0	as Tag
 	public final k1	as Tag
 	public def constructor(e as kri.Entity, s0 as string, s1 as string):
-		assert s0 and s1 and s0!=s1
 		k0 = k1 = null
 		for key in e.enuTags[of Tag]():
-			k0 = key	if key.name == s0
-			k1 = key	if key.name == s1
-		assert k0 and k1
+			if key.name == s0:	k0 = key
+			if key.name == s1:	k1 = key
+		if not (k0 and k1):
+			kri.lib.Journal.Log("Morph: animation keys not found (${s0},${s1})")
 	protected override def onRate(rate as double) as void:
-		k0.Value = 1.0 - rate
-		k1.Value = rate
+		if k0:	k0.Value = 1.0 - rate
+		if k1:	k1.Value = rate
 
 
 #----------------------------------------

@@ -126,7 +126,7 @@ public class Ant(IDisposable):
 	public final extensions	= List[of IExtension]()
 	public final loaders	as load.Standard
 	# resource manager
-	public final dataMan		= data.Manager()
+	public final dataMan	= data.Manager()
 	# main uniform dictionary
 	public final dict		= shade.par.Dict()
 	# libraries

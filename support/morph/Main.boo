@@ -40,7 +40,7 @@ public class Extra( kri.IExtension ):
 	#---	Parse shape key		---#
 	public def pv_shape(r as kri.load.Reader) as bool:
 		e = r.geData[of kri.Entity]()
-		return false	if not e or not e.mesh
+		if not (e and e.mesh):	return false
 		tag = Tag( r.getString() )
 		r.getByte()	# relative ID, not used
 		tag.Value = r.getReal()

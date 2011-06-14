@@ -19,5 +19,5 @@ public class Switch[of T(class)]( ILoaderGen[of T] ):
 				if not raw:
 					return null
 				return raw.generate()
-		kri.lib.Journal.Log("Image extension (${path}) is not recognized")
+		kri.lib.Journal.Log("Switch: extension (${path}) is not recognized")
 		return null

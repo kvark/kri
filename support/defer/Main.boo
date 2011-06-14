@@ -16,6 +16,13 @@ public class Context:
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
 	
+	public Diffuse	as kri.buf.Texture:
+		get: return buf.at.color[0] as kri.buf.Texture
+	public Specular	as kri.buf.Texture:
+		get: return buf.at.color[1] as kri.buf.Texture
+	public Bump		as kri.buf.Texture:
+		get: return buf.at.color[2] as kri.buf.Texture
+	
 	public def constructor(qord as byte, ncone as byte):
 		# light volumes
 		sh = kri.gen.Sphere( qord,	OpenTK.Vector3.One )

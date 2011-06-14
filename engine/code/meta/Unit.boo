@@ -12,6 +12,7 @@ public class Pass:
 	public bumpSpace	= ''
 	public color		= Graphics.Color4.White
 	public defValue		= 1f
+	public parallax		= 0f
 	public doIntensity	= false
 	public doInvert		= false
 	public doStencil	= false

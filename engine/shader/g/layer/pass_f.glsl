@@ -7,11 +7,12 @@ out	vec4	c_diffuse;
 out	vec4	c_specular;
 
 vec4	tc_unit();
+vec2	make_offset(vec2);
 const	vec3	luminance = vec3(0.3,0.5,0.2);
 
-
 void main()	{
-	vec2	tc	= tc_unit().xy;
+	vec4	tc4	= tc_unit();
+	vec2	tc	= make_offset( tc4.xy );
 	vec4	value	= texture( unit_texture, tc );
 	if (value.w<0.01)	discard;
 

@@ -9,6 +9,7 @@ import kri.shade
 public class Fill( kri.rend.tech.General ):
 	state	Blend
 	public	shadeUnits		= true
+	public	fixParallax		= 0.03f
 	private final	fbo		as kri.buf.Holder
 	private final	factory	= kri.shade.Linker(onLink)
 	private	doNormal		= false
@@ -19,9 +20,11 @@ public class Fill( kri.rend.tech.General ):
 	private	final	sVert	= Object.Load('/g/layer/pass_v')
 	private final	sFrag	= Object.Load('/g/layer/pass_f')
 	private final	sNorm	= Object.Load('/g/layer/normal_f')
+	private final	sParax	= Object.Load('/g/layer/parallax_f')
 	private final	fout	= ('c_diffuse','c_specular','c_normal')
 	# params
 	private final	pDic	= par.Dict()
+	private final	pPax	= par.Value[of single]('parallax')
 	private	final	pHas	= par.Value[of int]('has_data')
 	private final	pTex	= par.Texture('texture')
 	private final	pColor	= par.Value[of Vector4]('user_color')
@@ -32,7 +35,10 @@ public class Fill( kri.rend.tech.General ):
 		fbo = con.buf
 		pDic.var(pColor)
 		pDic.var(pHas)
-		pDic.unit(pTex)
+		pDic.var(pPax)
+		pBump = par.Texture('bump')
+		pBump.Value = con.Bump
+		pDic.unit(pTex,pBump)
 	
 	private def onLink(sa as Mega) as void:
 		if doNormal:
@@ -84,6 +90,8 @@ public class Fill( kri.rend.tech.General ):
 		c = pa.color
 		flag = (0f,1f)[pa.doIntensity]
 		pColor.Value = Vector4( c.R, c.G, c.B, flag )
+		# set parallax
+		pPax.Value = (pa.parallax,fixParallax)[fixParallax!=0f]
 		
 
 	# construct: fill
@@ -107,6 +115,7 @@ public class Fill( kri.rend.tech.General ):
 		sall = List[of Object](mapins)
 		sall.Add( (sFrag,sNorm)[doNormal] )			# normal space shader
 		sall.Add( getSpaceShader(('',space)[doNormal]) )
+		if not doNormal:	sall.Add(sParax)
 		sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
 		sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders
 		return factory.link( sall, pDic )			# generate program
