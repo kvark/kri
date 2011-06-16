@@ -32,7 +32,6 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['m_diff']	= pm_diff
 		nt.readers['m_spec']	= pm_spec
 		nt.readers['unit']		= pm_unit
-		nt.readers['u_apply']	= pu_apply
 		nt.readers['t_map']		= pt_map
 		nt.readers['t_samp']	= pt_samp
 		nt.readers['t_path']	= pt_path
@@ -87,7 +86,7 @@ public class ExMaterial( kri.IExtension ):
 		r.puData(u)
 		while (name = r.getString()) != '':
 			factor = r.getReal()
-			u.layer.affects[name] = factor
+			u.affects[name] = factor
 			targ as MapTarget
 			if not tarDict.TryGetValue(name,targ):
 				continue
@@ -109,22 +108,6 @@ public class ExMaterial( kri.IExtension ):
 			kri.lib.Journal.Log("Loader: mapping (${name}) not supported in material '${m.name}'")
 			return false
 	
-	
-	#---	Parse unit application	---#
-	public def pu_apply(r as Reader) as bool:
-		u = r.geData[of AdUnit]()
-		if not u:	return false
-		pa = u.layer
-		pa.blend		= r.getString()
-		pa.bumpSpace	= r.getString()
-		pa.doIntensity	= r.getByte()>0
-		pa.doInvert		= r.getByte()>0
-		pa.doStencil	= r.getByte()>0
-		pa.color		= r.getColorByte()
-		pa.defValue		= r.getReal()
-		return true
-
-
 	#---	Parse material	---#
 	public def p_mat(r as Reader) as bool:
 		m = kri.Material( r.getString() )

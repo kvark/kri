@@ -61,7 +61,7 @@ public class BugLayer( kri.rend.Basic ):
 public class Group( kri.rend.Group ):
 	public	final	con			as Context
 	public	final	rFill		as fill.Fork	= null
-	public	final	rLayer		as layer.Fill	= null
+	public	final	rLayer		as support.layer.Fill	= null
 	public	final	rApply		as Apply		= null
 	public	final	rParticle	as Particle		= null
 	public	final	rBug		as BugLayer		= null
@@ -75,7 +75,7 @@ public class Group( kri.rend.Group ):
 	public def constructor(qord as byte, ncone as uint, lc as support.light.Context, pc as kri.part.Context):
 		con = cx = Context(qord,ncone)
 		rFill	= fill.Fork(cx)
-		rLayer	= layer.Fill(cx)
+		rLayer	= support.layer.Fill(cx)
 		rl = List[of kri.rend.Basic]()
 		rl.Extend(( rFill, rLayer ))
 		if lc:

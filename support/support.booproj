@@ -58,7 +58,6 @@
     <Compile Include="corp\Child.boo" />
     <Compile Include="corp\Inst.boo" />
     <Compile Include="defer\Apply.boo" />
-    <Compile Include="defer\Layer.boo" />
     <Compile Include="defer\Fill.boo" />
     <Compile Include="defer\Particle.boo" />
     <Compile Include="defer\Main.boo" />
@@ -67,6 +66,8 @@
     <Compile Include="hair\Bake.boo" />
     <Compile Include="hair\Main.boo" />
     <Compile Include="hdr\Main.boo" />
+    <Compile Include="layer\Fill.boo" />
+    <Compile Include="layer\Main.boo" />
     <Compile Include="light\Context.boo" />
     <Compile Include="light\Defer.boo" />
     <Compile Include="light\Group.boo" />
@@ -106,6 +107,7 @@
     <Folder Include="light" />
     <Folder Include="mirror" />
     <Folder Include="motion" />
+    <Folder Include="layer" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />

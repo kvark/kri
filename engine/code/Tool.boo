@@ -61,6 +61,10 @@ public static class Help:
 	# smart logical shift
 	public def shiftInt(val as int, shift as int) as int:
 		return (val<<shift	if shift>0 else val>>-shift)
+	# copy dictionary
+	public def copyDic[of K,V](dv as (Collections.Generic.Dictionary[of K,V])) as void:
+		for x in dv[1]:
+			dv[0].Add( x.Key, x.Value )
 
 
 #---------------#

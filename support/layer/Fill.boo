@@ -1,4 +1,4 @@
-﻿namespace support.defer.layer
+﻿namespace support.layer
 
 import System.Collections.Generic
 import OpenTK
@@ -67,7 +67,7 @@ public class Fill( kri.rend.tech.General ):
 		else:	return false
 		return true
 	
-	private def setParams(pa as kri.meta.Pass) as void:
+	private def setParams(pa as Pass, affects as Dictionary[of string,single]) as void:
 		# set blending
 		if not setBlend( pa.blend ):
 			kri.lib.Journal.Log("Blend: unknown mode (${pa.blend})")
@@ -75,7 +75,7 @@ public class Fill( kri.rend.tech.General ):
 		# set mask
 		afDiff = afEmis = false
 		afSpec = afHard = false
-		for aff in pa.affects:
+		for aff in affects:
 			inf = aff.Key
 			if inf == 'color_diffuse':
 				afDiff = true
@@ -125,11 +125,13 @@ public class Fill( kri.rend.tech.General ):
 		if not mesh.render( va, bu, vDict, tm.off, tm.num, 1, null ):
 			return
 		if not shadeUnits:	return
-		for un in tm.mat.unit:
-			app = un.layer
-			if not (un.input and app and app.enable):
+		for meta in tm.mat.metaList:
+			app = meta as Pass
+			if not (app and app.enable):	continue
+			un = tm.mat.unit[ app.Unit ]
+			if not (un and un.input):
 				continue
-			doNormal = ('normal' in app.affects.Keys)
+			doNormal = ('normal' in un.affects.Keys)
 			if not app.prog:
 				app.prog = makeLayerProgram( un, app.bumpSpace )
 			if app.prog.LinkFail:
@@ -141,7 +143,7 @@ public class Fill( kri.rend.tech.General ):
 			else:
 				Blend = true
 				fbo.setMask(3)
-				setParams(app)
+				setParams( app, un.affects )
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
 			GL.ColorMask(0, true,true,true,true)
 			GL.ColorMask(1, true,true,true,true)

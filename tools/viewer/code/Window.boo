@@ -166,10 +166,11 @@ public class GladeApp:
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		ant = kri.Ant(config,true)
+		eLayer	= support.layer.Extra()
 		eSkin	= support.skin.Extra()
 		eCorp	= support.corp.Extra()
 		eMorph	= support.morph.Extra()
-		ant.extensions.AddRange((of kri.IExtension:eSkin,eCorp,eMorph))
+		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
 		ant.anim = al
 		rset = RenderSet( true, eCorp.con )
 		gw.QueueResize()

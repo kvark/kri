@@ -17,5 +17,5 @@ void main()	{
 	
 	c_diffuse	= vec4( mat_diffuse.xyz, mat_emissive );
 	c_specular	= vec4( mat_specular.xyz, glossy );
-	c_normal	= vec4( norm, 0.5 );
+	c_normal	= vec4( norm, 0.5 );	//parallax
 }
