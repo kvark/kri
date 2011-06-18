@@ -37,6 +37,7 @@ public class Native( kri.data.ILoaderGen[of Atom] ):
 	
 	public def constructor():
 		swImage.ext['.tga'] = image.Targa()
+		swImage.ext['.dds'] = image.Compress()
 		swSound.ext['.wav'] = sound.Wave()
 		resMan.register( swImage )
 		resMan.register( swSound )

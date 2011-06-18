@@ -2,6 +2,14 @@
 
 import OpenTK.Graphics.OpenGL
 
+#------		DUMMY GENERATOR		------#
+
+public class Dummy( kri.data.IGenerator[of kri.buf.Texture] ):
+	public tex	as kri.buf.Texture	= null
+	public def generate() as kri.buf.Texture:	#imp: kri.res.IGenerator
+		return tex
+
+
 #------		BASIC RGBA IMAGE		------#
 
 public class Basic( kri.data.IGenerator[of kri.buf.Texture] ):

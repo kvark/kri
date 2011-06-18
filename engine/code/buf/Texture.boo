@@ -132,7 +132,7 @@ public class Texture(Surface):
 		assert not 'good type'
 		return PixelType.Bitmap
 	
-	private def setImage[of T(struct)](tg as TextureTarget, data as (T)) as void:
+	public def checkInit() as void:
 		assert not samples
 		if not level:
 			fullWidth,fullHeight = wid,het
@@ -141,6 +141,9 @@ public class Texture(Surface):
 		assert het <= caps.textureSize
 		assert dep <= caps.textureSize
 		allocated = true
+	
+	private def setImage[of T(struct)](tg as TextureTarget, data as (T)) as void:
+		checkInit()
 		pt = GetPixelType(T)
 		if dep:
 			GL.TexImage3D( tg, level, intFormat, wid, het, dep,	0, pixFormat, pt, data )
@@ -149,9 +152,22 @@ public class Texture(Surface):
 		else:
 			GL.TexImage1D( tg, level, intFormat, wid, 	 		0, pixFormat, pt, data )
 	
+	private def setCompressed(tg as TextureTarget, data as (byte)) as void:
+		checkInit()
+		if dep:
+			GL.CompressedTexImage3D( tg, level, intFormat, wid, het, dep, 	0, data.Length, data )
+		elif het:
+			GL.CompressedTexImage2D( tg, level, intFormat, wid, het,		0, data.Length, data )
+		else:
+			GL.CompressedTexImage1D( tg, level, intFormat, wid,				0, data.Length, data )
+	
 	public def init[of T(struct)](data as (T)) as void:
 		bind()
 		setImage(target,data)
+	
+	public def initCompressed(data as (byte)) as void:
+		bind()
+		setCompressed(target,data)
 	
 	public def initCube[of T(struct)](side as int, data as (T)) as void:
 		bind()
@@ -173,6 +189,7 @@ public class Texture(Surface):
 	# read back
 	
 	public def switchLevel(val as byte) as void:
+		if level==val:	return
 		assert fullWidth
 		level = val
 		wid = ((fullWidth-1)>>val)+1
