@@ -44,6 +44,7 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 	
 	public def read(path as string) as  IGenerator[of kri.buf.Texture]:	#imp: ILoaderGen
 		br = BinaryReader( File.OpenRead(path) )
+		# read header
 		head = Header(
 			magic	: br.ReadUInt32(),
 			size	: br.ReadUInt32(),
@@ -54,6 +55,7 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 			depth	: br.ReadUInt32(),
 			mips	: br.ReadUInt32())
 		br.BaseStream.Seek(44, SeekOrigin.Current)
+		# read pixel format
 		format = PixFormat(
 			size	: br.ReadUInt32(),
 			flags	: br.ReadUInt32(),
@@ -63,17 +65,15 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 			maskG	: br.ReadUInt32(),
 			maskB	: br.ReadUInt32(),
 			maskA	: br.ReadUInt32())
-		Caps(
-			caps1	: br.ReadUInt32(),
-			caps2	: br.ReadUInt32(),
-			ddsx	: br.ReadUInt32())
-		br.BaseStream.Seek(8, SeekOrigin.Current)
+		br.BaseStream.Seek(20, SeekOrigin.Current)
+		# check input and init texture
 		if not head.check():
 			kri.lib.Journal.Log("DDS: bad format (${path})")
 			return null
 		t = kri.buf.Texture()
 		t.wid = head.width
 		t.het = head.height
+		# find internal format and block size
 		block = 0
 		if (format.flags & FlagFourCC):
 			if format.fourCC == 'DXT1':
@@ -85,9 +85,14 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 			if format.fourCC == 'DXT5':
 				t.intFormat = PixelInternalFormat.CompressedRgbaS3tcDxt5Ext
 				block = 16
-		else: return null
+		else:
+			kri.lib.Journal.Log("DDS: non-compressed (${path})")
+			return null
+		# fill up the mip maps
 		size = ((head.width+3)>>2) * ((head.height+3)>>2) * block
-		assert size == head.pitch
+		if size != head.pitch:
+			kri.lib.Journal.Log("DDS: invalid size (${path}: ${size} != ${head.pitch})")
+			return null
 		nMips = 1
 		if (head.flags & FlagMipCount):
 			nMips = head.mips
@@ -96,5 +101,6 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 			t.initCompressed(data)
 			t.switchLevel(i+1)
 			size = ((t.wid+3)>>2) * ((t.het+3)>>2) * block
+		# pass-through result
 		t.switchLevel(0)
 		return Dummy( tex:t )
