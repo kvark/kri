@@ -19,7 +19,7 @@ public struct SetBake:
 		piRot = PixelInternalFormat.Rgba32f
 		filt = smooth
 	
-	public def tag() as kri.ITag:
+	public def tag() as support.bake.surf.Tag:
 		assert ratio > 0f
 		side = Math.Sqrt(pixels / ratio)
 		wid,het = cast(int,side*ratio),cast(int,side)
@@ -104,13 +104,17 @@ public class Extra( kri.IExtension ):
 		pm = pe.owner
 		
 		ph = pm.seBeh[of support.hair.Behavior]()
-		if source=='FACE' and not ent.seTag[of support.bake.surf.Tag]():
+		edgeTag = ent.seTag[of support.bake.edge.Tag]()
+		faceTag = ent.seTag[of support.bake.surf.Tag]()
+		if source=='EDGE' and not edgeTag:
+			ent.tags.Add( edgeTag = support.bake.edge.Tag() )
+		if source=='FACE' and not faceTag:
 			st = bake
 			if ph:
 				st.pixels = pm.Total
-			ent.tags.Add( st.tag() )
+			ent.tags.Add( faceTag = st.tag() )
 		if ph:
-			assert source in ('VERT','FACE')
+			assert source in ('VERT','EDGE','FACE')
 			return true
 
 		sh as kri.shade.Object	= null
@@ -121,7 +125,7 @@ public class Extra( kri.IExtension ):
 			for i in range(2):
 				at = ('vertex','quat')[i]
 				t = kri.shade.par.Value[of kri.buf.Texture](at)
-				pm.dict.unit(t.Name,t)
+				pm.dict.unit(t)
 				t.Value = kri.buf.Texture()	
 				t.Value.init( SizedInternalFormat.Rgba32f, ent.findAny(at) )
 				pe.onUpdate = upNode
@@ -129,6 +133,12 @@ public class Extra( kri.IExtension ):
 			parNumber.Value = 1f * ent.mesh.nVert
 			pm.dict.var(parNumber)
 			sh = con.sh_surf_vertex
+		elif source == 'EDGE':
+			t = kri.shade.par.Value[of kri.buf.Texture]('edge')
+			pm.dict.unit(t)
+			t.Value = kri.buf.Texture()
+			t.Value.init( SizedInternalFormat.Rgba32f, edgeTag.data )
+			sh = con.sh_surf_edge
 		elif source == 'FACE':
 			tVert = kri.shade.par.Value[of kri.buf.Texture]('vertex')
 			tQuat = kri.shade.par.Value[of kri.buf.Texture]('quat')

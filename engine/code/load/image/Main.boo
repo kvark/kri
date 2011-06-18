@@ -10,6 +10,11 @@ public class Basic( kri.data.IGenerator[of kri.buf.Texture] ):
 	public final height	as uint
 	public final scan 	as (byte)
 	public final bits	as byte
+	public static	IntFormat	= PixelInternalFormat.Rgba
+	
+	public static Compressed as bool:
+		get: return IntFormat == PixelInternalFormat.CompressedRgba
+		set: IntFormat = (PixelInternalFormat.Rgba,PixelInternalFormat.CompressedRgba)[value]
 	
 	public def constructor(s as string, w as uint, h as uint, d as byte):
 		name = s
@@ -29,6 +34,6 @@ public class Basic( kri.data.IGenerator[of kri.buf.Texture] ):
 	
 	public def generate() as kri.buf.Texture:	#imp: kri.res.IGenerator
 		tex = kri.buf.Texture( wid:width, het:height,
-			name:name, pixFormat:getFormat() )
+			name:name, pixFormat:getFormat(), intFormat:IntFormat )
 		tex.init(scan)
 		return tex

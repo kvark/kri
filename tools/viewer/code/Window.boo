@@ -111,6 +111,7 @@ public class GladeApp:
 		fdir = path.Substring(0,pos)
 		# load scene
 		kri.Ant.Inst.loaders.materials.prefix = fdir
+		kri.load.image.Basic.Compressed = true
 		loader = kri.load.Native()
 		at = loader.read(path)
 		view.scene = at.scene

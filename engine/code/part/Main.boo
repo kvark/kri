@@ -62,4 +62,5 @@ public class Context:
 	# emit surface shaders
 	public final	sh_surf_node	= Object.Load('/part/surf/node_v')
 	public final	sh_surf_vertex	= Object.Load('/part/surf/vertex_v')
+	public final	sh_surf_edge	= Object.Load('/part/surf/edge_v')
 	public final	sh_surf_face	= Object.Load('/part/surf/face_v')

@@ -35,7 +35,7 @@ public class Update( kri.rend.tech.Basic ):
 	public	final channel	as byte
 	
 	public def constructor(texId as byte, putId as bool):
-		super('bake.mesh')
+		super('bake.surf')
 		channel = texId
 		# surface shader
 		sa = bu.shader
