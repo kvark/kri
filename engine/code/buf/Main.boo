@@ -11,13 +11,12 @@ public class Plane:
 	public Size		as uint:
 		get: return wid * het * System.Math.Max(samples,1)
 	# methods
-	public def isCompatible(pl as Plane) as bool:
+	public def isCompatible(pl as Plane, depth as bool) as bool:
 		if samples!=pl.samples:
 			# only MS resolution is possible
-			if samples*pl.samples:
-				return false
-			if wid!=pl.wid or het!=pl.het:
-				return false
+			#return false	if depth
+			return false	if samples*pl.samples
+			return false	if wid!=pl.wid or het!=pl.het
 		return true
 
 

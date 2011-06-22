@@ -166,6 +166,7 @@ public class GladeApp:
 		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
+		samples = byte.Parse(config.ask('Samples','0'))
 		ant = kri.Ant(config,true)
 		eLayer	= support.layer.Extra()
 		eSkin	= support.skin.Extra()
@@ -173,7 +174,7 @@ public class GladeApp:
 		eMorph	= support.morph.Extra()
 		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
 		ant.anim = al
-		rset = RenderSet( true, eCorp.con )
+		rset = RenderSet( true, samples, eCorp.con )
 		rset.grDeferred.rBug.layer = -1
 		gw.QueueResize()
 	

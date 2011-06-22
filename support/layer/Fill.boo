@@ -155,13 +155,24 @@ public class Fill( kri.rend.tech.General ):
 
 	# work	
 	public override def process(link as kri.rend.link.Basic) as void:
-		fbo.at.depth = link.Depth
-		fbo.mask = 7
 		fbo.bind()
+		# prepare depth layer
+		if link.Depth.samples:
+			if not fbo.at.depth:
+				fbo.at.depth = td = kri.buf.Texture.Depth(0)
+				td.wid = fbo.at.color[0].wid
+				td.het = fbo.at.color[0].het
+			assert fbo.at.depth.samples == 0
+			fbo.mask = 0
+			link.blitTo(fbo, ClearBufferMask.DepthBufferBit)
+		else:	fbo.at.depth = link.Depth
+		# prepare buffer
+		fbo.setMask(7)
 		link.SetDepth(0f, false)
 		link.ClearColor( Graphics.Color4(0f,0f,0f,0.5f) )
 		scene = kri.Scene.Current
 		if not scene:	return
+		# render objects
 		for e in scene.entities:
 			kri.Ant.Inst.params.activate(e)
 			vDict = e.CombinedAttribs

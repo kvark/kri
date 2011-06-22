@@ -76,22 +76,37 @@ public class Frame:
 	
 	public def copyTo(fr as Frame, what as ClearBufferMask) as bool:
 		assert self != fr
+		# bind buffers
 		bind()	# update attachments
 		fr.bind()
 		doColor = (what & ClearBufferMask.ColorBufferBit) != 0 
+		doDepth = (what & (ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)) != 0 
 		if not bindRead(doColor):
 			kri.lib.Journal.Log("Blit: failed to bind read buffer (${handle})")
 			return false
 		r0 = r1 = Drawing.Rectangle()
+		# check operation conditions
 		i0 = getRect(r0)
 		i1 = fr.getRect(r1)
-		if not i0.isCompatible(i1):
-			kri.lib.Journal.Log("Blit: incompatible framebuffers (${handle}->)")
+		if not i0.isCompatible(i1,doDepth):
+			kri.lib.Journal.Log("Blit: incompatible framebuffers (${handle}->${fr.handle})")
 			return false
+		if not 'ParanoidCheck':
+			s_id = d_id = d_buf0 = d_buf1 = s_buf = 0
+			GL.GetInteger( GetPName.ReadFramebufferBinding, s_id )
+			GL.GetInteger( GetPName.DrawFramebufferBinding, d_id )
+			GL.GetInteger( GetPName.ReadBuffer, s_buf )
+			GL.GetInteger( GetPName.DrawBuffer0, d_buf0 )
+			GL.GetInteger( GetPName.DrawBuffer1, d_buf1 )
+			s_ok = GL.CheckFramebufferStatus( FramebufferTarget.ReadFramebuffer )
+			d_ok = GL.CheckFramebufferStatus( FramebufferTarget.DrawFramebuffer )
+			s_ok = d_ok
+		# do it!
+		filt = (BlitFramebufferFilter.Linear,BlitFramebufferFilter.Nearest)[doDepth]
 		GL.BlitFramebuffer(
 			r0.Left, r0.Top, r0.Right, r0.Bottom,
 			r1.Left, r1.Top, r1.Right, r1.Bottom,
-			what, BlitFramebufferFilter.Linear )
+			what, filt )
 		return true
 	
 	# reading

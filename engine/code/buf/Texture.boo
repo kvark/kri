@@ -202,6 +202,7 @@ public class Texture(Surface):
 	
 	# set filtering mode: point/linear
 	public def filt(mode as bool, mips as bool) as void:
+		if samples: return	# ignore multi-sampled
 		vMin as TextureMinFilter
 		vMag = (TextureMagFilter.Nearest,TextureMagFilter.Linear)[mode]
 		vmi0 = (TextureMinFilter.Nearest,TextureMinFilter.Linear)

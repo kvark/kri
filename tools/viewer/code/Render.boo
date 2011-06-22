@@ -3,7 +3,7 @@
 import OpenTK
 
 public class RenderSet:
-	public	final	rChain	= kri.rend.Chain()
+	public	final	rChain	as kri.rend.Chain	= null
 	public	final	rClear	= kri.rend.Clear()
 	public	final	rZcull	= kri.rend.EarlyZ()
 	public	final	rColor	= kri.rend.Color()
@@ -11,11 +11,11 @@ public class RenderSet:
 	public	final	rSkin	= support.skin.Universal()
 	public	final	rAttrib	= kri.rend.debug.Attrib()
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
-	public	final	rNormal		as support.light.normal.Apply
-	public	final	rDummy		as kri.rend.part.Dummy
-	public	final	rParticle	as kri.rend.part.Standard
-	public	final	grForward	as support.light.group.Forward
-	public	final	grDeferred	as support.defer.Group	= null
+	public	final	rNormal		as support.light.normal.Apply	= null
+	public	final	rDummy		as kri.rend.part.Dummy			= null
+	public	final	rParticle	as kri.rend.part.Standard		= null
+	public	final	grForward	as support.light.group.Forward	= null
+	public	final	grDeferred	as support.defer.Group			= null
 	public	final	rBox	= kri.rend.box.Update()
 
 	public	BaseColor 	as Graphics.Color4:
@@ -23,13 +23,16 @@ public class RenderSet:
 	public	ClearColor	as Graphics.Color4:
 		set:	rClear.backColor = rEmi.backColor = value
 	
-	public def constructor(profile as bool, pc as kri.part.Context):
+	public def constructor(profile as bool, samples as byte, pc as kri.part.Context):
+		# create render groups
 		rDummy		= kri.rend.part.Dummy(pc)
 		rParticle	= kri.rend.part.Standard(pc)
 		grForward	= support.light.group.Forward( 8, false )
 		grDeferred	= support.defer.Group( 3, 10, grForward.con, null )
 		grDeferred.Shadow = 1
 		rNormal		= support.light.normal.Apply( grForward.con )
+		# create and populate render chain
+		rChain = kri.rend.Chain(samples,0,0)
 		rChain.renders.AddRange((rSkin,rClear,rZcull,rColor,rEmi,rSurfBake,rNormal,
 			grForward,grDeferred,rDummy,rParticle,rAttrib,rBox))
 		rChain.doProfile = profile
