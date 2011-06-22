@@ -24,6 +24,7 @@ public class ExMaterial( kri.IExtension ):
 		# fill targets
 		tarDict['color_diffuse']	= MapTarget('diffuse',	con.slib.diffuse_t2 )
 		tarDict['color_emission']	= MapTarget('emissive',	con.slib.emissive_t2 )
+		tarDict['normal']			= MapTarget('bump',		con.slib.bump_t2 )
 		# material
 		nt.readers['mat']		= p_mat
 		nt.readers['m_hair']	= pm_hair
@@ -89,6 +90,7 @@ public class ExMaterial( kri.IExtension ):
 			u.affects[name] = factor
 			targ as MapTarget
 			if not tarDict.TryGetValue(name,targ):
+				kri.lib.Journal.Log("Loader: unknown map target: ${name}")
 				continue
 			me = m.Meta[targ.name] as Advanced
 			if not me:
