@@ -174,6 +174,7 @@ public class GladeApp:
 		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
 		ant.anim = al
 		rset = RenderSet( true, eCorp.con )
+		rset.grDeferred.rBug.layer = -1
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:

@@ -10,6 +10,7 @@ public class Texture(Surface):
 	private static	bound	as uint	= 0
 	private			allocated	= false
 	private			filtered	= false
+	private			mipmapped	= false
 	private			fullWidth	as uint	= 0
 	private			fullHeight	as uint	= 0
 	public			target		= TextureTarget.Texture2D
@@ -99,9 +100,9 @@ public class Texture(Surface):
 		if samples:
 			initMulti()
 		elif pixFormat == PixelFormat.DepthStencil:
-			init[of double](null)
+			init[of double](null,false)
 		else:
-			init[of byte](null)
+			init[of byte](null,false)
 	
 	public def initMulti() as void:
 		fixedLoc = level>0
@@ -131,43 +132,32 @@ public class Texture(Surface):
 		return PixelType.UnsignedInt248	if t==double	# depth_stencil
 		assert not 'good type'
 		return PixelType.Bitmap
-	
-	public def checkInit() as void:
+
+	private def setImage[of T(struct)](tg as TextureTarget, data as (T), compressed as bool) as void:
+		# update stats
+		if level: mipmapped = true
+		else: fullWidth,fullHeight = wid,het
+		allocated = true
+		# check
 		assert not samples
-		if not level:
-			fullWidth,fullHeight = wid,het
 		caps = kri.Ant.Inst.caps
 		assert wid <= caps.textureSize
 		assert het <= caps.textureSize
 		assert dep <= caps.textureSize
-		allocated = true
-	
-	private def setImage[of T(struct)](tg as TextureTarget, data as (T)) as void:
-		checkInit()
-		pt = GetPixelType(T)
-		if dep:
-			GL.TexImage3D( tg, level, intFormat, wid, het, dep,	0, pixFormat, pt, data )
-		elif het:
-			GL.TexImage2D( tg, level, intFormat, wid, het, 		0, pixFormat, pt, data )
+		# upload
+		if compressed:
+			if dep:		GL.CompressedTexImage3D( tg, level, intFormat, wid, het, dep, 	0, data.Length, data )
+			elif het:	GL.CompressedTexImage2D( tg, level, intFormat, wid, het,		0, data.Length, data )
+			else:		GL.CompressedTexImage1D( tg, level, intFormat, wid,				0, data.Length, data )
 		else:
-			GL.TexImage1D( tg, level, intFormat, wid, 	 		0, pixFormat, pt, data )
+			pt = GetPixelType(T)
+			if dep:		GL.TexImage3D( tg, level, intFormat, wid, het, dep,	0, pixFormat, pt, data )
+			elif het:	GL.TexImage2D( tg, level, intFormat, wid, het, 		0, pixFormat, pt, data )
+			else:		GL.TexImage1D( tg, level, intFormat, wid, 	 		0, pixFormat, pt, data )
 	
-	private def setCompressed(tg as TextureTarget, data as (byte)) as void:
-		checkInit()
-		if dep:
-			GL.CompressedTexImage3D( tg, level, intFormat, wid, het, dep, 	0, data.Length, data )
-		elif het:
-			GL.CompressedTexImage2D( tg, level, intFormat, wid, het,		0, data.Length, data )
-		else:
-			GL.CompressedTexImage1D( tg, level, intFormat, wid,				0, data.Length, data )
-	
-	public def init[of T(struct)](data as (T)) as void:
+	public def init[of T(struct)](data as (T), compressed as bool) as void:
 		bind()
-		setImage(target,data)
-	
-	public def initCompressed(data as (byte)) as void:
-		bind()
-		setCompressed(target,data)
+		setImage(target,data,compressed)
 	
 	public def initCube[of T(struct)](side as int, data as (T)) as void:
 		bind()
@@ -176,7 +166,7 @@ public class Texture(Surface):
 			TextureTarget.Texture1D,	# dummy corresponding side==0
 			TextureTarget.TextureCubeMapPositiveX, TextureTarget.TextureCubeMapPositiveY, TextureTarget.TextureCubeMapPositiveZ)
 		assert side in (-3,-2,-1,1,2,3)
-		setImage( tArray[side+3], data )
+		setImage( tArray[side+3], data, false )
 	
 	public def initCube() as void:
 		bind()
@@ -184,7 +174,7 @@ public class Texture(Surface):
 			TextureTarget.TextureCubeMapNegativeX,	TextureTarget.TextureCubeMapPositiveX,
 			TextureTarget.TextureCubeMapNegativeY,	TextureTarget.TextureCubeMapPositiveY,
 			TextureTarget.TextureCubeMapNegativeZ,	TextureTarget.TextureCubeMapPositiveZ):
-			setImage[of byte]( t, null )
+			setImage[of byte]( t, null, false )
 	
 	# read back
 	
@@ -252,6 +242,7 @@ public class Texture(Surface):
 		GL.GenerateMipmap(ti)
 		num as int = 0
 		GL.GetTexParameterI( target, GetTextureParameter.TextureMaxLod, num )
+		mipmapped = true
 		return System.Math.Min(0xFF,num+1)
 	
 	# init all state
@@ -260,7 +251,8 @@ public class Texture(Surface):
 		bind()
 		wrap(wm,2)
 		filt(fl,mips)
-		genLevels()	if mips
+		if mips and not mipmapped:
+			genLevels()
 	
 	# select a range of LODs to sample from
 	public def setLevels(a as int, b as int) as void:

@@ -47,14 +47,10 @@ public class Fill( kri.rend.tech.General ):
 			sa.fragout(fout[0],fout[1])
 	
 	private def getSpaceShader(str as string) as Object:
-		x = { ''				: 'zero',
-			'BUMP_TEXTURESPACE'	: 'tangent',
-			'BUMP_OBJECTSPACE'	: 'object'
-			}[str]
-		if not x:
+		rez = Object.Load("/g/layer/bump/${str.ToLower()}_v")
+		if not rez:
 			kri.lib.Journal.Log("Deferred layer: unknow normal space (${str})")
-			x = 'zero'
-		return Object.Load("/g/layer/norm/${x}_v")
+		return rez
 	
 	private def setBlend(str as string) as bool:
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
@@ -112,7 +108,10 @@ public class Fill( kri.rend.tech.General ):
 		(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
 		sall = List[of Object](mapins)
 		sall.Add( (sFrag,sNorm)[doNormal] )			# normal space shader
-		sall.Add( getSpaceShader(('',space)[doNormal]) )
+		ss as Object = null
+		if doNormal==false or not (ss=getSpaceShader(space)):
+			ss = getSpaceShader('zero')
+		sall.Add(ss)
 		if not doNormal:	sall.Add(sParax)		# parallax
 		sall.AddRange(( sVert, un.input.Shader, sDefer ))	# core shaders
 		sall.AddRange( kri.Ant.Inst.libShaders )	# standard shaders

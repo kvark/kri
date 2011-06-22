@@ -62,11 +62,12 @@ def save_mat_unit(mtex):
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	out.end()
 	out.begin('u_apply')
-	out.text( mtex.blend_type, mtex.bump_objectspace )
+	out.text( mtex.blend_type, mtex.normal_map_space )
 	out.pack('3B', mtex.use_rgb_to_intensity, mtex.invert, mtex.use_stencil )
 	save_color( mtex.color )
 	out.pack('f', mtex.default_value )
 	out.end()
+	
 
 
 
@@ -149,9 +150,8 @@ def save_mat_image(mtex):
 	if it.type == 'IMAGE':
 		# texture image sampling
 		out.begin('t_samp')
-		repeat = (it.extension == 'EXTEND')
-		out.pack( '3B', repeat,
-			it.use_mipmap, it.use_interpolation )
+		out.text( it.extension )
+		out.pack( '2B', it.use_mipmap, it.use_interpolation )
 		out.end()
 	if img.source == 'SEQUENCE':
 		# image sequence chunk

@@ -152,7 +152,7 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 		for i in range(nMips):
 			data = br.ReadBytes(size)
 			flipVertical(data, t.het, block)
-			t.initCompressed(data)
+			t.init(data,true)
 			t.switchLevel(i+1)
 			size = ((t.wid+3)>>2) * ((t.het+3)>>2) * block
 		# pass-through result

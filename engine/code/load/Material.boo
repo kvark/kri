@@ -205,11 +205,12 @@ public class ExMaterial( kri.IExtension ):
 	public def pt_samp(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		if not (u and u.Value):	return false
-		bRepeat	= r.getByte()>0	# extend by repeat
+		sRepeat	= r.getString()	# extend by repeat
+		iRepeat = (0,1)[sRepeat=='REPEAT']
 		bMipMap	= r.getByte()>0	# generate mip-maps
 		bFilter	= r.getByte()>0	# linear filtering
 		# init sampler parameters, todo: use sampler object
-		u.Value.setState( (0,1)[bRepeat], bFilter, bMipMap )
+		u.Value.setState( iRepeat, bFilter, bMipMap )
 		return true
 
 	#---	Texture: file path	---#

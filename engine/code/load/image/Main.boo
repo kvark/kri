@@ -43,5 +43,5 @@ public class Basic( kri.data.IGenerator[of kri.buf.Texture] ):
 	public def generate() as kri.buf.Texture:	#imp: kri.res.IGenerator
 		tex = kri.buf.Texture( wid:width, het:height,
 			name:name, pixFormat:getFormat(), intFormat:IntFormat )
-		tex.init(scan)
+		tex.init(scan,false)
 		return tex
