@@ -47,9 +47,14 @@ public class Chain(Basic):
 					r.process(ln)
 			else:	r.process(ln)
 		if con:
-			con.activate(false)
-			ln.blitTo(con)
-	
+			if kri.Ant.Inst.gamma:
+				using kri.Section(EnableCap.FramebufferSrgb):
+					con.activate(false)
+					ln.blitTo(con)
+			else:
+				con.activate(false)
+				ln.blitTo(con)
+				
 	public def genReport() as string:
 		rez = 'Profile report:'
 		for p in dpro:

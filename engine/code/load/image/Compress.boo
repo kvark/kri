@@ -129,15 +129,16 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 		# find internal format and block size
 		block = 0
 		if (format.flags & FlagFourCC):
-			if format.fourCC == 'DXT1':
-				t.intFormat = PixelInternalFormat.CompressedRgbaS3tcDxt1Ext
-				block = 8
-			if format.fourCC == 'DXT3':
-				t.intFormat = PixelInternalFormat.CompressedRgbaS3tcDxt3Ext
-				block = 16
-			if format.fourCC == 'DXT5':
-				t.intFormat = PixelInternalFormat.CompressedRgbaS3tcDxt5Ext
-				block = 16
+			id = System.Array.IndexOf( ('DXT1','DXT3','DXT5'), format.fourCC )
+			block = (8,16,16)[id]
+			pif0 = (PixelInternalFormat.CompressedRgbaS3tcDxt1Ext,
+					PixelInternalFormat.CompressedRgbaS3tcDxt3Ext,
+					PixelInternalFormat.CompressedRgbaS3tcDxt5Ext)
+			pif1 = (PixelInternalFormat.CompressedSrgbAlphaS3tcDxt1Ext,
+					PixelInternalFormat.CompressedSrgbAlphaS3tcDxt3Ext,
+					PixelInternalFormat.CompressedSrgbAlphaS3tcDxt5Ext)
+			gc = Basic.GammaCorrected and kri.Ant.Inst.gamma
+			t.intFormat = (pif0,pif1)[gc][id]
 		else:
 			kri.lib.Journal.Log("DDS: non-compressed (${path})")
 			return null

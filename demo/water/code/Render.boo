@@ -35,7 +35,7 @@ private class Context:
 			target:TextureTarget.Texture1D, wid:data.Length, het:0,
 			intFormat:PixelInternalFormat.R16f, pixFormat:PixelFormat.Red )
 		t.setState(-1,false,false)
-		t.init(data)
+		t.init(data,false)
 		return t
 	
 	public def bind(xor as byte) as void:

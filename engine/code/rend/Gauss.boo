@@ -27,7 +27,7 @@ public class Simple( kri.rend.Basic ):
 			texIn.Value = fbo.at.color[i] as Texture
 			fbo.mask = 3 ^ (1<<i)
 			fbo.bind()
-			kri.Ant.inst.quad.draw((pu,pv)[i])
+			kri.Ant.Inst.quad.draw((pu,pv)[i])
 
 
 public class Advanced( kri.rend.Basic ):
@@ -54,7 +54,7 @@ public class Advanced( kri.rend.Basic ):
 			pDir.Value = (Vector4.UnitX,Vector4.UnitY)[i]
 			fbo.mask = 3 ^ (1<<i)
 			fbo.bind()
-			kri.Ant.inst.quad.draw(bu)
+			kri.Ant.Inst.quad.draw(bu)
 
 
 public class Axis( kri.rend.Basic ):
@@ -70,4 +70,4 @@ public class Axis( kri.rend.Basic ):
 		parent.pTex.Value = con.Input
 		parent.pDir.Value = dir
 		con.activate(true)
-		kri.Ant.inst.quad.draw( parent.bu )
+		kri.Ant.Inst.quad.draw( parent.bu )

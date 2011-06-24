@@ -49,6 +49,10 @@ public class Window( GameWindow ):
 		title	= conf.ask('Title','kri')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
 		context	= conf.ask('Context','0')
+		samples	= int.Parse(conf.ask('Samples','0'))
+		buffers	= int.Parse(conf.ask('Buffers','2'))
+		stereo	= conf.ask('Stereo','no')	== 'yes'
+		gamma	= conf.ask('Gamma','no')	== 'yes'
 		bug = context.EndsWith('d')
 		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
 		wid	= uint.Parse( sizes[0] )
@@ -57,7 +61,7 @@ public class Window( GameWindow ):
 
 		# prepare attributes
 		dd = DisplayDevice.Default
-		gm = GraphicsMode( ColorFormat(8), depth, 0 )
+		gm = GraphicsMode( ColorFormat(32), depth, 0, samples, ColorFormat.Empty, buffers, stereo, gamma )
 		conFlags  = GraphicsContextFlags.ForwardCompatible
 		conFlags |= GraphicsContextFlags.Debug	if bug
 		gameFlags  = GameWindowFlags.Default
@@ -68,7 +72,7 @@ public class Window( GameWindow ):
 		# start
 		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
 		ticks = uint.Parse( conf.ask('FrameTicks','0') )
-		core = Ant(conf,bug)
+		core = Ant(conf,bug,gamma)
 		fps = FpsCounter(period,title)
 		
 
@@ -109,10 +113,11 @@ public interface IExtension:
 
 public class Ant(IDisposable):
 	[getter(Inst)]
-	public static inst	as Ant = null		# Singleton
+	private static inst	as Ant = null		# Singleton
 	# context
 	public final caps	= lib.Capabilities(true)	# Render capabilities
 	public final debug	as bool						# is debug context
+	public final gamma	as bool						# is gamma corrected
 	public final quad	as gen.Frame	= null		# Standard quad frame
 	# time
 	private final sw	= Diagnostics.Stopwatch()	# Time counter
@@ -134,15 +139,16 @@ public class Ant(IDisposable):
 	public final libShaders	as (kri.shade.Object)
 
 
-	public def constructor(conf as Config, bug as bool):
+	public def constructor(conf as Config, bug as bool, gammaCorr as bool):
 		# config read
 		defPath = '../../engine/shader'
 		if conf:
-			defPath	= conf.ask('ShaderPath',defPath)
+			defPath		= conf.ask('ShaderPath',defPath)
 			# check configuration completeness
 			unused = List[of string]( conf.getUnused() ).ToArray()
 			if unused.Length:
-				raise 'Unknown config parameter: ' + unused[0]
+				str = string.Join(',',unused)
+				lib.Journal.Log("Cmd: unknown parameters (${str})")
 		
 		# context init
 		kri.rend.link.Basic.Init()
@@ -151,12 +157,13 @@ public class Ant(IDisposable):
 		inst = self
 		sw.Start()
 		debug = bug
+		gamma = gammaCorr
 		quad = gen.Frame(gen.Quad())
 		
 		# shader library init
 		dataMan.register( shade.Loader() )
-		libShaders = List[of shade.Object]( dataMan.load[of shade.Object]('/lib/'+str)
-			for str in ('quat_v','tool_v','orient_v','fixed_v','math_f')).ToArray()
+		libShaders = List[of shade.Object]( dataMan.load[of shade.Object]('/lib/'+s)
+			for s in ('quat_v','tool_v','orient_v','fixed_v','math_f')).ToArray()
 		# extensions init
 		loaders = load.Standard()
 		extensions.Add(loaders)

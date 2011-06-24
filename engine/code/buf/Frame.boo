@@ -47,7 +47,9 @@ public class Frame:
 	
 	public def getRect(ref rez as Drawing.Rectangle) as Plane:
 		pl = getInfo()
-		assert pl
+		if not pl:
+			kri.lib.Journal.Log("FBO: inconsistent attachments (${handle})")
+			return null
 		rez.Location = getOffsets()
 		het = Math.Max(1, cast(int, pl.het ))
 		rez.Size = Drawing.Size( pl.wid, het )
@@ -67,10 +69,11 @@ public class Frame:
 	
 	public def bindRead(color as bool) as bool:
 		GL.BindFramebuffer( FramebufferTarget.ReadFramebuffer, handle )
-		rm = cast(ReadBufferMode,0)
+		rm = ReadBufferMode.None
 		if color:
 			rm = getReadMode()
-			if not rm:	return false
+			if rm==ReadBufferMode.None:
+				return false
 		GL.ReadBuffer(rm)
 		return true
 	
@@ -79,7 +82,7 @@ public class Frame:
 		# bind buffers
 		bind()	# update attachments
 		fr.bind()
-		doColor = (what & ClearBufferMask.ColorBufferBit) != 0 
+		doColor = (what & (ClearBufferMask.ColorBufferBit)) != 0 
 		doDepth = (what & (ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)) != 0 
 		if not bindRead(doColor):
 			kri.lib.Journal.Log("Blit: failed to bind read buffer (${handle})")
@@ -88,7 +91,7 @@ public class Frame:
 		# check operation conditions
 		i0 = getRect(r0)
 		i1 = fr.getRect(r1)
-		if not i0.isCompatible(i1,doDepth):
+		if not i0.isCompatible(i1):
 			kri.lib.Journal.Log("Blit: incompatible framebuffers (${handle}->${fr.handle})")
 			return false
 		if not 'ParanoidCheck':

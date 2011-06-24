@@ -10,7 +10,8 @@ public class Context:
 	public final sphere		as kri.gen.Frame
 	public final cone		as kri.gen.Frame
 	public final dict		= par.Dict()
-	public final texDepth	= par.Texture('depth')
+	public final texDepth	= par.UnitProxy() do():
+		return buf.at.depth	as kri.buf.Texture
 	public final doShadow	= par.Value[of int]('use_shadow')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
@@ -30,7 +31,7 @@ public class Context:
 		cn = kri.gen.Cone( ncone,	OpenTK.Vector3.One )
 		cone	= kri.gen.Frame(cn)
 		# dictionary
-		dict.unit(texDepth)
+		dict.unit('depth',texDepth)
 		dict.var(doShadow)
 		# diffuse, specular, world space normal
 		pif = (PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba16)

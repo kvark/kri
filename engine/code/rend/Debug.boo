@@ -25,7 +25,7 @@ public class Map( kri.rend.Basic ):
 	
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate(false)
-		kri.Ant.inst.quad.draw(bu)
+		kri.Ant.Inst.quad.draw(bu)
 
 
 public class MapDepth( Map ):

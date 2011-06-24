@@ -166,8 +166,9 @@ public class GladeApp:
 		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
-		samples = byte.Parse(config.ask('Samples','0'))
-		ant = kri.Ant(config,true)
+		samples = byte.Parse(config.ask('InnerSamples','0'))
+		gamma = config.ask('Gamma','no') == 'yes'
+		ant = kri.Ant(config,true,gamma)
 		eLayer	= support.layer.Extra()
 		eSkin	= support.skin.Extra()
 		eCorp	= support.corp.Extra()
@@ -372,7 +373,7 @@ public class GladeApp:
 		#return Gtk.GLWidget()	# for gl-2
 		bug = context.EndsWith('d')
 		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
-		gm = GraphicsMode( ColorFormat(8), 24, 8 )
+		gm = GraphicsMode( ColorFormat(32), 24, 8 )
 		conFlags  = GraphicsContextFlags.ForwardCompatible
 		if bug:	conFlags |= GraphicsContextFlags.Debug	
 		return Gtk.GLWidget(gm,3,ver,conFlags)

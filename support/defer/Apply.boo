@@ -7,7 +7,6 @@ import kri.shade
 
 public class ApplyBase( kri.rend.Basic ):
 	protected	final	bu		= Bundle()
-	private		texDepth		as par.Texture	= null
 	public		initOnly		= false
 	# custom activation
 	private virtual def onInit() as void:
@@ -16,19 +15,17 @@ public class ApplyBase( kri.rend.Basic ):
 		pass
 	# link
 	protected def relink(con as Context) as void:
-		texDepth = con.texDepth
 		bu.dicts.Add( con.dict )
 		bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f','/lib/math_f' )
 		bu.shader.add( con.sh_apply, con.sh_diff, con.sh_spec )
 		bu.link()
 	# work
-	public override def process(con as kri.rend.link.Basic) as void:
-		texDepth.Value = con.Depth
-		con.activate(false)
+	public override def process(link as kri.rend.link.Basic) as void:
+		link.activate(false)
 		onInit()
 		if initOnly:	return
 		# enable depth check
-		con.activate( con.Target.Same, 0f, false )
+		link.activate( link.Target.Same, 0f, false )
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
 		# add lights

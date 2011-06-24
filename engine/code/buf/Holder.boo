@@ -53,11 +53,14 @@ public class Holder(Frame):
 	
 	public def setMask(m as byte) as void:
 		if (mask=m) == oldMask:	return
+		oldMask = mask
+		if not mask:
+			GL.DrawBuffer( DrawBufferMode.None )
+			return
 		drawList = List[of DrawBuffersEnum](
 			DrawBuffersEnum.ColorAttachment0+i
 			for i in range(4)	if (mask>>i)&1)
 		GL.DrawBuffers( drawList.Count, drawList.ToArray() )
-		oldMask = mask
 	
 	public def updateSurfaces() as void:
 		if 'ds':
@@ -80,7 +83,7 @@ public class Holder(Frame):
 		checkStatus()
 	
 	private override def getReadMode() as ReadBufferMode:
-		if not mask:	return cast(ReadBufferMode,0)
+		if not mask:	return ReadBufferMode.None
 		i = 0
 		while (mask>>i)&1 == 0: i+=1
 		return ReadBufferMode.ColorAttachment0+i

@@ -16,7 +16,7 @@ public class Render( kri.rend.part.Meta ):
 		data = (of Color4: Color4.Red, Color4.Yellow, Color4.Violet, Color4.RosyBrown, Color4.Black)
 		pColor.Value = t = kri.buf.Texture( target:TextureTarget.Texture1D, wid:data.Length, het:0 )
 		t.setState(0,true,false)
-		t.init(data)
+		t.init(data,false)
 	public override def process(con as kri.rend.link.Basic) as void:
 		con.activate( con.Target.Same, 0f, false )
 		drawScene()

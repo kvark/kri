@@ -26,7 +26,7 @@ public class Filter(Basic):
 		texIn.Value = con.Input
 		con.Input.filt(linear,false)
 		con.activate(true)
-		kri.Ant.inst.quad.draw(bu)
+		kri.Ant.Inst.quad.draw(bu)
 
 public class FilterCopy(Filter):
 	public def constructor():

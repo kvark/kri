@@ -157,12 +157,14 @@ public class Fill( kri.rend.tech.General ):
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.bind()
 		# prepare depth layer
-		if link.Depth.samples:
+		if true or link.Depth.samples:
 			if not fbo.at.depth:
 				fbo.at.depth = td = kri.buf.Texture.Depth(0)
+				td.filt(false,false)
 				td.wid = fbo.at.color[0].wid
 				td.het = fbo.at.color[0].het
 			assert fbo.at.depth.samples == 0
+			GL.DepthMask(true)
 			fbo.mask = 0
 			link.blitTo(fbo, ClearBufferMask.DepthBufferBit)
 		else:	fbo.at.depth = link.Depth

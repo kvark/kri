@@ -97,6 +97,8 @@ public class ExMaterial( kri.IExtension ):
 				continue
 			me.Unit = m.unit.IndexOf(u)
 			me.Shader = targ.prog
+		# set gamma correction
+		image.Basic.GammaCorrected = 'normal' not in u.affects.Keys
 		# map inputs
 		name = r.getString()
 		proj = r.getString()

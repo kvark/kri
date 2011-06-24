@@ -84,7 +84,7 @@ private class TextureRead( kri.rend.Basic ):
 			wid:2, het:2,
 			intFormat:PixelInternalFormat.R16i,
 			pixFormat:PixelFormat.RedInteger )
-		tex.init(data)
+		tex.init(data,false)
 	public override def process(con as kri.rend.link.Basic) as void:
 		buf.bind()
 		#GL.ClearBuffer( ClearBuffer.Color, 0, (of int:5,5,5,5) )
@@ -165,3 +165,23 @@ private class DrawToStencil( kri.rend.Basic ):
 		fbo.bind()
 		#run!
 		kri.Ant.Inst.quad.draw(sa)
+
+
+private class MultiResolve( kri.rend.Basic ):
+	public override def process(con as kri.rend.link.Basic) as void:
+		GL.DepthMask(true)
+		f0 = kri.buf.Holder()
+		f0.at.depth = td = kri.buf.Texture.Depth(1)
+		td.wid = td.het = 100
+		#td.initMulti(true)
+		f0.bind()
+		con.ClearDepth(1.0)
+		f1 = kri.buf.Holder()
+		f1.at.depth = td = kri.buf.Texture.Depth(0)
+		td.wid = td.het = 100
+		#td.initMulti(true)
+		f1.bind()
+		con.ClearDepth(1.0)
+		GL.BindTexture( TextureTarget.Texture2D, 0 )
+		GL.BindTexture( TextureTarget.Texture2DMultisample, 0 )
+		f0.copyTo(f1, ClearBufferMask.DepthBufferBit)

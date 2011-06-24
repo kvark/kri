@@ -98,17 +98,15 @@ public class Texture(Surface):
 	
 	public override def init() as void:
 		if samples:
-			initMulti()
+			initMulti(level>0)
 		elif pixFormat == PixelFormat.DepthStencil:
 			init[of double](null,false)
 		else:
 			init[of byte](null,false)
 	
-	public def initMulti() as void:
-		fixedLoc = level>0
+	public def initMulti(fixedLoc as bool) as void:
 		bind()
 		caps = kri.Ant.Inst.caps
-		assert not level
 		fullWidth,fullHeight = wid,het
 		assert samples and samples <= caps.multiSamples
 		assert wid <= caps.textureSize
