@@ -7,6 +7,8 @@ import OpenTK.Graphics.OpenGL
 
 public class Frame:
 	public final	handle	as uint
+	public fixGamma	= false
+	state FramebufferSrgb
 	
 	# construction
 	
@@ -59,6 +61,7 @@ public class Frame:
 	
 	public virtual def bind() as void:
 		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
+		FramebufferSrgb = fixGamma
 		rect = Drawing.Rectangle()
 		pl = getRect(rect)
 		GL.Viewport(rect)
@@ -132,7 +135,6 @@ public class Screen(Frame):
 	public final plane	= Plane()
 	public ofx	= 0
 	public ofy	= 0
-	
 	public def constructor():
 		super(0)
 	public override def getInfo() as Plane:
@@ -142,5 +144,6 @@ public class Screen(Frame):
 	private override def getReadMode() as ReadBufferMode:
 		return ReadBufferMode.Back
 	public override def bind() as void:
+		fixGamma = kri.Ant.Inst.gamma
 		super()
 		GL.DrawBuffer( DrawBufferMode.Back )

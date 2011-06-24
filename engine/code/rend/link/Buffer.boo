@@ -62,7 +62,8 @@ public class Buffer(Basic):
 	
 	public def resize(pl as Plane) as void:
 		if not Input:
-			buf.at.color[0] = makeSurface()
+			buf.at.color[0] = t = makeSurface()
+			t.filt(false,false)
 		buf.resize( pl.wid, pl.het )
 	
 	public override def activate(ct as Target, offset as single, toDepth as bool) as void:
