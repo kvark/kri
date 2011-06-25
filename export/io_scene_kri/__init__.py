@@ -4,12 +4,12 @@ bl_info = {
     'name': 'KRI Scene format (.scene)',
     'author': 'Dzmitry Malyshau',
     'version': (0, 1, 0),
-    'blender': (2, 5, 7),
+    'blender': (2, 5, 8),
     'api': 36079,
     'location': 'File > Export > Kri Scene (.scene)',
     'description': 'Export KRI Scenes with meshes, armatures, particles and stuff.',
     'warning': '',
-    'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Import-Export/Kri_Scene',
+    'wiki_url': 'http://code.google.com/p/kri/wiki/Exporter',
     'tracker_url': '',
     'category': 'Import-Export'}
 
@@ -21,8 +21,8 @@ if 'bpy' in locals():
 
 
 import bpy
-from bpy.props	import *
-from io_utils	import ImportHelper, ExportHelper
+from bpy.props			import *
+from bpy_extras.io_utils	import ImportHelper, ExportHelper
 from io_scene_kri.scene		import save_scene
 from io_scene_kri.common	import Settings
 
