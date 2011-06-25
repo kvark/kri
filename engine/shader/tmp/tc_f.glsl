@@ -19,4 +19,8 @@ void apply_tex_offset(vec3 off)	{
 
 uniform vec4 offset_%t, scale_%t;
 
-vec4 tc_%t()	{ return offset_%t + scale_%t * vec4(tr_%T,1.0); }
+vec4 tc_%t()	{
+	const vec4 off = vec4(0.5);
+	vec4 tin = vec4(tr_%T,1.0);
+	return offset_%t + off + scale_%t * (tin-off);
+}
