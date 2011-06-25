@@ -3,28 +3,6 @@ namespace kri
 import System
 import System.Collections.Generic
 import OpenTK
-import OpenTK.Graphics
-
-
-public class Config:
-	private final dict	= Collections.Generic.Dictionary[of string,string]()
-	public def constructor():
-		pass
-	public def constructor(path as string):
-		read(path)
-	public def read(path as string) as void:
-		for line in IO.File.ReadAllLines(path):
-			continue	if line =~ /^\s*#/
-			name,val = /\s*=\s*/.Split(line)
-			dict[name] = val
-	public def ask(name as string, default as string) as string:
-		rez as string = null
-		if dict.TryGetValue(name,rez):
-			dict[name] = null
-			return rez
-		return default
-	public def getUnused() as string*:
-		return ( d.Key	for d in dict	if d.Value!=null )
 
 
 #-----------------------------------------------------------#
@@ -45,35 +23,28 @@ public class Window( GameWindow ):
 
 	public def constructor(cPath as string, depth as int):
 		# read config
-		conf = Config(cPath)
+		conf = lib.Config(cPath)
 		title	= conf.ask('Title','kri')
 		sizes	= conf.ask('Window','0x0').Split(char('x'))
-		context	= conf.ask('Context','0')
-		samples	= int.Parse(conf.ask('Samples','0'))
-		buffers	= int.Parse(conf.ask('Buffers','2'))
-		stereo	= conf.ask('Stereo','no')	== 'yes'
-		gamma	= conf.ask('Gamma','no')	== 'yes'
-		bug = context.EndsWith('d')
-		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
 		wid	= uint.Parse( sizes[0] )
 		het	= uint.Parse( sizes[1] )
-		period	= single.Parse( conf.ask('StatPeriod','1.0') )
+		opt = lib.OptionReader(conf)
 
 		# prepare attributes
 		dd = DisplayDevice.Default
-		gm = GraphicsMode( ColorFormat(32), depth, 0, samples, ColorFormat.Empty, buffers, stereo, gamma )
-		conFlags  = GraphicsContextFlags.ForwardCompatible
-		conFlags |= GraphicsContextFlags.Debug	if bug
 		gameFlags  = GameWindowFlags.Default
 		gameFlags |= GameWindowFlags.Fullscreen	if wid+het==0
 		if not wid:	wid = dd.Width
 		if not het:	het = dd.Height
+		gmode = opt.genMode(32,depth)
+		flags = opt.genFlags()
 
 		# start
-		super(wid,het, gm, title, gameFlags, dd, 3,ver, conFlags)
-		ticks = uint.Parse( conf.ask('FrameTicks','0') )
-		core = Ant(conf,bug,gamma)
+		super(wid,het, gmode, title, gameFlags, dd, opt.verMajor, opt.verMinor, flags)
+		ticks	= uint.Parse(	conf.ask('FrameTicks','0') )
+		period	= single.Parse(	conf.ask('StatPeriod','1.0') )
 		fps = FpsCounter(period,title)
+		core = Ant( conf, opt.debug, opt.gamma )
 		
 
 	public override def Dispose() as void:
@@ -139,7 +110,7 @@ public class Ant(IDisposable):
 	public final libShaders	as (kri.shade.Object)
 
 
-	public def constructor(conf as Config, bug as bool, gammaCorr as bool):
+	public def constructor(conf as lib.Config, bug as bool, gammaCorr as bool):
 		# config read
 		defPath = '../../engine/shader'
 		if conf:

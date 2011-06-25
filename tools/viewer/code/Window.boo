@@ -1,7 +1,5 @@
 ﻿namespace viewer
 
-import OpenTK.Graphics
-
 public class GladeApp:
 	[Glade.Widget]	window			as Gtk.Window
 	[Glade.Widget]	drawBox			as Gtk.Container
@@ -30,7 +28,8 @@ public class GladeApp:
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	[Glade.Widget]	renderCombo		as Gtk.ComboBox
 	
-	private	final	config	= kri.Config('kri.conf')
+	private	final	config	= kri.lib.Config('kri.conf')
+	private final	options	= kri.lib.OptionReader(config)
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
 	private	final	log		= kri.lib.Journal()
@@ -167,8 +166,7 @@ public class GladeApp:
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		samples = byte.Parse(config.ask('InnerSamples','0'))
-		gamma = config.ask('Gamma','no') == 'yes'
-		ant = kri.Ant(config,true,gamma)
+		ant = kri.Ant( config, options.debug, options.gamma )
 		eLayer	= support.layer.Extra()
 		eSkin	= support.skin.Extra()
 		eCorp	= support.corp.Extra()
@@ -369,14 +367,9 @@ public class GladeApp:
 	# construction
 			
 	private def makeWidget() as Gtk.GLWidget:
-		context	= config.ask('Context','0')
-		#return Gtk.GLWidget()	# for gl-2
-		bug = context.EndsWith('d')
-		ver = uint.Parse( context.TrimEnd(*'rd'.ToCharArray()) )
-		gm = GraphicsMode( ColorFormat(32), 24, 8 )
-		conFlags  = GraphicsContextFlags.ForwardCompatible
-		if bug:	conFlags |= GraphicsContextFlags.Debug	
-		return Gtk.GLWidget(gm,3,ver,conFlags)
+		gm = options.genMode(32,24)
+		fl = options.genFlags()
+		return Gtk.GLWidget( gm, options.verMajor, options.verMinor, fl )
 	
 	private def makeColumn() as Gtk.TreeViewColumn:
 		col = Gtk.TreeViewColumn()

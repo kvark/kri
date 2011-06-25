@@ -70,7 +70,9 @@
     <Compile Include="code\gen\Simple.boo" />
     <Compile Include="code\gen\Texture.boo" />
     <Compile Include="code\lib\Cap.boo" />
-    <Compile Include="code\lib\Main.boo" />
+    <Compile Include="code\lib\Journal.boo" />
+    <Compile Include="code\lib\Param.boo" />
+    <Compile Include="code\lib\Option.boo" />
     <Compile Include="code\lib\par\Main.boo" />
     <Compile Include="code\lib\par\Project.boo" />
     <Compile Include="code\lib\par\Spatial.boo" />
