@@ -7,6 +7,7 @@ import System.Collections.Generic
 #---	Unit Slave meta data	---#
 public class AdUnit( ISlave, par.ValuePure[of kri.buf.Texture] ):
 	public final	affects		= Dictionary[of string,single]()
+	public isBump	as bool		= false
 	public input	as Hermit	= null
 	public final	pOffset		= par.ValuePure[of Vector4]()
 	public final	pScale		= par.ValuePure[of Vector4]()

@@ -24,7 +24,10 @@ public class ExMaterial( kri.IExtension ):
 		# fill targets
 		tarDict['color_diffuse']	= MapTarget('diffuse',	con.slib.diffuse_t2 )
 		tarDict['color_emission']	= MapTarget('emissive',	con.slib.emissive_t2 )
+		tarDict['color_specular']	= MapTarget('specular',	con.slib.specular_t2 )
 		tarDict['normal']			= MapTarget('bump',		con.slib.bump_t2 )
+		for s in ('diffuse','emission','specular'):
+			tarDict[s] = tarDict['color_'+s]
 		# material
 		nt.readers['mat']		= p_mat
 		nt.readers['m_hair']	= pm_hair
@@ -97,8 +100,6 @@ public class ExMaterial( kri.IExtension ):
 				continue
 			me.Unit = m.unit.IndexOf(u)
 			me.Shader = targ.prog
-		# set gamma correction
-		image.Basic.GammaCorrected = 'normal' not in u.affects.Keys
 		# map inputs
 		name = r.getString()
 		proj = r.getString()
@@ -220,6 +221,10 @@ public class ExMaterial( kri.IExtension ):
 		u = r.geData[of AdUnit]()
 		if not u:	return false
 		path = prefix + r.getString()
+		# set gamma correction
+		u.isBump = r.getByte()>0
+		image.Basic.GammaCorrected = not u.isBump
+		# load image
 		u.Value = r.data.load[of kri.buf.Texture](path)
 		return u.Value != null
 

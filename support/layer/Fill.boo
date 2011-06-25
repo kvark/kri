@@ -56,7 +56,7 @@ public class Fill( kri.rend.tech.General ):
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
 		if str == '':
 			GL.BlendFunc( BlendingFactorSrc.One, 		BlendingFactorDest.Zero )
-		elif str == 'MIX':
+		elif str in ('MIX','MULTIPLY'):
 			GL.BlendFunc( BlendingFactorSrc.DstColor,	BlendingFactorDest.Zero )
 		elif str == 'ADD':
 			GL.BlendFunc( BlendingFactorSrc.One, 		BlendingFactorDest.One )
@@ -130,7 +130,7 @@ public class Fill( kri.rend.tech.General ):
 			un = tm.mat.unit[ app.Unit ]
 			if not (un and un.input):
 				continue
-			doNormal = ('normal' in un.affects.Keys)
+			doNormal = un.isBump
 			if not app.prog:
 				app.prog = makeLayerProgram( un, app.bumpSpace )
 			if app.prog.LinkFail:

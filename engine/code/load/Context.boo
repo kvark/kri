@@ -57,6 +57,7 @@ public class Shade:
 	public final diffuse_u		= Object.Load('/mod/diffuse_u_f')
 	public final diffuse_t2		= Object.Load('/mod/diffuse_t2d_f')
 	public final specular_u		= Object.Load('/mod/specular_u_f')
+	public final specular_t2	= Object.Load('/mod/specular_t2d_f')
 	public final glossiness_u	= Object.Load('/mod/glossiness_u_f')
 	public final bump_c			= Object.Load('/mod/bump_c_f')
 	public final bump_t2		= Object.Load('/mod/bump_t2d_f')

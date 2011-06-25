@@ -128,6 +128,7 @@ def save_mat_image(mtex):
 	elif it.type == 'NOISE':	# noise chunk
 		out.begin('t_noise')
 		out.end()
+		return
 	elif it.type == 'NONE':
 		out.begin('t_zero')
 		out.end()
@@ -146,21 +147,25 @@ def save_mat_image(mtex):
 	if fullname.find(name) not in (0,1):
 		out.log(2,'w', 'path cut to: %s' % (name))
 	out.text( name)
+	out.pack('B', it.use_normal_map)
+	if it.use_normal_map:
+		out.log(2,'i', 'normal space: %s' % (mtex.normal_map_space))
 	out.end()
+	# texture image sampling
 	if it.type == 'IMAGE':
-		# texture image sampling
 		out.begin('t_samp')
 		out.text( it.extension )
 		out.pack( '2B', it.use_mipmap, it.use_interpolation )
 		out.end()
+	# image sequence chunk
 	if img.source == 'SEQUENCE':
-		# image sequence chunk
 		user = mtex.texture.image_user
 		out.begin('t_seq')
 		out.pack( '3H', user.frames, user.offset, user.start_frame )
 		out.end()
 	elif img.source != 'FILE':
 		out.log(2,'w','unknown image source')
+
 
 
 ###  MATERIAL:CORE   ###
