@@ -1,5 +1,6 @@
 ﻿namespace kri
 
+import System
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
@@ -8,12 +9,12 @@ import OpenTK.Graphics.OpenGL
 #	QUERY	#
 #-----------#
 
-public class Catcher( System.IDisposable ):
+public class Catcher( IDisposable ):
 	public final t	as QueryTarget
 	public def constructor(target as QueryTarget, q as Query):
 		t = target
 		Query.Assign(t,q)
-	public virtual def Dispose() as void:
+	def IDisposable.Dispose() as void:
 		Query.Assign(t,null)
 
 
@@ -38,7 +39,7 @@ public class Query:
 	def destructor():
 		tmp = handle
 		Help.safeKill({ GL.DeleteQueries(1,tmp) })
-	public def catch(tg as QueryTarget) as Catcher:
+	public def catch(tg as QueryTarget) as IDisposable:
 		return Catcher(tg,self)
 	public def result() as int:
 		rez = 0
@@ -50,24 +51,27 @@ public class Query:
 #	TRANSFORM FEEDBACK	#
 #-----------------------#
 
-public class CatcherFeed(Catcher):
-	public def constructor(q as Query, m as BeginFeedbackMode):
+public class CatcherFeed(IDisposable):
+	public	static final	target = QueryTarget.TransformFeedbackPrimitivesWritten
+	public def constructor(m as BeginFeedbackMode, q as Query):
 		GL.BeginTransformFeedback(m)
-		super( QueryTarget.TransformFeedbackPrimitivesWritten, q )
-	public override def Dispose() as void:
-		super()
+		if q: Query.Assign(target,q)
+	def IDisposable.Dispose() as void:
+		Query.Assign(target,null)
 		GL.EndTransformFeedback()
+
 
 public class TransFeedback(Query):
 	public			final	mode	as BeginFeedbackMode
 	public	static	final	Cache	= array[of vb.Object](8)
 	public	static	final	Dummy	= TransFeedback(1)
+	public	static	CountPrimitives = false
 
 	public def constructor(nv as byte):
 		mode = (BeginFeedbackMode.Points, BeginFeedbackMode.Lines, BeginFeedbackMode.Triangles)[nv-1]
 	
-	public def catch() as Catcher:
-		return CatcherFeed(self,mode)
+	public def catch() as IDisposable:
+		return CatcherFeed( mode, (null,self)[CountPrimitives] )
 	
 	public static def Bind(*buffers as (vb.Object)) as bool:
 		for i in range( buffers.Length ):
@@ -78,3 +82,7 @@ public class TransFeedback(Query):
 		for i in range( buffers.Length, Cache.Length ):
 			Cache[i] = null
 		return true
+	
+	public def result() as int:
+		return -1	if not CountPrimitives
+		return super()

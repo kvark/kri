@@ -114,7 +114,7 @@ public class Mesh( vb.Storage ):
 		using tf.catch():
 			draw()
 		nr = tf.result()
-		if nr != nVert:
+		if nr>=0 and nr != nVert:
 			kri.lib.Journal.Log("TransFeedback: bad result size (${nr}) for input (${nVert})")
 			return false
 		return true

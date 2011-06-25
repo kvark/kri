@@ -113,8 +113,11 @@ public class Ant(IDisposable):
 	public def constructor(conf as lib.Config, bug as bool, gammaCorr as bool):
 		# config read
 		defPath = '../../engine/shader'
+		feedCount = safeDiscard = 'no'
 		if conf:
 			defPath		= conf.ask('ShaderPath',defPath)
+			feedCount	= conf.ask('FeedbackCount',feedCount)
+			safeDiscard	= conf.ask('SafeDiscard',safeDiscard)
 			# check configuration completeness
 			unused = List[of string]( conf.getUnused() ).ToArray()
 			if unused.Length:
@@ -124,6 +127,8 @@ public class Ant(IDisposable):
 		# context init
 		kri.rend.link.Basic.Init()
 		shade.Code.Folder = defPath
+		TransFeedback.CountPrimitives = (feedCount	== 'yes')
+		Discarder.Safe = (safeDiscard				== 'yes')
 
 		inst = self
 		sw.Start()

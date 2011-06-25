@@ -121,7 +121,7 @@ public class Blender(Section):
 
 # Provide standard blending options
 public class Discarder(Section):
-	public static Safe	= true
+	public static Safe	= false
 	public def constructor():
 		super( EnableCap.RasterizerDiscard )
 		if Safe:
