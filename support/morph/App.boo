@@ -37,7 +37,7 @@ public class Update( kri.rend.Basic ):
 		bu.dicts.Add(d)
 	
 	public override def process(con as kri.rend.link.Basic) as void:
-		using kri.Discarder(true):
+		using kri.Discarder():
 			for ent in kri.Scene.Current.entities:
 				keys = ent.enuTags[of Tag]()
 				dirty = System.Array.Find(keys) do(t as Tag):

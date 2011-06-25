@@ -82,6 +82,6 @@ public class Update( kri.rend.tech.Basic ):
 				par[i+1].activate(spa)
 			# run the transform
 			kri.Ant.Inst.params.activate(e)
-			using kri.Discarder(true):
+			using kri.Discarder():
 				e.mesh.render(va,bu,tf)
 			tag.Sync = true

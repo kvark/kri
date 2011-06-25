@@ -121,15 +121,14 @@ public class Blender(Section):
 
 # Provide standard blending options
 public class Discarder(Section):
-	public final safe	as bool
-	public def constructor(safety as bool):
+	public static Safe	= true
+	public def constructor():
 		super( EnableCap.RasterizerDiscard )
-		safe = safety
-		if safe:
+		if Safe:
 			GL.PointSize(1.0)
 			GL.ColorMask(false,false,false,false)
 			GL.Disable( EnableCap.DepthTest )
 	public override def Dispose() as void:
-		if safe:
+		if Safe:
 			GL.ColorMask(true,true,true,true)
 		super()

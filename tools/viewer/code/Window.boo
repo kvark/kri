@@ -251,6 +251,7 @@ public class GladeApp:
 			propertyBook.Page = 6
 		if (meta = obj as kri.meta.Advanced):
 			metaUnitLabel.Text = 'Unit: ' + meta.Unit
+			metaShaderLabel.Text = ''
 			if meta.Shader:
 				metaShaderLabel.Text = meta.Shader.Description
 			propertyBook.Page = 7

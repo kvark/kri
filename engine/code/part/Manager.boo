@@ -88,7 +88,7 @@ public class Manager( kri.IMeshed ):
 		if not tf.Bind( mesh.vbo[0] ):
 			return false
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
-		using kri.Discarder(true):
+		using kri.Discarder():
 			if not mesh.render( va, bu, pe.entries, 0, tf ):
 				return false
 		if not 'Debug':
