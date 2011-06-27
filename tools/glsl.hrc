@@ -321,6 +321,7 @@
         <word name='sampler2D'/>
         <word name='sampler3D'/>
         <word name='samplerCube'/>
+	<word name='samplerCubeShadow'/>
         <word name='sampler2DRect'/>
         <word name='sampler1DShadow'/>
         <word name='sampler2DShadow'/>

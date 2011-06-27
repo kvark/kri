@@ -61,7 +61,7 @@ public class Apply( kri.rend.tech.Meta ):
 	
 	public def constructor(lc as support.light.Context, bSmooth as bool):
 		super('lit.omni.apply', false, null, *kri.load.Meta.LightSet)
-		shobs.Add( lc.commonShader )
+		shobs.Add( lc.sh_common )
 		shade('/light/omni/apply')
 		smooth = bSmooth
 		texLit = lc.texLit

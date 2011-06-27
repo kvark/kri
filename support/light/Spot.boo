@@ -8,7 +8,7 @@ import support.light
 #---------	LIGHT MAP FILL	--------#
 
 public class Fill( kri.rend.tech.Sorted ):
-	public final fbo		= kri.buf.Holder()
+	public	final fbo		= kri.buf.Holder()
 	protected final bu		= kri.shade.Bundle()
 	protected final licon	as Context
 
@@ -16,7 +16,7 @@ public class Fill( kri.rend.tech.Sorted ):
 		super('lit.bake')
 		licon = lc
 		# buffer init
-		if lc.type == Type.VARIANCE:
+		if lc.type == ShadowType.Variance:
 			fbo.mask = 1
 			fbo.at.depth = kri.buf.Texture.Depth(0)
 			fbo.at.color[1] = kri.buf.Texture(
@@ -38,11 +38,11 @@ public class Fill( kri.rend.tech.Sorted ):
 		for l in kri.Scene.Current.lights:
 			if l.fov == 0f: continue
 			kri.Ant.Inst.params.activate(l)
-			index = (-1,0)[licon.type == Type.VARIANCE]
+			index = (-1,0)[licon.type == ShadowType.Variance]
 			if not l.depth:
 				ask = kri.rend.link.Buffer.FmDepth[licon.bits>>3]
-				pif = (ask, PixelInternalFormat.Rg16)[index+1]
-				pix = (PixelFormat.DepthComponent, PixelFormat.Rgba)[index+1]
+				pif = ( ask, PixelInternalFormat.Rg16 )[index+1]
+				pix = ( PixelFormat.DepthComponent, PixelFormat.Rgba )[index+1]
 				l.depth = kri.buf.Texture( intFormat:pif, pixFormat:pix,
 					wid:licon.size, het:licon.size )
 			if index<0:
@@ -58,7 +58,7 @@ public class Fill( kri.rend.tech.Sorted ):
 			kri.buf.Texture.Slot(8)
 			l.depth.genLevels()	if licon.mipmap
 			l.depth.filt( licon.smooth, licon.mipmap )
-			l.depth.shadow( licon.type == Type.SIMPLE )
+			l.depth.shadow( licon.type == ShadowType.Simple )
 
 
 #---------	LIGHT MAP APPLY	--------#
@@ -69,7 +69,7 @@ public class Apply( kri.rend.tech.Meta ):
 
 	public def constructor(lc as Context):
 		super('lit.apply', false, null, *kri.load.Meta.LightSet)
-		shobs.Extend(( lc.getApplyShader(), lc.commonShader ))
+		shobs.Extend(( lc.getApplyShader(), lc.sh_common ))
 		shade('/light/spot/apply')
 		dict.attach(lc.dict)
 		texLit = lc.texLit

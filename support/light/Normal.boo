@@ -11,7 +11,7 @@ public class Apply( kri.rend.tech.Meta ):
 		super('lit.normal.apply', false, null, *kri.load.Meta.LightSet)
 		defTex = lc.defShadow
 		#shobs.Add( lc.getApplyShader() )
-		shobs.Extend(( lc.dummyShader, lc.commonShader ))
+		shobs.Extend(( lc.sh_dummy, lc.sh_common ))
 		shade('/light/normal/apply')
 		dict.attach(lc.dict)
 		texLit = lc.texLit
