@@ -24,7 +24,7 @@ public class ApplyBase( kri.rend.Basic ):
 			bu.shader.add( shader, con.sh_apply, con.sh_diff, con.sh_spec )
 			if lc:
 				bu.dicts.Add( lc.dict )
-				bu.shader.add( lc.getApplyShader(st) )
+				bu.shader.add( *lc.getApplyShaders(st) )
 			else:	break
 	# work
 	public override def process(link as kri.rend.link.Basic) as void:
@@ -48,7 +48,6 @@ public class ApplyBase( kri.rend.Basic ):
 public class Apply( ApplyBase ):
 	private final bv		= Bundle()
 	private final texShadow	as par.Texture
-	private final doShadow	as par.Value[of int]
 	private final sphere	as kri.gen.Frame
 	private final cone		as kri.gen.Frame
 	private final noShadow	as kri.buf.Texture
@@ -57,7 +56,6 @@ public class Apply( ApplyBase ):
 		super(con,lc,'/g/apply_v')
 		sphere = con.sphere
 		cone = con.cone
-		doShadow = con.doShadow
 		texShadow = lc.texLit
 		noShadow = lc.defShadow
 		# fill shader
@@ -69,16 +67,12 @@ public class Apply( ApplyBase ):
 		if t:
 			texShadow.Value = t
 			st = support.light.ShadowType.Spot
-			doShadow.Value = 1
 			if t.target == TextureTarget.Texture2DArray:
 				st = support.light.ShadowType.Dual
-				doShadow.Value = 2
 			if t.target == TextureTarget.TextureCubeMap:
 				st = support.light.ShadowType.Cube
-				doShadow.Value = 2
 		else:
 			texShadow.Value = noShadow
-			doShadow.Value = 0
 		return bus[st]
 	# work
 	private override def onInit() as void:

@@ -12,7 +12,6 @@ public class Context:
 	public final dict		= par.Dict()
 	public final texDepth	= par.UnitProxy() do():
 		return buf.at.depth	as kri.buf.Texture
-	public final doShadow	= par.Value[of int]('use_shadow')
 	public final sh_diff	= Object.Load('/mod/lambert_f')
 	public final sh_spec	= Object.Load('/mod/phong_f')
 	public final sh_apply	= Object.Load('/g/apply_f')
@@ -32,7 +31,6 @@ public class Context:
 		cone	= kri.gen.Frame(cn)
 		# dictionary
 		dict.unit('depth',texDepth)
-		dict.var(doShadow)
 		# diffuse, specular, world space normal
 		pif = (PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba16)
 		for i in range(3):

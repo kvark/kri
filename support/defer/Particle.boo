@@ -9,7 +9,6 @@ public class Particle(ApplyBase):
 		super(con,null,'/part/draw/light_v')
 		sphere = con.sphere.mesh
 		con.dict.var(pHalo)
-		con.doShadow.Value = 0
 	# work
 	private override def onDraw() as void:
 		scene = kri.Scene.Current

@@ -59,11 +59,11 @@ public class Context:
 		name = '/light/bake_var_f'	if shadowFormat == ShadowFormat.Variance
 		return Object.Load(name)
 	
-	public def getApplyShader(ot as ShadowType) as Object:
+	public def getApplyShaders(ot as ShadowType) as (Object):
 		if ot == ShadowType.None:
-			return sh_dummy
+			return (sh_dummy,)
 		path = '/light/shadow' + {
-			ShadowType.Spot:	'',
+			ShadowType.Spot:	'/spot',
 			ShadowType.Cube:	'/omni/cube',
 			ShadowType.Dual:	'/omni/dual',
 		}[ot]
@@ -72,7 +72,9 @@ public class Context:
 			ShadowFormat.Exponent:	'exponent2',
 			ShadowFormat.Variance:	'variance',
 		}[shadowFormat]
-		return Object.Load("${path}/${name}_f")
+		x0 = Object.Load("${path}/base_f")
+		x1 = Object.Load("${path}/${name}_f")
+		return (of Object: x0,x1)
 	
 	public def getApplyShader() as Object:
-		return getApplyShader( ShadowType.Spot )
+		return getApplyShaders( ShadowType.Spot )[1]

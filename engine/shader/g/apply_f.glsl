@@ -9,48 +9,25 @@ uniform struct Spatial	{
 	vec4 pos,rot;
 }s_cam,s_lit;
 
-uniform vec4 screen_size, proj_cam, proj_lit;
-uniform vec4 lit_color, lit_data, range_lit;
-uniform int use_shadow;	//0=no,1=spot,2=omni
+uniform vec4 screen_size, proj_cam, lit_color;
 
 
 //---	LIGHT MODEL	---//
-float	get_shadow(vec4);
 float	comp_diffuse(vec3,vec3);
 float	comp_specular(vec3,vec3,vec3,float);
+float	comp_shadow(vec3,float);
 
 //---	TRANSFORM	---//
 vec3	trans_for2(vec3,Spatial);
 vec3	trans_inv2(vec3,Spatial);
 
 //---	TOOLS		---//
-vec4	project2(vec3,vec4);
 vec3	unproject(vec3,vec4);
 float	get_attenuation2(float);
 
 //---	VARYINGS	---//
 flat in	Spatial	s_light;
 out vec4 rez_color;
-
-
-float comp_shadow(vec3 pw, float len)	{
-	if(use_shadow==0) return 1.0;
-	vec3 p_light = trans_inv2(pw, s_lit);
-	float rad = 1.0;
-	vec4 vs = vec4(0.0);
-	if(use_shadow==1)	{
-		vec4 v_shadow = project2( p_light, proj_lit );
-		vec3 vlit = v_shadow.xyz / mix(1.0, v_shadow.w, lit_data.y);
-		vec2 r2 = vlit.xy;
-		rad = smoothstep( 0.0, lit_data.x, 1.0-dot(r2,r2) );
-		vs = vec4(0.5*vlit + vec3(0.5), 1.0);
-	}
-	if(use_shadow==2)	{
-		len = (len - range_lit.x) * range_lit.z;
-		vs = vec4(p_light.xyz, len);
-	}
-	return rad * get_shadow(vs);
-}
 
 
 //---	MAIN	---//
@@ -78,7 +55,8 @@ void main()	{
 	float spec = comp_specular( normal, v2lit, v2cam, 256.0*g_specular.w );
 
 	//write attenuated color
-	float intensity = comp_shadow(p_world,len) * get_attenuation2(len);
+	vec3 p_light = trans_inv2(p_world, s_lit);
+	float intensity = comp_shadow(p_light,len) * get_attenuation2(len);
 	if( intensity*(diff+spec) < 0.01 ) discard;
 	rez_color = intensity*lit_color * (diff*g_diffuse + spec*g_specular);
 }
