@@ -66,7 +66,6 @@ public class Group( kri.rend.Group ):
 	public	final	rApply		as Apply		= null
 	public	final	rParticle	as Particle		= null
 	public	final	rBug		as BugLayer		= null
-	portal	Shadow	as int		= con.doShadow.Value
 	public	Layered	as bool:
 		get: return rLayer.active
 		set:

@@ -29,7 +29,6 @@ public class RenderSet:
 		rParticle	= kri.rend.part.Standard(pc)
 		grForward	= support.light.group.Forward( 8, false )
 		grDeferred	= support.defer.Group( 3, 10, grForward.con, null )
-		grDeferred.Shadow = 1
 		rNormal		= support.light.normal.Apply( grForward.con )
 		# create and populate render chain
 		rChain = kri.rend.Chain(samples,0,0)

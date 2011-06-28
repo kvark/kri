@@ -9,6 +9,7 @@ public class Particle(ApplyBase):
 		super(con,null,'/part/draw/light_v')
 		sphere = con.sphere.mesh
 		con.dict.var(pHalo)
+		con.doShadow.Value = 0
 	# work
 	private override def onDraw() as void:
 		scene = kri.Scene.Current
@@ -29,5 +30,5 @@ public class Particle(ApplyBase):
 				en.divisor = 1
 				d['ghost_'+s] = en
 			kri.Ant.Inst.params.activate(light)
-			bu = bus[support.light.OmniType.None]
+			bu = bus[support.light.ShadowType.None]
 			sphere.render( pe.owner.va, bu, d, 1, null )

@@ -2,12 +2,13 @@
 
 import kri.shade
 
-public enum ShadowType:
+public enum ShadowFormat:
 	Simple
 	Exponent
 	Variance
-public enum OmniType:
+public enum ShadowType:
 	None
+	Spot
 	Dual
 	Cube
 
@@ -25,7 +26,7 @@ public class Context:
 	public bits		as uint	= 0
 	public mipmap	as bool = false
 	public smooth	as bool	= true
-	public shadowType 		= ShadowType.Simple
+	public shadowFormat		= ShadowFormat.Simple
 	public final defShadow	= kri.gen.Texture.depth
 	public final sh_dummy	= Object.Load('/light/shadow/dummy_f')
 	public final sh_common	= Object.Load('/light/common_f')
@@ -41,35 +42,37 @@ public class Context:
 
 	# exponential
 	public def setExpo(darkness as single, kernel as single) as void:
-		shadowType = ShadowType.Exponent
+		shadowFormat = ShadowFormat.Exponent
 		bits = 32
 		pDark.Value	= darkness
 		pOff.Value	= kernel / size
 		pX.Value = OpenTK.Vector4(5f, 5f, 4f, kernel / size)
 	# variance
 	public def setVariance() as void:
-		shadowType = ShadowType.Variance
+		shadowFormat = ShadowFormat.Variance
 		bits = 0
 
 	# shadow shaders
 	public def getFillShader() as Object:
 		name = '/empty_f'
-		name = '/light/bake_exp_f'	if shadowType == ShadowType.Exponent
-		name = '/light/bake_var_f'	if shadowType == ShadowType.Variance
+		name = '/light/bake_exp_f'	if shadowFormat == ShadowFormat.Exponent
+		name = '/light/bake_var_f'	if shadowFormat == ShadowFormat.Variance
 		return Object.Load(name)
 	
-	public def getApplyShader(ot as OmniType) as Object:
+	public def getApplyShader(ot as ShadowType) as Object:
+		if ot == ShadowType.None:
+			return sh_dummy
 		path = '/light/shadow' + {
-			OmniType.None:	'',
-			OmniType.Cube:	'/cube',
-			OmniType.Dual:	'/dual',
+			ShadowType.Spot:	'',
+			ShadowType.Cube:	'/omni/cube',
+			ShadowType.Dual:	'/omni/dual',
 		}[ot]
 		name = {
-			ShadowType.Simple:		'simple',
-			ShadowType.Exponent:	'exponent2',
-			ShadowType.Variance:	'variance',
-		}[shadowType]
+			ShadowFormat.Simple:	'simple',
+			ShadowFormat.Exponent:	'exponent2',
+			ShadowFormat.Variance:	'variance',
+		}[shadowFormat]
 		return Object.Load("${path}/${name}_f")
 	
 	public def getApplyShader() as Object:
-		return getApplyShader( OmniType.None )
+		return getApplyShader( ShadowType.Spot )
