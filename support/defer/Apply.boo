@@ -1,23 +1,31 @@
 ﻿namespace support.defer
 
 import OpenTK.Graphics.OpenGL
+import System.Collections.Generic
 import kri.shade
 
 #---------	DEFERRED BASE APPLY		--------#
 
 public class ApplyBase( kri.rend.Basic ):
-	protected	final	buSimple		= Bundle()
-	public		initOnly			= false
+	protected	final	bus	= Dictionary[of support.light.OmniType,Bundle]()
+	public		initOnly	= false
 	# custom activation
 	private virtual def onInit() as void:
 		pass
 	private virtual def onDraw() as void:
 		pass
 	# create
-	protected def constructor(con as Context):
-		buSimple.dicts.Add( con.dict )
-		buSimple.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f','/lib/math_f' )
-		buSimple.shader.add( con.sh_apply, con.sh_diff, con.sh_spec )
+	protected def constructor(con as Context, lc as support.light.Context, spath as string):
+		shader = Object.Load(spath)
+		for ot in System.Enum.GetValues(support.light.OmniType):
+			bus[ot] = bu = Bundle()
+			bu.dicts.Add( con.dict )
+			bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f','/lib/math_f' )
+			bu.shader.add( shader, con.sh_apply, con.sh_diff, con.sh_spec )
+			if lc:
+				bu.dicts.Add( lc.dict )
+				bu.shader.add( lc.getApplyShader(ot) )
+			else:	break
 	# work
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.activate(false)
@@ -45,14 +53,11 @@ public class Apply( ApplyBase ):
 	private final noShadow	as kri.buf.Texture
 	# init
 	public def constructor(lc as support.light.Context, con as Context):
-		super(con)
+		super(con,lc,'/g/apply_v')
 		sphere = con.sphere
 		cone = con.cone
 		texShadow = lc.texLit
 		noShadow = lc.defShadow
-		buSimple.dicts.Add( lc.dict )
-		buSimple.shader.add( lc.getApplyShader() )
-		buSimple.shader.add('/g/apply_v')
 		# fill shader
 		bv.shader.add( '/copy_v', '/g/init_f' )
 		bv.dicts.Add( con.dict )
@@ -64,7 +69,7 @@ public class Apply( ApplyBase ):
 			t.shadow(false)
 		else:
 			texShadow.Value = noShadow
-		return buSimple
+		return bus[support.light.OmniType.None]
 	# work
 	private override def onInit() as void:
 		kri.Ant.Inst.quad.draw(bv)

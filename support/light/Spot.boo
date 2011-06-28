@@ -16,7 +16,7 @@ public class Fill( kri.rend.tech.Sorted ):
 		super('lit.bake')
 		licon = lc
 		# buffer init
-		if lc.type == ShadowType.Variance:
+		if lc.shadowType == ShadowType.Variance:
 			fbo.mask = 1
 			fbo.at.depth = kri.buf.Texture.Depth(0)
 			fbo.at.color[1] = kri.buf.Texture(
@@ -38,7 +38,7 @@ public class Fill( kri.rend.tech.Sorted ):
 		for l in kri.Scene.Current.lights:
 			if l.fov == 0f: continue
 			kri.Ant.Inst.params.activate(l)
-			index = (-1,0)[licon.type == ShadowType.Variance]
+			index = (-1,0)[licon.shadowType == ShadowType.Variance]
 			if not l.depth:
 				ask = kri.rend.link.Buffer.FmDepth[licon.bits>>3]
 				pif = ( ask, PixelInternalFormat.Rg16 )[index+1]
@@ -58,7 +58,7 @@ public class Fill( kri.rend.tech.Sorted ):
 			kri.buf.Texture.Slot(8)
 			l.depth.genLevels()	if licon.mipmap
 			l.depth.filt( licon.smooth, licon.mipmap )
-			l.depth.shadow( licon.type == ShadowType.Simple )
+			l.depth.shadow( licon.shadowType == ShadowType.Simple )
 
 
 #---------	LIGHT MAP APPLY	--------#
