@@ -8,7 +8,7 @@ import OpenTK.Graphics.OpenGL
 public class Texture(Surface):
 	public	final	handle	as uint
 	private static	bound	as uint	= 0
-	private			allocated	= false
+	private	final	allocated	= array[of bool](16)
 	private			filtered	= false
 	private			mipmapped	= false
 	private			fullWidth	as uint	= 0
@@ -20,11 +20,20 @@ public class Texture(Surface):
 	public			level	as byte = 0		# active mip level
 	public 			layer	as int	= -1	# active layer for Cube/Array textures
 	
+	private Allocated	as bool:
+		get: return allocated[level]
 	public	CanSample	as bool:
-		get: return allocated and filtered
+		get: return allocated[0] and filtered
 
 	public def constructor():
 		handle = GL.GenTexture()	
+		for i in range(allocated.Length):
+			allocated[i] = false
+	
+	private def constructor(manId as uint):
+		allocated[0] = filtered = true
+		handle = manId
+
 	public def constructor(sm as byte, ifm as PixelInternalFormat, pf as PixelFormat):
 		self()
 		target = (TextureTarget.Texture2D,TextureTarget.Texture2DMultisample)[sm>0]
@@ -39,9 +48,6 @@ public class Texture(Surface):
 	public static def Stencil(sm as byte) as Texture:
 		return Texture( sm, PixelInternalFormat.DepthStencil,	PixelFormat.DepthStencil )
 
-	private def constructor(manId as uint):
-		allocated = filtered = true
-		handle = manId
 	public static final	Zero	= Texture(0)
 	def destructor():
 		if not handle:
@@ -59,8 +65,8 @@ public class Texture(Surface):
 	# virtual routines
 
 	public override def attachTo(fa as FramebufferAttachment) as void:
-		if not allocated:	init()
-		assert allocated
+		if not Allocated:	init()
+		assert Allocated
 		if layer>=0:
 			GL.FramebufferTextureLayer(	FramebufferTarget.Framebuffer, fa, handle, level, layer)
 		else:	# let GL decide
@@ -92,7 +98,7 @@ public class Texture(Surface):
 		assert not level
 		target = TextureTarget.TextureBuffer
 		bind()
-		allocated = true
+		allocated[level] = true
 		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.handle )
 		#syncBack()	# produces InvalidEnum when asking for width
 	
@@ -113,7 +119,7 @@ public class Texture(Surface):
 		assert het <= caps.textureSize
 		assert dep <= caps.textureSize
 		tams = cast( TextureTargetMultisample, cast(int,target) )
-		allocated = true
+		allocated[level] = true
 		if dep:
 			assert target == TextureTarget.Texture2DMultisampleArray	
 			GL.TexImage3DMultisample( tams, samples, intFormat, wid, het, dep, fixedLoc )
@@ -135,7 +141,7 @@ public class Texture(Surface):
 		# update stats
 		if level: mipmapped = true
 		else: fullWidth,fullHeight = wid,het
-		allocated = true
+		allocated[level] = true
 		# check
 		assert not samples
 		caps = kri.Ant.Inst.caps
@@ -184,7 +190,7 @@ public class Texture(Surface):
 		het = ((fullHeight-1)>>val)+1
 	
 	public def read[of T(struct)]() as (T):
-		assert allocated
+		assert Allocated
 		bind()
 		pt = GetPixelType(T)
 		data = array[of T](wid*het)
@@ -192,7 +198,7 @@ public class Texture(Surface):
 		return data
 	
 	public def read(pt as PixelType) as void:
-		assert allocated
+		assert Allocated
 		bind()
 		GL.GetTexImage( target,level,pixFormat,pt, IntPtr.Zero )
 
@@ -258,6 +264,8 @@ public class Texture(Surface):
 		bind()
 		GL.TexParameterI( target, TextureParameterName.TextureBaseLevel, a )	if a>=0
 		GL.TexParameterI( target, TextureParameterName.TextureMaxLevel, b )		if b>=0
+	public def setLevels() as void:
+		setLevels(level,level)
 	
 	# set border color
 	public def setBorder(v as Graphics.Color4) as void:

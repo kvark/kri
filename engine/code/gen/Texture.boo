@@ -1,6 +1,5 @@
 ﻿namespace kri.gen
 
-import System
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
@@ -36,7 +35,7 @@ public static class Texture:
 		assert data.Length
 		mid = 1f
 		for i in range( data.Length-1 ):
-			mid = Math.Min(mid, data[i+1].pos - data[i].pos)
+			mid = System.Math.Min(mid, data[i+1].pos - data[i].pos)
 		assert mid>0f
 		d2 = array[of Color4](1 + cast(int, 1f / mid))
 		mid = 1f / (d2.Length-1)
@@ -66,3 +65,25 @@ public static class Texture:
 	public final normal	= ofColor(0x80,0x80,0xFF,0x80)
 	public final depth	= ofDepth(1f)
 	public final noise	= ofColor(0,0,0,0)
+
+	# generate mip map levels by either down-sampling or up-sampling
+	# note that it starts with a current level and finishes on the stopLevel
+	public def createMipmap(fbo as kri.buf.Holder, stopLevel as byte, bu as kri.shade.Bundle) as void:
+		if fbo.mask == 0:
+			t = fbo.at.depth	as kri.buf.Texture
+			point = FramebufferAttachment.DepthAttachment
+			kri.rend.link.Help.SetDepth(0f,true)
+		else:
+			t = fbo.at.color[0]	as kri.buf.Texture
+			point = FramebufferAttachment.ColorAttachment0
+			kri.rend.link.Help.DepthTest = false
+		if not t:	return
+		step = (-1,1)[stopLevel > t.level]
+		fbo.bind()
+		while true:
+			if t.wid+t.het<=2 and step>0:	break
+			if t.level==stopLevel:			break
+			t.setLevels()
+			t.switchLevel( t.level + step )
+			t.attachTo(point)
+			kri.Ant.Inst.quad.draw(bu)
