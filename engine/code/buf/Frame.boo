@@ -128,6 +128,11 @@ public class Frame:
 		ptr = GCHandle.Alloc( data, GCHandleType.Pinned )
 		readRaw[of T]( fm, rect, ptr.AddrOfPinnedObject() )
 		return data
+	
+	public def readAll[of T(struct)](fm as PixelFormat) as (T):
+		rect = Drawing.Rectangle()
+		getRect(rect)
+		return read[of T](fm,rect)
 
 
 

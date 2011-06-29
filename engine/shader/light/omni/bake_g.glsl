@@ -3,22 +3,22 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 18) out;
 
+uniform	vec4	proj_lit;
 
-in vec3 pos[];
+in	vec3	pos[];
 
 vec3 qrot2(vec4 q, vec3 v)	{
 	return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
 }
-
-uniform vec4 uni_dist;
-
+vec4 project_lit(vec3 v)	{
+	return vec4( v.xy, v.z*proj_lit.z + proj_lit.w, -v.z);
+}
 
 void triMake(int lid, vec4 q)	{
 	gl_Layer = lid;
 	for(int i=0; i<3; ++i)	{
 		vec3 v = qrot2(q, pos[i]);
-		float k = (2.0*v.z + uni_dist.y) * uni_dist.x;
-		gl_Position = vec4( v.xy, -v.z*vec2(k,1.0) );
+		gl_Position = project_lit(v);
 		EmitVertex();
 	}
 	EndPrimitive();

@@ -1,7 +1,5 @@
 ﻿namespace support.light.omni
 
-import System
-import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
@@ -11,7 +9,6 @@ public class Fill( kri.rend.tech.Sorted ):
 	protected final fbo		= kri.buf.Holder(mask:0)
 	protected final bu		= kri.shade.Bundle()
 	protected final context	as support.light.Context
-	protected final pDist	= kri.shade.par.Value[of Vector4]('uni_dist')
 
 	public def constructor(lc as support.light.Context):
 		super('lit.omni.bake')
@@ -19,18 +16,11 @@ public class Fill( kri.rend.tech.Sorted ):
 		# omni shader
 		bu.shader.add( '/light/omni/bake_v', '/light/omni/bake_g', '/empty_f' )
 		bu.shader.add( *kri.Ant.Inst.libShaders )
-		dict = kri.shade.par.Dict()
-		dict.var(pDist)
-		bu.dicts.Add( dict )
 		bu.dicts.Add( lc.dict )
 		bu.link()
 
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
-	private def setLight(l as kri.Light) as void:
-		kri.Ant.Inst.params.pLit.spatial.activate( l.node )
-		k = 1f / (l.rangeOut - l.rangeIn)
-		pDist.Value = Vector4(k, l.rangeIn+l.rangeOut, 0f, 0f)
 
 	public override def process(con as kri.rend.link.Basic) as void:
 		scene = kri.Scene.Current
@@ -38,18 +28,23 @@ public class Fill( kri.rend.tech.Sorted ):
 		con.SetDepth(1f, true)	# offset for HW filtering
 		for l in scene.lights:
 			if l.fov != 0f:	continue
-			setLight(l)
+			kri.Ant.Inst.params.activate(l)
 			if not l.depth:
+				if not context.size:
+					raise 'Light context created without shadow support'
 				l.depth = t = kri.buf.Texture.Depth(0)
 				t.target = TextureTarget.TextureCubeMap
 				t.wid = t.het = context.size
 				t.initCube()
 				t.shadow(false)
-				t.filt(false,false)
+				t.setState(0,false,false)
+			elif not 'Debug':
+				data = fbo.readAll[of single]( PixelFormat.DepthComponent )
+				data[0] = 0f
 			fbo.at.depth = l.depth
 			fbo.bind()
-			con.ClearDepth(1.0)
-			drawScene()
+			con.ClearDepth(0.5)
+			#drawScene()
 
 
 #---------	LIGHT OMNI APPLY	--------#

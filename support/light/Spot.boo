@@ -40,6 +40,8 @@ public class Fill( kri.rend.tech.Sorted ):
 			kri.Ant.Inst.params.activate(l)
 			index = (-1,0)[licon.shadowFormat == ShadowFormat.Variance]
 			if not l.depth:
+				if not licon.size:
+					raise 'Light context created without shadow support'
 				ask = kri.rend.link.Buffer.FmDepth[licon.bits>>3]
 				pif = ( ask, PixelInternalFormat.Rg16 )[index+1]
 				pix = ( PixelFormat.DepthComponent, PixelFormat.Rgba )[index+1]

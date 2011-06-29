@@ -6,6 +6,7 @@ import OpenTK.Graphics.OpenGL
 public class Help:
 	state DepthTest
 	state Multisample
+	state TextureCubeMapSeamless
 	
 	public static def Init() as void:
 		GL.Enable( EnableCap.CullFace )

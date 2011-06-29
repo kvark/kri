@@ -131,7 +131,7 @@ private class Feedback( kri.rend.Basic ):
 		#run!
 		bu.activate()
 		tf.Bind(vot)
-		using tf.catch(), kri.Discarder(true):
+		using tf.catch(), kri.Discarder():
 			GL.DrawArrays( BeginMode.Points, 0, 2 )
 		q = tf.result()
 		vot.read(dar)

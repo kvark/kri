@@ -58,6 +58,7 @@
     <Compile Include="corp\beh\Small.boo" />
     <Compile Include="corp\Child.boo" />
     <Compile Include="corp\Inst.boo" />
+    <Compile Include="cull\HierZ.boo" />
     <Compile Include="defer\Apply.boo" />
     <Compile Include="defer\Fill.boo" />
     <Compile Include="defer\Particle.boo" />
@@ -109,6 +110,7 @@
     <Folder Include="mirror" />
     <Folder Include="motion" />
     <Folder Include="layer" />
+    <Folder Include="cull" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
