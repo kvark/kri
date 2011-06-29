@@ -71,19 +71,20 @@ public static class Texture:
 	public def createMipmap(fbo as kri.buf.Holder, stopLevel as byte, bu as kri.shade.Bundle) as void:
 		if fbo.mask == 0:
 			t = fbo.at.depth	as kri.buf.Texture
-			point = FramebufferAttachment.DepthAttachment
 			kri.rend.link.Help.SetDepth(0f,true)
+			GL.DepthFunc( DepthFunction.Always )
 		else:
 			t = fbo.at.color[0]	as kri.buf.Texture
-			point = FramebufferAttachment.ColorAttachment0
 			kri.rend.link.Help.DepthTest = false
 		if not t:	return
 		step = (-1,1)[stopLevel > t.level]
-		fbo.bind()
 		while true:
 			if t.wid+t.het<=2 and step>0:	break
 			if t.level==stopLevel:			break
 			t.setLevels()
 			t.switchLevel( t.level + step )
-			t.attachTo(point)
+			fbo.forceUpdate = true
+			fbo.bind()
 			kri.Ant.Inst.quad.draw(bu)
+		t.setLevels(0,20)
+		GL.DepthFunc( DepthFunction.Lequal )

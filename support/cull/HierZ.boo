@@ -7,11 +7,12 @@ public class HierZ( kri.rend.Basic ):
 	
 	public def constructor():
 		d = kri.shade.par.Dict()
-		d.var(pTex)
+		d.unit(pTex)
 		buDown.dicts.Add(d)
 		buDown.shader.add('/copy_v','/cull/down_f')
 	public override def process(link as kri.rend.link.Basic) as void:
-		fbo.at.depth = t = link.Depth
-		t.filt(false,false)
+		fbo.at.depth = t = pTex.Value = link.Depth
+		t.setBorder( OpenTK.Graphics.Color4.Black )
+		t.setState(0,false,false)
 		kri.gen.Texture.createMipmap(fbo,10,buDown)
 		t.switchLevel(0)

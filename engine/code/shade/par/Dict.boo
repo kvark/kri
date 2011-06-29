@@ -15,6 +15,7 @@ public class Dict( SortedDictionary[of string,IBaseRoot] ):
 			Item[u.Key] = u.Value
 	# add standard uniform
 	public def var[of T](*var as (Value[of T])) as void:
+		assert T != kri.buf.Texture
 		for v in var:
 			Item[v.Name] = v
 	# add custom unit

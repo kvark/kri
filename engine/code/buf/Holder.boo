@@ -22,6 +22,7 @@ public struct Container:
 public class Holder(Frame):
 	private	old		= Container(4)
 	public	at		= Container(4)
+	public	forceUpdate	= false
 	private oldMask	= -1
 	public	mask	= 0
 	
@@ -29,7 +30,7 @@ public class Holder(Frame):
 		oldMask = -1
 	
 	private def addSurface(fa as FramebufferAttachment, ref cur as Surface, nex as Surface) as void:
-		if cur==nex:	return
+		if cur==nex and not (forceUpdate and cur):	return
 		cur = nex
 		(Render.Zero,nex)[nex!=null].attachTo(fa)
 	
@@ -70,6 +71,7 @@ public class Holder(Frame):
 			surface = old.color[i]	# Boo bug workaround
 			addSurface( FramebufferAttachment.ColorAttachment0+i,		surface,		at.color[i] )
 			old.color[i] = surface
+		forceUpdate = false
 	
 	public override def bind() as void:
 		# bind with viewport

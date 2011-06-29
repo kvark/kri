@@ -225,7 +225,7 @@ public class Texture(Surface):
 		assert dim>=0 and dim<wraps.Length
 		bind()
 		for wp in wraps[0:dim]:
-			GL.TexParameterI(target, wp, val)
+			GL.TexParameter(target, wp, val)
 
 	# set shadow mode: on/off
 	public def shadow(en as bool) as void:
@@ -234,9 +234,9 @@ public class Texture(Surface):
 		if en:
 			param = cast(int, TextureCompareMode.CompareRefToTexture)
 			func = cast(int, DepthFunction.Lequal)
-			GL.TexParameterI( target, TextureParameterName.TextureCompareFunc, func )
+			GL.TexParameter( target, TextureParameterName.TextureCompareFunc, func )
 		if 'always':
-			GL.TexParameterI( target, TextureParameterName.TextureCompareMode, param )
+			GL.TexParameter( target, TextureParameterName.TextureCompareMode, param )
 		
 	# generate mipmaps
 	public def genLevels() as byte:
@@ -262,8 +262,8 @@ public class Texture(Surface):
 	# select a range of LODs to sample from
 	public def setLevels(a as int, b as int) as void:
 		bind()
-		GL.TexParameterI( target, TextureParameterName.TextureBaseLevel, a )	if a>=0
-		GL.TexParameterI( target, TextureParameterName.TextureMaxLevel, b )		if b>=0
+		GL.TexParameter( target, TextureParameterName.TextureBaseLevel, a )	if a>=0
+		GL.TexParameter( target, TextureParameterName.TextureMaxLevel, b )	if b>=0
 	public def setLevels() as void:
 		setLevels(level,level)
 	
