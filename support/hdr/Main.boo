@@ -37,7 +37,7 @@ public class Render( kri.rend.Basic ):
 	public virtual def process(con as kri.rend.link.Basic) as void:
 		# update context
 		data = (of single:-1f,)
-		pbo.read(data)
+		pbo.read(data,0)
 		context.avg = data[0]
 		# init texture
 		assert not con.Input

@@ -134,7 +134,7 @@ private class Feedback( kri.rend.Basic ):
 		using tf.catch(), kri.Discarder():
 			GL.DrawArrays( BeginMode.Points, 0, 2 )
 		q = tf.result()
-		vot.read(dar)
+		vot.read(dar,0)
 		assert q == 2
 
 

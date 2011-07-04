@@ -71,7 +71,10 @@ public class Object:
 		return GL.UnmapBuffer(DefTarget)
 	[ext.spec.Method(( byte,short,single ))]
 	[ext.RemoveSource]
-	public def read[of T(struct)](ar as (T)) as void:
+	public def read[of T(struct)](ar as (T), soff as int) as void:
 		buf = tomap( BufferAccess.ReadOnly )
+		if soff:
+			size = kri.Sizer[of T].Value
+			buf = IntPtr( buf.ToInt32() + soff*size )
 		Marshal.Copy( buf, ar, 0, ar.Length )
 		unmap()

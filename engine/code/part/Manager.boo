@@ -93,7 +93,7 @@ public class Manager( kri.IMeshed ):
 				return false
 		if not 'Debug':
 			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
-			mesh.vbo[0].read(ar)
+			mesh.vbo[0].read(ar,0)
 		# swap data
 		mesh.fillEntries( pe.entries )
 		data = mesh.vbo[0]

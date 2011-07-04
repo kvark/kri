@@ -142,7 +142,7 @@ public class Core:
 		dar = array[of byte]( size*(1+2*es) )
 		for i in range(dar.Length):
 			dar[i] = 123
-		pbo.read(dar)
+		pbo.read(dar,0)
 		# readpixels don't work on 10.6
 		for i in range(size):
 			cs = dar[i]

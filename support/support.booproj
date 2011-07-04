@@ -58,6 +58,7 @@
     <Compile Include="corp\beh\Small.boo" />
     <Compile Include="corp\Child.boo" />
     <Compile Include="corp\Inst.boo" />
+    <Compile Include="cull\Box.boo" />
     <Compile Include="cull\HierZ.boo" />
     <Compile Include="defer\Apply.boo" />
     <Compile Include="defer\Fill.boo" />
