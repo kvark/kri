@@ -28,9 +28,9 @@ public class Tag( kri.ITag ):
 public class Update( kri.rend.Basic ):
 	public	final maxn	= 256
 	private next		= 0
-	private final data	= kri.vb.Object()
+	public	final data	= kri.vb.Attrib()
 	private final bu	= kri.shade.Bundle()
-	private final va	= kri.vb.Array()
+	public	final va	= kri.vb.Array()
 	private final fbo	= kri.buf.Holder( mask:1 )
 	private final tex	= kri.buf.Texture(0,
 			PixelInternalFormat.Rgba32f, PixelFormat.Rgba )
@@ -41,6 +41,7 @@ public class Update( kri.rend.Basic ):
 		tex.target = TextureTarget.Texture1D
 		fbo.at.color[0] = tex
 		fbo.resize(2*maxn,0)
+		kri.Help.enrich(data,4,'low','hai')
 	
 	public def genTag() as Tag:
 		if next>=maxn:

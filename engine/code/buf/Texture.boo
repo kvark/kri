@@ -20,6 +20,8 @@ public class Texture(Surface):
 	public			level	as byte = 0		# active mip level
 	public 			layer	as int	= -1	# active layer for Cube/Array textures
 	
+	public	MipMapped	as bool:
+		get: return mipmapped
 	private Allocated	as bool:
 		get: return allocated[level]
 	public	CanSample	as bool:

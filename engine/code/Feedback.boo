@@ -77,7 +77,9 @@ public class TransFeedback(Query):
 		for i in range( buffers.Length ):
 			bf = Cache[i] = buffers[i]
 			if not bf:	bf = vb.Object.Zero
-			if not bf.Allocated:	return false
+			if not bf.Allocated:
+				kri.lib.Journal.Log("Feedback: destination buffer is not ready (${bf.handle})")
+				return false
 			bf.bindAsDestination(i)
 		for i in range( buffers.Length, Cache.Length ):
 			Cache[i] = null
