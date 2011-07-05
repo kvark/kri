@@ -48,6 +48,7 @@ public class Apply( kri.rend.Basic ):
 		kri.Help.enrich(spatial, 4, 'pos','rot')
 	
 	public override def process(link as kri.rend.link.Basic) as void:
+		link.DepthTest = false
 		pTex.Value = t = link.Depth
 		if not t.MipMapped:
 			kri.lib.Journal.Log('HierZ: mip chain has not been constructed')
@@ -72,8 +73,3 @@ public class Apply( kri.rend.Basic ):
 			if not tag: continue
 			vis = rez[tag.index] != 0
 			ent.frameVisible[cam] = vis
-		# check log
-		msg = (kri.lib.Journal.Inst as kri.lib.Journal).messages
-		r0,r1 = rez[0],rez[1]
-		r0=r1
-		msg[0] = ''

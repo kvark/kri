@@ -140,6 +140,11 @@ public class View:
 			ren.process(Link)
 		vb.Array.Default.bind()
 		Scene.current = null
+	public def countVisible() as int:
+		if not scene: return 0
+		return List[of Entity](e
+			for e in scene.entities	if e.Visible[cam]
+			).Count
 
 
 # View for rendering to screen

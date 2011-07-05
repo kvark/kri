@@ -12,7 +12,7 @@ public class General( Basic ):
 		pass
 
 	public virtual def addObject(e as kri.Entity, vd as kri.vb.Dict) as bool:
-		if not e.visible:
+		if not e.VisibleCam:
 			return false
 		atar	as (kri.shade.Attrib)	= null
 		vao		as kri.vb.Array			= null

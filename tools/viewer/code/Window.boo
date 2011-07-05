@@ -114,7 +114,9 @@ public class GladeApp:
 		loader = kri.load.Native()
 		at = loader.read(path)
 		view.scene = at.scene
-		if at.scene.cameras.Count:
+		for e in at.scene.entities:	# add Bbox update tags
+			e.tags.Add( rset.rBox.genTag() )
+		if at.scene.cameras.Count:	# set camera
 			view.cam = at.scene.cameras[0]
 		# notify
 		updateList()
@@ -156,6 +158,11 @@ public class GladeApp:
 		kri.lib.Journal.Log("Viewer: pipeline '${str}' not found");
 		return -1
 
+	public def getSceneStats() as string:
+		if not view.scene: return ''
+		total = view.scene.entities.Count
+		active = view.countVisible()
+		return ", ${active}/${total} visible"
 
 	#--------------------	
 	# signals
@@ -195,7 +202,7 @@ public class GladeApp:
 		core.update(1)
 		view.update()
 		if butDraw.Active and fps.update(core.Time):
-			window.Title = fps.gen()
+			window.Title = fps.gen() + getSceneStats()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:

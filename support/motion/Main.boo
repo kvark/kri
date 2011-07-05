@@ -63,7 +63,9 @@ public class Bake( kri.rend.tech.Basic ):
 		con.ClearColor()
 		# set camera
 		cam = kri.Camera.Current
+		scene = kri.Scene.Current
 		s_old = kri.Spatial.Identity
+		if not scene:	return
 		diCamera.TryGetValue(cam,s_old)
 		pCamera.activate(s_old)
 		s_old.inverse()
@@ -71,8 +73,8 @@ public class Bake( kri.rend.tech.Basic ):
 		diCamera[cam] = s_new
 		sc = kri.Spatial.Combine(s_old,s_new)	# cam offset
 		# iterate meshes
-		for e in kri.Scene.Current.entities:
-			continue	if not e.visible
+		for e in scene.entities:
+			continue	if not e.Visible[cam]
 			# find previous transform
 			s_old = kri.Spatial.Identity
 			diModel.TryGetValue(e,s_old)

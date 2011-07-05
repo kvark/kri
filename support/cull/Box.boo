@@ -63,11 +63,11 @@ public class Update( kri.rend.Basic ):
 		using blend = kri.Blender():
 			blend.min()
 			for e in scene.entities:
+				e.frameVisible.Clear()
 				tag = e.seTag[of Tag]()
-				bv = e.findAny('vertex')
-				if not tag:	continue	#tag.check(bv)
-				i = 2 * tag.index
-				GL.Viewport(i,0,2,1)		
+				#bv = e.findAny('vertex')
+				if not tag:	continue	#and tag.check(bv)):
+				GL.Viewport( 2 * tag.index,0, 2,1 )		
 				e.render( va,bu, kri.TransFeedback.Dummy )
 		# read back
 		fbo.bindRead(true)

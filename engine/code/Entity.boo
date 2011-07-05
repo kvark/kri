@@ -165,6 +165,13 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	INamed.Name as string:
 		get: return (node.name	if node else	'')
 	
+	public Visible[p as Projector] as bool:
+		get:
+			rez = false
+			tr = frameVisible.TryGetValue(p,rez)
+			return visible and (rez or not tr)
+	public VisibleCam as bool:
+		get: return Visible[Camera.Current]
 	public CombinedAttribs as vb.Dict:
 		get: return vb.Dict(mesh,store)
 	
