@@ -1,6 +1,8 @@
 ﻿namespace support.cull.hier
 
+import OpenTK
 import OpenTK.Graphics.OpenGL
+
 
 public class Fill( kri.rend.Basic ):
 	public final	fbo		= kri.buf.Holder(mask:0)
@@ -14,7 +16,7 @@ public class Fill( kri.rend.Basic ):
 		buDown.shader.add('/copy_v','/cull/down_f')
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.at.depth = t = pTex.Value = link.Depth
-		t.setBorder( OpenTK.Graphics.Color4.White )
+		t.setBorder( Graphics.Color4.White )
 		t.shadow(false)
 		t.setState(0,false,false)
 		kri.gen.Texture.createMipmap(fbo,10,buDown)
@@ -31,7 +33,7 @@ public class Apply( kri.rend.Basic ):
 	private	final	va		= kri.vb.Array()
 	private	final	spatial	= kri.vb.Attrib()
 	private final	rez		as (int)
-	private final	model 	as (kri.Spatial)
+	private final	model 	as (Vector4)
 	
 	public def constructor(box as support.cull.box.Update):
 		d = kri.shade.par.Dict()
@@ -43,7 +45,7 @@ public class Apply( kri.rend.Basic ):
 		mesh.vbo.Add( box.data )
 		mesh.vbo.Add( spatial )
 		rez = array[of int]( box.maxn )
-		model = array[of kri.Spatial]( box.maxn )
+		model = array[of Vector4]( 2*box.maxn )
 		dest.init( box.maxn * 4 )
 		kri.Help.enrich(spatial, 4, 'pos','rot')
 	
@@ -59,7 +61,10 @@ public class Apply( kri.rend.Basic ):
 		for ent in scene.entities:
 			tag = ent.seTag[of support.cull.box.Tag]()
 			if not tag: continue
-			model[tag.index] = kri.Node.SafeWorld( ent.node )
+			spa = kri.Node.SafeWorld( ent.node )
+			i = 2 * tag.index
+			model[i+0] = kri.Spatial.GetPos(spa)
+			model[i+1] = kri.Spatial.GetRot(spa)
 		spatial.init(model,true)
 		# perform culling
 		tf.Bind(dest)
