@@ -34,13 +34,17 @@ public class Update( kri.rend.Basic ):
 	private final fbo	= kri.buf.Holder( mask:1 )
 	private final tex	= kri.buf.Texture(0,
 			PixelInternalFormat.Rgba32f, PixelFormat.Rgba )
+	private final rez	= array[of single](maxn*4*2)
+	#private final tex	= kri.buf.Texture()	# ATI bug prevents using TBO for FBO attachments
 	
 	public def constructor():
 		data.init( maxn*2*4*sizeof(single) )
 		bu.shader.add( '/box_v', '/box_g', '/color_f' )
 		tex.target = TextureTarget.Texture1D
+		#tex.init( SizedInternalFormat.Rgba32f, data )
+		#tex.wid = maxn*2
 		fbo.at.color[0] = tex
-		fbo.resize(2*maxn,0)
+		fbo.resize(maxn*2,0)
 		kri.Help.enrich(data,4,'low','hai')
 	
 	public def genTag() as Tag:
@@ -52,27 +56,31 @@ public class Update( kri.rend.Basic ):
 	public override def process(con as kri.rend.link.Basic) as void:
 		scene = kri.Scene.Current
 		if not scene:	return
-		d = array[of single](8)
 		con.DepthTest = false
+		fbo.bind()
+		v = single.PositiveInfinity
+		GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
 		using blend = kri.Blender():
 			blend.min()
 			for e in scene.entities:
 				tag = e.seTag[of Tag]()
 				bv = e.findAny('vertex')
-				if not (tag and tag.check(bv)):
-					continue
-				#tex.init( SizedInternalFormat.Rgba32f, tag.buf )
-				fbo.bind()
+				if not tag:	continue	#tag.check(bv)
 				i = 2 * tag.index
-				GL.Viewport(i,0,i+2,1)
-				v = single.PositiveInfinity
-				GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
+				GL.Viewport(i,0,2,1)		
 				e.render( va,bu, kri.TransFeedback.Dummy )
-				kri.vb.Object.Pack = tag.buf
-				tex.read( PixelType.Float )
-				# read back
-				data.read(d,4*i)
-				v0 = Vector3(d[0],d[1],d[2])
-				v1 = Vector3(d[4],d[5],d[6])
-				e.localBox.center = 0.5f*(v0-v1)
-				e.localBox.hsize = -0.5f*(v0+v1)
+		# read back
+		fbo.bindRead(true)
+		GL.Viewport(0,0,maxn*2,1)
+		kri.vb.Object.Pack = data
+		tex.read( PixelType.Float )
+		data.read(rez,0)
+		# update local boxes
+		for e in scene.entities:
+			tag = e.seTag[of Tag]()
+			if not tag:	continue
+			i = 2*4 * tag.index
+			v0 = Vector3(rez[i+0],rez[i+1],rez[i+2])
+			v1 = Vector3(rez[i+4],rez[i+5],rez[i+6])
+			e.localBox.center = 0.5f*(v0-v1)
+			e.localBox.hsize = -0.5f*(v0+v1)

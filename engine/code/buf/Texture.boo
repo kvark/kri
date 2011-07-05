@@ -239,6 +239,10 @@ public class Texture(Surface):
 			GL.TexParameter( target, TextureParameterName.TextureCompareFunc, func )
 		if 'always':
 			GL.TexParameter( target, TextureParameterName.TextureCompareMode, param )
+	
+	# set anisotropy
+	public def anisotropy(lev as byte) as void:
+		bind()
 		
 	# generate mipmaps
 	public def genLevels() as byte:

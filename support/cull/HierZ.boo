@@ -14,7 +14,8 @@ public class Fill( kri.rend.Basic ):
 		buDown.shader.add('/copy_v','/cull/down_f')
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.at.depth = t = pTex.Value = link.Depth
-		t.setBorder( OpenTK.Graphics.Color4.Black )
+		t.setBorder( OpenTK.Graphics.Color4.White )
+		t.shadow(false)
 		t.setState(0,false,false)
 		kri.gen.Texture.createMipmap(fbo,10,buDown)
 		t.switchLevel(0)
@@ -36,7 +37,7 @@ public class Apply( kri.rend.Basic ):
 		d = kri.shade.par.Dict()
 		d.unit(pTex)
 		bu.dicts.Add(d)
-		bu.shader.add('/cull/check_v')
+		bu.shader.add( '/cull/check_v', '/lib/quat_v', '/lib/tool_v' )
 		bu.shader.feedback(true,'to_visible')
 		mesh.nVert = box.maxn
 		mesh.vbo.Add( box.data )
@@ -73,4 +74,6 @@ public class Apply( kri.rend.Basic ):
 			ent.frameVisible[cam] = vis
 		# check log
 		msg = (kri.lib.Journal.Inst as kri.lib.Journal).messages
+		r0,r1 = rez[0],rez[1]
+		r0=r1
 		msg[0] = ''
