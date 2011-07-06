@@ -35,8 +35,10 @@ public class Fill( kri.rend.Basic ):
 				bv = e.findAny('vertex')
 				if not (tag and tag.check(bv)):
 					continue
+				if tag.Index<0:
+					tag.Index = con.genId()
 				tag.fresh = doWork = true
-				i = 2 * tag.index
+				i = 2 * tag.Index
 				GL.Scissor	( i,0, 2,1 )
 				GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
 				GL.Viewport	( i,0, 2,1 )

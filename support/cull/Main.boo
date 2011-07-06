@@ -6,7 +6,7 @@ public class Context:
 	public	final	maxn	as uint
 	public	final	pTex	= kri.shade.par.Texture('input')
 	public	final	dict	= kri.shade.par.Dict()
-	private next	= 0
+	private next	as uint	= 0
 	
 	public def constructor(n as uint):
 		maxn = n
@@ -15,15 +15,19 @@ public class Context:
 		kri.Help.enrich(spatial,4,'pos','rot')
 		dict.unit(pTex)
 	
-	public def genTag() as box.Tag:
+	public def reset() as void:
+		next = 0
+	
+	public def genId() as uint:
 		if next>=maxn:
 			kri.lib.Journal.Log('Box: objects limit reached')
-			return null
-		return box.Tag(next++)
+			next = 0
+		return next++
 	
 	public def fillScene(scene as kri.Scene) as void:
 		for e in scene.entities:
-			e.tags.Add( genTag() )
+			if not e.seTag[of box.Tag]():
+				e.tags.Add( box.Tag() )
 
 
 

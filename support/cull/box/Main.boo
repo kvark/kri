@@ -3,10 +3,16 @@
 ###	Entity tag - a sign of bounding box update	###
 
 public class Tag( kri.ITag ):
-	public	final	index	as uint
 	public	fresh		= false
+	private	index		as int	= -1
 	private	animated	= false
 	private	stamp		as uint	= 0
+	
+	public Index	as int:
+		get: return index
+		set:
+			assert index<0
+			index = value
 	
 	public def check(bv as kri.vb.Object) as bool:
 		if animated != (bv!=null):
@@ -16,9 +22,6 @@ public class Tag( kri.ITag ):
 			return false
 		stamp = bv.TimeStamp
 		return true
-	
-	public def constructor(ind as uint):
-		index = ind
 
 
 ###	Read the GPU object and update local bounding boxes	###
@@ -41,7 +44,8 @@ public class Update( kri.rend.Basic ):
 			if not (tag and tag.fresh):
 				continue
 			tag.fresh = false
-			i = 2*4 * tag.index
+			i = 2*4 * tag.Index
+			if i<0: continue
 			v0 = OpenTK.Vector3(rez[i+0],rez[i+1],rez[i+2])
 			v1 = OpenTK.Vector3(rez[i+4],rez[i+5],rez[i+6])
 			e.localBox.center = 0.5f*(v0-v1)

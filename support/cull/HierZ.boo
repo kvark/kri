@@ -59,6 +59,7 @@ public class Apply( kri.rend.Basic ):
 		dest.read(rez,0)
 		for ent in scene.entities:
 			tag = ent.seTag[of support.cull.box.Tag]()
-			if not tag: continue
-			vis = rez[tag.index] != 0
+			if not (tag and tag.Index>=0):
+				continue
+			vis = rez[tag.Index] != 0
 			ent.frameVisible[cam] = vis
