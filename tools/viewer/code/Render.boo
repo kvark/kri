@@ -5,7 +5,6 @@ import OpenTK
 public class RenderSet:
 	public	final	rChain	as kri.rend.Chain	= null
 	public	final	rClear	= kri.rend.Clear()
-	public	final	rZcull	= kri.rend.EarlyZ()
 	public	final	rColor	= kri.rend.Color()
 	public	final	rEmi	= kri.rend.Emission()
 	public	final	rSkin	= support.skin.Universal()
@@ -16,10 +15,9 @@ public class RenderSet:
 	public	final	rParticle	as kri.rend.part.Standard		= null
 	public	final	grForward	as support.light.group.Forward	= null
 	public	final	grDeferred	as support.defer.Group			= null
-	public	final	rBox		= support.cull.box.Update()
-	public	final	rHierFill	= support.cull.hier.Fill()
-	public	final	rHierApply	= support.cull.hier.Apply(rBox)
-	public	final	rMap		= kri.rend.debug.MapDepth()
+	public	final	grCull		= support.cull.Group(256)
+	public	final	rZcull		= grCull.rZ
+	public	final	rBox		= grCull.rBox
 
 	public	BaseColor 	as Graphics.Color4:
 		set:	rEmi.pBase.Value = value
@@ -35,8 +33,8 @@ public class RenderSet:
 		rNormal		= support.light.normal.Apply( grForward.con )
 		# create and populate render chain
 		rChain = kri.rend.Chain(samples,0,0)
-		rChain.renders.AddRange((rBox,rSkin,rClear,rZcull,rHierFill,rHierApply,rColor,rEmi,rSurfBake,rNormal,
-			grForward,grDeferred,rDummy,rParticle,rAttrib,rMap))
+		rChain.renders.AddRange((rBox,rSkin,rClear,rZcull,grCull,rColor,rEmi,rSurfBake,rNormal,
+			grForward,grDeferred,rDummy,rParticle,rAttrib))
 		rChain.doProfile = profile
 	
 	public def gen(str as string) as kri.rend.Basic:
@@ -59,7 +57,7 @@ public class RenderSet:
 				ren.active = true
 			grDeferred.Layered = (str == 'Layered')
 		if str in ('HierZ'):
-			for ren in (rSkin,rZcull,rHierFill,rClear,rHierApply,rEmi):
+			for ren in (rBox,rSkin,rZcull,grCull,rEmi):
 				ren.active = true
 			rEmi.fillDepth = false
 		return rChain

@@ -5,14 +5,13 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Fill( kri.rend.Basic ):
-	public final	fbo		= kri.buf.Holder(mask:0)
-	public final	buDown	= kri.shade.Bundle()
-	public final	pTex	= kri.shade.par.Texture('input')
+	public	final	fbo		= kri.buf.Holder(mask:0)
+	public	final	buDown	= kri.shade.Bundle()
+	private	final	pTex	as kri.shade.par.Texture
 	
-	public def constructor():
-		d = kri.shade.par.Dict()
-		d.unit(pTex)
-		buDown.dicts.Add(d)
+	public def constructor(con as support.cull.Context):
+		pTex = con.pTex
+		buDown.dicts.Add( con.dict )
 		buDown.shader.add('/copy_v','/cull/down_f')
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.at.depth = t = pTex.Value = link.Depth
@@ -31,41 +30,26 @@ public class Apply( kri.rend.Basic ):
 	private	final	mesh	= kri.Mesh( BeginMode.Points )
 	private	final	dest	= kri.vb.Object()
 	private	final	va		= kri.vb.Array()
-	private	final	spatial	= kri.vb.Attrib()
 	private final	rez		as (int)
-	private final	model 	as (Vector4)
 	
-	public def constructor(box as support.cull.box.Update):
-		d = kri.shade.par.Dict()
-		d.unit(pTex)
-		bu.dicts.Add(d)
+	public def constructor(con as support.cull.Context):
+		bu.dicts.Add( con.dict )
 		bu.shader.add( '/cull/check_v', '/lib/quat_v', '/lib/tool_v' )
 		bu.shader.feedback(true,'to_visible')
-		mesh.nVert = box.maxn
-		mesh.vbo.Add( box.data )
-		mesh.vbo.Add( spatial )
-		rez = array[of int]( box.maxn )
-		model = array[of Vector4]( 2*box.maxn )
-		dest.init( box.maxn * 4 )
-		kri.Help.enrich(spatial, 4, 'pos','rot')
+		mesh.nVert = con.maxn
+		mesh.vbo.Add( con.bound )
+		mesh.vbo.Add( con.spatial )
+		rez = array[of int]( con.maxn )
+		dest.init( con.maxn * 4 )
 	
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.DepthTest = false
-		pTex.Value = t = link.Depth
-		if not t.MipMapped:
+		tex = link.Depth
+		if not (tex and tex.MipMapped):
 			kri.lib.Journal.Log('HierZ: mip chain has not been constructed')
 			return
 		scene = kri.Scene.Current
 		if not scene:	return
-		# pass spatial info array
-		for ent in scene.entities:
-			tag = ent.seTag[of support.cull.box.Tag]()
-			if not tag: continue
-			spa = kri.Node.SafeWorld( ent.node )
-			i = 2 * tag.index
-			model[i+0] = kri.Spatial.GetPos(spa)
-			model[i+1] = kri.Spatial.GetRot(spa)
-		spatial.init(model,true)
 		# perform culling
 		tf.Bind(dest)
 		using kri.Discarder():

@@ -114,8 +114,7 @@ public class GladeApp:
 		loader = kri.load.Native()
 		at = loader.read(path)
 		view.scene = at.scene
-		for e in at.scene.entities:	# add Bbox update tags
-			e.tags.Add( rset.rBox.genTag() )
+		rset.grCull.con.fillScene(at.scene)
 		if at.scene.cameras.Count:	# set camera
 			view.cam = at.scene.cameras[0]
 		# notify

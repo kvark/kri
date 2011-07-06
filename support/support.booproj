@@ -60,6 +60,7 @@
     <Compile Include="corp\Inst.boo" />
     <Compile Include="cull\Box.boo" />
     <Compile Include="cull\HierZ.boo" />
+    <Compile Include="cull\Main.boo" />
     <Compile Include="defer\Apply.boo" />
     <Compile Include="defer\Fill.boo" />
     <Compile Include="defer\Particle.boo" />
