@@ -31,6 +31,7 @@ public class Context:
 
 
 
+
 public class Group( kri.rend.Group ):
 	public	final	con			as Context					= null
 	public	final	rBoxFill	as box.Fill					= null
@@ -38,6 +39,7 @@ public class Group( kri.rend.Group ):
 	public	final	rZ			as kri.rend.EarlyZ			= null
 	public	final	rFill		as hier.Fill				= null
 	public	final	rApply		as hier.Apply				= null
+	public	final	rDraw		as box.Draw					= null
 	public	final	rMap		as kri.rend.debug.MapDepth	= null
 
 	public def constructor(maxn as uint):
@@ -46,8 +48,8 @@ public class Group( kri.rend.Group ):
 		rBoxUp = box.Update(con)
 		rZ = kri.rend.EarlyZ()
 		rFill = hier.Fill(con)
+		rDraw = box.Draw(con)
 		rApply = hier.Apply(con)
 		rMap = kri.rend.debug.MapDepth()
 		rMap.active = false
-		super(rBoxFill,rZ,rFill,rApply,rBoxUp,rMap)
-
+		super(rBoxFill,rZ,rFill,rApply,rBoxUp,rDraw,rMap)
