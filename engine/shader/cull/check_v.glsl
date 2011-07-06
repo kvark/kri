@@ -31,12 +31,12 @@ vec3 to_ndc(vec3 v)	{
 //	compute LOD containing our box in the neighbour 2x2 pixels
 int get_lod(vec4 bounds)	{
 	// first estimation
-	ivec2 viewSize = textureSize(unit_input,0);
-	float viewLen = length(viewSize);
-	float len = distance( bounds.xy, bounds.zw );
-	float flod = ceil(log2( len * viewLen ));
+	vec2 view = vec2( textureSize(unit_input,0) );
+	vec2 area = bounds.zw - bounds.xy;
+	float square = dot(view,view) * dot(area,area);
+	float flod = ceil(0.5*log2(square))-1.0;
 	// move to the next level is that's not enough
-	vec4 addr = floor(bounds * viewSize.xyxy * exp2(-flod));
+	vec4 addr = floor(bounds * view.xyxy * exp2(-flod));
 	vec2 diff = addr.zw - addr.xy;
 	flod += step(3.0, dot(diff,diff));
 	return int(flod);
