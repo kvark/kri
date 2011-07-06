@@ -16,8 +16,7 @@ public class RenderSet:
 	public	final	grForward	as support.light.group.Forward	= null
 	public	final	grDeferred	as support.defer.Group			= null
 	public	final	grCull		= support.cull.Group(256)
-	public	final	rZcull		= grCull.rZ
-	public	final	rBox		= grCull.rBox
+	public	final	rZcull		= kri.rend.Wrap( grCull.rZ )
 
 	public	BaseColor 	as Graphics.Color4:
 		set:	rEmi.pBase.Value = value
@@ -33,14 +32,13 @@ public class RenderSet:
 		rNormal		= support.light.normal.Apply( grForward.con )
 		# create and populate render chain
 		rChain = kri.rend.Chain(samples,0,0)
-		rChain.renders.AddRange((rBox,rSkin,rClear,rZcull,grCull,rColor,rEmi,rSurfBake,rNormal,
+		rChain.renders.AddRange((rSkin,rClear,rZcull,grCull,rColor,rEmi,rSurfBake,rNormal,
 			grForward,grDeferred,rDummy,rParticle,rAttrib))
 		rChain.doProfile = profile
 	
 	public def gen(str as string) as kri.rend.Basic:
 		for ren in rChain.renders:
 			ren.active = false
-		rBox.active = true
 		if str == 'Debug':
 			rAttrib.active = true
 		if str == 'Simple':
@@ -57,7 +55,7 @@ public class RenderSet:
 				ren.active = true
 			grDeferred.Layered = (str == 'Layered')
 		if str in ('HierZ'):
-			for ren in (rBox,rSkin,rZcull,grCull,rEmi):
+			for ren in (rSkin,grCull,rEmi):
 				ren.active = true
 			rEmi.fillDepth = false
 		return rChain

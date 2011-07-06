@@ -6,9 +6,19 @@ import OpenTK.Graphics
 
 public class Clear( Basic ):
 	public backColor	= Color4.Black
-	public override def process(con as link.Basic) as void:
-		con.activate(false)
-		con.ClearColor( backColor )
+	public override def process(link as link.Basic) as void:
+		link.activate(false)
+		link.ClearColor( backColor )
+
+
+#---------	WRAPPER	--------#
+
+public class Wrap( Basic ):
+	public final	sub	as Basic	= null
+	public def constructor(rend as Basic):
+		sub = rend
+	public override def process(link as link.Basic) as void:
+		if sub: sub.process(link)
 
 
 #---------	EARLY Z FILL	--------#
@@ -22,9 +32,9 @@ public class EarlyZ( tech.Sorted ):
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
-	public override def process(con as link.Basic) as void:
-		con.activate( con.Target.None, 1f, true )
-		con.ClearDepth(1f)
+	public override def process(link as link.Basic) as void:
+		link.activate( link.Target.None, 1f, true )
+		link.ClearDepth(1f)
 		drawScene()
 
 
@@ -40,12 +50,12 @@ public class Emission( tech.Meta ):
 		shade('/mat_base')
 		dict.var(pBase)
 		pBase.Value = Color4.Black
-	public override def process(con as link.Basic) as void:
+	public override def process(link as link.Basic) as void:
 		if fillDepth:
-			con.activate( con.Target.Same, 1f, true )
-			con.ClearDepth(1f)
-		else: con.activate( con.Target.Same, 0f, false )
-		con.ClearColor( backColor )
+			link.activate( link.Target.Same, 1f, true )
+			link.ClearDepth(1f)
+		else: link.activate( link.Target.Same, 0f, false )
+		link.ClearColor( backColor )
 		drawScene()
 
 
@@ -61,14 +71,14 @@ public class Color( tech.Sorted ):
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
-	public override def process(con as link.Basic) as void:
+	public override def process(link as link.Basic) as void:
 		if fillDepth:
-			con.ClearDepth(1.0)
-			con.activate( con.Target.Same, 1f, true )
+			link.ClearDepth(1.0)
+			link.activate( link.Target.Same, 1f, true )
 		else:
-			con.activate( con.Target.Same, 0f, false )
+			link.activate( link.Target.Same, 0f, false )
 		if fillColor:
-			con.ClearColor()
+			link.ClearColor()
 			drawScene()
 		else:
 			using blend = kri.Blender():
@@ -88,8 +98,8 @@ public class All( tech.Sorted ):
 		bu = kri.shade.Bundle()
 		bu.link()
 		return bu
-	public override def process(con as link.Basic) as void:
-		con.activate( con.Target.Same, 0f, true )
-		con.ClearDepth(1f)
-		con.ClearColor()
+	public override def process(link as link.Basic) as void:
+		link.activate( link.Target.Same, 0f, true )
+		link.ClearDepth(1f)
+		link.ClearColor()
 		drawScene()
