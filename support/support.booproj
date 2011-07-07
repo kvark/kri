@@ -16,7 +16,6 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <BaseIntermediateOutputPath>_obj\</BaseIntermediateOutputPath>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
@@ -24,14 +23,14 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>_bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>_bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
     <Optimize>True</Optimize>
@@ -51,72 +50,83 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
-    <Compile Include="bake\Depth.boo" />
-    <Compile Include="bake\Edge.boo" />
-    <Compile Include="bake\Surface.boo" />
-    <Compile Include="corp\beh\Main.boo" />
-    <Compile Include="corp\beh\Small.boo" />
-    <Compile Include="corp\Child.boo" />
-    <Compile Include="corp\Inst.boo" />
-    <Compile Include="cull\box\Draw.boo" />
-    <Compile Include="cull\box\Fill.boo" />
-    <Compile Include="cull\box\Main.boo" />
-    <Compile Include="cull\HierZ.boo" />
-    <Compile Include="cull\Main.boo" />
-    <Compile Include="defer\Apply.boo" />
-    <Compile Include="defer\Fill.boo" />
-    <Compile Include="defer\Particle.boo" />
-    <Compile Include="defer\Main.boo" />
-    <Compile Include="hair\Draw.boo" />
-    <Compile Include="hair\Beh.boo" />
-    <Compile Include="hair\Bake.boo" />
-    <Compile Include="hair\Main.boo" />
-    <Compile Include="hdr\Main.boo" />
-    <Compile Include="layer\Fill.boo" />
-    <Compile Include="layer\Main.boo" />
-    <Compile Include="light\Context.boo" />
-    <Compile Include="light\Defer.boo" />
-    <Compile Include="light\Group.boo" />
-    <Compile Include="light\Kbuf.boo" />
-    <Compile Include="light\Normal.boo" />
-    <Compile Include="light\Omni.boo" />
-    <Compile Include="light\Spot.boo" />
-    <Compile Include="motion\Main.boo" />
-    <Compile Include="mirror\Main.boo" />
-    <Compile Include="morph\Main.boo" />
-    <Compile Include="morph\App.boo" />
-    <Compile Include="corp\Main.boo" />
-    <Compile Include="phys\Main.boo" />
-    <Compile Include="pick\Main.boo" />
-    <Compile Include="reflect\App.boo" />
-    <Compile Include="reflect\Main.boo" />
-    <Compile Include="skin\App.boo" />
-    <Compile Include="skin\Main.boo" />
-    <Compile Include="skin\Uni.boo" />
-    <Compile Include="vanburen\Model.boo" />
+    <Compile Include="code\bake\Depth.boo" />
+    <Compile Include="code\bake\Edge.boo" />
+    <Compile Include="code\bake\Surface.boo" />
+    <Compile Include="code\corp\beh\Main.boo" />
+    <Compile Include="code\corp\beh\Small.boo" />
+    <Compile Include="code\corp\Child.boo" />
+    <Compile Include="code\corp\Inst.boo" />
+    <Compile Include="code\corp\Main.boo" />
+    <Compile Include="code\cull\box\Draw.boo" />
+    <Compile Include="code\cull\box\Fill.boo" />
+    <Compile Include="code\cull\box\Main.boo" />
+    <Compile Include="code\cull\HierZ.boo" />
+    <Compile Include="code\cull\Main.boo" />
+    <Compile Include="code\defer\Apply.boo" />
+    <Compile Include="code\defer\Fill.boo" />
+    <Compile Include="code\defer\Main.boo" />
+    <Compile Include="code\defer\Particle.boo" />
+    <Compile Include="code\hair\Bake.boo" />
+    <Compile Include="code\hair\Beh.boo" />
+    <Compile Include="code\hair\Draw.boo" />
+    <Compile Include="code\hair\Main.boo" />
+    <Compile Include="code\hdr\Main.boo" />
+    <Compile Include="code\layer\Fill.boo" />
+    <Compile Include="code\layer\Main.boo" />
+    <Compile Include="code\light\Context.boo" />
+    <Compile Include="code\light\Defer.boo" />
+    <Compile Include="code\light\Group.boo" />
+    <Compile Include="code\light\Kbuf.boo" />
+    <Compile Include="code\light\Normal.boo" />
+    <Compile Include="code\light\Omni.boo" />
+    <Compile Include="code\light\Spot.boo" />
+    <Compile Include="code\mirror\Main.boo" />
+    <Compile Include="code\morph\App.boo" />
+    <Compile Include="code\morph\Main.boo" />
+    <Compile Include="code\motion\Main.boo" />
+    <Compile Include="code\phys\Main.boo" />
+    <Compile Include="code\pick\Main.boo" />
+    <Compile Include="code\reflect\App.boo" />
+    <Compile Include="code\reflect\Main.boo" />
+    <Compile Include="code\skin\App.boo" />
+    <Compile Include="code\skin\Main.boo" />
+    <Compile Include="code\skin\Uni.boo" />
+    <Compile Include="code\vanburen\Model.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">
       <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
-    <ProjectReference Include="..\engine\engine.booproj">
+    <ProjectReference Include="..\core\engine.booproj">
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ext\ext.booproj">
+    <ProjectReference Include="..\lib\ext.booproj">
       <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
       <Name>ext</Name>
     </ProjectReference>
-    <Folder Include="corp\" />
-    <Folder Include="cull\box" />
-    <Folder Include="defer" />
-    <Folder Include="light" />
-    <Folder Include="mirror" />
-    <Folder Include="motion" />
-    <Folder Include="layer" />
-    <Folder Include="cull" />
     <Reference Include="System.Drawing" />
+    <Folder Include="code" />
+    <Folder Include="code\bake" />
+    <Folder Include="code\corp" />
+    <Folder Include="code\corp\beh" />
+    <Folder Include="code\cull" />
+    <Folder Include="code\cull\box" />
+    <Folder Include="code\defer" />
+    <Folder Include="code\hair" />
+    <Folder Include="code\hdr" />
+    <Folder Include="code\layer" />
+    <Folder Include="code\light" />
+    <Folder Include="code\mirror" />
+    <Folder Include="code\morph" />
+    <Folder Include="code\motion" />
+    <Folder Include="code\phys" />
+    <Folder Include="code\pick" />
+    <Folder Include="code\reflect" />
+    <Folder Include="code\skin" />
+    <Folder Include="code\vanburen" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

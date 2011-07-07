@@ -1,42 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</ProjectGuid>
+    <ProjectGuid>{F8554600-4363-46A4-88D0-B9CFB1410D5B}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <OutputType>Library</OutputType>
-    <RootNamespace>ext</RootNamespace>
-    <AssemblyName>ext</AssemblyName>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>test_suite</RootNamespace>
+    <AssemblyName>test_suite</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <Strict>True</Strict>
     <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\dmitrym\Application Data\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <NoStdLib>False</NoStdLib>
     <Ducky>False</Ducky>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <Strict>True</Strict>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>BCW0014</NoWarn>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <BaseIntermediateOutputPath>_obj\</BaseIntermediateOutputPath>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>_bin\Debug\</OutputPath>
+    <OutputPath>..\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>_bin\Release\</OutputPath>
-    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -52,10 +50,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
-    <Compile Include="Lang.boo" />
-    <Compile Include="spec\Common.boo" />
-    <Compile Include="spec\Simple.boo" />
-    <Compile Include="Tool.boo" />
+    <Compile Include="Main.boo" />
+    <Compile Include="Test.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\opentk\Source\OpenTK\OpenTK.csproj">
+      <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
+      <Name>OpenTK</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\core\engine.booproj">
+      <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
+      <Name>engine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

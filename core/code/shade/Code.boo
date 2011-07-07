@@ -131,12 +131,15 @@ public class Collector:
 public class Template(ICode):
 	private final dict	= Dictionary[of string,Object]()
 	[Getter(Text)]
-	private final text		as string
-	private final keys		as (string)
-	public final tip		as ShaderType
+	private final text		as string	= null
+	private final keys		as (string)	= null
+	public final tip		= ShaderType.VertexShader
 	
 	public def constructor(path as string):
 		text = Code.Read(path)
+		if not text:
+			kri.lib.Journal.Log("Template: failed to read text (${path})")
+			return
 		tip = Object.Type(path)
 		dk = Dictionary[of string,object]()
 		pos = 0

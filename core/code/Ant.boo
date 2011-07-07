@@ -112,7 +112,7 @@ public class Ant(IDisposable):
 
 	public def constructor(conf as lib.Config, bug as bool, gammaCorr as bool):
 		# config read
-		defPath = '../../engine/shader'
+		defPath = '../../gpu'
 		answers = ('no','yes')
 		feedCount	= answers[kri.TransFeedback.CountPrimitives]
 		safeDiscard	= answers[kri.Discarder.Safe]

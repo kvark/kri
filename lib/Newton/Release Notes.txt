@@ -1,0 +1,75 @@
+         Newton Physics .NET
+         ===================
+
+This a the .NET wrapper for the Newton Game Dynamics SDK 1.30
+http://physicsengine.com/
+
+Instructions to build the project (I used VS2003 but should work with other versions) :
+- Create a C++ project : .NET class library named NewtonWrapper
+- Remove all files from solution (NewtonWrapper.h/.cpp, stdafx.h/.cpp, ressources)
+- Copy all the files from cvs into the project directory and add them to the solution. There are 13 ".h" + NewtonWrapper.cpp + Newton.h + AssemblyInfo.cpp
+- disable precompiled headers from solution options (C++/Precompiled headers/Do not use precompiled header)
+- add newton.lib to additional dependencies (linker/input/additional dependencies)
+- still new and delete are missing for the linker so add msvcrt.lib to the additional dependencies also.
+- compiles fine. To check the dll use ildasm tool (visual studio prompt).
+
+
+Not everything is wrapped.
+Vehicle joint OK
+Ragdolls OK
+TreeCollisions OK
+UserMeshCollisions NO
+
+Some functions are a little different than their Newton equivalent :
+the most different functions are :
+
+static void RagDollSetTransformCallback( int ragdoll, SetRagDollTransform* callback, int boneList __gc[] ) {
+static void RagDollSetForceAndTorqueCallback( int ragdoll, ApplyForceAndTorque* callback, int bodyList __gc[]  )
+
+They take the boneList and the bone's body list to enable my wrapper to lookup for callbacks.
+To clarify things up, here's how I setup a ragdoll using my wrapper :
+
+	ragdoll = Newton.CreateRagDoll( Physic.World );
+	Newton.RagDollBegin( ragdoll );
+	int[] bodyList = new int[bones.Length];
+	int[] boneNumList = new int[bones.Length];
+	for (int i=0; i<bones.Length; i++) {
+		VBone bone = bones[i];
+		int coll = Newton.CreateBox( Physic.World,
+									 bone.param.collSize.x, bone.param.collSize.y, bone.param.collSize.z,
+									 Utils.M42A(bone.param.offsetMatrix) );
+		int userData = 0;
+		float mass = 1f;
+		int parentNum = bone.param.parent;
+		if (parentNum==-1)
+			parentNum = 0;
+		else
+			parentNum = bones[parentNum].boneNum;
+		int boneNum = Newton.RagDollAddBone(
+			ragdoll, parentNum, userData, mass,
+			Utils.M42A(bone.param.matrix), coll,
+			Utils.V32A(bone.param.boneSize));
+		Newton.ReleaseCollision( Physic.World, coll );
+		bone.boneNum = boneNum;
+		bone.body = Newton.RagDollBoneGetBody( bone.boneNum );
+		boneToVBone[boneNum] = bone;
+		bodyList[i] = bone.body;
+		boneNumList[i] = bone.boneNum;
+		Newton.BodySetAutoFreeze( bone.body, 0 );
+		Newton.WorldUnfreezeBody( Physic.World, bone.body );
+
+		if (bone.param.pin != Vector3.Zero)
+		Newton.RagDollBoneSetLimits(
+			bone.boneNum,
+			Utils.V32A(bone.param.pin),
+			bone.param.minConeAngle, bone.param.maxConeAngle, bone.param.maxTwistAngle,
+			Utils.V32A(Vector3.UnitZ) /*DO NOT SET TO ZERO (Newton bug)*/, Utils.deg_to_rad(-0), Utils.deg_to_rad(+0) );
+	
+	}
+
+	Newton.RagDollSetTransformCallback( ragdoll, new Newton.SetRagDollTransform( ragDollTransformCB ), boneNumList );
+	Newton.RagDollSetForceAndTorqueCallback( ragdoll, new Newton.ApplyForceAndTorque( ragDollForceAndTorque ), bodyList );
+	Newton.RagDollEnd( ragdoll );
+
+	for (int i=0; i<bones.Length; i++)
+		TranslateBody(bones[i].body, startX);

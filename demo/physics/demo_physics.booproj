@@ -42,7 +42,7 @@
       <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\engine\engine.booproj">
+    <ProjectReference Include="..\..\core\engine.booproj">
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>

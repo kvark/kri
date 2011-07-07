@@ -130,49 +130,13 @@
     <Compile Include="code\vb\Info.boo" />
     <Compile Include="code\vb\Main.boo" />
     <Compile Include="code\View.boo" />
-    <None Include="shader\copy_ar_f.glsl" />
-    <None Include="shader\copy_f.glsl" />
-    <None Include="shader\copy_v.glsl" />
-    <None Include="shader\depth_field_f.glsl" />
-    <None Include="shader\g\apply_f.glsl" />
-    <None Include="shader\g\make_f.glsl" />
-    <None Include="shader\g\make_v.glsl" />
-    <None Include="shader\hdr\bright_f.glsl" />
-    <None Include="shader\hdr\tone_f.glsl" />
-    <None Include="shader\lib\fixed_v.glsl" />
-    <None Include="shader\lib\math_f.glsl" />
-    <None Include="shader\lib\quat_v.glsl" />
-    <None Include="shader\lib\tool_v.glsl" />
-    <None Include="shader\light\apply_f.glsl" />
-    <None Include="shader\light\apply_v.glsl" />
-    <None Include="shader\light\bake_exp_f.glsl" />
-    <None Include="shader\light\bake_v.glsl" />
-    <None Include="shader\light\shadow\exponent_f.glsl" />
-    <None Include="shader\light\shadow\exp_old_f.glsl" />
-    <None Include="shader\light\shadow\simple_f.glsl" />
-    <None Include="shader\mat_base_f.glsl" />
-    <None Include="shader\mat_base_v.glsl" />
-    <None Include="shader\mod\cooktorr_f.glsl" />
-    <None Include="shader\mod\lambert_f.glsl" />
-    <None Include="shader\mod\shift0_f.glsl" />
-    <None Include="shader\mod\shift1_f.glsl" />
-    <None Include="shader\mod\phong2_f.glsl" />
-    <None Include="shader\mod\phong_f.glsl" />
-    <None Include="shader\empty_f.glsl" />
-    <None Include="shader\part\init_v.glsl" />
-    <None Include="shader\skin\dual_v.glsl" />
-    <None Include="shader\skin\empty_v.glsl" />
-    <None Include="shader\skin\main_v.glsl" />
-    <None Include="shader\skin\simple_v.glsl" />
-    <None Include="shader\skin\zcull_v.glsl" />
-    <None Include="shader\zcull_v.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">
       <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ext\ext.booproj">
+    <ProjectReference Include="..\lib\ext.booproj">
       <Project>{ACE1CC26-970D-4F3B-9129-70911A339AC7}</Project>
       <Name>ext</Name>
     </ProjectReference>
@@ -198,14 +162,6 @@
     <Folder Include="code\rend\" />
     <Folder Include="code\rend\link" />
     <Folder Include="code\shade\par" />
-    <Folder Include="shader\" />
-    <Folder Include="shader\" />
-    <Folder Include="shader\" />
-    <Folder Include="shader\" />
-    <Folder Include="shader\light\" />
-    <Folder Include="shader\" />
-    <Folder Include="shader\" />
-    <Folder Include="shader\" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
