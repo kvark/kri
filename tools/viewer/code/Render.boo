@@ -3,6 +3,7 @@
 import OpenTK
 
 public class RenderSet:
+	# todo: use render manager
 	public	final	rChain	as kri.rend.Chain	= null
 	public	final	rClear	= kri.rend.Clear()
 	public	final	rColor	= kri.rend.Color()
