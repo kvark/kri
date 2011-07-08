@@ -22,31 +22,3 @@ public class Tag( kri.ITag ):
 			return false
 		stamp = bv.TimeStamp
 		return true
-
-
-###	Read the GPU object and update local bounding boxes	###
-
-public class Update( kri.rend.Basic ):
-	private final rez		as (single)
-	private final data		as kri.vb.Object
-	
-	public def constructor(ct as support.cull.Context):
-		rez = array[of single]( ct.maxn*4*2 )
-		data = ct.bound
-		
-	public override def process(link as kri.rend.link.Basic) as void:
-		scene = kri.Scene.Current
-		if not scene:	return
-		data.read(rez,0)
-		# update local boxes
-		for e in scene.entities:
-			tag = e.seTag[of Tag]()
-			if not (tag and tag.fresh):
-				continue
-			tag.fresh = false
-			i = 2*4 * tag.Index
-			if i<0: continue
-			v0 = OpenTK.Vector3(rez[i+0],rez[i+1],rez[i+2])
-			v1 = OpenTK.Vector3(rez[i+4],rez[i+5],rez[i+6])
-			e.localBox.center = 0.5f*(v0-v1)
-			e.localBox.hsize = -0.5f*(v0+v1)

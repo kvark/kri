@@ -17,6 +17,9 @@ public class Mesh( vb.Storage ):
 	public NumElements as uint:
 		get: return (nVert,nPoly)[ind!=null]
 	
+	public def constructor():
+		self( BeginMode.Points )
+	
 	public def constructor(dmode as BeginMode):
 		drawMode,polySize = dmode,0
 		polySize = 1	if dmode in (BeginMode.Points, BeginMode.LineStrip, BeginMode.LineLoop,

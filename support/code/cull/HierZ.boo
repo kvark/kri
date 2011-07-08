@@ -1,7 +1,6 @@
 ﻿namespace support.cull.hier
 
 import OpenTK
-import OpenTK.Graphics.OpenGL
 
 
 public class Fill( kri.rend.Basic ):
@@ -27,18 +26,15 @@ public class Apply( kri.rend.Basic ):
 	public	final	bu		= kri.shade.Bundle()
 	public	final	pTex	= kri.shade.par.Texture('input')
 	private	final	tf		= kri.TransFeedback(1)
-	private	final	mesh	= kri.Mesh( BeginMode.Points )
+	private	final	frame	as kri.gen.Frame	= null
 	private	final	dest	= kri.vb.Object()
-	private	final	va		= kri.vb.Array()
 	private final	rez		as (int)
 	
 	public def constructor(con as support.cull.Context):
 		bu.dicts.Add( con.dict )
 		bu.shader.add( '/cull/check_v', '/lib/quat_v', '/lib/tool_v' )
 		bu.shader.feedback(true,'to_visible')
-		mesh.nVert = con.maxn
-		mesh.buffers.Add( con.bound )
-		mesh.buffers.Add( con.spatial )
+		frame = con.frame
 		rez = array[of int]( con.maxn )
 		dest.init( con.maxn * 4 )
 	
@@ -53,7 +49,7 @@ public class Apply( kri.rend.Basic ):
 		# perform culling
 		tf.Bind(dest)
 		using kri.Discarder():
-			mesh.render(va,bu,tf)
+			frame.draw(bu,tf)
 		# store the result
 		cam = kri.Camera.Current
 		dest.read(rez,0)

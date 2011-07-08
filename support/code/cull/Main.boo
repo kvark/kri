@@ -6,6 +6,7 @@ public class Context:
 	public	final	maxn	as uint
 	public	final	pTex	= kri.shade.par.Texture('input')
 	public	final	dict	= kri.shade.par.Dict()
+	public	final	frame	as kri.gen.Frame	= null
 	private next	as uint	= 0
 	
 	public def constructor(n as uint):
@@ -14,6 +15,9 @@ public class Context:
 		bound.initUnit(n)
 		kri.Help.enrich(spatial,4,'pos','rot')
 		dict.unit(pTex)
+		m = kri.Mesh( nVert:maxn )
+		m.buffers.AddRange(( bound, spatial ))
+		frame = kri.gen.Frame(m)
 	
 	public def reset() as void:
 		next = 0

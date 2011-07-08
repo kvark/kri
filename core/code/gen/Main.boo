@@ -16,6 +16,8 @@ public class Frame:
 		m.fillEntries(dict)
 	public def draw(bu as kri.shade.Bundle) as bool:
 		return mesh.render(va,bu,dict,1,null)
+	public def draw(bu as kri.shade.Bundle, tf as kri.TransFeedback) as bool:
+		return mesh.render(va,bu,dict,1,tf)
 	public def draw(sa as kri.shade.Mega) as bool:
 		return mesh.render( va, kri.shade.Bundle(sa), null )
 
