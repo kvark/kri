@@ -8,7 +8,6 @@ import OpenTK.Graphics.OpenGL
 public class Draw( kri.rend.Basic ):
 	public	final	bu		= kri.shade.Bundle()
 	private	final	frame	as kri.gen.Frame	= null
-	private final	q		= kri.Query()
 	
 	public def constructor(con as support.cull.Context):
 		sa = bu.shader
@@ -22,11 +21,8 @@ public class Draw( kri.rend.Basic ):
 		if not frame.mesh.Allocated:
 			return
 		link.activate(false)
-		link.SetDepth(-1f,false)
-		using q.catch( QueryTarget.SamplesPassed ):
-			frame.draw(bu)
-		x = q.result()
-		x = 0
+		link.SetDepth(0f,false)	#todo: add line offset
+		frame.draw(bu)
 
 
 ###	Read the GPU object and update local bounding boxes	###
