@@ -26,7 +26,7 @@ public class ExMesh( kri.IExtension ):
 		v = kri.vb.Attrib()
 		v.init(ar,false)
 		v.Semant.Add(ai)
-		m.vbo.Add(v)
+		m.buffers.Add(v)
 		return true
 
 	

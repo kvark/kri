@@ -31,16 +31,16 @@ public class Mesh( vb.Storage ):
 		ind		= m.ind
 		drawMode	= m.drawMode
 		polySize	= m.polySize
-		vbo.AddRange( m.vbo )
+		buffers.AddRange( m.buffers )
 	
 	public def allocate() as void:
-		for v in vbo:
+		for v in buffers:
 			v.initUnit(nVert)
 		assert not ind
 	
 	public def getTotalSize() as uint:
 		rez = 0
-		for v in vbo:
+		for v in buffers:
 			rez += v.unitSize()
 		return rez * nVert
 	

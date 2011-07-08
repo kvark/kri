@@ -14,8 +14,8 @@ public class Draw( kri.rend.Basic ):
 			#sa.add( kri.shade.Object( ShaderType.GeometryShader, name, text ))
 		sa.add( '/cull/draw_v', '/cull/draw_g', '/white_f' )
 		mesh.nVert = con.maxn
-		mesh.vbo.Add( con.bound )
-		mesh.vbo.Add( con.spatial )
+		mesh.buffers.Add( con.bound )
+		mesh.buffers.Add( con.spatial )
 	
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.activate(false)

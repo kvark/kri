@@ -11,6 +11,7 @@ public class Fill( kri.rend.Basic ):
 			PixelInternalFormat.Rgba32f, PixelFormat.Rgba )
 	private final model 	as (OpenTK.Vector4)
 	private final con		as support.cull.Context
+	private final mesh		= kri.Mesh( BeginMode.Points )
 	
 	public def constructor(ct as support.cull.Context):
 		model = array[of OpenTK.Vector4]( ct.maxn*2 )

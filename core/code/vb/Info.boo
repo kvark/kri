@@ -27,28 +27,28 @@ public struct Info:
 #---------
 
 public class Storage:
-	public final vbo = List[of kri.vb.Attrib]()
+	public final buffers		= List[of kri.vb.Attrib]()
 	public final static	Empty	= Storage()
 	
 	public def find(name as string) as kri.vb.Attrib:
-		return vbo.Find() do(v as kri.vb.Attrib):
+		return buffers.Find() do(v as kri.vb.Attrib):
 			s = v.Semant
 			return s.Count>0 and s[0].name==name
 
 	public def swap(x as kri.vb.Attrib, y as kri.vb.Attrib) as void:
 		#vbo.Remove(x)
 		#vbo.Add(y)
-		vbo[ vbo.IndexOf(x) ] = y
+		buffers[ buffers.IndexOf(x) ] = y
 
 	public def gatherAttribs() as (string):
 		al = List[of string]()
-		for vat in vbo:
+		for vat in buffers:
 			for ai in vat.Semant:
 				al.Add( ai.name )
 		return al.ToArray()
 	
 	public def fillEntries(d as Dictionary[of string,Entry]) as void:
-		for vat in vbo:
+		for vat in buffers:
 			off = 0
 			size = vat.unitSize()
 			for sem in vat.Semant:

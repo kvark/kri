@@ -22,7 +22,7 @@ public class Manager( kri.IMeshed ):
 	public	Total	as uint:
 		get: return mesh.nVert
 	public	Ready	as bool:
-		get: return mesh.vbo.Count==1 and col_init.Ready and col_update.Ready
+		get: return mesh.buffers.Count==1 and col_init.Ready and col_update.Ready
 	
 	kri.IMeshed.Mesh as kri.Mesh:
 		get: return mesh
@@ -32,13 +32,13 @@ public class Manager( kri.IMeshed ):
 		dict.var(parTotal)
 	
 	public def initMesh(m as kri.Mesh) as void:
-		assert m and mesh.vbo.Count
-		if m.vbo.Count:
-			m.vbo[0].Semant.Clear()
+		assert m and mesh.buffers.Count
+		if m.buffers.Count:
+			m.buffers[0].Semant.Clear()
 		else:
-			m.vbo.Add( kri.vb.Attrib() )
+			m.buffers.Add( kri.vb.Attrib() )
 		m.nVert = Total
-		m.vbo[0].Semant.AddRange( mesh.vbo[0].Semant )
+		m.buffers[0].Semant.AddRange( mesh.buffers[0].Semant )
 		m.allocate()
 	
 	public def makeStandard(pc as Context) as void:
@@ -70,8 +70,8 @@ public class Manager( kri.IMeshed ):
 
 	public def init(pc as Context) as void:
 		# collect attributes
-		mesh.vbo.Clear()
-		mesh.vbo.Add( vob = kri.vb.Attrib() )
+		mesh.buffers.Clear()
+		mesh.buffers.Add( vob = kri.vb.Attrib() )
 		for b in behos:
 			vob.Semant.AddRange( (b as kri.vb.ISemanted).Semant )
 			b.link(dict)
@@ -85,20 +85,20 @@ public class Manager( kri.IMeshed ):
 	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
 		if not (Ready and pe.update()):
 			return false
-		if not tf.Bind( mesh.vbo[0] ):
+		if not tf.Bind( mesh.buffers[0] ):
 			return false
 		parTotal.Value = (0f, 1f / (Total-1))[ Total>1 ]
 		using kri.Discarder():
 			if not mesh.render( va, bu, pe.entries, 0, tf ):
 				return false
 		if not 'Debug':
-			ar = array[of single]( Total * mesh.vbo[0].unitSize() >>2 )
-			mesh.vbo[0].read(ar,0)
+			ar = array[of single]( Total * mesh.buffers[0].unitSize() >>2 )
+			mesh.buffers[0].read(ar,0)
 		# swap data
 		mesh.fillEntries( pe.entries )
-		data = mesh.vbo[0]
-		mesh.vbo[0] = pe.mesh.vbo[0]
-		pe.mesh.vbo[0] = data
+		data = mesh.buffers[0]
+		mesh.buffers[0] = pe.mesh.buffers[0]
+		pe.mesh.buffers[0] = data
 		return true
 
 	public def process(pe as Emitter) as bool:

@@ -22,7 +22,7 @@ public class Tag( kri.ITag ):
 
 	public def constructor(size as uint):
 		# init fake vertex attrib for drawing
-		mesh.vbo.Add( vat = kri.vb.Attrib() )
+		mesh.buffers.Add( vat = kri.vb.Attrib() )
 		vat.Semant.Add( kri.vb.Info.Dummy )
 		mesh.nVert = size
 		mesh.allocate()

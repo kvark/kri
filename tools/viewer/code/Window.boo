@@ -300,7 +300,7 @@ public class GladeApp:
 			for ch in rec.channels:
 				objTree.AppendValues(par,ch)
 		if (vs = ox as kri.vb.Storage) and inStore:
-			for vat in vs.vbo:
+			for vat in vs.buffers:
 				for ai in vat.Semant:
 					objTree.AppendValues(par,AtBox(ai))
 		if (own = ox as kri.part.Manager) and inOwner:

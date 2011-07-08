@@ -86,7 +86,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 		v = kri.vb.Attrib()
 		v.init(ar,false)
 		v.Semant.Add(ai)
-		m.vbo.Add(v)
+		m.buffers.Add(v)
 		return true
 	
 	public static def QuatBasis(hand as single, ref a as Vector3, ref b as Vector3, ref c as Vector3) as Quaternion:
@@ -327,7 +327,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 			mesh.ind.init(dar,false)
 			# deferred vertex push
 			vat = ProcessVertices(dar,va)
-			rd.ent.mesh.vbo.Add(vat)
+			rd.ent.mesh.buffers.Add(vat)
 		else:
 			# not debugged yet
 			for i in range(num):

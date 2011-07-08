@@ -37,8 +37,8 @@ public class Apply( kri.rend.Basic ):
 		bu.shader.add( '/cull/check_v', '/lib/quat_v', '/lib/tool_v' )
 		bu.shader.feedback(true,'to_visible')
 		mesh.nVert = con.maxn
-		mesh.vbo.Add( con.bound )
-		mesh.vbo.Add( con.spatial )
+		mesh.buffers.Add( con.bound )
+		mesh.buffers.Add( con.spatial )
 		rez = array[of int]( con.maxn )
 		dest.init( con.maxn * 4 )
 	

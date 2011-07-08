@@ -26,7 +26,8 @@ vec4 to_screen(vec3 mask)	{
 	//vec3 v = mix( b[0].low.xyz, b[0].hai.xyz, mask );
 	//Spatial s_model;
 	//s_model.rot = to_rot[0];
-	return b[0].pos+b[0].rot;	//ATI crashes with OOM
+	return vec4(1.0);
+	//return b[0].pos+b[0].rot;	//ATI crashes with OOM
 	//vec3 w = trans_for(v,s_model);
 	//vec3 c = trans_inv(w,s_cam);
 	//return get_projection(c,proj_cam);

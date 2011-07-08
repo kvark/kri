@@ -30,7 +30,7 @@ public class Point( Mesh ):
 		ai = kri.vb.Info( name:'vertex', size:1,
 			type:VertexAttribPointerType.UnsignedByte )
 		vat.Semant.Add(ai)
-		vbo.Add(vat)
+		buffers.Add(vat)
 
 
 #---------	QUAD	---------#
@@ -48,7 +48,7 @@ public class Quad( Mesh ):
 		ai = kri.vb.Info( name:'vertex', size:2,
 			type:VertexAttribPointerType.HalfFloat )
 		vat.Semant.Add(ai)
-		vbo.Add(vat)
+		buffers.Add(vat)
 
 
 #----	LINE OBJECT (-1,1)	----#
@@ -62,7 +62,7 @@ public class Line( Mesh ):
 		vat = kri.vb.Attrib()
 		vat.init( data, false )
 		kri.Help.enrich(vat, 4, 'vertex')
-		vbo.Add(vat)
+		buffers.Add(vat)
 
 
 
@@ -97,4 +97,4 @@ public class PlaneTex( Mesh ):
 		kri.Help.enrich(vat, 4, 'vertex','quat')
 		kri.Help.enrich(vat, 2, 'tex0')
 		# return
-		vbo.Add(vat)
+		buffers.Add(vat)

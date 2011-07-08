@@ -62,7 +62,7 @@ public struct Constructor:
 			vbo = kri.vb.Attrib()
 			vbo.init( v, false )
 			vbo.Semant.AddRange((InfoVertex,InfoQuat))
-			m.vbo.Add(vbo)
+			m.buffers.Add(vbo)
 		if i:
 			m.nPoly = i.Length / m.polySize
 			m.ind = kri.vb.Object()

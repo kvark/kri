@@ -101,6 +101,6 @@ public class Cone(Mesh):
 		vo = kri.vb.Attrib()
 		vo.init( v, false )
 		vo.Semant.AddRange(( Constructor.InfoVertex, Constructor.InfoNormal ))
-		vbo.Add(vo)
+		buffers.Add(vo)
 		.ind = kri.vb.Object()
 		ind.init( ix, false )

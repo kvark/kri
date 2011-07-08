@@ -51,7 +51,7 @@ public class Universal( kri.rend.tech.Basic ):
 				vos[i] = v = kri.vb.Attrib()
 				v.Semant.Add(ai)
 				v.init( e.mesh.nVert * ai.fullSize() )
-				e.store.vbo.Add(v)
+				e.store.buffers.Add(v)
 			tf.Bind( *vos )
 			# upload bone info
 			spa as kri.Spatial
