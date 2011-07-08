@@ -1,4 +1,4 @@
-#version 150 core
+#version 130
 
 in	vec4	at_pos, at_rot;
 in	vec4	at_low, at_hai;

@@ -19,6 +19,11 @@ public class Fill( kri.rend.Basic ):
 		tex.target = TextureTarget.Texture1D
 		fbo.at.color[0] = tex
 		fbo.resize( ct.maxn*2, 0 )
+		# initialize buffers
+		fbo.bind()
+		kri.rend.link.Help.ClearColor()
+		for i in range(2*ct.maxn):
+			model[i] = OpenTK.Vector4.Zero
 	
 	public override def process(link as kri.rend.link.Basic) as void:
 		scene = kri.Scene.Current

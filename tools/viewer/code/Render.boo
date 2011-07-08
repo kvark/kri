@@ -33,7 +33,7 @@ public class RenderSet:
 		# create and populate render chain
 		rChain = kri.rend.Chain(samples,0,0)
 		rChain.renders.AddRange((rSkin,rClear,rZcull,grCull,rColor,rEmi,rSurfBake,rNormal,
-			grForward,grDeferred,rDummy,rParticle,rAttrib))
+			grForward,grDeferred,rDummy,rParticle, grCull.rDraw, rAttrib))
 		rChain.doProfile = profile
 	
 	public def gen(str as string) as kri.rend.Basic:
@@ -55,7 +55,7 @@ public class RenderSet:
 				ren.active = true
 			grDeferred.Layered = (str == 'Layered')
 		if str in ('HierZ'):
-			for ren in (rSkin,grCull,rEmi):
+			for ren in (rSkin,grCull,rEmi, grCull.rDraw):
 				ren.active = true
 			rEmi.fillDepth = false
 		return rChain

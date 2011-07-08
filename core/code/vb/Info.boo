@@ -29,6 +29,12 @@ public struct Info:
 public class Storage:
 	public final buffers		= List[of kri.vb.Attrib]()
 	public final static	Empty	= Storage()
+	public Allocated as bool:
+		get:
+			for b in buffers:
+				if not b.Allocated:
+					return false
+			return true
 	
 	public def find(name as string) as kri.vb.Attrib:
 		return buffers.Find() do(v as kri.vb.Attrib):

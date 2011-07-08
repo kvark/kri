@@ -1,24 +1,32 @@
 ﻿namespace support.cull.box
 
+import OpenTK.Graphics.OpenGL
+
 
 ###	Draw BBoxes on the screen	###
 
 public class Draw( kri.rend.Basic ):
 	public	final	bu		= kri.shade.Bundle()
 	private	final	frame	as kri.gen.Frame	= null
+	private final	q		= kri.Query()
 	
 	public def constructor(con as support.cull.Context):
 		sa = bu.shader
-		#for name in ('quat','tool'):
-			#text = kri.shade.Code.Read("/lib/${name}_v")
-			#sa.add( kri.shade.Object( ShaderType.GeometryShader, name, text ))
+		for name in ('quat','tool'):
+			text = kri.shade.Code.Read("/lib/${name}_v")
+			sa.add( kri.shade.Object( ShaderType.GeometryShader, name, text ))
 		sa.add( '/cull/draw_v', '/cull/draw_g', '/white_f' )
 		frame = con.frame
 	
 	public override def process(link as kri.rend.link.Basic) as void:
+		if not frame.mesh.Allocated:
+			return
 		link.activate(false)
-		link.SetDepth(0f,false)
-		frame.draw(bu)
+		link.SetDepth(-1f,false)
+		using q.catch( QueryTarget.SamplesPassed ):
+			frame.draw(bu)
+		x = q.result()
+		x = 0
 
 
 ###	Read the GPU object and update local bounding boxes	###

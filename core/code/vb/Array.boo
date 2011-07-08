@@ -69,10 +69,13 @@ public class Array:
 			slots[i] = Entry.Zero
 			GL.DisableVertexAttribArray(i)
 	
-	public def push(slot as int, ref e as Entry) as void:
+	public def push(slot as int, ref e as Entry) as bool:
 		if slots[slot] == e:
-			return
-		e.buffer.Data.bind()
+			return true
+		(d = e.buffer.Data).bind()
+		if not d.Allocated:
+			kri.lib.Journal.Log("VAO: trying to use un-allocated buffer (${d.handle}) for (${handle})")
+			return false
 		GL.EnableVertexAttribArray( slot )
 		if slots[slot].divisor != e.divisor:
 			GL.VertexAttribDivisor( slot, e.divisor )
@@ -84,6 +87,7 @@ public class Array:
 			GL.VertexAttribPointer( slot, e.info.size,
 				e.info.type, false, e.stride, e.offset)
 		slots[slot] = e
+		return true
 	
 	public def pushAll(ind as Object, sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
 		bind()
@@ -98,7 +102,8 @@ public class Array:
 			ai = en.info
 			if not sat[i].matches(ai):
 				return false
-			push(i,en)
+			if not push(i,en):
+				return false
 			useMask |= 1<<i
 		if index != ind:
 			Object.Index = index = ind

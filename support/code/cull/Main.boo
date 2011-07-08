@@ -56,4 +56,4 @@ public class Group( kri.rend.Group ):
 		rApply = hier.Apply(con)
 		rMap = kri.rend.debug.MapDepth()
 		rMap.active = false
-		super(rBoxFill,rZ,rFill,rApply,rBoxUp,rDraw,rMap)
+		super(rBoxFill,rZ,rFill,rApply,rBoxUp,rMap)
