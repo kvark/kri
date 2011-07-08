@@ -7,8 +7,6 @@ public class Fill( kri.rend.Basic ):
 	private final bu	= kri.shade.Bundle()
 	public	final va	= kri.vb.Array()
 	private final fbo	= kri.buf.Holder( mask:1 )
-	private final tex	= kri.buf.Texture(0,
-			PixelInternalFormat.Rgba32f, PixelFormat.Rgba )
 	private final model 	as (OpenTK.Vector4)
 	private final con		as support.cull.Context
 	
@@ -16,9 +14,8 @@ public class Fill( kri.rend.Basic ):
 		model = array[of OpenTK.Vector4]( ct.maxn*2 )
 		con = ct
 		bu.shader.add( '/cull/box_v', '/cull/box_g', '/color_f' )
-		tex.target = TextureTarget.Texture1D
-		fbo.at.color[0] = tex
-		fbo.resize( ct.maxn*2, 0 )
+		fbo.at.color[0] = kri.buf.Render( format:RenderbufferStorage.Rgba32f )
+		fbo.resize( ct.maxn*2, 1 )
 		# initialize buffers
 		fbo.bind()
 		kri.rend.link.Help.ClearColor()
@@ -55,7 +52,5 @@ public class Fill( kri.rend.Basic ):
 			# upload spatial data array
 			con.spatial.init(model,true)
 			# read from texture into VBO
-			fbo.bindRead(true)
-			GL.Viewport( 0,0, con.maxn*2,1 )
 			kri.vb.Object.Pack = con.bound
-			tex.read( PixelType.Float )
+			fbo.readBuffer[of single]( PixelFormat.Rgba )

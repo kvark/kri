@@ -122,6 +122,11 @@ public class Frame:
 		type = Texture.GetPixelType(T)
 		bindRead( fm not in noColorFormats )
 		GL.ReadPixels( rect.Left, rect.Top, rect.Width, rect.Height, fm, type, ptr )
+	
+	public def readBuffer[of T(struct)](fm as PixelFormat) as void:
+		rect = Drawing.Rectangle()
+		getRect(rect)
+		readRaw[of T]( fm, rect, IntPtr.Zero )
 
 	public def read[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle) as (T):
 		data = array[of T](rect.Width * rect.Height)

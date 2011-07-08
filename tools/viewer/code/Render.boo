@@ -37,6 +37,7 @@ public class RenderSet:
 		rChain.doProfile = profile
 	
 	public def gen(str as string) as kri.rend.Basic:
+		rEmi.pBase.Value = Graphics.Color4.Black
 		for ren in rChain.renders:
 			ren.active = false
 		if str == 'Debug':
@@ -58,4 +59,5 @@ public class RenderSet:
 			for ren in (rSkin,grCull,rEmi, grCull.rDraw):
 				ren.active = true
 			rEmi.fillDepth = false
+			rEmi.pBase.Value = Graphics.Color4.DarkSlateGray
 		return rChain
