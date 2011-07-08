@@ -57,8 +57,9 @@ public class Mesh( vb.Storage ):
 			kri.lib.Journal.Log("Render: failed to activate shader (${sa.handle})")
 			blockList.Add(bu)
 			return false
-		if not sa.isCompatible(drawMode):
-			kri.lib.Journal.Log("Render: incompatible primitive type (${sa.handle},${drawMode})")
+		actualMode = (drawMode,BeginMode.Points)[tf!=null]
+		if not sa.isCompatible(actualMode):
+			kri.lib.Journal.Log("Render: incompatible primitive type (${sa.handle},${actualMode})")
 			blockList.Add(bu)
 			return false
 		rez = true

@@ -11,12 +11,11 @@ public class Fill( kri.rend.Basic ):
 			PixelInternalFormat.Rgba32f, PixelFormat.Rgba )
 	private final model 	as (OpenTK.Vector4)
 	private final con		as support.cull.Context
-	private final mesh		= kri.Mesh( BeginMode.Points )
 	
 	public def constructor(ct as support.cull.Context):
 		model = array[of OpenTK.Vector4]( ct.maxn*2 )
 		con = ct
-		bu.shader.add( '/box_v', '/box_g', '/color_f' )
+		bu.shader.add( '/cull/box_v', '/cull/box_g', '/color_f' )
 		tex.target = TextureTarget.Texture1D
 		fbo.at.color[0] = tex
 		fbo.resize( ct.maxn*2, 0 )
