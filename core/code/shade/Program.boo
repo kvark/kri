@@ -12,6 +12,8 @@ import OpenTK.Graphics.OpenGL
 
 public class Program:
 	public final	handle	as int
+	private hasGeometry		as bool	= false
+	private inputType		= BeginMode.Polygon
 	[Getter(Ready)]
 	private linked	as bool = false
 	private static	Current	as Program	= null
@@ -43,12 +45,16 @@ public class Program:
 		GL.ValidateProgram(handle)
 		return check( ProgramParameter.ValidateStatus )
 	
+	public def isCompatible(bm as BeginMode) as bool:
+		return hasGeometry==false or inputType==bm
+	
 	# add specific objects
 	public def add(*shads as (Object)) as void:
 		assert not linked
 		blocks.Extend(shads)
 		for sh in shads:
 			if sh and sh.handle:
+				hasGeometry |= sh.type == ShaderType.GeometryShader
 				GL.AttachShader(handle, sh.handle)
 			else:
 				str = ''
@@ -63,6 +69,10 @@ public class Program:
 		#assert not linked
 		GL.LinkProgram(handle)
 		linked = check( ProgramParameter.LinkStatus )
+		if linked and hasGeometry:
+			itype = 0
+			GL.GetProgram(handle, ProgramParameter.GeometryInputType, itype)
+			inputType = cast(BeginMode,itype)
 		return linked
 	# activate program
 	public def bind() as void:
@@ -104,7 +114,7 @@ public class Program:
 
 	# clear everything
 	public virtual def clear() as void:
-		linked = false
+		linked = hasGeometry = false
 		for sh in blocks:
 			GL.DetachShader( handle, sh.handle )	if sh
 		blocks.Clear()

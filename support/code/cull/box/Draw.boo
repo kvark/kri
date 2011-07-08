@@ -9,9 +9,9 @@ public class Draw( kri.rend.Basic ):
 	
 	public def constructor(con as support.cull.Context):
 		sa = bu.shader
-		for name in ('quat','tool'):
-			text = kri.shade.Code.Read("/lib/${name}_v")
-			sa.add( kri.shade.Object( ShaderType.GeometryShader, name, text ))
+		#for name in ('quat','tool'):
+			#text = kri.shade.Code.Read("/lib/${name}_v")
+			#sa.add( kri.shade.Object( ShaderType.GeometryShader, name, text ))
 		sa.add( '/cull/draw_v', '/cull/draw_g', '/white_f' )
 		mesh.nVert = con.maxn
 		mesh.vbo.Add( con.bound )

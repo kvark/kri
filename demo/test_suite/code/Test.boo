@@ -185,3 +185,20 @@ private class MultiResolve( kri.rend.Basic ):
 		GL.BindTexture( TextureTarget.Texture2D, 0 )
 		GL.BindTexture( TextureTarget.Texture2DMultisample, 0 )
 		f0.copyTo(f1, ClearBufferMask.DepthBufferBit)
+
+
+private class Geometry( kri.rend.Basic ):
+	public override def process(con as kri.rend.link.Basic) as void:
+		con.activate(false)
+		bu = kri.shade.Bundle()
+		bu.shader.add('/cull/draw_v','/cull/draw_g','/white_f')
+		m = kri.Mesh(BeginMode.Points)
+		m.nVert = 256
+		v0 = kri.vb.Attrib()
+		kri.Help.enrich(v0,4,'pos','rot')
+		v1 = kri.vb.Attrib()
+		kri.Help.enrich(v1,4,'low','hai')
+		m.vbo.AddRange((v0,v1))
+		m.allocate()
+		vao = kri.vb.Array()
+		m.render(vao,bu,null)

@@ -48,12 +48,17 @@ public class Mesh( vb.Storage ):
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, dict as vb.Dict, off as uint, num as uint, nob as uint, tf as TransFeedback) as bool:
 		if bu in blockList:	return
+		sa = bu.shader
 		if not bu.pushAttribs(ind,vao,dict):
-			kri.lib.Journal.Log("Render: failed to load mesh (v=${nVert},p=${nPoly}) with shader ${bu}")
+			kri.lib.Journal.Log("Render: failed to load mesh (v=${nVert},p=${nPoly}) with shader ${sa.handle}")
 			blockList.Add(bu)
 			return false
 		if not bu.activate():
-			kri.lib.Journal.Log("Render: failed to activate shader (${bu})")
+			kri.lib.Journal.Log("Render: failed to activate shader (${sa.handle})")
+			blockList.Add(bu)
+			return false
+		if not sa.isCompatible(drawMode):
+			kri.lib.Journal.Log("Render: incompatible primitive type (${sa.handle},${drawMode})")
 			blockList.Add(bu)
 			return false
 		rez = true
@@ -61,7 +66,7 @@ public class Mesh( vb.Storage ):
 			rez = draw(null)
 		elif tf:
 			if kri.Ant.Inst.debug and vao.hasConflicts():
-				kri.lib.Journal.Log("Transform Feedback: loop detected on shader ${bu}")
+				kri.lib.Journal.Log("Transform Feedback: loop detected on shader ${sa.handle}")
 				blockList.Add(bu)
 				return false
 			rez = draw(tf)
