@@ -14,7 +14,8 @@ def Main(argv as (string)):
 		#rlis.Add( Feedback() )
 		#rlis.Add( DrawToStencil() )
 		#rlis.Add( MultiResolve() )
-		rlis.Add( Geometry() )
+		#rlis.Add( Geometry() )
+		rlis.Add( SamplerArray() )
 		
 		view.resize(10,10)
 		view.update()

@@ -4,11 +4,6 @@ import System.Collections.Generic
 
 # Standard uniform dictionary
 public class Dict( SortedDictionary[of string,IBaseRoot] ):
-	# find uniform
-	public virtual def find(uni as kri.shade.Uniform) as IBaseRoot:
-		iv as IBaseRoot = null
-		TryGetValue( uni.name, iv )
-		return iv
 	# copy contents of another dictionary
 	public def attach(d as Dict) as void:
 		for u in d:
@@ -29,9 +24,9 @@ public class Dict( SortedDictionary[of string,IBaseRoot] ):
 
 # Proxy uniform dictionary
 public class DictProxy(Dict):
-	public override def find(uni as kri.shade.Uniform) as IBaseRoot:
-		iv = super(uni)
-		if not iv:
+	public def find(uni as kri.shade.Uniform) as IBaseRoot:
+		iv as IBaseRoot = null
+		if not TryGetValue(uni.name,iv):
 			iv = uni.genProxy()
 			Add( uni.name, iv )
 		return iv

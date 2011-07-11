@@ -74,16 +74,18 @@ public class Bundle:
 		tun = 0
 		badNames = List[of string]()
 		for uni in shader.uniforms:
-			iv	as par.IBaseRoot = null
-			for d in dicts:
-				iv = d.find(uni)
-				if iv: break
-			if not iv:
-				badNames.Add(uni.name)
-				continue
 			loc = shader.getLocation( uni.name )
-			p = uni.genParam(loc,iv,tun)
-			if p: params.Add(p)
+			for i in range(uni.size):
+				str = uni.name + ('',"[${i}]")[uni.size>1]
+				iv	as par.IBaseRoot = null
+				for d in dicts:
+					iv = null
+					if d.TryGetValue(str,iv): break
+				if not iv:
+					badNames.Add(str)
+					continue
+				p = uni.genParam(loc+i,iv,tun)
+				if p: params.Add(p)
 		if badNames.Count:
 			str = string.Join( ',', badNames.ToArray() )
 			kri.lib.Journal.Log('Shader params not bound: '+str)

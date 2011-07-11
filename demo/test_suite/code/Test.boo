@@ -198,7 +198,19 @@ private class Geometry( kri.rend.Basic ):
 		kri.Help.enrich(v0,4,'pos','rot')
 		v1 = kri.vb.Attrib()
 		kri.Help.enrich(v1,4,'low','hai')
-		m.vbo.AddRange((v0,v1))
+		m.buffers.AddRange((v0,v1))
 		m.allocate()
 		vao = kri.vb.Array()
 		m.render(vao,bu,null)
+
+
+private class SamplerArray( kri.rend.Basic ):
+	public override def process(con as kri.rend.link.Basic) as void:
+		bu = kri.shade.Bundle()
+		bu.shader.add('text/sampler_v')
+		t0 = kri.shade.par.Texture('input[0]')
+		t1 = kri.shade.par.Texture('input[1]')
+		d = kri.shade.par.Dict()
+		d.unit(t0,t1)
+		bu.dicts.Add(d)
+		bu.link()

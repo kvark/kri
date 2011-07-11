@@ -10,8 +10,7 @@ public struct Uniform:
 	public type	as ActiveUniformType
 
 	public def genParam(loc as int, iv as par.IBaseRoot, ref tun as int) as Parameter:
-		if size!=1 or not iv:
-			return null
+		if not iv:	return null
 		it = iv.GetType().GetInterface('IBase`1')
 		T = object
 		if it:	T = it.GetGenericArguments()[0]

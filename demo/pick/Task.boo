@@ -174,7 +174,7 @@ private class Task:
 			x,y = (i % size),(i / size)
 			n.local.pos = Vector3( (x+x+1-size)*3.5f, (y+y+1-size)*2.3f, -50f )
 			ar.Add(ec)
-			ec.store.vbo.Add( makeTexCoord(x,y) )
+			ec.store.buffers.Add( makeTexCoord(x,y) )
 		# remove original
 		(ec = ar[0]).visible = false
 		ec.tags.RemoveAll() do(t as kri.ITag):
