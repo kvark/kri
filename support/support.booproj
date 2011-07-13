@@ -50,6 +50,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="code\asm\Mesh.boo" />
+    <Compile Include="code\asm\Texture.boo" />
     <Compile Include="code\bake\Depth.boo" />
     <Compile Include="code\bake\Edge.boo" />
     <Compile Include="code\bake\Surface.boo" />
@@ -72,6 +74,7 @@
     <Compile Include="code\hair\Draw.boo" />
     <Compile Include="code\hair\Main.boo" />
     <Compile Include="code\hdr\Main.boo" />
+    <Compile Include="code\asm\Draw.boo" />
     <Compile Include="code\layer\Fill.boo" />
     <Compile Include="code\layer\Main.boo" />
     <Compile Include="code\light\Context.boo" />
@@ -122,6 +125,7 @@
     <Folder Include="code\mirror" />
     <Folder Include="code\morph" />
     <Folder Include="code\motion" />
+    <Folder Include="code\asm" />
     <Folder Include="code\phys" />
     <Folder Include="code\pick" />
     <Folder Include="code\reflect" />

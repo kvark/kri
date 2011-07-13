@@ -21,6 +21,7 @@ public class Dict( Dictionary[of string,Entry] ):
 		super()
 		for st in stores:
 			if st: st.fillEntries(self)
+	
 	public def fake(*names as (string)) as byte:
 		mask = 0
 		for i in range(names.Length):
@@ -29,7 +30,9 @@ public class Dict( Dictionary[of string,Entry] ):
 			else:
 				self[names[i]] = self[names[0]]
 		return mask
-
+	
+	public def add(ib as IBuffed, ai as Info, offset as uint, stride as uint) as void:
+		self[ai.name] = kri.vb.Entry(ib,ai,offset,stride)
 
 
 public class Attrib( IProvider, Object ):

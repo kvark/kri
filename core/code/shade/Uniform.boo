@@ -14,7 +14,7 @@ public struct Uniform:
 		it = iv.GetType().GetInterface('IBase`1')
 		T = object
 		if it:	T = it.GetGenericArguments()[0]
-		if T == kri.buf.Texture and name.StartsWith( Mega.PrefixUnit ):
+		if T == kri.buf.Texture and name.Contains( Mega.PrefixUnit ):
 			tn = tun++
 			return ParTexture(loc,iv,tn)
 		elif T == int				and type in (ActiveUniformType.Int,ActiveUniformType.UnsignedInt):

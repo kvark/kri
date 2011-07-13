@@ -53,10 +53,10 @@ public class Storage:
 				al.Add( ai.name )
 		return al.ToArray()
 	
-	public def fillEntries(d as Dictionary[of string,Entry]) as void:
+	public def fillEntries(d as Dict) as void:
 		for vat in buffers:
 			off = 0
 			size = vat.unitSize()
 			for sem in vat.Semant:
-				d[sem.name] = Entry(vat,sem,off,size)
+				d.add(vat,sem,off,size)
 				off += sem.fullSize()
