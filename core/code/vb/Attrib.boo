@@ -41,12 +41,15 @@ public class Attrib( IProvider, Object ):
 	IBuffed.Data		as Object:
 		get: return self
 
-	public def unitSize() as uint:
+	public def countSize() as uint:
 		rez as uint = 0
 		for a in semantics:
 			rez += a.fullSize()
 		return rez
 	
 	public def initUnit(num as uint) as void:
-		init( num * unitSize() )
+		init( num * countSize() )
 
+	public def bindAsDestination(id as uint, off as uint, num as uint) as void:
+		size = countSize()
+		bindAsDestination(id, off*size, num*size)

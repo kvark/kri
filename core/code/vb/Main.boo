@@ -45,7 +45,10 @@ public class Object:
 	public def bind() as void:
 		Bind[DefTarget] = self
 	public def bindAsDestination(id as uint) as void:
-		GL.BindBufferBase( BufferTarget.TransformFeedbackBuffer, id, handle )
+		GL.BindBufferBase(	BufferTarget.TransformFeedbackBuffer, id, handle )
+		timeStamp += 1
+	public def bindAsDestination(id as uint, off as System.IntPtr, num as System.IntPtr) as void:
+		GL.BindBufferRange(	BufferTarget.TransformFeedbackBuffer, id, handle, off, num )
 		timeStamp += 1
 	
 	# filling

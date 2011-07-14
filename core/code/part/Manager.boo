@@ -92,7 +92,7 @@ public class Manager( kri.IMeshed ):
 			if not mesh.render( va, bu, pe.entries, 0, tf ):
 				return false
 		if not 'Debug':
-			ar = array[of single]( Total * mesh.buffers[0].unitSize() >>2 )
+			ar = array[of single]( Total * mesh.buffers[0].countSize() >>2 )
 			mesh.buffers[0].read(ar,0)
 		# swap data
 		mesh.fillEntries( pe.entries )

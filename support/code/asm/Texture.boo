@@ -9,9 +9,9 @@ public class Texture:
 	public	final	data	= kri.buf.Texture(0, PixelInternalFormat.Rgba, PixelFormat.Rgba)
 	public	final	cMap	= Dictionary[of kri.buf.Texture,Box2]()
 	private	final	fbo		= kri.buf.Holder(mask:2)
-	private	cx		= 0
-	private	cy		= 0
-	private maxy	= 0
+	private	cx		as uint	= 0
+	private	cy		as uint	= 0
+	private maxy	as uint	= 0
 	
 	public def constructor(size as uint):
 		fbo.at.color[1] = data
@@ -53,6 +53,7 @@ public class Texture:
 			BlitFramebufferFilter.Nearest )
 		v = Vector2(1f / (data.wid-1), 1f / (data.het-1))
 		b = Box2( Vector2.Multiply(v,Vector2(cx,cy)), Vector2.Multiply(v,Vector2(dx,dy)) )
+		cMap.Add(tex,b)
 		cx += tex.wid+1
 		if tex.het>maxy:	maxy = tex.het
 		return b

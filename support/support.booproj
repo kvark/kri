@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="code\asm\Mesh.boo" />
+    <Compile Include="code\asm\Scene.boo" />
     <Compile Include="code\asm\Texture.boo" />
     <Compile Include="code\bake\Depth.boo" />
     <Compile Include="code\bake\Edge.boo" />

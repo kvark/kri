@@ -7,7 +7,8 @@ import OpenTK
 [STAThread]
 def Main(argv as (string)):
 	using win = kri.Window('kri.conf',0):
-		win.core.extensions.Add( support.skin.Extra() )
+		win.core.extensions.AddRange((of kri.IExtension:
+			support.skin.Extra(), support.layer.Extra() ))
 		view = kri.ViewScreen()
 		win.views.Add( view )
 		win.VSync = VSyncMode.Off
@@ -19,8 +20,7 @@ def Main(argv as (string)):
 		view.cam = at.scene.cameras[0]
 		view.ren = support.asm.Draw()
 		
-		support.asm.Texture(1024)
-		support.asm.Mesh()
+		support.asm.Scene()
 
 		#win.Run(0.0)
 		log = null

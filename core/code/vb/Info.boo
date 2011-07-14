@@ -56,7 +56,7 @@ public class Storage:
 	public def fillEntries(d as Dict) as void:
 		for vat in buffers:
 			off = 0
-			size = vat.unitSize()
+			size = vat.countSize()
 			for sem in vat.Semant:
 				d.add(vat,sem,off,size)
 				off += sem.fullSize()

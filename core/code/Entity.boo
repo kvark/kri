@@ -44,7 +44,7 @@ public class Mesh( vb.Storage ):
 	public def getTotalSize() as uint:
 		rez = 0
 		for v in buffers:
-			rez += v.unitSize()
+			rez += v.countSize()
 		return rez * nVert
 	
 	#---	render functions	---#
