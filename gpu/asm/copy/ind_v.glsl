@@ -3,7 +3,7 @@
 in	uint	at_index;
 out	uint	to_index;
 
-uniform	uint	offset;
+uniform	int	offset;
 
 
 void main()	{

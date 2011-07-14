@@ -1,6 +1,6 @@
 #version 130
 
-uniform	uint	index;
+uniform	int	index;
 
 in	vec4	at_vertex, at_quat;
 in	vec2	at_tex0, at_tex1;

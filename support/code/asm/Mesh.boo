@@ -37,8 +37,8 @@ public class Mesh:
 	private	final	vao		= kri.vb.Array()
 	private	final	pIndex	= kri.shade.par.Value[of int]('index')
 	private	final	pOffset	= kri.shade.par.Value[of int]('offset')
-	private			nVert	as uint	= 0
-	private	final	maxVert	as uint	= 0
+	public			nVert	as uint	= 0
+	public	final	maxVert	as uint	= 0
 	
 	public	Count	as int:
 		get: return pIndex.Value
@@ -88,9 +88,14 @@ public class Mesh:
 			return r
 		tf.Cache[0] = data
 		data.bindAsDestination(0, nVert, m.nVert)
-		m.render( vao, buData, tf )
-		pIndex.Value += 1
-		nVert += m.nVert
+		m.fillEntries(vDic)
+		vDic.fake('tex0','tex1')
+		if m.render( vao, buData, vDic, 1,tf ):
+			r.start = nVert
+			r.total = m.nVert
+			pIndex.Value += 1
+			nVert += m.nVert
+		eMap.Add(m,r)
 		return r
 
 	public def copyIndex(m as kri.Mesh, out as IndexAccum) as bool:
@@ -105,6 +110,7 @@ public class Mesh:
 			return false
 		varBuf.data = m.ind
 		out.bindOut( tf, m.nPoly )
-		m.render( vao, buInd, vDic, 1,tf )
-		out.curNumber += m.nPoly
-		return true
+		if m.render( vao, buInd, vDic, 1,tf ):
+			out.curNumber += m.nPoly
+			return true
+		return false

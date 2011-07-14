@@ -8,8 +8,10 @@ public class Plane:
 	# attributes
 	public Aspect	as single:
 		get: return wid*1f / het
+	public Area		as uint:
+		get: return wid * het
 	public Size		as uint:
-		get: return wid * het * System.Math.Max(samples,1)
+		get: return wid * System.Math.Max(het,cast(uint,1)) * System.Math.Max(samples,1)
 	# methods
 	public def isCompatible(pl as Plane) as bool:
 		if samples!=pl.samples:

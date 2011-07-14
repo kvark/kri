@@ -10,6 +10,7 @@ ext/interchange
 demo/test
 demo/dude
 demo/vanburen
+demo/asm/res
 demo/particle/res
 tools/viewer/exception.txt
 game_*

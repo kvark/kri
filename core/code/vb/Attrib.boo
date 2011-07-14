@@ -28,6 +28,7 @@ public class Dict( Dictionary[of string,Entry] ):
 			if names[i]	in Keys:
 				mask |= 1<<i
 			else:
+				if not i:	return mask
 				self[names[i]] = self[names[0]]
 		return mask
 	
@@ -52,4 +53,4 @@ public class Attrib( IProvider, Object ):
 
 	public def bindAsDestination(id as uint, off as uint, num as uint) as void:
 		size = countSize()
-		bindAsDestination(id, off*size, num*size)
+		bindAsDestination( id, System.IntPtr(off*size), System.IntPtr(num*size) )

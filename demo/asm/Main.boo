@@ -20,7 +20,7 @@ def Main(argv as (string)):
 		view.cam = at.scene.cameras[0]
 		view.ren = support.asm.Draw()
 		
-		support.asm.Scene()
+		support.asm.Scene( at.scene )
 
 		#win.Run(0.0)
 		log = null
