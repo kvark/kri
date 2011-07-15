@@ -92,6 +92,7 @@
     <Compile Include="code\meta\App.boo" />
     <Compile Include="code\meta\Main.boo" />
     <Compile Include="code\meta\Unit.boo" />
+    <Compile Include="code\Object.boo" />
     <Compile Include="code\part\Emitter.boo" />
     <Compile Include="code\part\Main.boo" />
     <Compile Include="code\part\Manager.boo" />

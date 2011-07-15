@@ -4,6 +4,19 @@ import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
 
+public struct Element:
+	public	node	as kri.Node
+	public	mat		as kri.Material
+	public	range	as Range
+
+
+public class View( kri.View ):
+	public final elems	as (Element)
+	public def constructor(n as int):
+		elems = array[of Element](n)
+
+
+
 public class Scene:
 	public	final	conMesh		as Mesh		= null
 	public	final	conTex		as Texture	= null

@@ -10,7 +10,7 @@ import OpenTK
 #-----------------------------------------------------------#
 
 public class Window( GameWindow ):
-	public final views	= List[of View]()	# *View
+	public final views	= List[of ViewBase]()	# *View
 	public final ticks	as uint				# Ticks per frame
 	public final core	as Ant				# KRI Core
 	private final fps	as FpsCounter		# FPS counter
