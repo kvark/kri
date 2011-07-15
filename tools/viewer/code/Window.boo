@@ -205,8 +205,6 @@ public class GladeApp:
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
-		if not view.ren:
-			return
 		r = args.Allocation
 		view.resize( 0, 0, r.Width, r.Height )
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
@@ -439,6 +437,7 @@ public class GladeApp:
 			str = renderCombo.ActiveText
 			view.ren = rset.gen(str)
 			statusBar.Push(0, 'Pipeline switched to '+str)
+			view.updateSize()
 			gw.QueueDraw()
 		# add gl widget
 		drawBox.Child = gw = makeWidget()

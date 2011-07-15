@@ -18,9 +18,8 @@ public class View(ViewBase):
 	public scene	as Scene	= null
 
 	public override def resize(wid as int, het as int) as bool:
-		if not ren:
-			return true
-		return ren.setup( kri.buf.Plane(wid:wid,het:het) )
+		return ren!=null and ren.setup( kri.buf.Plane(wid:wid,het:het) )
+	
 	public override def update() as void:
 		Scene.current = scene
 		if cam and Link:
@@ -28,8 +27,15 @@ public class View(ViewBase):
 			Ant.Inst.params.activate(cam)
 		if ren and ren.active:
 			ren.process(Link)
+		elif Link:
+			Link.activate(false)
+			Link.ClearColor()
 		vb.Array.Default.bind()
 		Scene.current = null
+	
+	public def updateSize() as bool:
+		return ren!=null and Link!=null and ren.setup( Link.Frame.getInfo() )
+	
 	public def countVisible() as int:
 		if not scene: return 0
 		return List[of Entity](e
