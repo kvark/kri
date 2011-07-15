@@ -22,7 +22,7 @@ public final class Box( IBase ):
 		center	.Value = Vector4(b.center,1f)
 		hsize	.Value = Vector4(b.hsize,0f)
 	
-	par.INamed.Name as string:
+	kri.INamed.Name as string:
 		get: return name
 	def IBase.link(d as par.Dict) as void:
 		d.var(center,hsize)
@@ -40,7 +40,7 @@ public final class Light( IBase ):
 		attenu.Value	= Vector4(l.energy, l.quad1, l.quad2, l.sphere)
 		data.Value		= Vector4(l.softness, kdir, 0f, 0f)
 
-	par.INamed.Name as string:
+	kri.INamed.Name as string:
 		get: return 'Light'
 	def IBase.link(d as par.Dict) as void:
 		d.var(color)
@@ -59,7 +59,7 @@ public final class Project( IBase ):
 		project.activate( p )
 		spatial.activate( p.node )
 	
-	par.INamed.Name as string:
+	kri.INamed.Name as string:
 		get: return project.Name
 	def IBase.link(d as par.Dict) as void:
 		for ib as IBase in (project,spatial):

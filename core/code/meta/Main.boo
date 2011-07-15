@@ -5,7 +5,7 @@ import kri.shade
 
 #---	stand-alone meta interface	---#
 
-public interface IBase( par.INamed ):
+public interface IBase( kri.INamed ):
 	def link(d as par.Dict) as void
 
 public interface IBaseMat( IBase, System.ICloneable ):

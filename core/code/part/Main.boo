@@ -14,7 +14,7 @@ public class Behavior( kri.meta.IBaseMat, kri.meta.IShaded, kri.vb.ISemanted, Co
 	
 	def System.ICloneable.Clone() as object:
 		return Behavior(self)
-	par.INamed.Name:
+	kri.INamed.Name:
 		get: return 'behavior'
 	
 	kri.meta.IShaded.Shader as kri.shade.Object:

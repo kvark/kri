@@ -2,7 +2,7 @@ namespace kri
 
 public class ViewBase:
 	public virtual def resize(wid as int, het as int) as bool:
-		pass
+		return true
 	public virtual def update() as void:
 		pass
 

@@ -11,24 +11,19 @@ public interface IBase[of T](IBaseRoot):
 	Value	as T:
 		get
 
-public interface INamed:
-	Name	as string:
-		get
-
-
 public class ValuePure[of T]( IBase[of T] ):
 	[Property(Value)]
 	private val	as T
 
 
-public abstract class ValueBase[of T]( IBase[of T],INamed ):
+public abstract class ValueBase[of T]( IBase[of T], kri.INamed ):
 	[Getter(Name)]
 	private final name	as string
 	public def constructor(s as string):
 		name = s
 
 
-public class Value[of T](IBase[of T],INamed):
+public class Value[of T]( IBase[of T], kri.INamed ):
 	[Property(Value)]
 	private val	as T
 	[Getter(Name)]

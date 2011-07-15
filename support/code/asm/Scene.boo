@@ -1,16 +1,39 @@
 ﻿namespace support.asm
 
 import System.Collections.Generic
+import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
-public struct Element:
-	public	node	as kri.Node
-	public	mat		as kri.Material
-	public	range	as Range
+public struct Element( kri.meta.IBase ):
+	# internal state
+	public	final	name	as string
+	public	final	node	as kri.Node
+	public	final	mat		as kri.Material
+	public	final	range	as Range
+	# shader params
+	public	final	pNode	as kri.lib.par.spa.Linked
+	public	final	pArea	as kri.shade.par.Value[of Vector4]
+	public	final	pChan	as kri.shade.par.Value[of int]
+	# methods
+	public def constructor(str as string, n as kri.Node, m as kri.Material, r as Range):
+		name = str
+		node = n
+		mat = m
+		range = r
+		pNode = kri.lib.par.spa.Linked(str)
+		pArea = kri.shade.par.Value[of Vector4](str)
+		pChan = kri.shade.par.Value[of int](str)
+	
+	kri.INamed.Name as string:
+		get: return name
+	def kri.meta.IBase.link(d as kri.shade.par.Dict) as void:
+		(pNode as kri.meta.IBase).link(d)
+		d.var(pArea)
+		d.var(pChan)
 
 
-public class View( kri.View ):
+public class View( kri.ViewBase ):
 	public final elems	as (Element)
 	public def constructor(n as int):
 		elems = array[of Element](n)
