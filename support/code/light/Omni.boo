@@ -23,6 +23,7 @@ public class Fill( kri.rend.tech.Sorted ):
 		return bu
 
 	public override def process(con as kri.rend.link.Basic) as void:
+		return
 		scene = kri.Scene.Current
 		if not scene:	return
 		con.SetDepth(1f, true)	# offset for HW filtering
@@ -64,7 +65,7 @@ public class Apply( kri.rend.tech.Meta ):
 		metaFun = super(mat).fun
 		curLight = lit
 		return Updater() do() as int:
-			texLit.Value = curLight.depth
+			#texLit.Value = curLight.depth
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
 	
@@ -76,8 +77,8 @@ public class Apply( kri.rend.tech.Meta ):
 		for l in scene.lights:
 			if l.fov != 0f:	continue
 			d = (lit=l).depth
-			if not (d and d.target==TextureTarget.TextureCubeMap):
-				continue
+			#if not (d and d.target==TextureTarget.TextureCubeMap):
+			#	continue
 			# determine subset of affected objects
 			for e in scene.entities:
 				addObject(e,null)

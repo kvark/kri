@@ -8,10 +8,12 @@ import System.Runtime.InteropServices
 #---------	FRAME	---------#
 
 public class Frame:
+	public	final name	as string
 	public	final mesh	as kri.Mesh
 	public	final va	= kri.vb.Array()
 	private	final dict	= kri.vb.Dict()
-	public def constructor(m as kri.Mesh):
+	public def constructor(str as string, m as kri.Mesh):
+		name = str
 		mesh = m
 		m.fillEntries(dict)
 	public def draw(bu as kri.shade.Bundle) as bool:

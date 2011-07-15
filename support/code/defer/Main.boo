@@ -26,9 +26,9 @@ public class Context:
 	public def constructor(qord as byte, ncone as byte):
 		# light volumes
 		sh = kri.gen.Sphere( qord,	OpenTK.Vector3.One )
-		sphere	= kri.gen.Frame(sh)
+		sphere	= kri.gen.Frame('sphere',sh)
 		cn = kri.gen.Cone( ncone,	OpenTK.Vector3.One )
-		cone	= kri.gen.Frame(cn)
+		cone	= kri.gen.Frame('cone',cn)
 		# dictionary
 		dict.unit('depth',texDepth)
 		# diffuse, specular, world space normal

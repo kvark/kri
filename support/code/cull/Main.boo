@@ -17,7 +17,7 @@ public class Context:
 		dict.unit(pTex)
 		m = kri.Mesh( nVert:maxn )
 		m.buffers.AddRange(( bound, spatial ))
-		frame = kri.gen.Frame(m)
+		frame = kri.gen.Frame('box',m)
 	
 	public def reset() as void:
 		next = 0
