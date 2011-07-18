@@ -14,7 +14,7 @@ public class Fill( kri.rend.Basic ):
 		model = array[of OpenTK.Vector4]( ct.maxn*2 )
 		con = ct
 		bu.shader.add( '/cull/box_v', '/cull/box_g', '/color_f' )
-		fbo.at.color[0] = kri.buf.Render( format:RenderbufferStorage.Rgba32f )
+		fbo.at.color[0]	= kri.buf.Render( format:RenderbufferStorage.Rgba32f )
 		fbo.resize( ct.maxn*2, 1 )
 		# initialize buffers
 		fbo.bind()
@@ -44,10 +44,11 @@ public class Fill( kri.rend.Basic ):
 					doUpload = true
 					spa = kri.Node.SafeWorld( e.node )
 					model[i+0] = kri.Spatial.GetPos(spa)
-					model[i+1] = kri.Spatial.GetRot(spa)				
+					model[i+1] = kri.Spatial.GetRot(spa)
 				if tag.checkBuf(bv):
 					tag.fresh = doDownload = true
 					GL.Scissor	( i,0, 2,1 )
+					GL.Clear( ClearBufferMask.ColorBufferBit )	# ati 11.5 bug workaround
 					GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
 					GL.Viewport	( i,0, 2,1 )
 					e.render( va,bu, kri.TransFeedback.Dummy )
