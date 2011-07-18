@@ -6,7 +6,8 @@ public class Tag( kri.ITag ):
 	public	fresh		= false
 	private	index		as int	= -1
 	private	animated	= false
-	private	stamp		as uint	= 0
+	private	stampBuf	as uint	= 0
+	private	stampNode	as uint = 0
 	
 	public Index	as int:
 		get: return index
@@ -14,11 +15,18 @@ public class Tag( kri.ITag ):
 			assert index<0
 			index = value
 	
-	public def check(bv as kri.vb.Object) as bool:
+	public def checkBuf(bv as kri.vb.Object) as bool:
 		if animated != (bv!=null):
 			animated = not animated
-			stamp = 0
-		if stamp == bv.TimeStamp:
+			stampBuf = 0
+		if stampBuf == bv.TimeStamp:
 			return false
-		stamp = bv.TimeStamp
+		stampBuf = bv.TimeStamp
+		return true
+	
+	public def checkNode(n as kri.Node) as bool:
+		if not n: return false
+		if n.Stamp == stampNode:
+			return false
+		stampNode = n.Stamp
 		return true

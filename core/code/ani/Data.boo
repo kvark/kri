@@ -97,7 +97,10 @@ public class Record:
 
 
 public abstract class Player(IPlayer):
-	public final anims	= List[of Record]()
+	public		final anims	= List[of Record]()
+	[Getter(Stamp)]
+	private		stamp	as uint	= 1
+
 	public def play(name as string) as Anim:
 		rec = anims.Find({r| return r.name == name})
 		if rec:
@@ -105,6 +108,9 @@ public abstract class Player(IPlayer):
 				return Anim(self,rec)
 			kri.lib.Journal.Log("Acton: not supported (${name})")
 		return null
+	
+	public def touch() as void:	#imp: IPlayer
+		stamp += 1
 
 
 #---------------------

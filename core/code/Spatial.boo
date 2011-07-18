@@ -98,12 +98,12 @@ public struct Spatial:
 #	has a parent, caches the world-space transform
 
 public class Node( kri.ani.data.Player, IComparable[of Node] ):
-	public final name	as string
-	private parent	as Node = null
-	private dirty	= true
-	public local	= Spatial.Identity
-	private cached	= Spatial.Identity
-	private world	= Spatial.Identity
+	public	final name	as string
+	private	parent		as Node = null
+	private	lastSync	as uint	= 0
+	public	local	= Spatial.Identity
+	private	cached	= Spatial.Identity
+	private	world	= Spatial.Identity
 	
 	public def constructor(str as string):
 		name = str
@@ -114,8 +114,6 @@ public class Node( kri.ani.data.Player, IComparable[of Node] ):
 	#TODO: explicit interface imp, when supported
 	public def CompareTo(n as Node) as int:	#imp: IComparable
 		return name.CompareTo(n.name)
-	public def touch() as void:	#imp: IPlayer
-		dirty = true
 	
 	public static def SafeWorld(n as Node) as Spatial:
 		return (n.World	if n else	Spatial.Identity)
@@ -131,10 +129,10 @@ public class Node( kri.ani.data.Player, IComparable[of Node] ):
 		get:
 			if parent:
 				pw = parent.World
-				if dirty or pw != cached:
+				if lastSync!=Stamp or pw != cached:
+					lastSync = Stamp
 					cached = pw
 					world.combine(local,pw)
-				dirty = false
 				return world
 			else:	return local
 	

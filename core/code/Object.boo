@@ -22,9 +22,7 @@ public class Projector( ani.data.Player, INoded ):
 	
 	INoded.Node as Node:
 		get: return node
-	
-	public def touch() as void:	#imp: IPlayer
-		pass
+
 	public def project(ref v as Vector3) as Vector3:
 		dz = -1f / v.Z
 		tn = dz / System.Math.Tan(fov)

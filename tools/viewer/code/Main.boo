@@ -2,6 +2,7 @@
 
 private struct Launcher:
 	public	final	ga	as GladeApp
+	public	final	unknown as (string)
 	# startup options
 	public	final	initScene	as string
 	public	final	initPipe	as string

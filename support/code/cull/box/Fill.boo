@@ -28,29 +28,31 @@ public class Fill( kri.rend.Basic ):
 		link.DepthTest = false
 		fbo.bind()
 		v = single.PositiveInfinity
-		doWork = con.spatial.Allocated==0
+		doUpload = con.spatial.Allocated==0
+		doDownload = false
 		using blend = kri.Blender(), kri.Section(EnableCap.ScissorTest):
 			blend.min()
 			for e in scene.entities:
 				e.frameVisible.Clear()
-				tag = e.seTag[of Tag]()
 				bv = e.findAny('vertex')
-				if not (tag and tag.check(bv)):
-					continue
+				tag = e.seTag[of Tag]()
+				if not tag:	continue
 				if tag.Index<0:
 					tag.Index = con.genId()
-				tag.fresh = doWork = true
 				i = 2 * tag.Index
-				GL.Scissor	( i,0, 2,1 )
-				GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
-				GL.Viewport	( i,0, 2,1 )
-				e.render( va,bu, kri.TransFeedback.Dummy )
-				spa = kri.Node.SafeWorld( e.node )
-				model[i+0] = kri.Spatial.GetPos(spa)
-				model[i+1] = kri.Spatial.GetRot(spa)
-		if doWork:
-			# upload spatial data array
+				if tag.checkNode(e.node):
+					doUpload = true
+					spa = kri.Node.SafeWorld( e.node )
+					model[i+0] = kri.Spatial.GetPos(spa)
+					model[i+1] = kri.Spatial.GetRot(spa)				
+				if tag.checkBuf(bv):
+					tag.fresh = doDownload = true
+					GL.Scissor	( i,0, 2,1 )
+					GL.ClearBuffer( ClearBuffer.Color, 0, (v,v,v,1f) )
+					GL.Viewport	( i,0, 2,1 )
+					e.render( va,bu, kri.TransFeedback.Dummy )
+		if doUpload:	# upload spatial data array
 			con.spatial.init(model,true)
-			# read from texture into VBO
+		if doDownload:	# read from texture into VBO
 			kri.vb.Object.Pack = con.bound
 			fbo.readBuffer[of single]( PixelFormat.Rgba )

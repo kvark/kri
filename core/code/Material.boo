@@ -18,8 +18,6 @@ public class Material( ani.data.Player ):
 		name = str
 	private def clone[of T(System.ICloneable)](me as T) as T:
 			return me.Clone() as T
-	public def touch() as void:	#imp: IPlayer
-		pass
 
 	# clone with all 1-st level metas
 	public def constructor(mat as Material):

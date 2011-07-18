@@ -191,9 +191,6 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 		visible = e.visible
 		tags.AddRange( e.tags )
 	
-	public def touch() as void:
-		pass
-	
 	public def seTag[of T(ITag)]() as T:
 		for it in tags:
 			t = it as T
