@@ -117,21 +117,22 @@ public class Frame:
 	
 	# reading
 	
-	public def readRaw[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle, ptr as IntPtr) as void:
+	public def readRaw[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle, dest as kri.vb.Object, ptr as IntPtr) as void:
+		kri.vb.Object.Pack = dest
 		noColorFormats = (PixelFormat.DepthComponent, PixelFormat.DepthStencil, PixelFormat.StencilIndex)
 		type = Texture.GetPixelType(T)
 		bindRead( fm not in noColorFormats )
 		GL.ReadPixels( rect.Left, rect.Top, rect.Width, rect.Height, fm, type, ptr )
 	
-	public def readBuffer[of T(struct)](fm as PixelFormat) as void:
+	public def readBuffer[of T(struct)](fm as PixelFormat, dest as kri.vb.Object, offset as uint) as void:
 		rect = Drawing.Rectangle()
 		getRect(rect)
-		readRaw[of T]( fm, rect, IntPtr.Zero )
+		readRaw[of T]( fm, rect, dest, IntPtr(offset) )
 
 	public def read[of T(struct)](fm as PixelFormat, rect as Drawing.Rectangle) as (T):
 		data = array[of T](rect.Width * rect.Height)
 		ptr = GCHandle.Alloc( data, GCHandleType.Pinned )
-		readRaw[of T]( fm, rect, ptr.AddrOfPinnedObject() )
+		readRaw[of T]( fm, rect, null, ptr.AddrOfPinnedObject() )
 		return data
 	
 	public def readAll[of T(struct)](fm as PixelFormat) as (T):

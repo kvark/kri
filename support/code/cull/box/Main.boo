@@ -5,7 +5,7 @@
 public class Tag( kri.ITag ):
 	public	fresh		= false
 	private	index		as int	= -1
-	private	animated	= false
+	private	bufHandle	as uint	= 0
 	private	stampBuf	as uint	= 0
 	private	stampNode	as uint = 0
 	
@@ -16,8 +16,8 @@ public class Tag( kri.ITag ):
 			index = value
 	
 	public def checkBuf(bv as kri.vb.Object) as bool:
-		if animated != (bv!=null):
-			animated = not animated
+		if bufHandle != bv.handle:
+			bufHandle = bv.handle
 			stampBuf = 0
 		if stampBuf == bv.TimeStamp:
 			return false

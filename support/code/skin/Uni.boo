@@ -50,7 +50,7 @@ public class Universal( kri.rend.tech.Basic ):
 				ai = orig.Semant[0]
 				vos[i] = v = kri.vb.Attrib()
 				v.Semant.Add(ai)
-				v.init( e.mesh.nVert * ai.fullSize() )
+				v.initUnit( e.mesh.nVert )
 				e.store.buffers.Add(v)
 			tf.Bind( *vos )
 			# upload bone info

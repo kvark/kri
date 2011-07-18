@@ -167,8 +167,6 @@ public class NodeBone(Node):
 public class Skeleton( ani.data.Player, INoded ):
 	public final bones	as (NodeBone)
 	public final node	as Node
-	[getter(State)]
-	private state		as int	= 0
 	INoded.Node as Node:
 		get: return node
 	
@@ -186,8 +184,6 @@ public class Skeleton( ani.data.Player, INoded ):
 			if ind<0:	continue
 			bones[i].Parent = bones[ind]
 
-	public def touch() as void:
-		++state
 	public def bakePoseData(np as Node) as void:
 		sw = np.World
 		for b in bones:

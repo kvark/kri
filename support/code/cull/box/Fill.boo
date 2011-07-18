@@ -54,5 +54,4 @@ public class Fill( kri.rend.Basic ):
 		if doUpload:	# upload spatial data array
 			con.spatial.init(model,true)
 		if doDownload:	# read from texture into VBO
-			kri.vb.Object.Pack = con.bound
-			fbo.readBuffer[of single]( PixelFormat.Rgba )
+			fbo.readBuffer[of single]( PixelFormat.Rgba, con.bound, 0 )

@@ -131,12 +131,11 @@ public class Core:
 				FramebufferAttachment.ColorAttachment1, ts.target, ts.handle, i+1)
 			
 		# read back result
-		kri.vb.Object.Bind[ BufferTarget.PixelPackBuffer ] = pbo
 		pl = fbo.at.color[0]
 		size = pl.Size
 		rect = Drawing.Rectangle( 0, 0, pl.wid, pl.het )
-		fbo.readRaw[of byte]( PixelFormat.StencilIndex, rect, IntPtr.Zero )
-		fbo.readRaw[of byte]( PixelFormat.Rg, rect, IntPtr(size) )
+		fbo.readRaw[of byte]( PixelFormat.StencilIndex, rect, pbo, IntPtr.Zero )
+		fbo.readRaw[of byte]( PixelFormat.Rg, rect, pbo, IntPtr(size) )
 		# debug: extract result
 		es = (1,2)[isBig]
 		dar = array[of byte]( size*(1+2*es) )
