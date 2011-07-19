@@ -38,22 +38,36 @@ public class Context:
 
 public class Group( kri.rend.Group ):
 	public	final	con			as Context					= null
+	# renders
 	public	final	rBoxFill	as box.Fill					= null
+	public	final	rBoxDraw	as box.Draw					= null
 	public	final	rBoxUp		as box.Update				= null
-	public	final	rZ			as kri.rend.EarlyZ			= null
 	public	final	rFill		as hier.Fill				= null
 	public	final	rApply		as hier.Apply				= null
-	public	final	rDraw		as box.Draw					= null
 	public	final	rMap		as kri.rend.debug.MapDepth	= null
+	# signatures
+	public	final	sBoxFill	= 'box.fill'
+	public	final	sBoxDraw	= 'box.draw'
+	public	final	sBoxUp		= 'box.up'
+	public	final	sFill		= 'z.fill'
+	public	final	sApply		= 'z.app'
+	public	final	sMap		= 'z.map'
 
 	public def constructor(maxn as uint):
 		con = Context(maxn)
 		rBoxFill = box.Fill(con)
+		rBoxDraw = box.Draw(con)
 		rBoxUp = box.Update(con)
-		rZ = kri.rend.EarlyZ()
 		rFill = hier.Fill(con)
-		rDraw = box.Draw(con)
 		rApply = hier.Apply(con)
 		rMap = kri.rend.debug.MapDepth()
 		rMap.active = false
-		super(rBoxFill,rZ,rFill,rApply,rBoxUp,rMap)
+		super(rBoxFill,rFill,rApply,rBoxUp,rMap)
+	
+	public def fill(rm as kri.rend.Manager, skin as string, sZ as string, sEmi as string) as void:
+		rm.put(sBoxFill,	2,rBoxFill,	skin)
+		rm.put(sBoxDraw,	1,rBoxDraw,	sBoxFill,sEmi)
+		rm.put(sBoxUp,		1,rBoxUp,	sBoxFill)
+		rm.put(sFill,		1,rFill,	sZ)
+		rm.put(sApply,		1,rApply,	sFill,sBoxFill)
+		rm.put(sMap,		1,rMap,		sFill,sEmi)

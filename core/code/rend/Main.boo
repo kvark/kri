@@ -39,9 +39,11 @@ public class Group(Basic):
 	private	final	renders	as (Basic)	= null
 	public def constructor(*ren as (Basic)):
 		renders = ren
+	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		return System.Array.TrueForAll(renders) do(r as Basic):
 			return r.setup(pl)
+	
 	public override def process(con as link.Basic) as void:
 		for r in renders:
 			if r.active:

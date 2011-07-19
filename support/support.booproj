@@ -68,6 +68,7 @@
     <Compile Include="code\cull\Main.boo" />
     <Compile Include="code\defer\Apply.boo" />
     <Compile Include="code\defer\Fill.boo" />
+    <Compile Include="code\defer\Group.boo" />
     <Compile Include="code\defer\Main.boo" />
     <Compile Include="code\defer\Particle.boo" />
     <Compile Include="code\hair\Bake.boo" />

@@ -52,7 +52,6 @@ public class Apply( ApplyBase ):
 	private final sphere	as kri.gen.Frame
 	private final cone		as kri.gen.Frame
 	private final noShadow	as kri.buf.Texture
-	private final q = kri.Query()
 	# init
 	public def constructor(lc as support.light.Context, con as Context):
 		super(con,lc,'/g/apply_v')
@@ -79,6 +78,7 @@ public class Apply( ApplyBase ):
 	# work
 	private override def onInit() as void:
 		kri.Ant.Inst.quad.draw(bv)
+
 	private override def onDraw() as void:
 		scene = kri.Scene.Current
 		if not scene:	return
@@ -92,6 +92,4 @@ public class Apply( ApplyBase ):
 				continue
 			bu = bindShadow( l.depth )
 			kri.Ant.Inst.params.activate(l)
-			using q.catch( QueryTarget.SamplesPassed ):
-				frame.draw(bu)
-			x = q.result()
+			frame.draw(bu)

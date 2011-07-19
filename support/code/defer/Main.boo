@@ -41,7 +41,7 @@ public class Context:
 			dict.unit(pt)
 
 
-#---------	GROUP	--------#
+#---------	Debug Layer render	--------#
 
 public class BugLayer( kri.rend.Basic ):
 	public	final fbo	as kri.buf.Holder
@@ -53,35 +53,3 @@ public class BugLayer( kri.rend.Basic ):
 		link.activate(false)
 		fbo.mask = 1<<layer
 		fbo.copyTo( link.Frame, ClearBufferMask.ColorBufferBit )
-
-
-#---------	GROUP	--------#
-
-public class Group( kri.rend.Group ):
-	public	final	con			as Context
-	public	final	rFill		as fill.Fork	= null
-	public	final	rLayer		as support.layer.Fill	= null
-	public	final	rApply		as Apply		= null
-	public	final	rParticle	as Particle		= null
-	public	final	rBug		as BugLayer		= null
-	public	Layered	as bool:
-		get: return rLayer.active
-		set:
-			rLayer.active = value
-			rFill.active = not value
-	
-	public def constructor(qord as byte, ncone as uint, lc as support.light.Context, pc as kri.part.Context):
-		con = cx = Context(qord,ncone)
-		rFill	= fill.Fork(cx)
-		rLayer	= support.layer.Fill(cx)
-		rl = List[of kri.rend.Basic]()
-		rl.Extend(( rFill, rLayer ))
-		if lc:
-			rApply = Apply(lc,cx)
-			rl.Add(rApply)
-		if pc:
-			rParticle = Particle(pc,cx)
-			rl.Add(rParticle)
-		rBug = BugLayer(cx)
-		rl.Add(rBug)
-		super( *rl.ToArray() )
