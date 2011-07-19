@@ -17,8 +17,29 @@ public class Wrap( Basic ):
 	public final	sub	as Basic	= null
 	public def constructor(rend as Basic):
 		sub = rend
-	public override def process(link as link.Basic) as void:
-		if sub: sub.process(link)
+	public override def process(con as link.Basic) as void:
+		if sub: sub.process(con)
+
+
+#---------	SCREEN COPY		--------#
+
+public class Copy( Basic ):
+	public	final	tun	= kri.shade.par.Texture('input')
+	public	final	bu	= kri.shade.Bundle()
+	public def constructor():
+		d = kri.shade.par.Dict()
+		d.unit(tun)
+		bu.dicts.Add(d)
+		bu.shader.add('/copy_v','/copy_f')
+	public override def process(con as link.Basic) as void:
+		con.activate(false)
+		kri.Ant.Inst.quad.draw(bu)
+	public def process(ln as link.Buffer, con as link.Basic) as void:
+		con.activate(false)
+		if kri.Ant.Inst.gamma:
+			tun.Value = ln.buf.at.color[0] as kri.buf.Texture
+			kri.Ant.Inst.quad.draw(bu)
+		else:	ln.blitTo(con)
 
 
 #---------	EARLY Z FILL	--------#
@@ -32,9 +53,9 @@ public class EarlyZ( tech.Sorted ):
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
-	public override def process(link as link.Basic) as void:
-		link.activate( link.Target.None, 1f, true )
-		link.ClearDepth(1f)
+	public override def process(con as link.Basic) as void:
+		con.activate( con.Target.None, 1f, true )
+		con.ClearDepth(1f)
 		drawScene()
 
 

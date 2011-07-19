@@ -7,7 +7,6 @@ public class Context:
 	public	final	pTex	= kri.shade.par.Texture('input')
 	public	final	dict	= kri.shade.par.Dict()
 	public	final	frame	as kri.gen.Frame	= null
-	private next	as uint	= 0
 	
 	public def constructor(n as uint):
 		maxn = n
@@ -18,15 +17,17 @@ public class Context:
 		m = kri.Mesh( nVert:maxn )
 		m.buffers.AddRange(( bound, spatial ))
 		frame = kri.gen.Frame('box',m)
+		m.nVert = 0
 	
 	public def reset() as void:
-		next = 0
+		frame.mesh.nVert = 0
 	
 	public def genId() as uint:
-		if next>=maxn:
+		m = frame.mesh
+		if m.nVert>=maxn:
 			kri.lib.Journal.Log('Box: objects limit reached')
-			next = 0
-		return next++
+			m.nVert = 0
+		return m.nVert++
 	
 	public def fillScene(scene as kri.Scene) as void:
 		for e in scene.entities:
@@ -63,6 +64,10 @@ public class Group( kri.rend.Group ):
 		rMap = kri.rend.debug.MapDepth()
 		rMap.active = false
 		super(rBoxFill,rFill,rApply,rBoxUp,rMap)
+	
+	public def actNormal() as void:
+		for r in (rBoxFill,rBoxDraw,rBoxUp,rFill,rApply):
+			r.active = true
 	
 	public def fill(rm as kri.rend.Manager, skin as string, sZ as string, sEmi as string) as void:
 		rm.put(sBoxFill,	2,rBoxFill,	skin)

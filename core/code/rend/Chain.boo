@@ -23,17 +23,10 @@ public class Chain(Basic):
 	public	doProfile		as bool	= false
 	private	final	dpro	= Dictionary[of Basic,kri.Query]()
 	private final	qpool	= QueryPool()
-	private	final	tun		= kri.shade.par.Texture('input')
-	private final	buCopy	as kri.shade.Bundle	= null
+	private	final	rCopy	= Copy()
 	
 	public def constructor(ns as byte, bc as byte, bd as byte):
 		ln = link.Buffer(ns,bc,bd)
-		if kri.Ant.Inst.gamma:
-			d = kri.shade.par.Dict()
-			d.unit(tun)
-			buCopy = kri.shade.Bundle()
-			buCopy.dicts.Add(d)
-			buCopy.shader.add('/copy_v','/copy_f')
 
 	public def constructor():
 		self(0,0,0)
@@ -56,12 +49,8 @@ public class Chain(Basic):
 					r.process(ln)
 			else:	r.process(ln)
 		if con:
-			con.activate(false)
-			if buCopy:
-				tun.Value = ln.buf.at.color[0] as kri.buf.Texture
-				kri.Ant.Inst.quad.draw(buCopy)
-			else:	ln.blitTo(con)
-				
+			rCopy.process(ln,con)
+
 	public def genReport() as string:
 		rez = 'Profile report:'
 		for p in dpro:

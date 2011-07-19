@@ -23,8 +23,17 @@ private class Job:
 public class Manager(Basic):
 	private	final	jall	= Dictionary[of string,Job]()
 	private final	ln		= link.Buffer(0,0,0)
+	private	final	rCopy	= Copy()
 	private	reverse			= false
 	private final	static MAX	= 100
+	
+	public	Renders	as Basic*:
+		get:
+			for job in jall.Values:
+				if job.rend:	yield job.rend
+	
+	public def genReport() as string:
+		return ''
 	
 	public def put(name as string, dif as int, r as Basic, *deps as (string)) as void:
 		assert not name in jall	# ensures no cycles in the dependency graph
@@ -42,7 +51,8 @@ public class Manager(Basic):
 			return j.rend==null or j.rend.setup(pl)
 	
 	public override def process(con as link.Basic) as void:
-		jord = List[of Job](jall.Values).ToArray()
+		jord = array[of Job](jall.Count)
+		jall.Values.CopyTo(jord,0)
 		total = 0
 		for j in jord:
 			total += j.Diff
@@ -88,4 +98,4 @@ public class Manager(Basic):
 		for j in jord:
 			if j.Active:
 				j.rend.process(ln)
-		ln.blitTo(con)
+		rCopy.process(ln,con)

@@ -56,6 +56,13 @@ public class GladeApp:
 		gw.Visible = true
 		return true
 	
+	private def resetScene() as void:
+		if not view.scene:	return
+		for e in view.scene.entities:
+			e.frameVisible.Clear()
+		#for l in view.scene.lights:
+		#	l.depth = null
+	
 	private def playRecord(it as Gtk.TreeIter) as kri.ani.data.Record:
 		par = Gtk.TreeIter.Zero
 		objTree.IterParent(par,it)
@@ -106,6 +113,7 @@ public class GladeApp:
 			addObject( it, par.owner )
 	
 	public def load(path as string) as void:
+		rset.grCull.con.reset()
 		pos = path.LastIndexOfAny((char('/'),char('\\')))
 		fdir = path.Substring(0,pos)
 		# load scene
@@ -403,7 +411,7 @@ public class GladeApp:
 		butOpen.Clicked 	+= onButOpen
 		butPlay.Clicked		+= onButPlay
 		butProfile.Clicked	+= do(o as object, args as System.EventArgs):
-			showMessage( Gtk.MessageType.Info, rset.rChain.genReport() )
+			showMessage( Gtk.MessageType.Info, rset.rMan.genReport() )
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)
@@ -436,6 +444,7 @@ public class GladeApp:
 		renderCombo.Changed		+= do(o as object, args as System.EventArgs):
 			str = renderCombo.ActiveText
 			view.ren = rset.gen(str)
+			resetScene()
 			statusBar.Push(0, 'Pipeline switched to '+str)
 			view.updateSize()
 			gw.QueueDraw()

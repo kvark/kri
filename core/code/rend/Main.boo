@@ -36,7 +36,7 @@ public class FilterCopy(Filter):
 #---------	RENDER GROUP	--------#
 
 public class Group(Basic):
-	private	final	renders	as (Basic)	= null
+	public	final	renders	as (Basic)	= null
 	public def constructor(*ren as (Basic)):
 		renders = ren
 	

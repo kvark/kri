@@ -17,12 +17,6 @@ public class Group( kri.rend.Group ):
 	public	final	sPart	= 'd.part'
 	public	final	sBug	= 'd.bug'
 	
-	public	Layered	as bool:
-		get: return rLayer.active
-		set:
-			rLayer.active = value
-			rFill.active = not value
-	
 	public def constructor(qord as byte, ncone as uint, lc as support.light.Context, pc as kri.part.Context):
 		con = cx = Context(qord,ncone)
 		rFill	= support.defer.fill.Fork(cx)
@@ -38,6 +32,13 @@ public class Group( kri.rend.Group ):
 		rBug = BugLayer(cx)
 		rl.Add(rBug)
 		super( *rl.ToArray() )
+
+	public def actNormal(layered as bool) as void:
+		rFill.active = true
+		if rParticle:	rParticle.active = true
+		if rApply:		rApply.active = true
+		rLayer.active = layered
+		rFill.active = not layered
 
 	public def fill(rm as kri.rend.Manager, sZ as string) as void:
 		rm.put(sFill,	3,rFill,		sZ)

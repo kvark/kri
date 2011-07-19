@@ -3,8 +3,6 @@
 import OpenTK
 
 public class RenderSet:
-	# todo: use render manager
-	public	final	rChain	as kri.rend.Chain	= null
 	public	final	rMan	= kri.rend.Manager()
 	public	final	rClear	= kri.rend.Clear()
 	public	final	rZ		= kri.rend.EarlyZ()
@@ -29,14 +27,10 @@ public class RenderSet:
 		grForward	= support.light.group.Forward( 8, false )
 		grDeferred	= support.defer.Group( 3, 10, grForward.con, null )
 		rNormal		= support.light.normal.Apply( grForward.con )
-		# create and populate render chain
-		rChain = kri.rend.Chain(samples,0,0)
-		rChain.renders.AddRange((rSkin,rClear,grCull,rColor,rSurfBake,rNormal,
-			grForward,grDeferred,rDummy,rParticle,rAttrib))
-		rChain.doProfile = profile
 		# populate render manager
 		sk = 'skin'
 		sz = 'zcull'
+		emi = grForward.sEmi
 		rMan.put('clear',	1,rClear)
 		rMan.put(sk,		2,rSkin)
 		rMan.put(sz,		2,rZ,		sk)
@@ -45,11 +39,14 @@ public class RenderSet:
 		rMan.put('surf',	3,rSurfBake,sk)
 		grForward.fill( rMan, sk, sz)
 		grDeferred.fill( rMan, sz )
-		grCull.fill( rMan, sk, sz, grForward.sEmi )
+		grCull.fill( rMan, sk, sz, emi )
+		rMan.put('norm',	3,rNormal,	emi)
+		rMan.put('dummy',	2,rDummy,	emi)
+		rMan.put('part',	3,rParticle,emi)
 	
 	public def gen(str as string) as kri.rend.Basic:
 		grForward.BaseColor = Graphics.Color4.Black
-		for ren in rChain.renders:
+		for ren in rMan.Renders:
 			ren.active = false
 		if str == 'Debug':
 			rAttrib.active = true
@@ -59,17 +56,18 @@ public class RenderSet:
 			rColor.fillColor = true
 			rColor.fillDepth = false
 		if str == 'Forward':
-			for ren in (rSkin,rZ,rParticle,rSurfBake,grForward):
+			for ren in (rSkin,rZ,rParticle,rSurfBake)+grForward.renders:
 				ren.active = true
 			grForward.rEmi.fillDepth = false
 		if str in ('Deferred','Layered'):
-			for ren in (rSkin,rZ,grDeferred,rParticle,rSurfBake):
+			for ren in (rSkin,rZ,rParticle,rSurfBake):
 				ren.active = true
-			grDeferred.Layered = (str == 'Layered')
+			grDeferred.actNormal(str == 'Layered')
 		if str in ('HierZ'):
 			emi = grForward.rEmi
-			for ren in (rSkin,rZ,grCull,emi, grCull.rBoxDraw):
+			for ren in (rSkin,rZ,emi):
 				ren.active = true
+			grCull.actNormal()
 			emi.fillDepth = false
 			grForward.BaseColor = Graphics.Color4.DarkSlateGray
 		return rMan
