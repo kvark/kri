@@ -21,6 +21,7 @@ public class RenderSet:
 		set:	rClear.backColor = grForward.rEmi.backColor = value
 	
 	public def constructor(profile as bool, samples as byte, pc as kri.part.Context):
+		rMan.doProfile = profile
 		# create render groups
 		rDummy		= kri.rend.part.Dummy(pc)
 		rParticle	= kri.rend.part.Standard(pc)

@@ -406,6 +406,7 @@ public class GladeApp:
 		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
 			Gtk.MessageType.Warning, Gtk.ButtonsType.Ok, null )
 		dialog.WidthRequest = 400
+		dialog.HeightRequest = 300
 		# make toolbar
 		butClear.Clicked	+= onButClear
 		butOpen.Clicked 	+= onButOpen
