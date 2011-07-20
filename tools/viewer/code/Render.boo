@@ -6,7 +6,7 @@ public class RenderSet:
 	public	final	rMan	= kri.rend.Manager()
 	public	final	rClear	= kri.rend.Clear()
 	public	final	rZ		= kri.rend.EarlyZ()
-	public	final	rColor	= kri.rend.Color()
+	public	final	rColor	= kri.rend.Color( fillColor:true, fillDepth:false )
 	public	final	rSkin	= support.skin.Universal()
 	public	final	rAttrib	= kri.rend.debug.Attrib()
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
@@ -41,7 +41,7 @@ public class RenderSet:
 		grForward.fill( rMan, sk, sz)
 		grDeferred.fill( rMan, sz )
 		grCull.fill( rMan, sk, sz, emi )
-		rMan.put('norm',	3,rNormal,	emi)
+		rMan.put('norm',	3,rNormal,	'color',grCull.sApply)
 		rMan.put('dummy',	2,rDummy,	emi)
 		rMan.put('part',	3,rParticle,emi)
 	
@@ -52,10 +52,8 @@ public class RenderSet:
 		if str == 'Debug':
 			rAttrib.active = true
 		if str == 'Simple':
-			for ren in (rSkin,rZ,rColor,rDummy,rNormal,rSurfBake):
+			for ren in (rSkin,rZ,rColor,rNormal,rDummy,rSurfBake):
 				ren.active = true
-			rColor.fillColor = true
-			rColor.fillDepth = false
 		if str == 'Forward':
 			for ren in (rSkin,rZ,rParticle,rSurfBake)+grForward.renders:
 				ren.active = true
@@ -65,10 +63,7 @@ public class RenderSet:
 				ren.active = true
 			grDeferred.actNormal(str == 'Layered')
 		if str in ('HierZ'):
-			emi = grForward.rEmi
-			for ren in (rSkin,rZ,emi):
+			for ren in (rSkin,rZ,rClear,rNormal):
 				ren.active = true
 			grCull.actNormal()
-			emi.fillDepth = false
-			grForward.BaseColor = Graphics.Color4.DarkSlateGray
 		return rMan

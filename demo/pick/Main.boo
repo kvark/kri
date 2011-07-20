@@ -18,16 +18,20 @@ def Main(argv as (string)):
 		rem.backColor = Graphics.Color4(0f,0.3f,0.5f,1)
 		licon = support.light.Context(2,8)
 		texDebug = kri.shade.par.Texture('debug')
-		#rd = kri.rend.debug.Map(false,false,-1,texDebug)
 		
-		view.ren = rm = kri.rend.Manager(false)
-		#rm.add('skin',	1,	kri.kit.skin.Update(true) )
-		rm.add('emi',	3,	rem)
-		rm.add('pick',	3,	support.pick.Render(win,2,8), 'emi')
-		rm.add('fill',	2,	support.light.spot.Fill(licon) )
-		rm.add('app',	4,	support.light.spot.Apply(licon), 'emi','fill')
-		#rm.add('tex',	2,	rd)
-		#rm.add('xxx',	2,	kri.rend.debug.Attrib(), 'app')
+		rd = kri.rend.debug.Map(false,false,-1,texDebug)
+		rSkin = support.skin.Update(true)
+		rAt = kri.rend.debug.Attrib()
+		rd.active = rSkin.active = rAt.active = false
+		
+		view.ren = rm = kri.rend.Manager()
+		rm.put('skin',	1,	rSkin)
+		rm.put('emi',	3,	rem,	'skin')
+		rm.put('pick',	3,	support.pick.Render(win,2,8), 'emi')
+		rm.put('fill',	2,	support.light.spot.Fill(licon),	'skin' )
+		rm.put('app',	4,	support.light.spot.Apply(licon), 'emi','fill')
+		rm.put('tex',	2,	rd,		'fill')
+		rm.put('xxx',	2,	rAt, 	'app','skin')
 		
 		str as string = null
 		if argv.Length:

@@ -56,14 +56,18 @@ public class Fill( kri.rend.tech.General ):
 		GL.BlendEquation( BlendEquationMode.FuncAdd )
 		if str == '':
 			GL.BlendFunc( BlendingFactorSrc.One, 		BlendingFactorDest.Zero )
-		elif str in ('MIX','MULTIPLY'):
+		elif str == 'MULTIPLY':
 			GL.BlendFunc( BlendingFactorSrc.DstColor,	BlendingFactorDest.Zero )
 		elif str == 'ADD':
 			GL.BlendFunc( BlendingFactorSrc.One, 		BlendingFactorDest.One )
+		elif str == 'MIX':
+			GL.BlendFuncSeparate(
+				BlendingFactorSrc.SrcAlpha,	BlendingFactorDest.OneMinusSrcAlpha,
+				BlendingFactorSrc.Zero,		BlendingFactorDest.One)
 		else:	return false
 		return true
 	
-	private def setParams(pa as Pass, affects as Dictionary[of string,single]) as void:
+	private def setParams(pa as Pass, affects as string*) as void:
 		# set blending
 		if not setBlend( pa.blend ):
 			kri.lib.Journal.Log("Blend: unknown mode (${pa.blend})")
@@ -72,14 +76,13 @@ public class Fill( kri.rend.tech.General ):
 		afDiff = afEmis = false
 		afSpec = afHard = false
 		for aff in affects:
-			inf = aff.Key
-			if inf == 'color_diffuse':
+			if aff == 'color_diffuse':
 				afDiff = true
-			if inf == 'color_emission':
+			if aff == 'color_emission':
 				afEmis = true
-			if inf == 'color_spec':
+			if aff == 'color_spec':
 				afSpec = true
-			if inf == 'hardness':
+			if aff == 'hardness':
 				afHard = true
 		GL.ColorMask(0, afDiff,afDiff,afDiff, afEmis)
 		GL.ColorMask(1, afSpec,afSpec,afSpec, afHard)
@@ -142,7 +145,7 @@ public class Fill( kri.rend.tech.General ):
 			else:
 				Blend = true
 				fbo.setMask(3)
-				setParams( app, un.affects )
+				setParams( app, un.affects.Keys )
 			mesh.render( va, app.prog, vDict, tm.off, tm.num, 1, null )
 			GL.ColorMask(0, true,true,true,true)
 			GL.ColorMask(1, true,true,true,true)

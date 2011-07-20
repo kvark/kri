@@ -19,5 +19,7 @@ void main()	{
 	float	single	= dot(value.xyz,luminance);
 	vec3	alt	= single * user_color.xyz;
 	vec3	color	= mix( value.xyz, alt, user_color.w );
-	c_diffuse = c_specular = vec4( color, single );
+	c_diffuse = c_specular = vec4( color, value.w );
+	//warning: alpha data modification is not supported,
+	//because alpha is used for blending. Looking for a workaround
 }
