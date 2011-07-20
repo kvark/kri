@@ -28,11 +28,11 @@ public class GladeApp:
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	[Glade.Widget]	renderCombo		as Gtk.ComboBox
 	
+	private	final	log		= kri.lib.Journal()
 	private	final	config	= kri.lib.Config('kri.conf')
 	private final	options	= kri.lib.OptionReader(config)
 	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	view	= kri.ViewScreen()
-	private	final	log		= kri.lib.Journal()
 	private	final	al		= kri.ani.Scheduler()
 	private	final	objTree	= Gtk.TreeStore(object)
 	private	final	dOpen	as Gtk.FileChooserDialog
@@ -175,8 +175,9 @@ public class GladeApp:
 	# signals
 	
 	public def onException(args as GLib.UnhandledExceptionArgs) as void:
-		args.ExitApplication = true
-		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
+		raise args.ExceptionObject as System.Exception
+		#args.ExitApplication = true
+		#System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		samples = byte.Parse(config.ask('InnerSamples','0'))
@@ -396,7 +397,6 @@ public class GladeApp:
 		return col
 	
 	public def constructor():
-		kri.lib.Journal.Inst = log
 		GLib.Idle.Add( onIdle )
 		GLib.ExceptionManager.UnhandledException += onException
 		# load scheme

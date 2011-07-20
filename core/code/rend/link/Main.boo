@@ -30,7 +30,7 @@ public class Basic(Help):
 			Frame.copyTo(dest,what)
 			return true
 		return false
-	public def blitTo(bas as Basic) as bool:
+	public virtual def blitTo(bas as Basic) as bool:
 		return blitTo( bas.Frame, ClearBufferMask.ColorBufferBit )
 
 

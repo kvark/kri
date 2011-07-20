@@ -85,4 +85,8 @@ public class Buffer(Basic):
 			buf.at.color[0] = t
 		# bind
 		buf.mask = (0,1)[ ct!=Target.None ]
-		buf.bind()	
+		buf.bind()
+
+	public override def blitTo(bas as Basic) as bool:
+		buf.mask = 1
+		return super(bas)

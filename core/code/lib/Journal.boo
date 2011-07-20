@@ -6,6 +6,9 @@ public interface ILogger:
 public class Journal(ILogger):
 	public	static	Inst		as ILogger	= null
 	public	final	messages	= List[of string]()
+
+	public def constructor():
+		Inst = self
 	def ILogger.log(str as string) as void:
 		messages.Add(str)
 	public static def Log(str as string) as void:

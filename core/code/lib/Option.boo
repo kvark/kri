@@ -12,8 +12,11 @@ public class Config:
 	public def constructor(path as string):
 		read(path)
 	public def read(path as string) as void:
+		if not IO.File.Exists(path):
+			Journal.Log("Config (${path}) not found")
+			return
 		for line in IO.File.ReadAllLines(path):
-			continue	if line =~ /^\s*#/
+			if line =~ /^\s*#/:	continue
 			name,val = /\s*=\s*/.Split(line)
 			dict[name] = val
 	public def ask(name as string, default as string) as string:
