@@ -36,7 +36,7 @@ public final class Light( IBase ):
 
 	public def activate(l as kri.Light) as void:
 		color.Value		= l.Color
-		kdir = (1f if l.fov>0f else 0f)
+		kdir = (0f,1f)[l.fov>0f]
 		attenu.Value	= Vector4(l.energy, l.quad1, l.quad2, l.sphere)
 		data.Value		= Vector4(l.softness, kdir, 0f, 0f)
 

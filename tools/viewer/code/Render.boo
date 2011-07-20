@@ -47,6 +47,7 @@ public class RenderSet:
 	
 	public def gen(str as string) as kri.rend.Basic:
 		grForward.BaseColor = Graphics.Color4.Black
+		rZ.offset = 1f
 		for ren in rMan.Renders:
 			ren.active = false
 		if str == 'Debug':
@@ -61,6 +62,7 @@ public class RenderSet:
 		if str in ('Deferred','Layered'):
 			for ren in (rSkin,rZ,rParticle,rSurfBake):
 				ren.active = true
+			rZ.offset = 0f
 			grDeferred.actNormal(str == 'Layered')
 		if str in ('HierZ'):
 			for ren in (rSkin,rZ,rClear,rNormal):

@@ -46,7 +46,8 @@ public class Copy( Basic ):
 #---------	EARLY Z FILL	--------#
 
 public class EarlyZ( tech.Sorted ):
-	public final bu	= kri.shade.Bundle()
+	public	final	bu	= kri.shade.Bundle()
+	public	offset	= 1f
 	public def constructor():
 		super('zcull')
 		# make shader
@@ -55,7 +56,7 @@ public class EarlyZ( tech.Sorted ):
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
 	public override def process(con as link.Basic) as void:
-		con.activate( con.Target.None, 1f, true )
+		con.activate( con.Target.None, offset, true )
 		con.ClearDepth(1f)
 		drawScene()
 
