@@ -49,23 +49,23 @@ public class Frame:
 	
 	public def getRect(ref rez as Drawing.Rectangle) as Plane:
 		pl = getInfo()
-		if not pl:
-			kri.lib.Journal.Log("FBO: inconsistent attachments (${handle})")
-			return null
 		rez.Location = getOffsets()
-		het = Math.Max(1, cast(int, pl.het ))
-		rez.Size = Drawing.Size( pl.wid, het )
+		if pl:
+			het = Math.Max(1, cast(int, pl.het ))
+			rez.Size = Drawing.Size( pl.wid, het )
 		return pl
 
 	# binding
 	
-	public virtual def bind() as void:
-		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
-		FramebufferSrgb = fixGamma
+	public virtual def bind() as bool:
 		rect = Drawing.Rectangle()
 		pl = getRect(rect)
+		if not pl:	return false
+		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
+		FramebufferSrgb = fixGamma
 		GL.Viewport(rect)
 		kri.Ant.Inst.params.activate(pl)
+		return true
 	
 	private abstract def getReadMode() as ReadBufferMode:
 		pass
@@ -154,7 +154,9 @@ public class Screen(Frame):
 		return Drawing.Point(ofx,ofy)
 	private override def getReadMode() as ReadBufferMode:
 		return ReadBufferMode.Back
-	public override def bind() as void:
+	public override def bind() as bool:
 		fixGamma = kri.Ant.Inst.gamma
-		super()
-		GL.DrawBuffer( DrawBufferMode.Back )
+		if super():
+			GL.DrawBuffer( DrawBufferMode.Back )
+			return checkStatus()
+		return false

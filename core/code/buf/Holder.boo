@@ -34,22 +34,17 @@ public class Holder(Frame):
 		cur = nex
 		(Render.Zero,nex)[nex!=null].attachTo(fa)
 	
-	public def getSamples() as int:
-		sm = -1
-		for sf in at.All:
-			if sm<0:
-				sm = sf.samples
-			elif sm!=sf.samples:
-				return -1
-		return sm
-	
 	public override def getInfo() as Plane:
-		sm = getSamples()
-		return null	if sm<0
-		pl = Plane( samples:sm, wid:1<<30, het:1<<30 )
+		sm = -1
+		pl = Plane( samples:0, wid:1<<30, het:1<<30 )
 		for sf in at.All:
 			pl.wid	= Math.Min( pl.wid,	sf.wid )
 			pl.het	= Math.Min( pl.het,	sf.het )
+			if sm<0:
+				sm = pl.samples = sf.samples
+			elif sm!=sf.samples:
+				kri.lib.Journal.Log("FBO: inconsistent attachments (${handle})")
+				return null
 		return pl
 	
 	public def setMask(m as byte) as void:
@@ -73,16 +68,12 @@ public class Holder(Frame):
 			old.color[i] = surface
 		forceUpdate = false
 	
-	public override def bind() as void:
-		# bind with viewport
-		super()
-		if getSamples()<0:
-			kri.lib.Journal.Log("FBO: failed to resolve samples number for binding (${handle})")
-			return
-		# attachments and check
-		updateSurfaces()
-		setMask(mask)
-		checkStatus()
+	public override def bind() as bool:
+		if super():
+			updateSurfaces()
+			setMask(mask)
+			return checkStatus()
+		return false
 	
 	private override def getReadMode() as ReadBufferMode:
 		if not mask:	return ReadBufferMode.None

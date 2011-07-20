@@ -175,9 +175,8 @@ public class GladeApp:
 	# signals
 	
 	public def onException(args as GLib.UnhandledExceptionArgs) as void:
-		raise args.ExceptionObject as System.Exception
-		#args.ExitApplication = true
-		#System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
+		args.ExitApplication = true
+		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		samples = byte.Parse(config.ask('InnerSamples','0'))
