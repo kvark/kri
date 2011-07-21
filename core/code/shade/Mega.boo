@@ -68,3 +68,4 @@ public class Mega(Program):
 		for i in range(attribs.Length):
 			attribs[i].name = ''
 		uniforms.Clear()
+

@@ -77,9 +77,10 @@ public class ExAnim( kri.IExtension ):
 		anid['s.rotation_quaternion']	= Rac( getQuatRev,	genBone(fs_rot) )
 		anid['s.scale']					= Rac( getScale,	genBone(fs_sca) )
 		# node
-		anid['n.location']			= Rac( getVector,		genSpatial(ft_pos) )
-		anid['n.rotation_euler']	= Rac( getQuatEuler,	genSpatial(ft_rot) )
-		anid['n.scale']				= Rac( getScale,		genSpatial(ft_sca) )
+		anid['n.location']				= Rac( getVector,		genSpatial(ft_pos) )
+		anid['n.rotation_euler']		= Rac( getQuatEuler,	genSpatial(ft_rot) )
+		anid['n.rotation_quaternion']	= Rac( getQuatRev,		genSpatial(ft_rot) )
+		anid['n.scale']					= Rac( getScale,		genSpatial(ft_sca) )
 		# material
 		anid['m.diffuse_color']		= RacMatColor('diffuse')
 		anid['m.specular_color']	= RacMatColor('specular')

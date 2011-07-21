@@ -173,7 +173,7 @@ public class Fill( kri.rend.tech.General ):
 		else:	fbo.at.depth = link.Depth
 		# prepare buffer
 		fbo.setMask(7)
-		link.SetDepth(0f, false)
+		link.SetDepth(-1f, false)
 		link.ClearColor( Graphics.Color4(0f,0f,0f,0.5f) )
 		scene = kri.Scene.Current
 		if not scene:	return
