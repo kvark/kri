@@ -22,7 +22,9 @@ public class GladeApp:
 	[Glade.Widget]	meshPolyLabel	as Gtk.Label
 	[Glade.Widget]	attrTypeLabel	as Gtk.Label
 	[Glade.Widget]	attrSizeLabel	as Gtk.Label
+	[Glade.Widget]	entCleanBut		as Gtk.Button
 	[Glade.Widget]	entVisibleBut	as Gtk.ToggleButton
+	[Glade.Widget]	entFrameVisBut	as Gtk.ToggleButton
 	[Glade.Widget]	recNumLabel		as Gtk.Label
 	[Glade.Widget]	recPlayBut		as Gtk.Button
 	[Glade.Widget]	emiStartBut		as Gtk.Button
@@ -246,6 +248,7 @@ public class GladeApp:
 		propertyBook.Page = 0
 		if (ent = obj as kri.Entity):
 			entVisibleBut.Active = ent.visible
+			entFrameVisBut.Active = ent.VisibleCam
 			propertyBook.Page = 1
 		if obj isa kri.Node:
 			propertyBook.Page = 2
@@ -286,30 +289,25 @@ public class GladeApp:
 		rez = objTree.IterChildren(it,par)
 		while rez:
 			ox = objTree.GetValue(it,0)
-			if (ox isa kri.meta.AdUnit) or (ox isa kri.meta.Advanced):
-				inMat = false
-			if ox isa kri.ani.data.IChannel:
-				inAni = false
-			if ox isa AtBox:
-				inStore = false
-			if ox isa kri.part.Behavior:
-				inOwner = false
-			if not objTree.IterNext(it):
-				break
+			if	(ox isa kri.meta.AdUnit) or (ox isa kri.meta.Advanced) or\
+				(ox isa kri.ani.data.IChannel) or (ox isa AtBox) or (ox isa kri.part.Behavior):
+				rez = objTree.Remove(it)
+			else:
+				rez = objTree.IterNext(it)
 		ox = objTree.GetValue(par,0)
-		if (mat = ox as kri.Material) and inMat:
+		if (mat = ox as kri.Material):
 			for unit in mat.unit:
 				objTree.AppendValues(par,unit)
 			for meta in mat.metaList:
 				objTree.AppendValues(par,meta)
-		if (rec = ox as kri.ani.data.Record) and inAni:
+		if (rec = ox as kri.ani.data.Record):
 			for ch in rec.channels:
 				objTree.AppendValues(par,ch)
-		if (vs = ox as kri.vb.Storage) and inStore:
+		if (vs = ox as kri.vb.Storage):
 			for vat in vs.buffers:
 				for ai in vat.Semant:
 					objTree.AppendValues(par,AtBox(ai))
-		if (own = ox as kri.part.Manager) and inOwner:
+		if (own = ox as kri.part.Manager):
 			for beh in own.behos:
 				objTree.AppendValues(par,beh)
 		objView.ExpandRow( args.Path, true )
@@ -425,12 +423,12 @@ public class GladeApp:
 		objView.CursorChanged	+= onSelectObj
 		objView.RowActivated	+= onActivateObj
 		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
-			if not camActiveBut.Active:
-				return
+			if not camActiveBut.Active:	return
 			view.cam = curObj as kri.Camera
+		entCleanBut.Clicked		+= do(o as object, args as System.EventArgs):
+			(curObj as kri.Entity).deleteOwnData()
 		entVisibleBut.Clicked	+= do(o as object, args as System.EventArgs):
-			ent = curObj as kri.Entity
-			ent.visible = entVisibleBut.Active
+			(curObj as kri.Entity).visible = entVisibleBut.Active
 		recPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
 			rec = playRecord(curIter)
 			statusBar.Push(0, "Animation '${rec.name}' started")

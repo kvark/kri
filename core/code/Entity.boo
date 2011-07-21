@@ -229,3 +229,11 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 		return mesh.render( vao,bu, CombinedAttribs, 1,tf )
 	public def render(vao as vb.Array, bu as shade.Bundle) as bool:
 		return render(vao,bu,null)
+
+	# removes animated vertex buffers that present in a mesh
+	public def deleteOwnData() as void:
+		store.buffers.RemoveAll() do(vat as kri.vb.Attrib):
+			for ai in vat.Semant:
+				if not mesh.find(ai.name):
+					return false
+			return true
