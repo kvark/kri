@@ -16,11 +16,11 @@ public struct Element( kri.meta.IBase ):
 	public	final	pArea	as kri.shade.par.Value[of Vector4]
 	public	final	pChan	as kri.shade.par.Value[of int]
 	# methods
-	public def constructor(str as string, n as kri.Node, m as kri.Material, r as Range):
+	public def constructor(str as string, n as kri.Node, tm as kri.TagMat):
 		name = str
 		node = n
-		mat = m
-		range = r
+		mat = tm.mat
+		range = Range(tm)
 		pNode = kri.lib.par.spa.Linked(str)
 		pArea = kri.shade.par.Value[of Vector4](str)
 		pChan = kri.shade.par.Value[of int](str)
@@ -33,17 +33,15 @@ public struct Element( kri.meta.IBase ):
 		d.var(pChan)
 
 
-public class View( kri.ViewBase ):
-	public final elems	as (Element)
-	public def constructor(n as int):
-		elems = array[of Element](n)
-
-
 
 public class Scene:
 	public	final	conMesh		as Mesh		= null
 	public	final	conTex		as Texture	= null
 	public	final	mesh	= kri.Mesh( BeginMode.Triangles )
+	public	final	elems	as (Element)	= null
+	[Getter(Current)]
+	internal	static	current	as Scene		= null
+	private	numEl	= 0
 	
 	public def enuMeshes(scene as kri.Scene) as kri.Mesh*:
 		mlis = List[of kri.Mesh]()
@@ -65,7 +63,8 @@ public class Scene:
 					tlis.Add(t)
 					yield t
 	
-	public def constructor(scene as kri.Scene):
+	public def constructor(n as int, scene as kri.Scene):
+		elems = array[of Element](n)
 		square = nv = np = 0
 		# gather statistiscs
 		for m in enuMeshes(scene):
@@ -82,13 +81,19 @@ public class Scene:
 		conMesh = Mesh(nv)
 		conTex = Texture(size)
 		mesh.buffers.Add( conMesh.data )
-		mesh.ind = ind = IndexAccum()
-		ind.init( np<<2 )
 		# push data
 		for m in enuMeshes(scene):
 			conMesh.copyData(m)
-			conMesh.copyIndex(m,ind)
 		for t in enuTextures(scene):
 			conTex.add(t)
 		mesh.nVert = conMesh.nVert
+		# generate element list
+		mesh.ind = ind = IndexAccum()
+		ind.init( np<<2 )
+		for e in scene.entities:
+			for tm in e.enuTags[of kri.TagMat]():
+				str = "el[${numEl}]."
+				conMesh.copyIndex( e.mesh, ind, tm )
+				elems[numEl] = Element(str, e.node, tm)
+				numEl += 1
 		mesh.nPoly = ind.curNumber

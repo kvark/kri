@@ -8,6 +8,9 @@ public struct Range:
 	public	start	as uint
 	public	total	as uint
 	public	static	final	Zero = Range( start:0, total:0 )
+	public def constructor(tm as kri.TagMat):
+		start = tm.off
+		total = tm.num
 
 
 private class VarBuffer( kri.vb.IBuffed ):
@@ -98,19 +101,19 @@ public class Mesh:
 		eMap.Add(m,r)
 		return r
 
-	public def copyIndex(m as kri.Mesh, out as IndexAccum) as bool:
+	public def copyIndex(m as kri.Mesh, out as IndexAccum, tm as kri.TagMat) as bool:
 		if not (m.ind and out):	return false
-		r = Range.Zero
-		if not eMap.TryGetValue(m,r):
+		rv = Range.Zero
+		if not eMap.TryGetValue(m,rv):
 			kri.lib.Journal.Log('Asm: mesh not registered')
 			return false
-		pOffset.Value = r.start
+		pOffset.Value = rv.start
 		if out.curNumber+m.nPoly > out.Allocated:
 			kri.lib.Journal.Log('Asm: index buffer overflow')
 			return false
 		varBuf.data = m.ind
-		out.bindOut( tf, m.nPoly )
-		if m.render( vao, buInd, vDic, 1,tf ):
-			out.curNumber += m.nPoly
+		out.bindOut( tf, tm.num )
+		if m.render( vao, buInd, vDic, tm.off, tm.num, 1,tf ):
+			out.curNumber += tm.num
 			return true
 		return false

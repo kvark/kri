@@ -12,7 +12,7 @@ public class Universal( kri.rend.tech.Basic ):
 		for i in range(kri.Ant.Inst.caps.bones)
 		).ToArray()
 	
-	private	final	maxBones	as byte	= 64
+	private	final	maxBones	as byte	= 0
 	private	final	pHas	= par.Value[of int]('has_data')	// vertex,normal,quat
 
 	public def constructor():
@@ -30,10 +30,11 @@ public class Universal( kri.rend.tech.Basic ):
 		bu.dicts.Add(dict)
 		# extract number of bones
 		bu.link()
-		loc = sa.getLocation(str)
-		val = 0
-		sa.getValue(loc,val)
-		maxBones = val
+		if not bu.LinkFail:
+			loc = sa.getLocation(str)
+			val = 0
+			sa.getValue(loc,val)
+			maxBones = val
 		# finish
 		spat = kri.Spatial.Identity
 		bones[0].activate(spat)
