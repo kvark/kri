@@ -30,7 +30,7 @@ public class Rend( kri.rend.tech.Meta ):
 			ent = inst.ent
 			if not ent:		continue
 			for s in ('pos','rot','sys','sub'):
-				en = kri.vb.Entry( pe.mesh, s )
+				en = kri.vb.Entry( pe.mesh.buffers[0], s )
 				if not en.buffer:
 					ent = null
 					break

@@ -82,7 +82,7 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 		m = rd.ent.mesh
 		ar = array[of T](m.nVert)
 		for i in range( ar.Length ):
-			ar[i] = fun(rd)
+			ar[i] = (fun as callable(Reader) as T)(rd)
 		v = kri.vb.Attrib()
 		v.init(ar,false)
 		v.Semant.Add(ai)

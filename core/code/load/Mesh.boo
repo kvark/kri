@@ -16,13 +16,12 @@ public class ExMesh( kri.IExtension ):
 	public static def GetArray[of T(struct)](num as uint, fun as callable) as (T):
 		ar = array[of T](num)
 		for i in range( ar.Length ):
-			ar[i] = fun()
+			ar[i] = cast(T,fun())
 		return ar
-	public static def LoadArray[of T(struct)](r as Reader, multi as uint,
-			ref ai as kri.vb.Info, fun as callable) as bool:
+	public static def LoadArray[of T(struct)](r as Reader, multi as int, ref ai as kri.vb.Info, f as callable) as bool:
 		m = r.geData[of kri.Mesh]()
 		if not m:	return false
-		ar = GetArray[of T]( multi * m.nVert, fun )
+		ar = GetArray[of T]( multi * m.nVert, f)
 		v = kri.vb.Attrib()
 		v.init(ar,false)
 		v.Semant.Add(ai)

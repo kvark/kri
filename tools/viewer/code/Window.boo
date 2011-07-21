@@ -284,7 +284,6 @@ public class GladeApp:
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
 		par = it = Gtk.TreeIter()
-		inMat = inAni = inStore = inOwner = true
 		objTree.GetIter(par,args.Path)
 		rez = objTree.IterChildren(it,par)
 		while rez:

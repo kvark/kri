@@ -48,7 +48,9 @@ public class ExMaterial( kri.IExtension ):
 	
 	
 	private def init() as void:
-		uvShaders = [	kri.shade.Object.Load("/mi/uv${i}_v") for i in range(4) ]
+		uvShaders = List[of kri.shade.Object](
+			kri.shade.Object.Load("/mi/uv${i}_v") for i in range(4)
+			).ToArray()
 		orcoVert =	kri.shade.Object.Load('/mi/orco_v')
 		orcoHalo =	kri.shade.Object.Load('/mi/orco_halo_f')
 		objectShader = 	kri.shade.Object.Load('/mi/object_v')
@@ -66,7 +68,7 @@ public class ExMaterial( kri.IExtension ):
 		# non-trivial sources
 		limDict['UV']		= do(r as Reader):
 			lid = r.getByte()
-			if lid>=uvShaders.Count:	return null
+			if lid>=uvShaders.Length:	return null
 			return Hermit( Shader:uvShaders[lid],	Name:'uv'+lid )
 		limDict['ORCO']		= do(r as Reader):
 			mat = r.geData[of kri.Material]()
@@ -168,7 +170,7 @@ public class ExMaterial( kri.IExtension ):
 		model = r.getString()
 		sh = { '':		con.slib.lambert,
 			'LAMBERT':	con.slib.lambert
-			}[model]
+			}[model] as kri.shade.Object
 		if not sh:
 			kri.lib.Journal.Log("Loader: Unknown diffuse lighting model (${model})")
 			return false
@@ -188,7 +190,7 @@ public class ExMaterial( kri.IExtension ):
 			'COOKTORR':	con.slib.cooktorr,
 			'PHONG':	con.slib.phong,
 			'BLINN':	con.slib.phong	#fake
-			}[model]
+			}[model] as kri.shade.Object
 		if not sh:
 			kri.lib.Journal.Log("Loader: Unknown specular lighting model (${model})")
 			return false

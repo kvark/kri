@@ -62,5 +62,5 @@ public final class Project( IBase ):
 	kri.INamed.Name as string:
 		get: return project.Name
 	def IBase.link(d as par.Dict) as void:
-		for ib as IBase in (project,spatial):
+		for ib in (of IBase: project,spatial):
 			ib.link(d)

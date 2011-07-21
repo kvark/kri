@@ -91,12 +91,14 @@ public class ExAnim( kri.IExtension ):
 		anid['t.offset']		= RacTexUnit({u| return u.pOffset })
 		anid['t.scale']			= RacTexUnit({u| return u.pScale })
 		# light
-		anid['l.energy']	= Rac( getReal,		{pl,v,i| (pl as kri.Light).energy = v })
-		anid['l.color']		= Rac( getColor,	{pl,v,i| (pl as kri.IColored).Color = v })
+		anid['l.energy']	= Rac(getReal)	do(pl as IPlayer, v as single, i as byte):
+			(pl as kri.Light).energy = v
+		anid['l.color']		= Rac(getColor)	do(pl as IPlayer, v as Color4, i as byte):
+			(pl as kri.IColored).Color = v
 		anid['l.clip_start']	= RacProject(fp_prin)
 		anid['l.clip_end']		= RacProject(fp_prout)
 		# camera
-		anid['c.angle']		= Rac(getReal) do(pl as IPlayer, v as single, i as byte):
+		anid['c.angle']		= Rac(getReal)	do(pl as IPlayer, v as single, i as byte):
 			(pl as kri.Camera).fov = v*0.5f
 		anid['c.clip_start']	= RacProject(fp_prin)
 		anid['c.clip_end']		= RacProject(fp_prout)

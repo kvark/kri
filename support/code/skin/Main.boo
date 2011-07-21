@@ -30,7 +30,7 @@ public class Extra( kri.IExtension ):
 		ai = kri.vb.Info( name:'skin', size:4,
 			type:VertexAttribPointerType.UnsignedShort,
 			integer:true )
-		rez = kri.load.ExMesh.LoadArray[of ushort]( r,4,ai, {return r.bin.ReadUInt16()})
+		rez = kri.load.ExMesh.LoadArray[of ushort]( r,4,ai, r.bin.ReadUInt16 )
 		if not rez:	return false
 		# link to the Armature
 		e = r.geData[of kri.Entity]()

@@ -18,6 +18,8 @@ public class ParUni[of T(struct)](Parameter):
 		assert iv
 		loc = lc
 		piv = iv
+	public def constructor(lc as int, iv as par.IBaseRoot):
+		self(lc, iv as par.IBase[of T])
 	public override def upload() as void:
 		data = piv.Value
 		Program.Param(loc,data)
@@ -31,6 +33,8 @@ public class ParTexture(Parameter):
 		assert iv and tn>=0
 		loc,tun = lc,tn
 		piv = iv
+	public def constructor(lc as int, iv as par.IBaseRoot, tn as int):
+		self(lc, iv as par.IBase[of kri.buf.Texture], tn)
 	public override def upload() as void:
 		slot = tun
 		kri.buf.Texture.Slot(slot)

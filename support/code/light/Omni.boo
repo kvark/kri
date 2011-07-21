@@ -77,6 +77,7 @@ public class Apply( kri.rend.tech.Meta ):
 		for l in scene.lights:
 			if l.fov != 0f:	continue
 			d = (lit=l).depth
+			d = null
 			#if not (d and d.target==TextureTarget.TextureCubeMap):
 			#	continue
 			# determine subset of affected objects

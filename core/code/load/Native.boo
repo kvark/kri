@@ -100,5 +100,5 @@ public class Standard( kri.IExtension ):
 	public final animations	= ExAnim()
 	
 	def kri.IExtension.attach(nt as Native) as void:
-		for ex as kri.IExtension in (objects,meshes,materials,animations):
+		for ex in (of kri.IExtension: objects,meshes,materials,animations):
 			ex.attach(nt)

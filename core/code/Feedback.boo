@@ -41,7 +41,7 @@ public class Query:
 		Help.safeKill({ GL.DeleteQueries(1,tmp) })
 	public def catch(tg as QueryTarget) as IDisposable:
 		return Catcher(tg,self)
-	public def result() as int:
+	public virtual def result() as int:
 		rez = 0
 		GL.GetQueryObject(handle, GetQueryObjectParam.QueryResult, rez)
 		return rez
@@ -85,6 +85,6 @@ public class TransFeedback(Query):
 			Cache[i] = null
 		return true
 	
-	public def result() as int:
+	public override def result() as int:
 		return -1	if not CountPrimitives
 		return super()

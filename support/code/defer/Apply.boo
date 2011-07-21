@@ -17,8 +17,9 @@ public class ApplyBase( kri.rend.Basic ):
 	# create
 	protected def constructor(con as Context, lc as support.light.Context, spath as string):
 		shader = Object.Load(spath)
-		for st in System.Enum.GetValues(support.light.ShadowType):
-			bus[st] = bu = Bundle()
+		for st in System.Enum.GetValues(support.light.ShadowType) as (support.light.ShadowType):
+			bu = Bundle()
+			bus.Add(st,bu)
 			bu.dicts.Add( con.dict )
 			bu.shader.add( '/lib/quat_v','/lib/tool_v','/lib/defer_f','/lib/math_f' )
 			bu.shader.add( shader, con.sh_apply, con.sh_diff, con.sh_spec )
@@ -83,10 +84,10 @@ public class Apply( ApplyBase ):
 		scene = kri.Scene.Current
 		if not scene:	return
 		for l in scene.lights:
-			frame as kri.gen.Frame = {
+			frame = {
 				kri.Light.Type.Omni:	sphere,
 				kri.Light.Type.Spot:	cone,
-			}[l.getType()]
+			}[l.getType()] as kri.gen.Frame
 			if not frame:
 				kri.lib.Journal.Log("Light: no volume found for light (${l})")
 				continue

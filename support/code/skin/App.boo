@@ -47,9 +47,10 @@ public class Update( kri.rend.tech.Basic ):
 			bu as kri.shade.Bundle = null
 			at_mod = ('vertex','')
 			for bx in buDic:
-				if e.mesh.find(bx.Key):
-					bu = bx.Value
-					at_mod[1] = bx.Key
+				str = bx.Key as string
+				if e.mesh.find(str):
+					bu = bx.Value as kri.shade.Bundle
+					at_mod[1] = str
 					break
 			if not (bu and e.mesh.find(at_mod[0])):
 				str = (e as kri.INamed).Name
