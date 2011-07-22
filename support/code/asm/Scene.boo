@@ -47,11 +47,10 @@ public class Scene:
 		mlis = List[of kri.Mesh]()
 		for e in scene.entities:
 			m = e.mesh
-			if m==null or m in mlis:
-				continue
-			mlis.Add(m)
-			yield m
-	
+			if m and m not in mlis:
+				yield m
+				mlis.Add(m)
+		
 	public def enuTextures(scene as kri.Scene) as kri.buf.Texture*:
 		tlis = List[of kri.buf.Texture]()
 		for e in scene.entities:
@@ -69,7 +68,7 @@ public class Scene:
 		# gather statistiscs
 		for m in enuMeshes(scene):
 			nv += m.nVert
-			np += m.nPoly
+			np += m.nPoly * m.polySize
 		for t in enuTextures(scene):
 			square += t.Area
 		size = 1
@@ -80,10 +79,11 @@ public class Scene:
 		# initialize constructors
 		conMesh = Mesh(nv)
 		conTex = Texture(size)
+		mesh.indexSize = 4
 		mesh.buffers.Add( conMesh.data )
 		# push data
-		for m in enuMeshes(scene):
-			conMesh.copyData(m)
+		for e in scene.entities:
+			conMesh.copyData( e.mesh )
 		for t in enuTextures(scene):
 			conTex.add(t)
 		mesh.nVert = conMesh.nVert
@@ -96,4 +96,4 @@ public class Scene:
 				conMesh.copyIndex( e.mesh, ind, tm )
 				elems[numEl] = Element(str, e.node, tm)
 				numEl += 1
-		mesh.nPoly = ind.curNumber
+		mesh.nPoly = ind.curNumber / 3

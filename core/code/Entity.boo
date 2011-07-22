@@ -8,13 +8,14 @@ import OpenTK.Graphics.OpenGL
 #--------- Mesh ---------#
 
 public class Mesh( vb.Storage ):
-	public nVert	as uint	= 0
-	public nPoly	as uint	= 0
-	public ind		as vb.Object	= null
-	public final drawMode	as BeginMode
-	public final polySize	as uint
-	public final blockList	= List[of shade.Bundle]()
-	public NumElements as uint:
+	public	nVert	as uint	= 0
+	public	nPoly	as uint	= 0
+	public	ind		as vb.Object	= null
+	public	indexSize	= 2
+	public	final drawMode	as BeginMode
+	public	final polySize	as uint
+	public	final blockList	= List[of shade.Bundle]()
+	public	NumElements as uint:
 		get: return (nVert,nPoly)[ind!=null]
 	
 	public def constructor():
@@ -89,6 +90,14 @@ public class Mesh( vb.Storage ):
 	
 	#---	internal drawing functions	---#
 	
+	public def getIndexType() as DrawElementsType:
+		return (
+			DrawElementsType.UnsignedByte,
+			DrawElementsType.UnsignedShort,
+			cast(DrawElementsType,0),
+			DrawElementsType.UnsignedInt
+			)[indexSize-1]
+	
 	protected def draw(off as uint, num as uint, nob as uint) as bool:
 		if ind:
 			if num+off>nPoly or num*polySize > kri.Ant.Inst.caps.elemIndices:
@@ -96,15 +105,14 @@ public class Mesh( vb.Storage ):
 		elif num+off>nVert:	return false
 		if nVert>kri.Ant.Inst.caps.elemVertices:
 			return false
-		# works for ushort indices only
+		elType = getIndexType()
+		ptr = IntPtr(polySize*indexSize*off)
 		if ind and nob != 1:
-			GL.DrawElementsInstanced( drawMode, polySize*num,
-				DrawElementsType.UnsignedShort, IntPtr(polySize*2*off), nob)
-		elif ind:	GL.DrawElements ( drawMode, polySize*num,
-				DrawElementsType.UnsignedShort, IntPtr(polySize*2*off))
+			GL.DrawElementsInstanced(	drawMode, polySize*num, elType, ptr, nob)
+		elif ind:	GL.DrawElements (	drawMode, polySize*num, elType, ptr)
 		elif nob != 1:
-			GL.DrawArraysInstanced( drawMode, polySize*off, polySize*num, nob)
-		else:	GL.DrawArrays(		drawMode, polySize*off, polySize*num )
+			GL.DrawArraysInstanced(		drawMode, polySize*off, polySize*num, nob)
+		else:	GL.DrawArrays(			drawMode, polySize*off, polySize*num )
 		return true
 
 	# draw all polygons once

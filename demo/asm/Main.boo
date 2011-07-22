@@ -19,6 +19,12 @@ def Main(argv as (string)):
 		view.cam = at.scene.cameras[0]
 		view.ren = support.asm.DrawSimple()
 		view.scene = support.asm.Scene( 200, at.scene )
+		
+		v2 = kri.ViewScreen()
+		#win.views.Add(v2)
+		v2.cam = view.cam
+		v2.scene = at.scene
+		v2.ren = kri.rend.debug.Attrib()
 
 		win.Run(0.0)
 		log = null

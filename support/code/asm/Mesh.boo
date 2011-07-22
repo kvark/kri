@@ -108,12 +108,13 @@ public class Mesh:
 			kri.lib.Journal.Log('Asm: mesh not registered')
 			return false
 		pOffset.Value = rv.start
-		if out.curNumber+m.nPoly > out.Allocated:
+		ps = m.polySize
+		if out.curNumber + m.nPoly*ps > out.MaxElements:
 			kri.lib.Journal.Log('Asm: index buffer overflow')
 			return false
 		varBuf.data = m.ind
-		out.bindOut( tf, tm.num )
-		if m.render( vao, buInd, vDic, tm.off, tm.num, 1,tf ):
-			out.curNumber += tm.num
+		out.bindOut( tf, tm.num*ps )
+		if m.render( vao, buInd, vDic, tm.off*ps, tm.num*ps, 1,tf ):
+			out.curNumber += tm.num*ps
 			return true
 		return false
