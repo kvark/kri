@@ -1,8 +1,10 @@
 ﻿namespace support.asm
 
+
 public class DrawSimple( kri.rend.Basic ):
 	public	final	bu	= kri.shade.Bundle()
 	public	final	va	= kri.vb.Array()
+	public	final	q	= kri.Query()
 	
 	public def constructor():
 		bu.shader.add('/asm/draw/simple_v','/white_f','/lib/quat_v','/lib/tool_v')

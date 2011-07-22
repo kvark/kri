@@ -40,6 +40,9 @@ public class Mesh:
 	private	final	vao		= kri.vb.Array()
 	private	final	pIndex	= kri.shade.par.Value[of int]('index')
 	private	final	pOffset	= kri.shade.par.Value[of int]('offset')
+	private	final	mot		= kri.Mesh()
+	private			ai		= kri.vb.Info( name:'index', size:1,
+		type:VertexAttribPointerType.UnsignedInt, integer:true )
 	public			nVert	as uint	= 0
 	public	final	maxVert	as uint	= 0
 	
@@ -48,17 +51,11 @@ public class Mesh:
 	
 	public def constructor(nv as uint):
 		clear()
-		ai	= kri.vb.Info( name:'index', size:1,
-			type:VertexAttribPointerType.UnsignedInt,
-			integer:true )
 		# init data buffer
 		maxVert = nv
 		kri.Help.enrich(data,4,'vertex','quat','tex')
 		data.Semant.Add(ai)
 		data.initUnit(maxVert)
-		# make input dictionary
-		ai.type = VertexAttribPointerType.UnsignedShort
-		vDic.add( varBuf, ai, 0,0 )
 		# prepare shader dictionary
 		d = kri.shade.par.Dict()
 		d.var(pIndex,pOffset)
@@ -113,8 +110,17 @@ public class Mesh:
 			kri.lib.Journal.Log('Asm: index buffer overflow')
 			return false
 		varBuf.data = m.ind
-		out.bindOut( tf, tm.num*ps )
-		if m.render( vao, buInd, vDic, tm.off*ps, tm.num*ps, 1,tf ):
-			out.curNumber += tm.num*ps
+		isize = m.indexSize
+		assert isize == 2
+		ai.type = VertexAttribPointerType.UnsignedShort
+		vDic.add( varBuf, ai, tm.off*ps*isize, isize )
+		mot.nVert = num = tm.num * ps
+		out.bindOut(tf,num)
+		if mot.render( vao, buInd, vDic, 1,tf ):
+			out.curNumber += num
+			xo = array[of int](out.curNumber)
+			out.read(xo,0)
+			xi = array[of short](num)
+			m.ind.read(xi,0)
 			return true
 		return false

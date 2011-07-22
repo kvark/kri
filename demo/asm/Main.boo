@@ -27,4 +27,5 @@ def Main(argv as (string)):
 		v2.ren = kri.rend.debug.Attrib()
 
 		win.Run(0.0)
-		log = null
+		if log.messages.Count:
+			log.flush()

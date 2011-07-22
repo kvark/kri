@@ -5,7 +5,7 @@ import OpenTK.Graphics.OpenGL
 
 
 public struct Entry:
-	public	final	buffer	as IBuffed
+	public	final	buffer	as Object
 	public	divisor			as int
 	public	final	info	as Info
 	public	final	offset	as uint
@@ -19,13 +19,13 @@ public struct Entry:
 		divisor = -1
 		for ai in vat.Semant:
 			if ai.name == name:
-				buffer = vat
+				buffer = vat.Data
 				info = ai
 				offset = stride
 			stride += ai.fullSize()
 	
 	public	def constructor(vat as IBuffed, ai as Info, off as uint, size as uint):
-		buffer = vat
+		buffer = (vat.Data	if vat else	null)
 		divisor = 0
 		info = ai
 		offset,stride = off,size
@@ -72,7 +72,7 @@ public class Array:
 	public def push(slot as int, ref e as Entry) as bool:
 		if slots[slot] == e:
 			return true
-		(d = e.buffer.Data).bind()
+		(d=e.buffer).bind()
 		if not d.Allocated:
 			kri.lib.Journal.Log("VAO: trying to use un-allocated buffer (${d.handle}) for (${handle})")
 			return false
@@ -120,7 +120,7 @@ public class Array:
 		for i in range(slots.Length):
 			buf = slots[i].buffer
 			if buf and ((1<<i)&useMask):
-				lx.Add( buf.Data )
+				lx.Add(buf)
 		num = 0
 		for bx in kri.TransFeedback.Cache:
 			if bx and bx in lx:
