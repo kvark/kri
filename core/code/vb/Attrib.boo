@@ -3,16 +3,13 @@
 import System.Collections.Generic
 
 
-public interface IBuffed:
-	Data	as Object:
-		get
-
 public interface ISemanted:
 	Semant	as List[of Info]:
 		get
 
-public interface IProvider(IBuffed,ISemanted):
-	pass
+public interface IProvider(ISemanted):
+	Data	as Object:
+		get
 
 
 
@@ -39,7 +36,7 @@ public class Dict( Dictionary[of string,Entry] ):
 public class Attrib( IProvider, Object ):
 	[Getter(Semant)]
 	private final semantics	as List[of Info]	= List[of Info]()
-	IBuffed.Data		as Object:
+	IProvider.Data		as Object:
 		get: return self
 
 	public def countSize() as uint:

@@ -25,7 +25,7 @@ public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed, kri.ani.IBase )
 		get: return (obj.node	if obj else null)
 	kri.IMeshed.Mesh as kri.Mesh:
 		get: return mesh
-	kri.vb.IBuffed.Data		as kri.vb.Object:
+	kri.vb.IProvider.Data		as kri.vb.Object:
 		get: return mesh.buffers[0]
 	kri.vb.ISemanted.Semant	as List[of kri.vb.Info]:
 		get: return (mesh.buffers[0].Semant	if mesh.buffers.Count	else null)

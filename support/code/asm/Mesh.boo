@@ -13,11 +13,6 @@ public struct Range:
 		total = tm.num
 
 
-private class VarBuffer( kri.vb.IBuffed ):
-	public	data	as kri.vb.Object	= null
-	kri.vb.IBuffed.Data		as kri.vb.Object:
-		get: return data
-
 private class IndexAccum( kri.vb.Object ):
 	public	MaxElements	as uint:
 		get: return Allocated>>2
