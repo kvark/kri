@@ -32,8 +32,8 @@ public class Dict( Dictionary[of string,Entry] ):
 				self[names[i]] = self[names[0]]
 		return mask
 	
-	public def add(ib as IBuffed, ai as Info, offset as uint, stride as uint) as void:
-		self[ai.name] = kri.vb.Entry(ib,ai,offset,stride)
+	public def add(buf as Object, ai as Info, offset as uint, stride as uint) as void:
+		self[ai.name] = kri.vb.Entry(buf,ai,offset,stride)
 
 
 public class Attrib( IProvider, Object ):

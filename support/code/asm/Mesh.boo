@@ -36,7 +36,6 @@ public class Mesh:
 	public	final	buInd	= kri.shade.Bundle()
 	private	final	tf		= kri.TransFeedback(1)
 	private	final	vDic	= kri.vb.Dict()
-	private	final	varBuf	= VarBuffer()
 	private	final	vao		= kri.vb.Array()
 	private	final	pIndex	= kri.shade.par.Value[of int]('index')
 	private	final	pOffset	= kri.shade.par.Value[of int]('offset')
@@ -106,21 +105,16 @@ public class Mesh:
 			return false
 		pOffset.Value = rv.start
 		ps = m.polySize
+		isize = m.indexSize
+		assert ps==3 and isize == 2
 		if out.curNumber + m.nPoly*ps > out.MaxElements:
 			kri.lib.Journal.Log('Asm: index buffer overflow')
 			return false
-		varBuf.data = m.ind
-		isize = m.indexSize
-		assert isize == 2
 		ai.type = VertexAttribPointerType.UnsignedShort
-		vDic.add( varBuf, ai, tm.off*ps*isize, isize )
+		vDic.add( m.ind, ai, tm.off*ps*isize, isize )
 		mot.nVert = num = tm.num * ps
 		out.bindOut(tf,num)
 		if mot.render( vao, buInd, vDic, 1,tf ):
 			out.curNumber += num
-			xo = array[of int](out.curNumber)
-			out.read(xo,0)
-			xi = array[of short](num)
-			m.ind.read(xi,0)
 			return true
 		return false

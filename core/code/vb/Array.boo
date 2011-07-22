@@ -24,8 +24,8 @@ public struct Entry:
 				offset = stride
 			stride += ai.fullSize()
 	
-	public	def constructor(vat as IBuffed, ai as Info, off as uint, size as uint):
-		buffer = (vat.Data	if vat else	null)
+	public	def constructor(buf as Object, ai as Info, off as uint, size as uint):
+		buffer = buf
 		divisor = 0
 		info = ai
 		offset,stride = off,size
