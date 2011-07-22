@@ -1,36 +1,19 @@
 ﻿namespace support.asm
 
 import System.Collections.Generic
-import OpenTK
 import OpenTK.Graphics.OpenGL
 
 
-public struct Element( kri.meta.IBase ):
+public struct Element(  ):
 	# internal state
-	public	final	name	as string
 	public	final	node	as kri.Node
 	public	final	mat		as kri.Material
 	public	final	range	as Range
-	# shader params
-	public	final	pNode	as kri.lib.par.spa.Linked
-	public	final	pArea	as kri.shade.par.Value[of Vector4]
-	public	final	pChan	as kri.shade.par.Value[of int]
 	# methods
-	public def constructor(str as string, n as kri.Node, tm as kri.TagMat):
-		name = str
+	public def constructor(n as kri.Node, tm as kri.TagMat):
 		node = n
 		mat = tm.mat
 		range = Range(tm)
-		pNode = kri.lib.par.spa.Linked(str)
-		pArea = kri.shade.par.Value[of Vector4](str)
-		pChan = kri.shade.par.Value[of int](str)
-	
-	kri.INamed.Name as string:
-		get: return name
-	def kri.meta.IBase.link(d as kri.shade.par.Dict) as void:
-		(pNode as kri.meta.IBase).link(d)
-		d.var(pArea)
-		d.var(pChan)
 
 
 
@@ -92,8 +75,7 @@ public class Scene:
 		ind.init( np<<2 )
 		for e in scene.entities:
 			for tm in e.enuTags[of kri.TagMat]():
-				str = "el[${numEl}]."
 				conMesh.copyIndex( e.mesh, ind, tm )
-				elems[numEl] = Element(str, e.node, tm)
+				elems[numEl] = Element( e.node, tm )
 				numEl += 1
 		mesh.nPoly = ind.curNumber / 3

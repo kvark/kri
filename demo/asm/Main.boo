@@ -17,7 +17,8 @@ def Main(argv as (string)):
 		ln = kri.load.Native()
 		at = ln.read('res/asm.scene')
 		view.cam = at.scene.cameras[0]
-		view.ren = support.asm.DrawSimple()
+		con = support.asm.Context()
+		view.ren = support.asm.DrawSimple(con)
 		view.scene = support.asm.Scene( 200, at.scene )
 		
 		v2 = kri.ViewScreen()

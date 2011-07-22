@@ -50,6 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="code\asm\Context.boo" />
     <Compile Include="code\asm\Mesh.boo" />
     <Compile Include="code\asm\Scene.boo" />
     <Compile Include="code\asm\Texture.boo" />

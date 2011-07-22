@@ -1,16 +1,21 @@
 ﻿namespace support.asm
 
-
 public class DrawSimple( kri.rend.Basic ):
 	public	final	bu	= kri.shade.Bundle()
 	public	final	va	= kri.vb.Array()
 	public	final	q	= kri.Query()
+	public	final	con	as Context	= null
 	
-	public def constructor():
+	public def constructor(ctx as Context):
+		con = ctx
+		bu.dicts.Add( con.dict )
 		bu.shader.add('/asm/draw/simple_v','/white_f','/lib/quat_v','/lib/tool_v')
 	
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.activate( link.Target.Same, 0f, true )
 		link.ClearDepth(1.0)
 		link.ClearColor()
-		Scene.Current.mesh.render(va,bu,null)
+		sc = Scene.Current
+		if not sc:	return
+		con.activate(sc)
+		sc.mesh.render(va,bu,null)
