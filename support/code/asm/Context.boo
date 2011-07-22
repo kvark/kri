@@ -28,7 +28,7 @@ public class Segment( kri.meta.IBase ):
 
 
 public class Context:
-	public	final	seg	= List[of Segment](
+	public	final	seg		= List[of Segment](
 		Segment("el[${i}].") for i in range(200)
 		).ToArray()
 	public	final	dict	= kri.shade.par.Dict()

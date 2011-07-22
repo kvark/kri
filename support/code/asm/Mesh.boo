@@ -102,12 +102,12 @@ public class Mesh:
 		ps = m.polySize
 		isize = m.indexSize
 		assert ps==3 and isize == 2
-		if out.curNumber + m.nPoly*ps > out.MaxElements:
+		mot.nVert = num = tm.num * ps
+		if out.curNumber + num > out.MaxElements:
 			kri.lib.Journal.Log('Asm: index buffer overflow')
 			return false
 		ai.type = VertexAttribPointerType.UnsignedShort
 		vDic.add( m.ind, ai, tm.off*ps*isize, isize )
-		mot.nVert = num = tm.num * ps
 		out.bindOut(tf,num)
 		if mot.render( vao, buInd, vDic, 1,tf ):
 			out.curNumber += num

@@ -21,6 +21,7 @@ public class Atom:
 	
 	public def constructor(name as string):
 		scene = kri.Scene(name)
+		mats[''] = kri.Ant.Inst.loaders.materials.con.mDef
 		nodes[''] = null
 
 

@@ -28,7 +28,7 @@ public class ExObject( kri.IExtension ):
 		e = kri.Entity( node:node, mesh:m )
 		r.at.scene.entities.Add(e)
 		r.puData(e)
-		mDef = kri.Ant.Inst.loaders.materials.con.mDef
+		mDef = r.at.mats['']
 		while n:
 			n = r.bin.ReadUInt16()
 			tag = kri.TagMat( off:off, num:n )

@@ -4,7 +4,7 @@ import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
 
-public struct Element(  ):
+public struct Element:
 	# internal state
 	public	final	node	as kri.Node
 	public	final	mat		as kri.Material
@@ -23,7 +23,7 @@ public class Scene:
 	public	final	mesh	= kri.Mesh( BeginMode.Triangles )
 	public	final	elems	as (Element)	= null
 	[Getter(Current)]
-	internal	static	current	as Scene		= null
+	internal	static	current	as Scene	= null
 	private	numEl	= 0
 	
 	public def enuMeshes(scene as kri.Scene) as kri.Mesh*:
