@@ -20,6 +20,7 @@ def Main(argv as (string)):
 		con = support.asm.Context()
 		view.ren = support.asm.DrawSimple(con)
 		view.scene = support.asm.Scene( 200, at.scene )
+		view.scene.lights.AddRange( at.scene.lights )
 		
 		v2 = kri.ViewScreen()
 		#win.views.Add(v2)

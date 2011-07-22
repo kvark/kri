@@ -22,6 +22,7 @@ public class Scene:
 	public	final	conTex		as Texture	= null
 	public	final	mesh	= kri.Mesh( BeginMode.Triangles )
 	public	final	elems	as (Element)	= null
+	public	final	lights	= List[of kri.Light]()
 	[Getter(Current)]
 	internal	static	current	as Scene	= null
 	private	numEl	= 0

@@ -9,7 +9,7 @@ public class DrawSimple( kri.rend.Basic ):
 	public def constructor(ctx as Context):
 		con = ctx
 		bu.dicts.Add( con.dict )
-		bu.shader.add('/asm/draw/simple_v','/white_f','/lib/quat_v','/lib/tool_v')
+		bu.shader.add('/asm/draw/simple_v', '/asm/draw/simple_f', '/lib/quat_v','/lib/tool_v')
 	
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.activate( link.Target.Same, 0f, true )
@@ -18,4 +18,6 @@ public class DrawSimple( kri.rend.Basic ):
 		sc = Scene.Current
 		if not sc:	return
 		con.activate(sc)
-		sc.mesh.render(va,bu,null)
+		for lit in sc.lights:
+			kri.Ant.Inst.params.activate(lit)
+			sc.mesh.render(va,bu,null)
