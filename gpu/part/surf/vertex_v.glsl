@@ -1,4 +1,4 @@
-#version 130
+#version 140
 
 uniform struct Spatial	{
 	vec4 pos,rot;
