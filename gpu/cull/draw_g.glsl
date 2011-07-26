@@ -1,4 +1,4 @@
-#version 140
+#version 150 core
 
 layout(points) in;
 layout(line_strip, max_vertices = 24) out;
@@ -8,13 +8,10 @@ struct Spatial	{ vec4 pos,rot; };
 uniform	Spatial	s_cam;
 uniform vec4	proj_cam;
 
-struct	Bound	{
-	vec4 pos, rot;
-	vec4 low, hai;
-};
-in	Bound	b[];
+//pos,rot,low,hai
+in	mat4	b[];
 
-Spatial s_model	= Spatial( b[0].pos, b[0].rot );
+Spatial s_model	= Spatial( b[0][0], b[0][1] );
 
 
 vec3 trans_for(vec3,Spatial);
@@ -25,7 +22,7 @@ vec4 get_projection(vec3,vec4);
 //	transform local coordinate into camera NDC
 
 vec4 to_screen(vec3 mask)	{
-	vec3 v = mix( b[0].low.xyz, b[0].hai.xyz, mask );
+	vec3 v = mix( b[0][2].xyz, b[0][3].xyz, mask );
 	vec3 w = trans_for(v,s_model);
 	vec3 c = trans_inv(w,s_cam);
 	return get_projection(c,proj_cam);

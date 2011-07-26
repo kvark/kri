@@ -17,7 +17,7 @@ Spatial skin_result();
 
 
 Spatial skin_append_all()	{
-	uvec4 ids = (at_skin + (bones_number>>20)) >> 8u;
+	uvec4 ids = (at_skin + uint(bones_number>>20)) >> 8u;
 	vec4 wes = vec4(at_skin & uvec4(255)) * (1.0/255.0);
 	for(int i=0; i<4; ++i)
 		skin_append( wes[i], bone[int(ids[i])] );
