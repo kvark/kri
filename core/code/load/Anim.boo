@@ -7,7 +7,7 @@ import kri.ani.data
 
 
 public class ExAnim( kri.IExtension ):
-	public final anid		= Dictionary[of string,callable(Reader) as IChannel]()
+	public final anid		= Dictionary[of string, System.Func[of Reader,IChannel]]()
 	public final badCurves	= Dictionary[of string,byte]()
 	
 	def kri.IExtension.attach(nt as Native) as void:
@@ -185,7 +185,7 @@ public class ExAnim( kri.IExtension ):
 		return false	if not rec
 		data_path = r.getString()
 		siz = r.getByte()	# element size in floats
-		fun as callable(Reader) as IChannel
+		fun as System.Func[of Reader,IChannel] = null
 		if not anid.TryGetValue(data_path,fun):
 			badCurves[data_path] = siz
 			fun = ReadDefaultChannel(siz)

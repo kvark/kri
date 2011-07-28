@@ -1,6 +1,5 @@
 ﻿namespace kri.ani.data
 
-import System
 import System.Collections.Generic
 import OpenTK
 
@@ -38,8 +37,8 @@ public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	public final elid	as byte
 	# it would be better to use references, but not allowed here
-	public final fup	as callable(IPlayer,T,byte)
-	public lerp			as callable(T,T,single) as T	= null
+	public final fup	as System.Action[of IPlayer,T,byte]	= null
+	public lerp			as System.Func[of T,T,single,T]		= null
 	public bezier		as bool	= true
 	public extrapolate	as bool	= false
 	[Property(Tag)]
@@ -50,9 +49,7 @@ public class Channel[of T(struct)](IChannel):
 	IChannel.Valid	as bool:
 		get: return fup!=null and lerp!=null
 
-	public def constructor(num as int, id as byte, f as callable):
-		self(num,id,f)
-	public def constructor(num as int, id as byte, f as callable(IPlayer,T,byte)):
+	public def constructor(num as int, id as byte, f as System.Action[of IPlayer,T,byte]):
 		kar = array[of Key[of T]](num)
 		elid,fup = id,f
 
