@@ -16,10 +16,10 @@ public class Apply( kri.rend.tech.Meta ):
 		dict.attach(lc.dict)
 		texLit = lc.texLit
 	# prepare
-	protected override def getUpdater(mat as kri.Material) as Updater:
-		metaFun = super(mat).fun
+	protected override def getUpdater(mat as kri.Material) as System.Func[of int]:
+		metaFun = super(mat)
 		curLight = lit	# need current light only
-		return Updater() do() as int:
+		return do() as int:
 			texLit.Value = d = curLight.depth
 			if not d:	texLit.Value = defTex
 			kri.Ant.Inst.params.activate(curLight)

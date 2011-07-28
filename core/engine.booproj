@@ -163,6 +163,9 @@
     <Folder Include="code\rend\" />
     <Folder Include="code\rend\link" />
     <Folder Include="code\shade\par" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />

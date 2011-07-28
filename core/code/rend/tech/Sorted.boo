@@ -44,22 +44,16 @@ public abstract class Sorted(General):
 	private	tempList	= List[of Batch]()
 	private bat			as Batch
 	
-	public struct Updater:
-		public final fun	as callable() as int
-		public def constructor(f as callable() as int):
-			fun = f
-	
 	protected def constructor(name as string):
 		super(name)
 	
-	protected virtual def getUpdater(mat as kri.Material) as Updater:
-		return Updater() do() as int:
-			return 1
+	protected virtual def getUpdater(mat as kri.Material) as System.Func[of int]:
+		return do() as int:	return 1
 	
 	protected override def onPass(va as kri.vb.Array, tm as kri.TagMat, bu as kri.shade.Bundle) as void:
 		bat.bu = bu
 		bat.va = va
-		bat.up = getUpdater( tm.mat ).fun
+		bat.up = getUpdater( tm.mat )
 		bat.num = tm.num
 		bat.off = tm.off
 		tempList.Add(bat)

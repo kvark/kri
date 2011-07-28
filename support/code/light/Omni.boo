@@ -61,10 +61,10 @@ public class Apply( kri.rend.tech.Meta ):
 		shade('/light/omni/apply')
 		smooth = bSmooth
 		texLit = lc.texLit
-	protected override def getUpdater(mat as kri.Material) as Updater:
-		metaFun = super(mat).fun
+	protected override def getUpdater(mat as kri.Material) as System.Func[of int]:
+		metaFun = super(mat)
 		curLight = lit
-		return Updater() do() as int:
+		return do() as int:
 			#texLit.Value = curLight.depth
 			kri.Ant.Inst.params.activate(curLight)
 			return metaFun()
