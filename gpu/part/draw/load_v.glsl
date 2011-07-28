@@ -1,10 +1,10 @@
 #version 130
 
-uniform vec4 halo_data, cur_time;
+uniform	vec4	halo_data, cur_time;
 
-in vec2 at_sys;
-in vec3 at_pos;
-out vec2 part_age;
+in	vec2	at_sys;
+in	vec3	at_pos;
+out	vec2	part_age;
 
 void make_tex_coords();
 void part_draw(vec3,float);

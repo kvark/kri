@@ -10,7 +10,8 @@ public class Journal(ILogger):
 	public def constructor():
 		Inst = self
 	def ILogger.log(str as string) as void:
-		messages.Add(str)
+		if str not in messages:
+			messages.Add(str)
 	public static def Log(str as string) as void:
 		if Inst:
 			Inst.log(str)

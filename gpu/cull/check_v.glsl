@@ -11,7 +11,7 @@ uniform vec4	proj_cam;
 
 in	vec4	at_pos, at_rot;
 in	vec4	at_low, at_hai;
-out	bool	to_visible;
+out	int	to_visible;
 
 Spatial s_model = Spatial(at_pos,at_rot);
 
@@ -70,5 +70,5 @@ void main()	{
 		textureLod( unit_input, xm.zw, lod ).x);
 	// compare to our depth
 	float maxDepth = max( max(sam.x,sam.w), max(sam.y,sam.z) );
-	to_visible = xmin.z < maxDepth;
+	to_visible = int(xmin.z < maxDepth);
 }

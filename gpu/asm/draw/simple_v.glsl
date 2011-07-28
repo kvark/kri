@@ -3,13 +3,13 @@
 in	vec4	at_vertex;
 in	vec4	at_quat;
 in	vec4	at_tex;
-in	int	at_index;
 
 struct Spatial	{
 	vec4 pos,rot;
 };
 
 uniform	Spatial	s_cam, s_lit;
+uniform	vec4	proj_cam;
 
 struct Element	{
 	Spatial	spa;
@@ -19,8 +19,7 @@ struct Element	{
 
 const	int	NE	= 50;
 uniform	Element el[NE];
-
-uniform	vec4 proj_cam;
+uniform	usamplerBuffer	unit_mat_id;
 
 vec3 qrot(vec4,vec3);
 vec4 qmul(vec4,vec4);
@@ -34,10 +33,11 @@ out	vec3	v_lit;
 
 
 void main()	{
+	uint id = texelFetch(unit_mat_id,0).r;
 	vec3 v = at_vertex.xyz;
-	vec3 vw = trans_for( v, el[at_index].spa );
+	vec3 vw = trans_for( v, el[id].spa );
 	v = trans_inv( vw, s_cam );
 	gl_Position = get_projection( v, proj_cam );
-	vec4 q = qinv(qmul( el[at_index].spa.rot, at_quat ));
+	vec4 q = qinv(qmul( el[id].spa.rot, at_quat ));
 	v_lit = vec3(at_vertex.w,1.0,1.0) * qrot(q, s_lit.pos.xyz - vw);
 }

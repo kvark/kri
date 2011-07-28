@@ -100,7 +100,7 @@ public class Texture(Surface):
 		assert not level
 		target = TextureTarget.TextureBuffer
 		bind()
-		allocated[level] = true
+		allocated[level] = filtered = true
 		GL.TexBuffer( TextureBufferTarget.TextureBuffer, sif, buf.handle )
 		#syncBack()	# produces InvalidEnum when asking for width
 	

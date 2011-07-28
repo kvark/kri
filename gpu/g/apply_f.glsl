@@ -26,8 +26,8 @@ vec3	unproject(vec3,vec4);
 float	get_attenuation2(float);
 
 //---	VARYINGS	---//
-flat in	Spatial	s_light;
-out vec4 rez_color;
+flat	in	vec4	sl_pos, sl_rot;
+	out	vec4	rez_color;
 
 
 //---	MAIN	---//
@@ -47,7 +47,7 @@ void main()	{
 	vec3 normal = 2.0*g_normal.xyz - vec3(1.0);	//world space
 	
 	//compute light contribution
-	vec3 v_lit = s_light.pos.xyz - p_world;
+	vec3 v_lit = sl_pos.xyz - p_world;
 	float len  = length(v_lit);
 	vec3 v2lit = v_lit / len;
 	vec3 v2cam = normalize( s_cam.pos.xyz - p_world );

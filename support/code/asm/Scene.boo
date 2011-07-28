@@ -21,6 +21,7 @@ public class Scene:
 	public	final	conMesh		as Mesh		= null
 	public	final	conTex		as Texture	= null
 	public	final	mesh	= kri.Mesh( BeginMode.Triangles )
+	public	final	texMat	as kri.buf.Texture = null
 	public	final	elems	as (Element)	= null
 	public	final	lights	= List[of kri.Light]()
 	[Getter(Current)]
@@ -72,11 +73,13 @@ public class Scene:
 			conTex.add(t)
 		mesh.nVert = conMesh.nVert
 		# generate element list
-		mesh.ind = ind = IndexAccum()
-		ind.init( np<<2 )
+		acc = IndexAccum()
+		mesh.ind = acc.ind
+		acc.init(np)
 		for e in scene.entities:
 			for tm in e.enuTags[of kri.TagMat]():
-				conMesh.copyIndex( e.mesh, ind, tm )
+				conMesh.copyIndex( e.mesh, acc, tm, numEl )
 				elems[numEl] = Element( e.node, tm )
 				numEl += 1
-		mesh.nPoly = ind.curNumber / 3
+		mesh.nPoly = acc.curNumber / 3
+		texMat = acc.tex

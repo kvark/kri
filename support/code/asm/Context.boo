@@ -32,11 +32,14 @@ public class Context:
 		Segment("el[${i}].") for i in range(200)
 		).ToArray()
 	public	final	dict	= kri.shade.par.Dict()
+	public	final	pMatId	= kri.shade.par.Texture('mat_id')
 	
 	public def constructor():
 		for s in seg:
 			(s as kri.meta.IBase).link(dict)
+		dict.unit(pMatId)
 	
 	public def activate(sc as Scene) as void:
 		for i in range( sc.elems.Length ):
 			seg[i].activate(sc.elems[i])
+		pMatId.Value = sc.texMat

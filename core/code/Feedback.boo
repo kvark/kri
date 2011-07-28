@@ -73,17 +73,23 @@ public class TransFeedback(Query):
 	public def catch() as IDisposable:
 		return CatcherFeed( mode, (null,self)[CountPrimitives] )
 	
-	public static def Bind(*buffers as (vb.Object)) as bool:
+	public static def Bind(buffers as (vb.Object), offsets as (uint), sizes as (uint)) as bool:
 		for i in range( buffers.Length ):
 			bf = Cache[i] = buffers[i]
 			if not bf:	bf = vb.Object.Zero
 			if not bf.Allocated:
 				kri.lib.Journal.Log("Feedback: destination buffer is not ready (${bf.handle})")
 				return false
-			bf.bindAsDestination(i)
+			if offsets and sizes:
+				bf.bindAsDestination(i, System.IntPtr(offsets[i]), System.IntPtr(sizes[i]) )
+			else:
+				bf.bindAsDestination(i)
 		for i in range( buffers.Length, Cache.Length ):
 			Cache[i] = null
 		return true
+	
+	public static def Bind(*buffers as (vb.Object)) as bool:
+		return Bind(buffers,null,null)
 	
 	public override def result() as int:
 		return -1	if not CountPrimitives
