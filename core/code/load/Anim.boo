@@ -12,7 +12,6 @@ public class ExAnim( kri.IExtension ):
 	
 	def kri.IExtension.attach(nt as Native) as void:
 		init()
-		# animations
 		nt.readers['action']	= p_action
 		nt.readers['curve']		= p_curve
 	
@@ -22,7 +21,7 @@ public class ExAnim( kri.IExtension ):
 	# generates invalid binary format if using generics, bypassing with extenions
 	[ext.spec.Method(( Vector3,Quaternion,single ))]
 	[ext.RemoveSource()]
-	private def genBone		[of T(struct)](fun as callable(kri.NodeBone, ref T)):
+	private def genBone		[of T(struct)](fun as callable(kri.NodeBone, ref T)) as System.Action[of IPlayer,T,byte]:
 		return do(pl as IPlayer, v as T, i as byte):
 			bar = (pl as kri.Skeleton).bones
 			if not i or i>bar.Length:	return
@@ -115,50 +114,34 @@ public class ExAnim( kri.IExtension ):
 		return true
 		
 	#---	Channel pre-defined interpolators per type	---#
-	private static def FixChan(c as Channel_Vector2):
-		c.lerp = Vector2.Lerp
-	private static def FixChan(c as Channel_Vector3):
-		c.lerp = Vector3.Lerp
-	private static def FixChan(c as Channel_Vector4):
-		c.lerp = Vector4.Lerp
-	private static def FixChan(c as Channel_Quaternion):
-		c.lerp = Quaternion.Slerp
-		c.bezier = false
-	private static def FixChan(c as Channel_Color4):
-		c.lerp = def(ref a as Color4, ref b as Color4, t as single) as Color4:
-			return Color4.Gray
-	private static def FixChan(c as Channel_single):
-		c.lerp = def(ref a as single, ref b as single, t as single) as single:
-			return (1-t)*a + t*b
 	
 	public static def InterColor(q as Color4, w as Color4, t as single) as Color4:
 		return Color4( q.R*(1f-t)+w.R*t, q.G*(1f-t)+w.G*t, q.B*(1f-t)+w.B*t, q.A*(1f-t)+w.A*t )
 	public static def InterSingle(q as single, w as single, t as single) as single:
 		return (1-t)*q + t*w
 	
-	/*private static def FixChan2[of T(struct)](c as Channel[of T]) as void:
-		if T == Quaternion:
-			c.lerp = Quaternion.Slerp	as callable
-			c.bezier = false
-		elif T == Vector2:
-			c.lerp = Vector2.Lerp		as callable
-		elif T == Vector3:
-			c.lerp = Vector3.Lerp		as callable
-		elif T == Vector4:
-			c.lerp = Vector4.Lerp		as callable
-		elif T == Color4:
-			c.lerp = InterColor			as callable
-		elif T == single:
-			c.lerp = InterSingle		as callable
-	*/
-
+	private static def FixChan(c as Channel[of Vector2]):
+		c.lerp = Vector2.Lerp
+	private static def FixChan(c as Channel[of Vector3]):
+		c.lerp = Vector3.Lerp
+	private static def FixChan(c as Channel[of Vector4]):
+		c.lerp = Vector4.Lerp
+	private static def FixChan(c as Channel[of Quaternion]):
+		c.lerp = Quaternion.Slerp
+		c.bezier = false
+	private static def FixChan(c as Channel[of Color4]):
+		c.lerp = InterColor
+	private static def FixChan(c as Channel[of single]):
+		c.lerp = InterSingle
+	
 	#---	Read Abstract Channel (rac) constructor	---#
 	
-	# bypassing BOO-854
-	[ext.spec.ForkMethodEx(Channel, (single,Vector2,Vector3,Vector4,Quaternion,Color4))]
+	# bypassing incorrect code generation of nested templates
+	[ext.spec.Method(( single,Vector2,Vector3,Vector4,Quaternion,Color4 ))]
 	[ext.RemoveSource()]
-	public static def Rac[of T(struct)](fread as callable(Reader) as T, fup as callable(IPlayer,T,byte) as void) as callable(Reader) as IChannel:
-		return do(r as Reader):
+	public static def Rac[of T(struct)](fread as System.Func[of Reader,T],
+	fup as System.Action[of IPlayer,T,byte]) as System.Func[of Reader,IChannel]:
+		return do(r as Reader) as IChannel:
 			ind = r.getByte() # element index
 			num = cast(int, r.bin.ReadUInt16() )
 			chan = Channel[of T](num,ind,fup)
@@ -172,7 +155,7 @@ public class ExAnim( kri.IExtension ):
 	#---	Unknown channel read	---#
 	protected static def ReadNullChannel() as IChannel:
 		return null
-	protected static def ReadDefaultChannel(size as byte) as callable(Reader) as IChannel:
+	protected static def ReadDefaultChannel(size as byte) as System.Func[of Reader,IChannel]:
 		if size == 1:	return Rac( getReal, null )
 		elif size == 2:	return Rac( getVec2, null )
 		elif size == 3:	return Rac( getVector, null )

@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLWidget", "..\..\..\..\GLW
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "support", "..\..\..\support\support.booproj", "{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}"
 EndProject
-Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "test_gen", "..\..\..\demo\test_gen\test_gen.booproj", "{852F5DD9-6C2E-4C3F-9B0A-CEF737F8887A}"
-EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "ext", "..\..\..\lib\ext.booproj", "{ACE1CC26-970D-4F3B-9129-70911A339AC7}"
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "engine", "..\..\..\core\engine.booproj", "{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}"
@@ -40,10 +38,6 @@ Global
 		{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}.Debug|x86.ActiveCfg = Debug|x86
 		{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}.Release|x86.Build.0 = Release|x86
 		{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}.Release|x86.ActiveCfg = Release|x86
-		{852F5DD9-6C2E-4C3F-9B0A-CEF737F8887A}.Debug|x86.Build.0 = Debug|x86
-		{852F5DD9-6C2E-4C3F-9B0A-CEF737F8887A}.Debug|x86.ActiveCfg = Debug|x86
-		{852F5DD9-6C2E-4C3F-9B0A-CEF737F8887A}.Release|x86.Build.0 = Release|x86
-		{852F5DD9-6C2E-4C3F-9B0A-CEF737F8887A}.Release|x86.ActiveCfg = Release|x86
 		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Debug|x86.Build.0 = Debug|Any CPU
 		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{ACE1CC26-970D-4F3B-9129-70911A339AC7}.Release|x86.Build.0 = Release|Any CPU

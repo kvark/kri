@@ -1,7 +1,6 @@
 ﻿namespace kri.ani.data
 
 import System.Collections.Generic
-import OpenTK
 
 #---------------------
 #	KEY: single curve point
@@ -30,9 +29,6 @@ public interface IChannel:
 #---------------------
 #	CHANNEL[T]: generic channel data
 
-# bypassing BOO-854
-[ext.spec.Class(( Vector2, Vector3, Vector4, Quaternion, Graphics.Color4, single ))]
-[ext.RemoveSource]
 public class Channel[of T(struct)](IChannel):
 	public final kar	as (Key[of T])
 	public final elid	as byte
@@ -48,11 +44,12 @@ public class Channel[of T(struct)](IChannel):
 		get: return elid
 	IChannel.Valid	as bool:
 		get: return fup!=null and lerp!=null
-
+		
 	public def constructor(num as int, id as byte, f as System.Action[of IPlayer,T,byte]):
 		kar = array[of Key[of T]](num)
-		elid,fup = id,f
-
+		elid = id
+		fup = f
+	
 	def IChannel.update(pl as IPlayer, time as single) as bool:
 		if not Valid:
 			kri.lib.Journal.Log("Animation: Failed to play channel (${tag}) of player (${pl})")
@@ -61,11 +58,12 @@ public class Channel[of T(struct)](IChannel):
 		return true
 		
 	public def moment(time as single) as T:
-		assert lerp and kar.Length
-		i = System.Array.FindIndex(kar) do(k as Key[of T]):
-			return k.t > time	# ref causes BOO-1289
-		if i<=0:
-			a = kar[i]
+		i = kar.Length
+		assert lerp and i
+		while i>0 and kar[i-1].t>time:
+			--i
+		if i in (0,kar.Length):
+			a = kar[ (0,i-1)[i>0] ]
 			if extrapolate:
 				if i: return lerp(a.co, a.h2, time - a.t)
 				else: return lerp(a.co, a.h1, a.t - time)
