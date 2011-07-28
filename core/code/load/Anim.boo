@@ -30,7 +30,7 @@ public class ExAnim( kri.IExtension ):
 	
 	[ext.spec.Method(( Vector3,Quaternion,single ))]
 	[ext.RemoveSource()]
-	private def genSpatial	[of T(struct)](fun as callable(ref kri.Spatial, ref T)):
+	private def genSpatial	[of T(struct)](fun as callable(ref kri.Spatial, ref T)) as System.Action[of IPlayer,T,byte]:
 		return do(pl as IPlayer, v as T, i as byte):
 			n = pl as kri.Node
 			fun( n.local, v )

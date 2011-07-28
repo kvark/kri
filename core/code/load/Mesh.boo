@@ -13,12 +13,12 @@ public class ExMesh( kri.IExtension ):
 		nt.readers['v_color']	= pv_color
 		nt.readers['v_ind']		= pv_ind
 	
-	public static def GetArray[of T(struct)](num as uint, fun as callable) as (T):
+	public static def GetArray[of T(struct)](num as uint, fun as System.Func[of T]) as (T):
 		ar = array[of T](num)
 		for i in range( ar.Length ):
-			ar[i] = cast(T,fun())
+			ar[i] = fun()
 		return ar
-	public static def LoadArray[of T(struct)](r as Reader, multi as int, ref ai as kri.vb.Info, f as callable) as bool:
+	public static def LoadArray[of T(struct)](r as Reader, multi as int, ref ai as kri.vb.Info, f as System.Func[of T]) as bool:
 		m = r.geData[of kri.Mesh]()
 		if not m:	return false
 		ar = GetArray[of T]( multi * m.nVert, f)

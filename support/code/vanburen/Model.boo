@@ -77,12 +77,11 @@ public class Model( kri.data.ILoaderGen[of kri.Entity] ):
 				return x
 	
 	public static def LoadArray[of T(struct)](rd as Reader, 
-			ref ai as kri.vb.Info, fun as callable) as bool:
-		#f2 as callable(Reader) as T = fun
+			ref ai as kri.vb.Info, fun as System.Func[of Reader,T]) as bool:
 		m = rd.ent.mesh
 		ar = array[of T](m.nVert)
 		for i in range( ar.Length ):
-			ar[i] = (fun as callable(Reader) as T)(rd)
+			ar[i] = fun(rd)
 		v = kri.vb.Attrib()
 		v.init(ar,false)
 		v.Semant.Add(ai)
