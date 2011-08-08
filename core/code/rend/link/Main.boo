@@ -4,10 +4,6 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Basic(Help):
-	public enum Target:
-		None
-		Same
-		New
 	Input	as kri.buf.Texture:
 		public virtual get:
 			return null
@@ -20,11 +16,17 @@ public class Basic(Help):
 	Frame	as kri.buf.Frame:
 		public virtual get:
 			return null
+
+	public enum Target:
+		None
+		Same
+		New
 	public abstract def activate(ct as Target, offset as single, toDepth as bool) as void:
 		pass
 	public def activate(toNew as bool) as void:
 		ct = (Target.Same,Target.New)[toNew]
 		activate( ct, System.Single.NaN, true )
+
 	public def blitTo(dest as kri.buf.Frame, what as ClearBufferMask) as bool:
 		if Frame.getInfo():
 			Frame.copyTo(dest,what)

@@ -99,6 +99,7 @@
     <Compile Include="code\skin\App.boo" />
     <Compile Include="code\skin\Main.boo" />
     <Compile Include="code\skin\Uni.boo" />
+    <Compile Include="code\text\Scaler.boo" />
     <Compile Include="code\vanburen\Model.boo" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +134,7 @@
     <Folder Include="code\morph" />
     <Folder Include="code\motion" />
     <Folder Include="code\asm" />
+    <Folder Include="code\text" />
     <Folder Include="code\phys" />
     <Folder Include="code\pick" />
     <Folder Include="code\reflect" />

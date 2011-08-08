@@ -73,24 +73,26 @@ public static class Help:
 
 # Provides GL state on/off mechanics
 public class Section(IDisposable):
-	private final cap as EnableCap
-	public def constructor(state as EnableCap):
+	public final	cap as EnableCap
+	public final	dir	as bool
+	
+	public def switch(val as bool) as void:
+		on = (val == dir)
+		if on == GL.IsEnabled(cap):
+			lib.Journal.Log("GL: unexpected state (${cap} == ${not on})")
+		if on:	GL.Enable(cap)
+		else:	GL.Disable(cap)
+			
+	public def constructor(state as EnableCap, direct as bool):
 		cap = state
-		assert not GL.IsEnabled(cap)
-		GL.Enable(cap)
+		dir = direct
+		switch(true)
+	
+	public def constructor(state as EnableCap):
+		self(state,true)
+		
 	public virtual def Dispose() as void:  #imp: IDisposable
-		assert GL.IsEnabled(cap)
-		GL.Disable(cap)
-
-public class SectionOff(IDisposable):
-	private final cap as EnableCap
-	public def constructor(state as EnableCap):
-		cap = state
-		assert GL.IsEnabled(cap)
-		GL.Disable(cap)
-	def IDisposable.Dispose() as void:
-		assert not GL.IsEnabled(cap)
-		GL.Enable(cap)
+		switch(false)
 
 
 # Provide standard blending options

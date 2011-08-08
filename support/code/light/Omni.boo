@@ -23,8 +23,8 @@ public class Fill( kri.rend.tech.Sorted ):
 		return bu
 
 	public override def process(con as kri.rend.link.Basic) as void:
-		return
 		scene = kri.Scene.Current
+		if scene: return	# force exit
 		if not scene:	return
 		con.SetDepth(1f, true)	# offset for HW filtering
 		for l in scene.lights:

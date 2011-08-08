@@ -1,6 +1,5 @@
 ﻿namespace kri.data
 
-import System
 import System.Collections.Generic
 
 
@@ -20,7 +19,7 @@ public class Manager:
 	private final cache		= Dictionary[of string, object]()
 
 	public static def Check(path as string) as bool:
-		if IO.File.Exists(path):
+		if System.IO.File.Exists(path):
 			return true
 		kri.lib.Journal.Log('Loader: Unable to locate ' + path)
 		return false

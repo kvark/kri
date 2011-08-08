@@ -10,14 +10,19 @@ float get_attenuation(float d)	{
 }
 
 //perspective/orhto project
-vec4 get_projection(vec3 v, vec4 pr)	{
+vec4 get_projection(vec3 v, vec4 pr, vec3 off)	{
 	//float w = -v.z*pr.w, z1 = (v.z+pr.x)*pr.z;
 	//return vec4( v.xy, z1*w, w );
 	//return vec4( v.xy * pr.xy, v.z*pr.z + pr.w, -v.z);
 	float ortho = step( 0.0, pr.w );
+	float w = mix( -v.z, 1.0, ortho );
 	return vec4( v.xy * pr.xy,
 		v.z*pr.z + (1.0-ortho*2.0)*pr.w,
-		mix( -v.z, 1.0, ortho ) );
+		w) + vec4(off*w,0.0);
+}
+
+vec4 get_projection(vec3 v, vec4 pr)	{
+	return get_projection(v,pr,vec3(0.0));
 }
 
 //perspective depth only
