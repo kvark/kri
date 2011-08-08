@@ -13,7 +13,8 @@ import OpenTK.Graphics.OpenGL
 public class Program:
 	public final	handle	as int
 	private hasGeometry		as bool	= false
-	private inputType		= BeginMode.Polygon
+	[Getter(GeometryInput)]
+	private inputType		as BeginMode	= BeginMode.Polygon
 	[Getter(Ready)]
 	private linked	as bool = false
 	private static	Current	as Program	= null
@@ -56,7 +57,7 @@ public class Program:
 		blocks.Extend(shads)
 		for sh in shads:
 			if sh and sh.handle:
-				hasGeometry |= sh.type == ShaderType.GeometryShader
+				hasGeometry |= (sh.type == ShaderType.GeometryShader)
 				GL.AttachShader(handle, sh.handle)
 			else:
 				str = ''

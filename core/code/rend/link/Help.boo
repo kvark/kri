@@ -10,6 +10,7 @@ public class Help:
 	
 	public static def Init() as void:
 		GL.Enable( EnableCap.CullFace )
+		GL.Disable( EnableCap.VertexProgramPointSize )
 		GL.CullFace( CullFaceMode.Back )
 		GL.ClearDepth(1.0)
 		GL.DepthRange(0.0,1.0)

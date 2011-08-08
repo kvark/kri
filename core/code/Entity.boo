@@ -63,7 +63,7 @@ public class Mesh( vb.Storage ):
 			return false
 		actualMode = (drawMode,BeginMode.Points)[tf!=null]
 		if not sa.isCompatible(actualMode):
-			kri.lib.Journal.Log("Render: incompatible primitive type (${sa.handle},${actualMode})")
+			kri.lib.Journal.Log("Render: incompatible primitive type (${actualMode}, expected ${sa.GeometryInput} of ${sa.handle})")
 			blockList.Add(bu)
 			return false
 		rez = true
