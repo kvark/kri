@@ -10,9 +10,9 @@ import kri.meta
 # basic projector settings
 public final class Shared( IBase ):
 	[getter(Name)]
-	private final name	as string
-	public final data	as par.Value[of Vector4]
-	public final range	as par.Value[of Vector4]
+	private	final name	as string
+	public	final data	as par.Value[of Vector4]
+	public	final range	as par.Value[of Vector4]
 	
 	public def constructor(s as string):
 		name = s
