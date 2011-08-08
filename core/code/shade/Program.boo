@@ -65,9 +65,11 @@ public class Program:
 				kri.lib.Journal.Log('Shader: attaching invalid object '+str)
 	
 	# add object from library
-	public def add(*names as (string)) as void:
+	public def add(names as string*) as void:
 		for s in names:
 			add( Object.Load(s) )
+	public def add(*names as (string)) as void:
+		add(names)
 	
 	# link program
 	public virtual def link() as bool:

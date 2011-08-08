@@ -50,6 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="code\stereo\Anaglyph.boo" />
     <Compile Include="code\asm\Context.boo" />
     <Compile Include="code\asm\Mesh.boo" />
     <Compile Include="code\asm\Scene.boo" />
@@ -134,6 +135,7 @@
     <Folder Include="code\morph" />
     <Folder Include="code\motion" />
     <Folder Include="code\asm" />
+    <Folder Include="code\stereo" />
     <Folder Include="code\text" />
     <Folder Include="code\phys" />
     <Folder Include="code\pick" />

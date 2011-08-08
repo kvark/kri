@@ -130,7 +130,7 @@ private class Task:
 			n.local.pos = val
 			n.touch()
 		rec = kri.ani.data.Record('rotate',3f)
-		ch = kri.ani.data.Channel_Vector3(4,0,fani)
+		ch = kri.ani.data.Channel[of Vector3](4,0,fani)
 		ch.lerp = Vector3.Lerp
 		ch.bezier = false
 		tar = (0f, 1f, 2f, 3f)
