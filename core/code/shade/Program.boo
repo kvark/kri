@@ -49,7 +49,9 @@ public class Program:
 		return check( ProgramParameter.ValidateStatus )
 	
 	public def isCompatible(bm as BeginMode) as bool:
-		return hasGeometry==false or inputType==bm
+		#workaround: inputType reported by GL does not correspond
+		#the actual value (always 0), contrary to specification
+		return hasGeometry==false or inputType==bm or true
 	
 	# add specific objects
 	public def add(*shads as (Object)) as void:

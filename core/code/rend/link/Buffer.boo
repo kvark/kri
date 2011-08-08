@@ -56,14 +56,14 @@ public class Buffer(Basic):
 		assert b<=48 and not (b&0x7)
 	
 	public def makeSurface() as Texture:
-		return Texture(
-			target:texTarget, samples:nSamples,
+		t = Texture( target:texTarget, samples:nSamples,
 			intFormat:FmColor[bitColor>>3] )
+		t.filt(false,false)
+		return t
 	
 	public def resize(pl as Plane) as void:
 		if not Input:
-			buf.at.color[0] = t = makeSurface()
-			t.filt(false,false)
+			buf.at.color[0] = makeSurface()
 		buf.resize( pl.wid, pl.het )
 	
 	public override def activate(ct as Target, offset as single, toDepth as bool) as void:

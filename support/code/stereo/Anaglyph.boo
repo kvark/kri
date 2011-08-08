@@ -1,6 +1,7 @@
 ﻿namespace support.stereo
 
 import kri.shade
+import OpenTK.Graphics.OpenGL
 
 
 public class Split( kri.rend.Basic ):

@@ -10,6 +10,7 @@ public class RenderSet:
 	public	final	rSkin	= support.skin.Universal()
 	public	final	rAttrib	= kri.rend.debug.Attrib()
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
+	public	final	rStereo		= support.stereo.Split()
 	public	final	rNormal		as support.light.normal.Apply	= null
 	public	final	rDummy		as kri.rend.part.Dummy			= null
 	public	final	rParticle	as kri.rend.part.Standard		= null
@@ -44,6 +45,7 @@ public class RenderSet:
 		rMan.put('norm',	3,rNormal,	'color',grCull.sApply)
 		rMan.put('dummy',	2,rDummy,	emi)
 		rMan.put('part',	3,rParticle,emi)
+		rMan.put('stereo',	3,rStereo,	'norm',sz)
 	
 	public def gen(str as string) as kri.rend.Basic:
 		grForward.BaseColor = Graphics.Color4.Black
@@ -68,4 +70,7 @@ public class RenderSet:
 			for ren in (rSkin,rZ,rClear,rNormal):
 				ren.active = true
 			grCull.actNormal()
+		if str in ('Anaglyph'):
+			for ren in (rSkin,rZ,rColor,rNormal,rStereo):
+				ren.active = true
 		return rMan
