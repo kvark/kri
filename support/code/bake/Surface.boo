@@ -56,7 +56,7 @@ public class Update( kri.rend.tech.Basic ):
 			assert tag.uvChannel == 0
 			tag.stamp = kri.Ant.Inst.Time
 			n = (null,e.node)[tag.worldSpace]
-			kri.Ant.Inst.params.modelView.activate(n)
+			kri.Ant.Inst.params.spaModel.activate(n)
 			tag.buf.bind()
 			if tag.clearTarget:
 				con.ClearColor( Color4(0f,0f,0f,0f) )

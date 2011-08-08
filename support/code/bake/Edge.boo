@@ -36,7 +36,7 @@ public class Update( kri.rend.tech.Basic ):
 				continue
 			tag.stamp = kri.Ant.Inst.Time
 			n = (null,e.node)[tag.worldSpace]
-			kri.Ant.Inst.params.modelView.activate(n)
+			kri.Ant.Inst.params.spaModel.activate(n)
 			tf.Bind( tag.data )
 			using kri.Discarder():
 				if not e.render(va,bu):

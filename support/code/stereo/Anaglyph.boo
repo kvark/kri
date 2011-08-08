@@ -1,13 +1,11 @@
 ﻿namespace support.stereo
 
 import kri.shade
-import OpenTK.Graphics.OpenGL
 
 
 public class Split( kri.rend.Basic ):
-	public	final	pDepth		= par.Texture('depth')
 	public	final	pColor		= par.Texture('color')
-	public	focus		= 0.5
+	public	focus	= 0.5
 	public	final	dict		= par.Dict()
 	public	final	pHalfEye	= par.Value[of single]('half_eye')
 	public	final	pFocus		= par.Value[of single]('focus_dist')
@@ -16,7 +14,7 @@ public class Split( kri.rend.Basic ):
 	
 	public def constructor():
 		dict.var(pHalfEye,pFocus)
-		dict.unit(pDepth,pColor)
+		dict.unit(pColor)
 		pHalfEye.Value = 1f
 		bu.dicts.Add(dict)
 		bu.shader.add('/stereo/split_'+s	for s in ('v','g','f'))
@@ -27,7 +25,6 @@ public class Split( kri.rend.Basic ):
 		return (1f-focus)*cam.rangeIn + focus*cam.rangeOut
 	
 	public override def process(link as kri.rend.link.Basic) as void:
-		pDepth.Value = link.Depth
 		pColor.Value = link.Input
 		link.activate( link.Target.New, 0f, false )
 		link.ClearColor()

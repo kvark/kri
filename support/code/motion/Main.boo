@@ -87,7 +87,7 @@ public class Bake( kri.rend.tech.Basic ):
 			sc.inverse()
 			sp = kri.Spatial.Combine(se,sc)
 			pOffset.activate(sp)
-			kri.Ant.Inst.params.modelView.activate(s_new)
+			kri.Ant.Inst.params.spaModel.activate(s_new)
 			#draw
 			e.render(va,pu)
 
