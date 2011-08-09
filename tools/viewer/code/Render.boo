@@ -10,7 +10,7 @@ public class RenderSet:
 	public	final	rSkin	= support.skin.Universal()
 	public	final	rAttrib	= kri.rend.debug.Attrib()
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
-	public	final	rStereo		= support.stereo.Split()
+	public	final	rStereo		= support.stereo.Split(0.1f)
 	public	final	rNormal		as support.light.normal.Apply	= null
 	public	final	rDummy		as kri.rend.part.Dummy			= null
 	public	final	rParticle	as kri.rend.part.Standard		= null

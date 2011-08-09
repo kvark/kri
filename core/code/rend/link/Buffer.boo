@@ -75,6 +75,7 @@ public class Buffer(Basic):
 				pixFormat:pf, intFormat:FmDepth[bitDepth>>3] )
 			td.init( Input.wid, Input.het )
 			td.filt( false, false )
+			td.shadow(false)
 		# prepare color
 		if ct == Target.New:
 			t = buf.at.color[1]
