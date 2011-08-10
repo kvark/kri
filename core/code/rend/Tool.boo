@@ -32,11 +32,11 @@ public class Copy( Basic ):
 		bu.dicts.Add(d)
 		bu.shader.add('/copy_v','/copy_f')
 	public override def process(con as link.Basic) as void:
-		con.activate(false)
-		kri.Ant.Inst.quad.draw(bu)
+		if con.activate(false):
+			kri.Ant.Inst.quad.draw(bu)
 	public def process(ln as link.Buffer, con as link.Basic) as void:
-		if not (ln and con):	return
-		con.activate(false)
+		if not (ln and con):		return
+		if not con.activate(false):	return
 		if kri.Ant.Inst.gamma:
 			tun.Value = ln.buf.at.color[0] as kri.buf.Texture
 			kri.Ant.Inst.quad.draw(bu)

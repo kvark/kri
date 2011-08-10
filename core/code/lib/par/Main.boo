@@ -50,18 +50,14 @@ public final class Light( IBase ):
 public final class Project( IBase ):
 	public	final	project	as proj.Shared
 	public	final	spatial	as spa.Linked
-	private	static	nOffset	= Vector4.Zero
 	
 	public def constructor(name as string):
 		project = proj.Shared(name)
 		spatial = spa.Linked('s_' + name)
 	
-	public def activate(p as kri.Projector, ref off as Vector4) as void:
-		project.activate( p, off )
-		spatial.activate( p.node )
-	
 	public def activate(p as kri.Projector) as void:
-		activate(p,nOffset)
+		project.activate( p )
+		spatial.activate( p.node )
 	
 	kri.INamed.Name as string:
 		get: return project.Name

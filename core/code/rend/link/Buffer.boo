@@ -66,8 +66,8 @@ public class Buffer(Basic):
 			buf.at.color[0] = makeSurface()
 		buf.resize( pl.wid, pl.het )
 	
-	public override def activate(ct as Target, offset as single, toDepth as bool) as void:
-		assert Input
+	public override def activate(ct as Target, offset as single, toDepth as bool) as bool:
+		if not Input:	return false
 		# prepare depth
 		if SetDepth(offset,toDepth) and not Depth:
 			pf = (PixelFormat.DepthComponent,PixelFormat.DepthStencil)[bitDepth==8]
@@ -86,7 +86,7 @@ public class Buffer(Basic):
 			buf.at.color[0] = t
 		# bind
 		buf.mask = (0,1)[ ct!=Target.None ]
-		buf.bind()
+		return buf.bind()
 
 	public override def blitTo(bas as Basic) as bool:
 		buf.mask = 1

@@ -21,11 +21,11 @@ public class Basic(Help):
 		None
 		Same
 		New
-	public abstract def activate(ct as Target, offset as single, toDepth as bool) as void:
+	public abstract def activate(ct as Target, offset as single, toDepth as bool) as bool:
 		pass
-	public def activate(toNew as bool) as void:
+	public def activate(toNew as bool) as bool:
 		ct = (Target.Same,Target.New)[toNew]
-		activate( ct, System.Single.NaN, true )
+		return activate( ct, System.Single.NaN, true )
 
 	public def blitTo(dest as kri.buf.Frame, what as ClearBufferMask) as bool:
 		if Frame.getInfo():
@@ -41,6 +41,5 @@ public class Screen(Basic):
 	Frame	as kri.buf.Frame:
 		public override get:
 			return screen
-	public override def activate(ct as Target, offset as single, toDepth as bool) as void:
-		screen.bind()
-		SetDepth(offset,toDepth)
+	public override def activate(ct as Target, offset as single, toDepth as bool) as bool:
+		return screen.bind() and SetDepth(offset,toDepth)

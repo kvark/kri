@@ -19,6 +19,7 @@ public class Projector( ani.data.Player, INoded ):
 	public rangeOut	= 100f
 	public fov		= 0.4f	# ~23 degrees (half)
 	public aspect	= 1f
+	public offset	= Vector3.Zero
 	
 	INoded.Node as Node:
 		get: return node
@@ -27,10 +28,10 @@ public class Projector( ani.data.Player, INoded ):
 		dz = -1f / v.Z
 		tn = dz / System.Math.Tan(fov)
 		assert fov > 0f
-		return Vector3( tn*v.X, tn*v.Y * aspect,
+		return offset + Vector3( tn*v.X, tn*v.Y * aspect,
 				(2f*dz*rangeIn*rangeOut - rangeIn-rangeOut) / (rangeIn - rangeOut))
 	public def toWorld(ref vin as Vector3) as Vector3:
-		v = Vector3.Add( Vector3.Multiply(vin,2f), Vector3.One )
+		v = Vector3.Multiply(vin-offset,2f) + Vector3.One
 		z = 2f*rangeIn*rangeOut / (v.Z*(rangeOut-rangeIn) - rangeOut - rangeIn)
 		return Vector3(-z*v.X, -z*v.Y / aspect, z)
 	public def makeOrtho(radius as single) as void:

@@ -25,9 +25,9 @@ public class View(IView):
 	def IView.update() as void:
 		link = getLink()
 		Scene.current = scene
-		if link and cam:
+		if cam and link:
 			cam.aspect = link.Frame.getInfo().Aspect
-			Ant.Inst.params.activate(cam)
+		Ant.Inst.params.activate(cam)
 		if ren and ren.active:
 			ren.process(link)
 			vb.Array.Default.bind()

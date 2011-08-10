@@ -21,8 +21,8 @@ public final class Shared( IBase ):
 		range	= par.Value[of Vector4]('range_'+s)
 		area	= par.Value[of Vector4]('area_'+s)
 	
-	public def activate(p as kri.Projector, ref off as Vector4) as void:
-		area.Value = off
+	public def activate(p as kri.Projector) as void:
+		area.Value = Vector4( p.offset )
 		if not p:
 			data.Value = Vector4(-1f,-1f,-2f,1f)
 			range.Value = Vector4(0f,1f,-1f,1f)

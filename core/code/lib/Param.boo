@@ -30,9 +30,6 @@ public final class Param:
 	public def activate(c as kri.Camera) as void:
 		kri.Camera.Current = c
 		pCam	.activate(c)
-	public def activate(c as kri.Camera, ref off as Vector4) as void:
-		kri.Camera.Current = c
-		pCam	.activate(c,off)
 	public def activate(pl as kri.buf.Plane) as void:
 		parSize.Value = Vector4( 1f*pl.wid, 1f*pl.het, 0.5f*(pl.wid+pl.het), 0f)
 
