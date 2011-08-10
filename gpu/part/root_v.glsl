@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 //(born moment, -life ID)
 in	vec2 at_sys;

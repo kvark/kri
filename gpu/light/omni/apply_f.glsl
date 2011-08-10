@@ -1,4 +1,4 @@
-﻿#version 130
+﻿#version 150 core
 
 uniform vec4 lit_color, lit_data, proj_lit;
 //uniform samplerCubeShadow unit_light;

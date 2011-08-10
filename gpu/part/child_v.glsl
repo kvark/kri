@@ -1,4 +1,4 @@
-#version 140
+#version 150 core
 
 uniform vec4 part_child;
 

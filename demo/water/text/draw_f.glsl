@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform sampler2D unit_wave, unit_kern, unit_town;
 

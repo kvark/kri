@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform	float mat_emissive;
 uniform sampler2D unit_emissive;

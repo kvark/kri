@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //Tile-Based Texture Mapping on Graphics Hardware
 //Li-Yi Wei
 //SIGGRAPH/EUROGRAPHICS Conference on Graphics Hardware, 2004.

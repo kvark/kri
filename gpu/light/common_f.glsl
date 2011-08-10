@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 vec4 get_diffuse();
 vec4 get_specular();

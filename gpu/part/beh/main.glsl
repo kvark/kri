@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 //(size,life)
 in	vec2 at_sub;

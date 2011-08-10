@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 vec4 mat_bump(vec4);
 uniform vec4 mat_scalars;

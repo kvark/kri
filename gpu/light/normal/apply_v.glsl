@@ -1,4 +1,4 @@
-﻿#version 130
+﻿#version 150 core
 
 uniform	struct Spatial	{
 	vec4 pos,rot;

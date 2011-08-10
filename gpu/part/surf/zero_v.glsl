@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 struct Spatial	{ vec4 pos,rot; }
 get_surface(vec2 tc)	{

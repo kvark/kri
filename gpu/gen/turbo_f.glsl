@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //	Augmentation tools for noise-based texture generation
 
 float snoise(vec2);

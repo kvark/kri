@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in vec4 to_old,to_new;
 out vec2 to_speed;

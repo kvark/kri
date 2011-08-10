@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform usampler2D unit_sten;
 uniform sampler2D unit_color;

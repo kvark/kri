@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 out vec2 to_sys;
 

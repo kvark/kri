@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform vec4 mat_diffuse;
 uniform sampler1D unit_diffuse;

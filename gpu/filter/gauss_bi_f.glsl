@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 uniform sampler2D unit_input;	//must be linearly sampled
 uniform vec4 dir;		//blur direction
 

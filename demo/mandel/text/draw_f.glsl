@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in float time;
 out vec4 rez_color;

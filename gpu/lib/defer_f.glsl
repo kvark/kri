@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //the '2' postfix is inserted for ATI compatibility
 //otherwise, you'll get Vertex Shader not supported by HW message
 

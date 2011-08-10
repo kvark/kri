@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 // Simplex Noise
 
 uniform sampler1D unit_perm, unit_grad;

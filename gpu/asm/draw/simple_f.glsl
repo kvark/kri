@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in	vec3	v_lit;
 out	vec4	to_color;

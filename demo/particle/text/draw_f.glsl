@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform vec4 halo_data;
 uniform sampler1D unit_color;

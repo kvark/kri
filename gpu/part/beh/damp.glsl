@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //proven to be frame-independent
 
 uniform vec4 cur_time;

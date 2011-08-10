@@ -1,4 +1,4 @@
-#version 140
+#version 150 core
 
 void main()	{
 	gl_PointSize = gl_PointSizeIn[0];

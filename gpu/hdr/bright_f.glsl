@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 //#define USE_FILTER
 uniform sampler2D unit_input;

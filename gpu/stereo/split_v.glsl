@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform	vec4		proj_cam;
 uniform	float		half_eye, focus_dist;

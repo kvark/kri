@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 #define NORMAL
 
 uniform vec4 lit_color, lit_data;

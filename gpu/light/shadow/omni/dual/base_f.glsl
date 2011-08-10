@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 float	get_shadow(vec4);
 

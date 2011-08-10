@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in	float at_pad;
 out	float to_pad;

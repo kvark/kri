@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform float limit;
 uniform vec4 cur_time;

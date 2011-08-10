@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 
 vec4 qmul(vec4,vec4);

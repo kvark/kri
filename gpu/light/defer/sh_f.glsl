@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 const float k0 = 0.2;
 const float k1 = sqrt(1.0 - k0*k0);

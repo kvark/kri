@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 #define FAKE
 
 uniform sampler2DArray unit_light;

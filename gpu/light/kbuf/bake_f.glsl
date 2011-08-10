@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform vec4 screen_size, lit_color, proj_cam;
 uniform sampler2D unit_depth;

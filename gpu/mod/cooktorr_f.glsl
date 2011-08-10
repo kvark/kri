@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 float comp_specular(vec3 no, vec3 lit, vec3 cam, float glossy)	{
 	float nh = dot(no, normalize(lit+cam) );

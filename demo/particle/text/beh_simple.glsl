@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in	vec3 at_pos,at_speed;
 out	vec2 to_sys;

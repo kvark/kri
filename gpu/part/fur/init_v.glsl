@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in	vec3 at_base;
 out	vec3 to_pos, to_speed;

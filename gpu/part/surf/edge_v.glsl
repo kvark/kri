@@ -1,4 +1,4 @@
-#version 140
+#version 150 core
 
 uniform samplerBuffer unit_edge;
 uniform float num_segments;

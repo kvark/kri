@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //matrix->quaternion reference:
 //www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 

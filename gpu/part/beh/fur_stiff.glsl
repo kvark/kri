@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //#define LIMIT
 //todo: use physically correct stiffness
 

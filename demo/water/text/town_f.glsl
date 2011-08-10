@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 const float freq = 5.0, amp = 1.0;
 

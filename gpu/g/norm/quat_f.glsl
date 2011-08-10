@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 flat	in	float handness;
 in	vec4	quaternion;

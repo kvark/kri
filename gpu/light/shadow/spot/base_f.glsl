@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform	vec4	proj_lit, lit_data;
 

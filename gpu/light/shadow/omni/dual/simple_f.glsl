@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform sampler2DArrayShadow unit_light;
 

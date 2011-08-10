@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in float depth;
 out vec2 rez_color;

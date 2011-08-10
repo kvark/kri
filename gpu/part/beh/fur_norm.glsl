@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 #define COMPENSATE
 
 in	vec3 at_prev, at_base;

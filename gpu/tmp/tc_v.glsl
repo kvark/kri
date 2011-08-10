@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 vec3 mi_%v();
 

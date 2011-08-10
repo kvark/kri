@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 const float size = 0.1;
 
 in vec3 at_pos;

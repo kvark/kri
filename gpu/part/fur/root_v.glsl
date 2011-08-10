@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 //"Position Based Dynamics"
 //by AGEIA, VRIPHYS 2006
 

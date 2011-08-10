@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 float comp_shadow(vec3 pl, float len)	{
 	return 1.0;

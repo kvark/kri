@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 /*	Dictionary:
 v,g,f: vertex/geometry/fragment map-ins

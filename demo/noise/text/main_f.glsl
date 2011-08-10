@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 uniform vec4 cur_time, mouse_coord;
 const float freq = 5.0, amp = 1.0, speed = 5.0;

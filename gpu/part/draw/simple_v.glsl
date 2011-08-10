@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in vec2 at_sys;
 in vec3 at_pos;

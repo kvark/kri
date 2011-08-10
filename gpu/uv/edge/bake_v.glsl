@@ -1,4 +1,4 @@
-#version 130
+#version 150 core
 
 in	vec4 at_vertex, at_quat;
 out	vec4 to_vertex, to_quat;
