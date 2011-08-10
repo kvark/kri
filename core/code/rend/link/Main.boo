@@ -42,4 +42,5 @@ public class Screen(Basic):
 		public override get:
 			return screen
 	public override def activate(ct as Target, offset as single, toDepth as bool) as bool:
-		return screen.bind() and SetDepth(offset,toDepth)
+		SetDepth(offset,toDepth)
+		return screen.bind()

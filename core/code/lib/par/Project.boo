@@ -22,10 +22,10 @@ public final class Shared( IBase ):
 		area	= par.Value[of Vector4]('area_'+s)
 	
 	public def activate(p as kri.Projector) as void:
-		area.Value = Vector4( p.offset )
 		if not p:
 			data.Value = Vector4(-1f,-1f,-2f,1f)
 			range.Value = Vector4(0f,1f,-1f,1f)
+			area.Value = Vector4.Zero
 			return
 		div = 1f / (p.rangeIn - p.rangeOut)
 		dad = div *(p.rangeIn + p.rangeOut)
@@ -37,6 +37,7 @@ public final class Shared( IBase ):
 		else:	# the last parameter sign shows orthogonality
 			data.Value = Vector4(-p.fov, -p.fov * p.aspect, 2f*div, -dad)
 		range.Value = Vector4(p.rangeIn, p.rangeOut, div, tn)
+		area.Value = Vector4( p.offset )
 	
 	def IBase.link(d as par.Dict) as void:
 		d.var(data,range,area)

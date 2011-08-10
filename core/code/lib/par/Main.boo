@@ -57,7 +57,7 @@ public final class Project( IBase ):
 	
 	public def activate(p as kri.Projector) as void:
 		project.activate( p )
-		spatial.activate( p.node )
+		spatial.activate(( p.node if p else null ))
 	
 	kri.INamed.Name as string:
 		get: return project.Name
