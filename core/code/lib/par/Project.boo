@@ -13,13 +13,20 @@ public final class Shared( IBase ):
 	private	final name	as string
 	public	final data	as par.Value[of Vector4]
 	public	final range	as par.Value[of Vector4]
+	public	final area	as par.Value[of Vector4]
 	
 	public def constructor(s as string):
 		name = s
 		data	= par.Value[of Vector4]('proj_'+s)
 		range	= par.Value[of Vector4]('range_'+s)
+		area	= par.Value[of Vector4]('area_'+s)
 	
-	public def activate(p as kri.Projector) as void:
+	public def activate(p as kri.Projector, ref off as Vector4) as void:
+		area.Value = off
+		if not p:
+			data.Value = Vector4(-1f,-1f,-2f,1f)
+			range.Value = Vector4(0f,1f,-1f,1f)
+			return
 		div = 1f / (p.rangeIn - p.rangeOut)
 		dad = div *(p.rangeIn + p.rangeOut)
 		tn = 1f
@@ -32,4 +39,4 @@ public final class Shared( IBase ):
 		range.Value = Vector4(p.rangeIn, p.rangeOut, div, tn)
 	
 	def IBase.link(d as par.Dict) as void:
-		d.var(data,range)
+		d.var(data,range,area)

@@ -3,15 +3,15 @@
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_cam;
-uniform vec4 proj_cam, screen_size;
+uniform vec4 screen_size;
 
 
 vec3 trans_inv(vec3,Spatial);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_cam(vec3);
 vec4 get_child(vec3);
 
 vec4 project(vec3 v)	{
-	return get_projection( trans_inv(v,s_cam), proj_cam);
+	return get_proj_cam( trans_inv(v,s_cam) );
 }
 
 

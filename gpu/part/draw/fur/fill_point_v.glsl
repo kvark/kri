@@ -3,10 +3,10 @@
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_lit;
-uniform vec4 proj_lit, lit_data, range_lit;
+uniform vec4 lit_data, range_lit;
 
 vec3 trans_inv(vec3,Spatial);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_lit(vec3);
 
 in	vec3 at_base, at_pos;
 out	float depth;
@@ -18,5 +18,5 @@ void main()	{
 
 	vec3 p = trans_inv(at_pos, s_lit);
 	depth = (p.z + range_lit.x) * range_lit.z;
-	gl_Position = get_projection(p,proj_lit);
+	gl_Position = get_proj_lit(p);
 }

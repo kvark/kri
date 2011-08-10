@@ -24,18 +24,18 @@ public class View(IView):
 	
 	def IView.update() as void:
 		link = getLink()
-		if not link:	return
 		Scene.current = scene
-		if cam:
+		if link and cam:
 			cam.aspect = link.Frame.getInfo().Aspect
 			Ant.Inst.params.activate(cam)
 		if ren and ren.active:
 			ren.process(link)
 			vb.Array.Default.bind()
-		else:
+		elif link:
 			link.activate(false)
 			link.ClearColor()
-		Scene.current = null
+		Camera.Current	= null
+		Scene.current	= null
 	
 	public def updateSize() as bool:
 		link = getLink()

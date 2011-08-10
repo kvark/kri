@@ -4,7 +4,7 @@ uniform	struct Spatial	{
 	vec4 pos,rot;
 }s_model,s_lit,s_cam;
 
-uniform	vec4 proj_cam, proj_lit, range_lit;
+uniform	vec4 range_lit;
 
 //lib_quat
 vec3	qrot(vec4,vec3);
@@ -14,7 +14,8 @@ vec3	trans_for(vec3,Spatial);
 vec3	trans_inv(vec3,Spatial);
 //lib_tool
 float	get_attenuation(float);
-vec4	get_projection(vec3,vec4);
+vec4	get_proj_cam(vec3);
+vec4	get_proj_lit(vec3);
 float	get_proj_depth(float,vec4);
 //mat
 void	make_tex_coords();
@@ -38,10 +39,10 @@ void main()	{
 
 	// vertex in camera space
 	vec3 vc = trans_inv(v, s_cam);
-	gl_Position = get_projection(vc, proj_cam);
+	gl_Position = get_proj_cam(vc);
 	
 	// vertex in light space
 	vec3 vl = trans_inv(v, s_lit);
 	lit_depth = (range_lit.x + vl.z) * range_lit.z;
-	v_shadow = get_projection(vl,proj_lit);
+	v_shadow = get_proj_lit(vl);
 }

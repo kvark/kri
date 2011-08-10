@@ -4,10 +4,7 @@ uniform sampler2D unit_input;
 
 uniform struct Spatial	{
 	vec4 pos,rot;
-}s_cam;
-
-uniform vec4	proj_cam;
-
+}s_view;
 
 in	vec4	at_pos, at_rot;
 in	vec4	at_low, at_hai;
@@ -16,15 +13,13 @@ out	int	to_visible;
 Spatial s_model = Spatial(at_pos,at_rot);
 
 vec3 trans_for(vec3,Spatial);
-vec3 trans_inv(vec3,Spatial);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_cam(vec3);
 
 
 //	transform local coordinate into camera NDC
 vec3 to_ndc(vec3 v)	{
-	vec3 w = trans_for(v,s_model);
-	vec3 c = trans_inv(w,s_cam);
-	vec4 p = get_projection(c,proj_cam);
+	vec3 vc = trans_for(v,s_view);
+	vec4 p = get_proj_cam(vc);
 	return (vec3(1.0) + p.xyz/p.w) * 0.5;
 }
 

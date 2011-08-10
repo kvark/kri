@@ -3,11 +3,11 @@
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_cam;
-uniform vec4 proj_cam, screen_size;
+uniform vec4 screen_size;
 
 
 vec3 trans_inv(vec3,Spatial);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_cam(vec3);
 
 
 in vec3 at_prev, at_base, at_pos;
@@ -21,7 +21,7 @@ void main()	{
 	
 	vec3 vs = mix(at_prev,at_pos,0.5);
 	vec3 v = trans_inv(vs,s_cam);
-	gl_Position = get_projection(v, proj_cam);
+	gl_Position = get_proj_cam(v);
 	
 	color = vec4(1.0);
 }

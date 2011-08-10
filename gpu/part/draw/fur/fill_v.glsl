@@ -3,10 +3,11 @@
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_lit;
-uniform vec4 proj_lit, lit_data, range_lit;
+uniform vec4 lit_data, range_lit;
+
 
 vec3 trans_inv(vec3,Spatial);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_lit(vec3);
 
 
 in	vec3 at_base, at_pos;
@@ -19,9 +20,9 @@ void main()	{ vec3 p;
 
 	p = trans_inv(at_base,s_lit);
 	dep.x = (p.z + range_lit.x) * range_lit.z;
-	vb = get_projection(p,proj_lit);
+	vb = get_proj_lit(p);
 
 	p = trans_inv(at_pos,s_lit);
 	dep.y = (p.z + range_lit.x) * range_lit.z;
-	vc = get_projection(p,proj_lit);
+	vc = get_proj_lit(p);
 }

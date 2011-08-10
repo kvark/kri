@@ -3,12 +3,11 @@
 uniform struct Spatial	{
 	vec4 pos,rot;
 }s_cam;
-uniform vec4 proj_cam;
 
 void make_tex_coords();
 vec3 trans_for(vec3,Spatial);
 vec3 trans_inv(vec3,Spatial);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_cam(vec3);
 
 in vec2 ghost_sys, ghost_sub;
 in vec3 ghost_pos;
@@ -24,6 +23,6 @@ void main()	{
 			ghost_rot );
 		vec3 v = trans_for( at_vertex.xyz, sp );
 		vec3 vc = trans_inv(v, s_cam);
-		gl_Position = get_projection(vc, proj_cam);
+		gl_Position = get_proj_cam(vc);
 	}else	gl_Position = vec4(0.0,0.0,-2.0,1.0);
 }

@@ -4,7 +4,7 @@ uniform struct Spatial	{
 	vec4 pos,rot;
 }s_model,s_lit,s_cam;
 
-uniform vec4 proj_cam, proj_lit;
+uniform vec4 proj_lit;
 
 //lib_quat
 vec3 qrot(vec4,vec3);
@@ -14,7 +14,7 @@ vec3 trans_for(vec3,Spatial);
 vec3 trans_inv(vec3,Spatial);
 //lib_tool
 float get_attenuation(float);
-vec4 get_projection(vec3,vec4);
+vec4 get_proj_cam(vec3);
 float get_proj_depth(float,vec4);
 //mat
 void make_tex_coords();
@@ -36,7 +36,7 @@ void main()	{
 	
 	// vertex in camera space
 	vec3 vc = trans_inv(v, s_cam);
-	gl_Position = get_projection(vc, proj_cam);
+	gl_Position = get_proj_cam(vc);
 	
 	// world -> tangent space transform
 	vec3 hand = vec3(at_vertex.w, 1.0,1.0);
