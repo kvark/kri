@@ -209,14 +209,14 @@ public class GladeApp:
 		core = kri.Ant.Inst
 		if not core:	return
 		core.update(1)
-		view.update()
+		(view as kri.IView).update()
 		if butDraw.Active and fps.update(core.Time):
 			window.Title = fps.gen() + getSceneStats()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
 		r = args.Allocation
-		view.resize( 0, 0, r.Width, r.Height )
+		(view as kri.IView).resize( r.Width, r.Height )
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
