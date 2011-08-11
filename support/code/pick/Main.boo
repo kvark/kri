@@ -71,13 +71,17 @@ public class Render( kri.rend.Basic ):
 		val = fbo.read[of single]( PixelFormat.DepthComponent, rect )
 		pl = fbo.at.color[0]
 		vin = OpenTK.Vector3(coord[0]*1f / pl.wid, coord[1]*1f / pl.het, val[0])
-		point = kri.Camera.Current.toWorld(vin)
+		vin = OpenTK.Vector3.Multiply(vin,2f) - OpenTK.Vector3.One
+		c = kri.Camera.Current
+		point = c.unproject(vin)
+		pw = kri.Node.SafeWorld( c.node ).byPoint(point)
 		# call the react method
 		e = ents[ index[0]-1 ]
 		sp = kri.Node.SafeWorld( e.node )
 		sp.inverse()
+		pe = sp.byPoint(pw)
 		fun = e.seTag[of Tag]().pick
-		if fun:	fun(e, sp.byPoint(point))
+		if fun:	fun(e,pe)
 
 	public def ev(ob as object, arg as OpenTK.Input.MouseButtonEventArgs) as void:
 		active = true

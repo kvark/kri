@@ -33,51 +33,46 @@ public class Merger( kri.rend.Basic ):
 public class Proxy( kri.IView ):
 	public	final	rMerge	= Merger()
 	public	final	view	as kri.View
-	public	final	hEye		as single
-	public	final	focus		as single
+	public	final	xv		as Vector3
 	private	final	linkBuf		= kri.rend.link.Buffer(0,0,0)
 	private	final	linkScreen	= kri.rend.link.Screen()
 	private	final	nEye		= kri.Node('eye')
 	
-	public def constructor(v as kri.View, halfEye as single, focusDist as single):
+	public def constructor(v as kri.View, shift as single, focus as single):
 		view = v
 		assert v
-		hEye = halfEye
-		focus = focusDist
+		xv = Vector3(shift, 0f, focus)
 	
-	public def setEye(eye as int) as void:
+	public def setEye(eye as int, pt as par.Texture) as void:
 		c = view.cam
-		if not c:	return
-		nEye.local.pos.X = x = eye * hEye * c.rangeIn
 		c.offset.X = 0f
-		if eye:
-			c.node = nEye
-			#mid = c.rangeIn * (1-focus) + c.rangeOut * focus
-			off = Vector3( x, 0f, -c.rangeIn )
-			c.offset.X = c.project(off).X
-			kri.Ant.Inst.params.activate(c)
-		else:
-			c.node = nEye.Parent
-			nEye.Parent = null
-			c.offset = Vector3.Zero
-
+		vin = xv	# make sure there is no offset here
+		off = c.unproject(vin)
+		c.offset.X = -eye * xv.X
+		c.node = nEye
+		nEye.local.pos.X = eye * off.X
+		kri.Ant.Inst.params.activate(c)
+		# render
+		linkBuf.activate(true)
+		view.ren.process(linkBuf)
+		pt.Value = linkBuf.Input
+		
 	def kri.IView.update() as void:
-		if not (view.cam and view.ren and view.ren.active):
+		c = view.cam
+		if not (c and view.ren and view.ren.active):
 			(view as kri.IView).update()
 			return
+		# prepare
 		kri.Scene.Current = view.scene
 		view.cam.aspect = linkBuf.Frame.getInfo().Aspect
-		nEye.Parent = view.cam.node
-		linkBuf.activate(true)
-		setEye(-1)	# left
-		rMerge.texLef.Value = linkBuf.Input
-		view.ren.process(linkBuf)		# into linkBuf-0
-		linkBuf.activate(true)			# switch plane
-		setEye(1)	# right
-		rMerge.texRit.Value = linkBuf.Input
-		view.ren.process(linkBuf)		# into linkBuf-1
-		setEye(0)	# restore
+		nEye.Parent = c.node
+		# render
+		setEye(0-1, rMerge.texLef )	# left
+		setEye(0+1, rMerge.texRit )	# right
 		rMerge.process(linkScreen)
+		# cleanup
+		c.offset = nEye.local.pos = Vector3.Zero
+		c.node = nEye.Parent
 		kri.Scene.Current = null
 	
 	def kri.IView.resize(wid as int, het as int) as bool:

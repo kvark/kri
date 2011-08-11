@@ -30,8 +30,8 @@ public class Projector( ani.data.Player, INoded ):
 		assert fov > 0f
 		return offset + Vector3( tn*v.X, tn*v.Y * aspect,
 				(2f*dz*rangeIn*rangeOut - rangeIn-rangeOut) / (rangeIn - rangeOut))
-	public def toWorld(ref vin as Vector3) as Vector3:
-		v = Vector3.Multiply(vin-offset,2f) + Vector3.One
+	public def unproject(ref vin as Vector3) as Vector3:
+		v = vin-offset
 		z = 2f*rangeIn*rangeOut / (v.Z*(rangeOut-rangeIn) - rangeOut - rangeIn)
 		return Vector3(-z*v.X, -z*v.Y / aspect, z)
 	public def makeOrtho(radius as single) as void:
