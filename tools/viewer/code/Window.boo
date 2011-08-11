@@ -40,6 +40,7 @@ public class GladeApp:
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private final	dialog	as Gtk.MessageDialog
 	public	final	gw		as Gtk.GLWidget
+	private	v2		as kri.IView	= null
 	private rset	as RenderSet	= null
 	private	curObj	as object		= null
 	private	curIter	= Gtk.TreeIter.Zero
@@ -192,6 +193,7 @@ public class GladeApp:
 		rset = RenderSet( true, samples, eCorp.con )
 		rset.grDeferred.rBug.layer = -1
 		gw.QueueResize()
+		#v2 = support.stereo.Proxy(view,0.01f,0.5f)
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		rset = null
@@ -209,14 +211,16 @@ public class GladeApp:
 		core = kri.Ant.Inst
 		if not core:	return
 		core.update(1)
-		(view as kri.IView).update()
+		if v2:	v2.update()
+		else:	(view as kri.IView).update()
 		if butDraw.Active and fps.update(core.Time):
 			window.Title = fps.gen() + getSceneStats()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
 		r = args.Allocation
-		(view as kri.IView).resize( r.Width, r.Height )
+		if v2:	v2.resize( r.Width, r.Height )
+		else:	(view as kri.IView).resize( r.Width, r.Height )
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:

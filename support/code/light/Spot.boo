@@ -25,7 +25,7 @@ public class Fill( kri.rend.tech.Sorted ):
 		else: fbo.mask = 0
 		# spot shader
 		bu.dicts.Add( lc.dict )
-		bu.shader.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
+		bu.shader.add( '/light/bake_v', '/lib/tool_v', '/lib/quat_v' )
 		bu.shader.add( lc.getFillShader() )
 		bu.link()
 

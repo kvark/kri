@@ -33,7 +33,7 @@ public class Render( kri.rend.Basic ):
 		d = kri.shade.par.Dict()
 		d.var(pInd)
 		d.unit(pTex)
-		bu.shader.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v')
+		bu.shader.add('/zcull_v', '/pick_f', '/lib/tool_v', '/lib/quat_v')
 		bu.dicts.Add(d)
 		bv.shader.add('/copy_v', '/copy_f')
 		bv.dicts.Add(d)

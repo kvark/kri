@@ -34,13 +34,13 @@ public class Copy( Basic ):
 	public override def process(con as link.Basic) as void:
 		if con.activate(false):
 			kri.Ant.Inst.quad.draw(bu)
-	public def process(ln as link.Buffer, con as link.Basic) as void:
-		if not (ln and con):		return
-		if not con.activate(false):	return
-		if kri.Ant.Inst.gamma:
+	public def process(ln as link.Buffer, con as link.Basic) as bool:
+		if not (ln and con):		return	false
+		if not con.activate(false):	return	false
+		if kri.Ant.Inst.gamma and con.Frame.fixGamma:
 			tun.Value = ln.buf.at.color[0] as kri.buf.Texture
-			kri.Ant.Inst.quad.draw(bu)
-		else:	ln.blitTo(con)
+			return kri.Ant.Inst.quad.draw(bu)
+		return ln.blitTo(con)
 
 
 #---------	EARLY Z FILL	--------#
@@ -50,8 +50,7 @@ public class EarlyZ( tech.Sorted ):
 	public	offset	= 1f
 	public def constructor():
 		super('zcull')
-		# make shader
-		bu.shader.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v', '/lib/fixed_v' )
+		bu.shader.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v' )
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
@@ -90,7 +89,7 @@ public class Color( tech.Sorted ):
 	public fillDepth	= false
 	public def constructor():
 		super('color')
-		bu.shader.add( '/color_v','/color_f', '/lib/quat_v','/lib/tool_v','/lib/fixed_v' )
+		bu.shader.add( '/color_v','/color_f', '/lib/quat_v','/lib/tool_v' )
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu

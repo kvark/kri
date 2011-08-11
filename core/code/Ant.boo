@@ -141,7 +141,7 @@ public class Ant(IDisposable):
 		# shader library init
 		dataMan.register( shade.Loader() )
 		libShaders = List[of shade.Object]( dataMan.load[of shade.Object]('/lib/'+s)
-			for s in ('quat_v','tool_v','orient_v','fixed_v','math_f')).ToArray()
+			for s in ('quat_v','tool_v','orient_v','math_f')).ToArray()
 		# extensions init
 		loaders = load.Standard()
 		extensions.Add(loaders)

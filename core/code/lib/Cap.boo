@@ -22,6 +22,8 @@ public final class Capabilities:
 	public final elemVertices	as uint
 	public final contextVersion	as string
 	public final shadingVersion	as string
+	public final vendorName		as string
+	public final rendererName	as string
 	public final bones			as byte
 	
 	public static def Var(pn as GetPName) as int:
@@ -32,6 +34,8 @@ public final class Capabilities:
 	public def constructor(gl3 as bool):
 		contextVersion	= GL.GetString( StringName.Version )
 		shadingVersion	= GL.GetString( StringName.ShadingLanguageVersion )
+		vendorName		= GL.GetString( StringName.Vendor )
+		rendererName	= GL.GetString( StringName.Renderer )
 		drawBuffers		= Var( GetPName.MaxDrawBuffers )
 		multiSamples	= Var( GetPName.MaxSamples )
 		vertexAttribs	= Var( GetPName.MaxVertexAttribs )

@@ -98,17 +98,23 @@ public class Body:
 
 # Scene that holds entities, lights & cameras
 public class Scene:
-	[getter(Current)]
-	internal static current as Scene = null
-	public final name		as string
-	public pGravity			as kri.shade.par.Value[of Vector4]	= null
-	public backColor		= Graphics.Color4.Black
+	private		static	current	as Scene = null
+	public		final	name	as string
+	public		pGravity		as kri.shade.par.Value[of Vector4]	= null
+	public		backColor		= Graphics.Color4.Black
+	# properties
+	public static Current as Scene:
+		get: return current
+		set:
+			if current and value:
+				lib.Journal.Log("Scene: invalid change (${current}->${value})")
+			current = value
 	# content
-	public final entities	= List[of Entity]()
-	public final bodies		= List[of Body]()
-	public final lights		= List[of Light]()
-	public final cameras	= List[of Camera]()
-	public final particles	= List[of part.Emitter]()
+	public		final	entities	= List[of Entity]()
+	public		final	bodies		= List[of Body]()
+	public		final	lights		= List[of Light]()
+	public		final	cameras		= List[of Camera]()
+	public		final	particles	= List[of part.Emitter]()
 	# funcs
 	public def constructor(str as string):
 		name = str

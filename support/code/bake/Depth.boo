@@ -27,7 +27,7 @@ public class Update( kri.rend.Basic ):
 
 	public def constructor():
 		fbo.at.depth = kri.buf.Texture.Depth(0)
-		bu.shader.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v','/lib/fixed_v')
+		bu.shader.add('/light/bake_v','/empty_f','/lib/quat_v','/lib/tool_v')
 		bu.link()
 
 	public override def process(con as kri.rend.link.Basic) as void:

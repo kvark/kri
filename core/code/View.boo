@@ -24,7 +24,7 @@ public class View(IView):
 	
 	def IView.update() as void:
 		link = getLink()
-		Scene.current = scene
+		Scene.Current = scene
 		if cam and link:
 			cam.aspect = link.Frame.getInfo().Aspect
 		Ant.Inst.params.activate(cam)
@@ -35,7 +35,7 @@ public class View(IView):
 			link.activate(false)
 			link.ClearColor()
 		Camera.Current	= null
-		Scene.current	= null
+		Scene.Current	= null
 	
 	public def updateSize() as bool:
 		link = getLink()

@@ -1,11 +1,14 @@
 #version 150 core
 
+in	vec4	at_vertex;
+
 uniform struct Spatial	{
 	vec4 pos,rot;
-}s_cam;
+}s_view;
 
-vec3 fixed_trans(Spatial);
+vec3 trans_for(vec3,Spatial);
+
 
 vec3 mi_global()	{
-	return fixed_trans(s_cam);
+	return trans_for( at_vertex.xyz, s_view );
 }

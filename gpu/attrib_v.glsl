@@ -1,17 +1,20 @@
 #version 150 core
 
-in	vec3 at_normal;
-out	vec4 color;
+in	vec4	at_vertex;
+in	vec3	at_normal;
+out	vec4	color;
+
 
 uniform struct Spatial	{
-	vec4 pos,rot;
-}s_model,s_cam;
-uniform vec4 proj_cam;
+	vec4	pos,rot;
+}s_view;
 
-vec4 fixed_proj(Spatial,vec4);
+vec3 trans_for(vec3,Spatial);
+vec4 get_proj_cam(vec3);
 
 
 void main()	{
-	gl_Position = fixed_proj(s_cam,proj_cam);
+	vec3 vc = trans_for( at_vertex.xyz, s_view );
+	gl_Position = get_proj_cam(vc);
 	color = vec4(0.5*(at_normal+vec3(1.0)),1.0);
 }
