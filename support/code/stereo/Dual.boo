@@ -48,9 +48,10 @@ public class Proxy( kri.IView ):
 		c.offset.X = 0f
 		vin = xv	# make sure there is no offset here
 		off = c.unproject(vin)
-		c.offset.X = -eye * xv.X
+		c.offset.X = eye * xv.X
 		c.node = nEye
 		nEye.local.pos.X = eye * off.X
+		nEye.touch()
 		kri.Ant.Inst.params.activate(c)
 		# render
 		linkBuf.activate(true)

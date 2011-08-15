@@ -193,7 +193,7 @@ public class GladeApp:
 		ant.anim = al
 		rset = RenderSet( true, samples, eCorp.con )
 		rset.grDeferred.rBug.layer = -1
-		vProxy = support.stereo.Proxy(view,0.02f,0f)
+		vProxy = support.stereo.Proxy(view,0.02f,0.9f)
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
