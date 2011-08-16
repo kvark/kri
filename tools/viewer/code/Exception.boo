@@ -56,7 +56,7 @@ public class ExceptApp:
 		return response
 	
 	private def uploadString(uri as string, data as string) as FtpWebResponse:
-		bs = System.Text.Encoding.UTF8.GetBytes(textMessage.Text)
+		bs = System.Text.Encoding.UTF8.GetBytes(data)
 		return uploadData(uri,bs)
 	
 	private def uploadFile(uri as string, path as string) as FtpWebResponse:
