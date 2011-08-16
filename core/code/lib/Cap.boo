@@ -52,3 +52,11 @@ public final class Capabilities:
 		elemVertices	= Var( GetPName.MaxElementsVertices )
 		vertComponents	= Var( GetPName.MaxVertexUniformComponents )
 		bones = System.Math.Min( vertComponents>>3, 128 )
+	
+	public def getInfo() as string:
+		str = ''
+		str += "\nContext: ${contextVersion}"
+		str += "\nShading: ${shadingVersion}"
+		str += "\nVendor: ${vendorName}"
+		str += "\nRenderer: ${rendererName}"
+		return str

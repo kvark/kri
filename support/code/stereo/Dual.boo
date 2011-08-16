@@ -10,20 +10,18 @@ public class Merger( kri.rend.Basic ):
 	public	final texLef	= par.Texture('lef')
 	public	final texRit	= par.Texture('rit')
 	public	final bu		= Bundle()
-	public	final defMask	= Vector4(1f,0f,0f,0.5f)
 	
 	public def constructor():
+		# shader
 		d = par.Dict()
 		d.var(pmLef,pmRit)
 		d.unit(texLef,texRit)
 		bu.dicts.Add(d)
 		bu.shader.add('/copy_v','/stereo/merge_f')
-		setMask(defMask)
+		# masks
+		pmLef.Value	= Vector4(1f,0f,0f,0.5f)
+		pmRit.Value	= Vector4(0f,1f,1f,0.5f)
 		
-	public def setMask(m as Vector4) as void:
-		pmLef.Value	= m
-		pmRit.Value = Vector4.One-m
-	
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.activate(false)
 		kri.Ant.Inst.quad.draw(bu)
@@ -39,24 +37,33 @@ public class Proxy( kri.IView ):
 	private	final	nEye		= kri.Node('eye')
 	
 	public def constructor(v as kri.View, shift as single, focus as single):
+		//reference: paulbourke.net/texture_colour/anaglyph/
 		view = v
 		assert v
-		xv = Vector3(shift, 0f, focus)
+		xv = Vector3(shift, 0f, -1f)
 	
 	public def setEye(eye as int, pt as par.Texture) as void:
-		c = view.cam
+		proPlane = 1f
+		halfEye = 0.01f
+		c = view.cam	# unmodified camera
 		c.offset.X = 0f
-		vin = xv	# make sure there is no offset here
-		off = c.unproject(vin)
-		c.offset.X = eye * xv.X
+		vin = xv
+		#off = c.unproject(vin)
+		#c.offset.X = eye * xv.X
+		#nEye.local.pos.X = eye * 0.1f
+		nEye.local.pos.X = eye * halfEye
+		vin = Vector3( halfEye, 0f, -proPlane )
+		c.offset.X = eye * c.project(vin).X
+		nEye.Parent = c.node
 		c.node = nEye
-		nEye.local.pos.X = eye * off.X
-		nEye.touch()
 		kri.Ant.Inst.params.activate(c)
 		# render
 		linkBuf.activate(true)
 		view.ren.process(linkBuf)
 		pt.Value = linkBuf.Input
+		# cleanup
+		c.node = nEye.Parent
+		c.offset = Vector3.Zero
 		
 	def kri.IView.update() as void:
 		c = view.cam
@@ -66,14 +73,11 @@ public class Proxy( kri.IView ):
 		# prepare
 		kri.Scene.Current = view.scene
 		view.cam.aspect = linkBuf.Frame.getInfo().Aspect
-		nEye.Parent = c.node
-		# render
+		# render eyes
 		setEye(0-1, rMerge.texLef )	# left
 		setEye(0+1, rMerge.texRit )	# right
+		# merge
 		rMerge.process(linkScreen)
-		# cleanup
-		c.offset = nEye.local.pos = Vector3.Zero
-		c.node = nEye.Parent
 		kri.Scene.Current = null
 	
 	def kri.IView.resize(wid as int, het as int) as bool:

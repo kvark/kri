@@ -38,6 +38,7 @@ public class GladeApp:
 	private	final	view	= kri.ViewScreen()
 	private	final	al		= kri.ani.Scheduler()
 	private	final	objTree	= Gtk.TreeStore(object)
+	private	final	exception	= ExceptApp()
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private final	dialog	as Gtk.MessageDialog
 	public	final	gw		as Gtk.GLWidget
@@ -56,7 +57,7 @@ public class GladeApp:
 		all = log.flush()
 		if not all: return false
 		gw.Visible = false
-		showMessage( Gtk.MessageType.Warning, all )
+		showMessage( Gtk.MessageType.Info, all )
 		gw.Visible = true
 		return true
 	
@@ -179,8 +180,8 @@ public class GladeApp:
 	# signals
 	
 	public def onException(args as GLib.UnhandledExceptionArgs) as void:
-		args.ExitApplication = true
-		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
+		gw.Visible = args.ExitApplication = false
+		exception.init( args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		samples = byte.Parse(config.ask('InnerSamples','0'))
@@ -193,7 +194,7 @@ public class GladeApp:
 		ant.anim = al
 		rset = RenderSet( true, samples, eCorp.con )
 		rset.grDeferred.rBug.layer = -1
-		vProxy = support.stereo.Proxy(view,0.02f,0.9f)
+		vProxy = support.stereo.Proxy(view,0.01f,0f)
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -202,6 +203,8 @@ public class GladeApp:
 		Gtk.Application.Quit()
 	
 	public def onIdle() as bool:
+		if exception.show():
+			Gtk.Application.Quit()
 		if butDraw.Active:
 			gw.QueueDraw()
 		elif window.Title != fps.title:
@@ -228,6 +231,7 @@ public class GladeApp:
 		view.scene = null
 		view.cam = null
 		objTree.Clear()
+		exception.sceneFile = null
 		gw.QueueDraw()
 		statusBar.Push(0, 'Cleared')
 	
@@ -239,6 +243,7 @@ public class GladeApp:
 		if rez != 0:
 			statusBar.Push(0, 'Load cancelled')
 			return
+		exception.sceneFile = dOpen.Filename
 		load( dOpen.Filename )
 		gw.QueueDraw()
 	
@@ -405,7 +410,7 @@ public class GladeApp:
 		xml.Autoconnect(self)
 		window.DeleteEvent	+= onDelete
 		dialog = Gtk.MessageDialog( window, Gtk.DialogFlags.Modal,
-			Gtk.MessageType.Warning, Gtk.ButtonsType.Ok, null )
+			Gtk.MessageType.Info, Gtk.ButtonsType.Ok, null )
 		dialog.WidthRequest = 400
 		dialog.HeightRequest = 300
 		# make toolbar
