@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="Exception.boo" />
+    <Compile Include="Logic.boo" />
     <Compile Include="Main.boo" />
     <Compile Include="Render.boo" />
     <Compile Include="Tool.boo" />

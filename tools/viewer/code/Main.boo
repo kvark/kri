@@ -14,7 +14,7 @@ private struct Launcher:
 		if initPipe:	ga.setPipe(initPipe)
 		if initScene:	ga.load(initScene)
 		if doUpdate:	ga.setDraw()
-		if doPlay:		ga.playAll()
+		if doPlay:		ga.logic.playAll()
 	
 	# create
 	public def constructor(argv as (string)):

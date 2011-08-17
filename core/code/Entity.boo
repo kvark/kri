@@ -185,8 +185,9 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	public Visible[p as Projector] as bool:
 		get:
 			rez = false
-			tr = frameVisible.TryGetValue(p,rez)
-			return visible and (rez or not tr)
+			return rez	if not p
+			tr = not frameVisible.TryGetValue(p,rez)
+			return visible and (tr or rez)
 	public VisibleCam as bool:
 		get: return Visible[Camera.Current]
 	public CombinedAttribs as vb.Dict:

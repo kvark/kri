@@ -26,15 +26,17 @@
                 <property name="icon-size">6</property>
               </widget>
               <packing>
+                <property name="expand">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
               <widget class="GtkLabel" id="labelTop">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Oops! Something bad happened!
-You can help the author to fix it by hitting 'Report'.
-Thank you!</property>
+                <property name="label" translatable="yes">&lt;b&gt;Oops! Something bad happened!&lt;/b&gt;
+The message is saved in &lt;i&gt;exception.txt&lt;/i&gt;. You can help the author to fix it by hitting &lt;i&gt;Report&lt;/i&gt;.
+Include your email into signature if you want to be contacted. Thank you!</property>
+                <property name="use_markup">True</property>
               </widget>
               <packing>
                 <property name="position">1</property>

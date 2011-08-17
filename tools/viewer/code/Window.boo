@@ -31,19 +31,13 @@ public class GladeApp:
 	[Glade.Widget]	emiStartBut		as Gtk.Button
 	[Glade.Widget]	renderCombo		as Gtk.ComboBox
 	
-	private	final	log		= kri.lib.Journal()
-	private	final	config	= kri.lib.Config('kri.conf')
-	private final	options	= kri.lib.OptionReader(config)
-	private final	fps		= kri.FpsCounter(1.0,'Viewer')
-	private	final	view	= kri.ViewScreen()
-	private	final	al		= kri.ani.Scheduler()
-	private	final	objTree	= Gtk.TreeStore(object)
+	private	final	journal	= kri.lib.Journal()
 	private	final	exception	= ExceptApp()
+	private final	fps		= kri.FpsCounter(1.0,'Viewer')
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private final	dialog	as Gtk.MessageDialog
 	public	final	gw		as Gtk.GLWidget
-	private	vProxy	as kri.IView	= null
-	private rset	as RenderSet	= null
+	public	final	logic	= Logic()
 	private	curObj	as object		= null
 	private	curIter	= Gtk.TreeIter.Zero
 	
@@ -54,128 +48,27 @@ public class GladeApp:
 		dialog.Hide()
 	
 	private def flushJournal() as bool:
-		all = log.flush()
+		all = journal.flush()
 		if not all: return false
 		gw.Visible = false
 		showMessage( Gtk.MessageType.Info, all )
 		gw.Visible = true
 		return true
 	
-	private def resetScene() as void:
-		if not view.scene:	return
-		for e in view.scene.entities:
-			e.frameVisible.Clear()
-		#for l in view.scene.lights:
-		#	l.depth = null
-	
-	private def playRecord(it as Gtk.TreeIter) as kri.ani.data.Record:
-		par = Gtk.TreeIter.Zero
-		objTree.IterParent(par,it)
-		pl = objTree.GetValue(par,0) as kri.ani.data.Player
-		rec = objTree.GetValue(it,0) as kri.ani.data.Record
-		al.add( kri.ani.data.Anim(pl,rec) )
-		return rec
-	
-	private def addPlayer(par as Gtk.TreeIter, ob as object) as void:
-		pl = ob as kri.ani.data.Player
-		if not pl: return
-		for ani in pl.anims:
-			objTree.AppendValues(par,ani)
-	
-	private def addObject(par as Gtk.TreeIter, ob as object) as Gtk.TreeIter:
-		if not ob:	return par
-		if par == Gtk.TreeIter.Zero:
-			it = objTree.AppendValues(ob)
-		else:
-			it = objTree.AppendValues(par,ob)
-		on = ob as kri.INoded
-		if on:	addObject(it, on.Node)
-		me = ob as kri.IMeshed
-		if me:	addObject(it, me.Mesh)
-		addPlayer(it,ob)
-		return it
-	
-	private def addObject(ob as object) as Gtk.TreeIter:
-		return addObject( Gtk.TreeIter.Zero, ob )
-		
-	private def updateList() as void:
-		objTree.Clear()
-		if not view.scene:
-			return
-		for cam in view.scene.cameras:
-			addObject(cam)
-		for lit in view.scene.lights:
-			addObject(lit)
-		for ent in view.scene.entities:
-			#ent.tags.Add( kri.rend.box.Tag() )
-			it = addObject(ent)
-			addObject( it, ent.store )
-			for tag in ent.tags:
-				td = tag as kri.ITagData
-				if td:	addObject(it,td.Data)
-		for par in view.scene.particles:
-			it = addObject(par)
-			addObject( it, par.owner )
-	
 	public def load(path as string) as void:
-		rset.grCull.con.reset()
-		pos = path.LastIndexOfAny((char('/'),char('\\')))
-		fdir = path.Substring(0,pos)
-		# load scene
-		kri.Ant.Inst.loaders.materials.prefix = fdir
-		kri.load.image.Basic.Compressed = true
-		loader = kri.load.Native()
-		at = loader.read(path)
-		view.scene = at.scene
-		rset.grCull.con.fillScene(at.scene)
-		if at.scene.cameras.Count:	# set camera
-			view.cam = at.scene.cameras[0]
+		str = logic.load(path)
 		# notify
-		updateList()
+		logic.updateList()
 		flushJournal()
-		statusBar.Push(0, 'Loaded ' + path.Substring(pos+1) )
-	
-	public def playAll() as void:
-		al.clear()
-		used = List[of object]()
-		tw = TreeWalker(objTree)
-		while tw.next():
-			ob = tw.Value
-			if ob as kri.ani.data.Record:
-				par = tw.Parent
-				if par not in used:
-					used.Add(par)
-					playRecord( tw.Iter )
-			emi = ob as kri.part.Emitter
-			if emi:
-				emi.filled = false
-				al.add(emi)
-		statusBar.Push(0, 'Started all scene animations')
+		statusBar.Push(0, 'Loaded '+str)
 	
 	public def setDraw() as void:
 		butDraw.Active = true
+		
+	public def setPipe(name as string) as void:
+		cur = logic.selectPipe( renderCombo.Model, name )
+		renderCombo.Active = cur
 	
-	public def setPipe(str as string) as int:
-		cur = 0
-		it as Gtk.TreeIter
-		md = renderCombo.Model
-		rez = md.GetIterFirst(it)
-		while rez:
-			sx = md.GetValue(it,0) as string
-			if sx == str:
-				renderCombo.Active = cur
-				return cur
-			rez = md.IterNext(it)
-			++cur
-		kri.lib.Journal.Log("Viewer: pipeline '${str}' not found");
-		return -1
-
-	public def getSceneStats() as string:
-		if not view.scene: return ''
-		total = view.scene.entities.Count
-		active = view.countVisible()
-		return ", ${active}/${total} visible"
-
 	#--------------------	
 	# signals
 	
@@ -184,21 +77,11 @@ public class GladeApp:
 		exception.init( args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
-		samples = byte.Parse(config.ask('InnerSamples','0'))
-		ant = kri.Ant( config, options.debug, options.gamma )
-		eLayer	= support.layer.Extra()
-		eSkin	= support.skin.Extra()
-		eCorp	= support.corp.Extra()
-		eMorph	= support.morph.Extra()
-		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
-		ant.anim = al
-		rset = RenderSet( true, samples, eCorp.con )
-		rset.grDeferred.rBug.layer = -1
-		vProxy = support.stereo.Proxy(view,0.01f,0f)
+		logic.init()
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
-		rset = null
+		logic.quit()
 		(kri.Ant.Inst as System.IDisposable).Dispose()
 		Gtk.Application.Quit()
 	
@@ -215,22 +98,18 @@ public class GladeApp:
 		core = kri.Ant.Inst
 		if not core:	return
 		core.update(1)
-		mv = (view,vProxy)[butStereo.Active]
-		mv.update()
+		logic.frame(butStereo.Active)
 		if butDraw.Active and fps.update(core.Time):
-			window.Title = fps.gen() + getSceneStats()
+			window.Title = fps.gen() + logic.getSceneStats()
 		flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
 		r = args.Allocation
-		mv = (view,vProxy)[vProxy!=null]
-		mv.resize( r.Width, r.Height )
+		logic.size( r.Width, r.Height )
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
-		view.scene = null
-		view.cam = null
-		objTree.Clear()
+		logic.clear()
 		exception.sceneFile = null
 		gw.QueueDraw()
 		statusBar.Push(0, 'Cleared')
@@ -248,77 +127,54 @@ public class GladeApp:
 		gw.QueueDraw()
 	
 	public def onButPlay(o as object, args as System.EventArgs) as void:
-		playAll()
+		logic.playAll()
+		statusBar.Push(0, 'Started all scene animations')
 	
 	public def onSelectObj(o as object, args as System.EventArgs) as void:
 		curIter = Gtk.TreeIter()
 		if not objView.Selection.GetSelected(curIter):
 			return
-		curObj = obj = objTree.GetValue(curIter,0)
-		propertyBook.Page = 0
+		curObj = obj = logic.TreeModel.GetValue(curIter,0)
+		page = 0
 		if (ent = obj as kri.Entity):
 			entVisibleBut.Active = ent.visible
 			entFrameVisBut.Active = ent.VisibleCam
-			propertyBook.Page = 1
+			page = 1
 		if obj isa kri.Node:
-			propertyBook.Page = 2
+			page = 2
 		if obj isa kri.Material:
-			propertyBook.Page = 3
+			page = 3
 		if (cam = obj as kri.Camera):
 			camFovLabel.Text = 'Fov: ' + cam.fov
 			camAspectLabel.Text = 'Aspect: ' + cam.aspect
-			camActiveBut.Active = view.cam == cam
-			propertyBook.Page = 4
+			camActiveBut.Active = (logic.ViewCam == cam)
+			page = 4
 		if obj isa kri.Light:
-			propertyBook.Page = 5
+			page = 5
 		if (rec = obj as kri.ani.data.Record):
 			recNumLabel.Text = 'Channels: ' + rec.channels.Count
-			propertyBook.Page = 6
+			page = 6
 		if (meta = obj as kri.meta.Advanced):
 			metaUnitLabel.Text = 'Unit: ' + meta.Unit
 			metaShaderLabel.Text = ''
 			if meta.Shader:
 				metaShaderLabel.Text = meta.Shader.Description
-			propertyBook.Page = 7
+			page = 7
 		if (mesh = obj as kri.Mesh):
 			meshModeLabel.Text = mesh.drawMode.ToString()
 			meshVertLabel.Text = 'nVert: ' + mesh.nVert
 			meshPolyLabel.Text = 'nPoly: ' + mesh.nPoly
-			propertyBook.Page = 8
+			page = 8
 		if (box = obj as AtBox):
 			attrTypeLabel.Text = box.info.type.ToString()
 			attrSizeLabel.Text = 'Size: ' + box.info.size + ('','i')[box.info.integer]
-			propertyBook.Page = 9
+			page = 9
 		if obj isa kri.part.Emitter:
-			propertyBook.Page = 10
+			page = 10
+		propertyBook.Page = page
 	
 	public def onActivateObj(o as object, args as Gtk.RowActivatedArgs) as void:
-		par = it = Gtk.TreeIter()
-		objTree.GetIter(par,args.Path)
-		rez = objTree.IterChildren(it,par)
-		while rez:
-			ox = objTree.GetValue(it,0)
-			if	(ox isa kri.meta.AdUnit) or (ox isa kri.meta.Advanced) or\
-				(ox isa kri.ani.data.IChannel) or (ox isa AtBox) or (ox isa kri.part.Behavior):
-				rez = objTree.Remove(it)
-			else:
-				rez = objTree.IterNext(it)
-		ox = objTree.GetValue(par,0)
-		if (mat = ox as kri.Material):
-			for unit in mat.unit:
-				objTree.AppendValues(par,unit)
-			for meta in mat.metaList:
-				objTree.AppendValues(par,meta)
-		if (rec = ox as kri.ani.data.Record):
-			for ch in rec.channels:
-				objTree.AppendValues(par,ch)
-		if (vs = ox as kri.vb.Storage):
-			for vat in vs.buffers:
-				for ai in vat.Semant:
-					objTree.AppendValues(par,AtBox(ai))
-		if (own = ox as kri.part.Manager):
-			for beh in own.behos:
-				objTree.AppendValues(par,beh)
+		logic.activate( args.Path )
 		objView.ExpandRow( args.Path, true )
 
 	
@@ -385,11 +241,6 @@ public class GladeApp:
 
 	#--------------------
 	# construction
-			
-	private def makeWidget() as Gtk.GLWidget:
-		gm = options.genMode(32,24)
-		fl = options.genFlags()
-		return Gtk.GLWidget( gm, options.verMajor, options.verMinor, fl )
 	
 	private def makeColumn() as Gtk.TreeViewColumn:
 		col = Gtk.TreeViewColumn()
@@ -418,7 +269,7 @@ public class GladeApp:
 		butOpen.Clicked 	+= onButOpen
 		butPlay.Clicked		+= onButPlay
 		butProfile.Clicked	+= do(o as object, args as System.EventArgs):
-			showMessage( Gtk.MessageType.Info, rset.rMan.genReport() )
+			showMessage( Gtk.MessageType.Info, logic.report() )
 		dOpen = Gtk.FileChooserDialog('Select KRI scene to load:',
 			window, Gtk.FileChooserAction.Open )
 		dOpen.AddButton('Load',0)
@@ -428,35 +279,30 @@ public class GladeApp:
 		# make panel
 		propertyBook.ShowTabs = false
 		objView.AppendColumn( makeColumn() )
-		objView.Model = objTree
+		objView.Model = logic.TreeModel
 		objView.CursorChanged	+= onSelectObj
 		objView.RowActivated	+= onActivateObj
 		camActiveBut.Clicked	+= do(o as object, args as System.EventArgs):
 			if not camActiveBut.Active:	return
-			view.cam = curObj as kri.Camera
+			logic.ViewCam = curObj as kri.Camera
 		entCleanBut.Clicked		+= do(o as object, args as System.EventArgs):
 			(curObj as kri.Entity).deleteOwnData()
 		entVisibleBut.Clicked	+= do(o as object, args as System.EventArgs):
 			(curObj as kri.Entity).visible = entVisibleBut.Active
 		recPlayBut.Clicked		+= do(o as object, args as System.EventArgs):
-			rec = playRecord(curIter)
+			rec = logic.playRecord(curIter)
 			statusBar.Push(0, "Animation '${rec.name}' started")
 		emiStartBut.Clicked		+= do(o as object, args as System.EventArgs):
 			emi = curObj as kri.part.Emitter
-			emi.filled = false
-			al.remove(emi)
-			emi.filled = false
-			al.add(emi)
+			logic.start(emi)
 			statusBar.Push(0, "Particle '${emi.name}' started")
 		renderCombo.Changed		+= do(o as object, args as System.EventArgs):
 			str = renderCombo.ActiveText
-			view.ren = rset.gen(str)
-			resetScene()
+			logic.changePipe(str)
 			statusBar.Push(0, 'Pipeline switched to '+str)
-			view.updateSize()
 			gw.QueueDraw()
 		# add gl widget
-		drawBox.Child = gw = makeWidget()
+		drawBox.Child = gw = logic.makeWidget()
 		gw.Initialized		+= onInit
 		gw.RenderFrame		+= onFrame
 		gw.SizeAllocated	+= onSize
