@@ -26,11 +26,6 @@ public class ExceptApp:
 		dialog.Title = 'Response from FTP server:'
 		textMessage.Text = null
 	
-	public def init(str as string) as void:
-		textMessage.Text = str
-		System.IO.File.WriteAllText( 'exception.txt', str )
-
-	
 	private def encode(bar as (byte)) as string:
 		return string.Join('',
 			List[of string](b.ToString('X2') for b in bar).
@@ -64,14 +59,14 @@ public class ExceptApp:
 		return uploadData(uri,bs)
 
 	
-	public def show() as bool:
-		if not textMessage.Text:
-			return false
+	public def show(str as string) as bool:
+		textMessage.Text = str
+		System.IO.File.WriteAllText( 'exception.txt', str )
 		stage = ''
 		while exceptionDialog.Run() == doResp:
 			response as FtpWebResponse = null
 			subEx = null
-			bs = System.Text.Encoding.UTF8.GetBytes(textMessage.Text)
+			bs = System.Text.Encoding.UTF8.GetBytes(str)
 			hash = cryptor.ComputeHash(bs)
 			path = ftpHost + encode(hash)
 			stage = 'MakeDir'
@@ -81,7 +76,7 @@ public class ExceptApp:
 			except e as System.Exception:
 				break
 			stage = 'UploadMessage'
-			response = uploadString( path+'/ex.txt', textMessage.Text )
+			response = uploadString( path+'/ex.txt', str )
 			if subEx: break
 			info = "Name: ${entryName.Text}\n${kri.Ant.Inst.caps.getInfo()}"
 			stage = 'UploadInfo'
@@ -105,5 +100,4 @@ public class ExceptApp:
 			dialog.Run()
 			dialog.Hide()
 		exceptionDialog.Hide()
-		textMessage.Text = null
 		return true

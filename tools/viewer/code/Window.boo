@@ -73,8 +73,10 @@ public class GladeApp:
 	# signals
 	
 	public def onException(args as GLib.UnhandledExceptionArgs) as void:
-		gw.Visible = args.ExitApplication = false
-		exception.init( args.ExceptionObject.ToString() )
+		gw.Visible = false
+		args.ExitApplication = true
+		GLib.Idle.Remove(onIdle)
+		exception.show( args.ExceptionObject.ToString() )
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		logic.init()
@@ -86,8 +88,6 @@ public class GladeApp:
 		Gtk.Application.Quit()
 	
 	public def onIdle() as bool:
-		if exception.show():
-			Gtk.Application.Quit()
 		if butDraw.Active:
 			gw.QueueDraw()
 		elif window.Title != fps.title:
@@ -177,10 +177,9 @@ public class GladeApp:
 		logic.activate( args.Path )
 		objView.ExpandRow( args.Path, true )
 
-	
 	#--------------------
 	# visuals
-
+	
 	private def objFunc(col as Gtk.TreeViewColumn, cell as Gtk.CellRenderer, model as Gtk.TreeModel, iter as Gtk.TreeIter):
 		obj = model.GetValue(iter,0)
 		text = obj.GetType().ToString()
