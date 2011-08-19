@@ -31,6 +31,13 @@ public class ExceptApp:
 			List[of string](b.ToString('X2') for b in bar).
 			ToArray())
 	
+	private def getSystemInfo() as string:
+		os		= System.Environment.OSVersion.VersionString
+		net		= System.Environment.Version.ToString()
+		host	= System.Environment.MachineName
+		user	= "${System.Environment.UserName}@${System.Environment.UserDomainName}"
+		return "\nOS: ${os}\nPlatform: ${net}\nHost: ${host}\nUser: ${user}"
+	
 	private def makeRequest(uri as string, m as string) as FtpWebRequest:
 		r = FileWebRequest.Create(uri) as FtpWebRequest
 		r.UseBinary = r.KeepAlive = true
@@ -57,7 +64,7 @@ public class ExceptApp:
 	private def uploadFile(uri as string, path as string) as FtpWebResponse:
 		bs = System.IO.File.ReadAllBytes(path)
 		return uploadData(uri,bs)
-
+	
 	
 	public def show(str as string) as bool:
 		textMessage.Text = str
@@ -79,7 +86,9 @@ public class ExceptApp:
 			stage = 'UploadMessage'
 			response = uploadString( path+'/ex.txt', str )
 			if subEx: break
-			info = "Signature: ${entryName.Text}\n${kri.Ant.Inst.caps.getInfo()}"
+			sysInfo = getSystemInfo()
+			glInfo = kri.Ant.Inst.caps.getInfo()
+			info = "Signature: ${entryName.Text}\n${sysInfo}\n${glInfo}"
 			stage = 'UploadInfo'
 			response = uploadString( path+'/info.txt', info )
 			if subEx: break
