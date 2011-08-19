@@ -64,6 +64,9 @@ public class GladeApp:
 	
 	public def setDraw() as void:
 		butDraw.Active = true
+	
+	public def setStereo() as void:
+		butStereo.Active = true
 		
 	public def setPipe(name as string) as void:
 		cur = logic.selectPipe( renderCombo.Model, name )

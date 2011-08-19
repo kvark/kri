@@ -74,11 +74,12 @@ public class ExceptApp:
 			try:
 				response = req.GetResponse() as FtpWebResponse
 			except e as System.Exception:
+				#if not response:	subEx = e
 				break
 			stage = 'UploadMessage'
 			response = uploadString( path+'/ex.txt', str )
 			if subEx: break
-			info = "Name: ${entryName.Text}\n${kri.Ant.Inst.caps.getInfo()}"
+			info = "Signature: ${entryName.Text}\n${kri.Ant.Inst.caps.getInfo()}"
 			stage = 'UploadInfo'
 			response = uploadString( path+'/info.txt', info )
 			if subEx: break

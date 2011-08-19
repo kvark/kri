@@ -7,6 +7,7 @@ private struct Launcher:
 	public	final	initScene	as string
 	public	final	initPipe	as string
 	public	final	doUpdate	as bool
+	public	final	doStereo	as bool
 	public	final	doPlay		as bool
 	
 	# init
@@ -14,12 +15,13 @@ private struct Launcher:
 		if initPipe:	ga.setPipe(initPipe)
 		if initScene:	ga.load(initScene)
 		if doUpdate:	ga.setDraw()
+		if doStereo:	ga.setStereo()
 		if doPlay:		ga.logic.playAll()
 	
 	# create
 	public def constructor(argv as (string)):
 		initScene = initPipe = null
-		doUpdate = doPlay = false
+		doUpdate = doStereo = doPlay = false
 		# parse command line
 		oScene	= '-scene='
 		oPipe	= '-pipe='
@@ -28,8 +30,9 @@ private struct Launcher:
 				initPipe	= ar.Substring( oPipe.Length )
 			elif ar.StartsWith(oScene):
 				initScene	= ar.Substring( oScene.Length )
-			elif ar == '-draw':	doUpdate = true
-			elif ar == '-play':	doPlay = true
+			elif ar == '-draw':		doUpdate = true
+			elif ar == '-stereo':	doStereo = true
+			elif ar == '-play':		doPlay = true
 		# create app
 		ga = GladeApp()
 		ga.gw.Initialized += onInit
