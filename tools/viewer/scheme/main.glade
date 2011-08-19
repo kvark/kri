@@ -10,8 +10,9 @@
     <property name="default_width">640</property>
     <property name="default_height">400</property>
     <child>
-      <widget class="GtkHBox" id="hbox4">
+      <widget class="GtkHPaned" id="hpanedMain">
         <property name="visible">True</property>
+        <property name="position">420</property>
         <child>
           <widget class="GtkVBox" id="vBox1">
             <property name="visible">True</property>
@@ -165,7 +166,8 @@ Anaglyph</property>
             </child>
           </widget>
           <packing>
-            <property name="position">0</property>
+            <property name="resize">False</property>
+            <property name="shrink">True</property>
           </packing>
         </child>
         <child>
@@ -595,9 +597,8 @@ Anaglyph</property>
             </child>
           </widget>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
+            <property name="resize">True</property>
+            <property name="shrink">True</property>
           </packing>
         </child>
       </widget>
