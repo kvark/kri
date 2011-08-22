@@ -40,6 +40,7 @@ public class GladeApp:
 	public	final	logic	= Logic()
 	private	curObj	as object		= null
 	private	curIter	= Gtk.TreeIter.Zero
+	private	flushCount	= 0
 	
 	private def showMessage(mType as Gtk.MessageType, text as string) as void:
 		dialog.MessageType = mType
@@ -49,7 +50,7 @@ public class GladeApp:
 	
 	private def flushJournal() as bool:
 		all = journal.flush()
-		if not all: return false
+		if not all:			return false
 		gw.Visible = false
 		showMessage( Gtk.MessageType.Info, all )
 		gw.Visible = true
@@ -104,15 +105,19 @@ public class GladeApp:
 		logic.frame(butStereo.Active)
 		if butDraw.Active and fps.update(core.Time):
 			window.Title = fps.gen() + logic.getSceneStats()
-		flushJournal()
+		if ++flushCount<3:
+			flushJournal()
 	
 	public def onSize(o as object, args as Gtk.SizeAllocatedArgs) as void:
 		r = args.Allocation
 		logic.size( r.Width, r.Height )
+		flushJournal()
 		statusBar.Push(0, 'Resized into '+r.Width+'x'+r.Height )
 	
 	public def onButClear(o as object, args as System.EventArgs) as void:
+		flushCount = 0
 		logic.clear()
+		flushJournal()
 		exception.sceneFile = null
 		gw.QueueDraw()
 		statusBar.Push(0, 'Cleared')
@@ -125,6 +130,7 @@ public class GladeApp:
 		if rez != 0:
 			statusBar.Push(0, 'Load cancelled')
 			return
+		flushCount = 0
 		exception.sceneFile = dOpen.Filename
 		load( dOpen.Filename )
 		gw.QueueDraw()
