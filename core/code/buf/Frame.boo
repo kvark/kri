@@ -64,6 +64,7 @@ public class Frame:
 		GL.BindFramebuffer( FramebufferTarget.Framebuffer, handle )
 		FramebufferSrgb = fixGamma
 		GL.Viewport(rect)
+		kri.Ant.Inst.stats.target()
 		kri.Ant.Inst.params.activate(pl)
 		return true
 	

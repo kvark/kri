@@ -113,6 +113,7 @@ public class Mesh( vb.Storage ):
 		elif nob != 1:
 			GL.DrawArraysInstanced(		drawMode, polySize*off, polySize*num, nob)
 		else:	GL.DrawArrays(			drawMode, polySize*off, polySize*num )
+		kri.Ant.Inst.stats.draw( polySize*num*nob )
 		return true
 
 	# draw all polygons once
@@ -123,6 +124,7 @@ public class Mesh( vb.Storage ):
 		if nVert>kri.Ant.Inst.caps.elemVertices:
 			return false
 		GL.DrawArrays( BeginMode.Points, 0, nVert )
+		kri.Ant.Inst.stats.draw(nVert)
 		return true
 	# transform points with feedback
 	protected def draw(tf as TransFeedback) as bool:

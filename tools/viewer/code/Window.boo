@@ -33,7 +33,7 @@ public class GladeApp:
 	
 	private	final	journal	= kri.lib.Journal()
 	private	final	exception	= ExceptApp()
-	private final	fps		= kri.FpsCounter(1.0,'Viewer')
+	private final	stat	= kri.lib.StatPeriod('Viewer',1.0)
 	private	final	dOpen	as Gtk.FileChooserDialog
 	private final	dialog	as Gtk.MessageDialog
 	public	final	gw		as Gtk.GLWidget
@@ -94,8 +94,8 @@ public class GladeApp:
 	public def onIdle() as bool:
 		if butDraw.Active:
 			gw.QueueDraw()
-		elif window.Title != fps.title:
-			window.Title = fps.title
+		elif window.Title != stat.title:
+			window.Title = stat.title
 		return true
 	
 	public def onFrame(o as object, args as System.EventArgs) as void:
@@ -103,8 +103,10 @@ public class GladeApp:
 		if not core:	return
 		core.update(1)
 		logic.frame(butStereo.Active)
-		if butDraw.Active and fps.update(core.Time):
-			window.Title = fps.gen() + logic.getSceneStats()
+		stat.frame()
+		str = stat.gather()
+		if butDraw.Active and str:
+			window.Title = str + logic.getSceneStats()
 		if ++flushCount<3:
 			flushJournal()
 	

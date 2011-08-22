@@ -10,10 +10,10 @@ import OpenTK
 #-----------------------------------------------------------#
 
 public class Window( GameWindow ):
-	public final views	= List[of IView]()	# *View
-	public final ticks	as uint				# Ticks per frame
-	public final core	as Ant				# KRI Core
-	private final fps	as FpsCounter		# FPS counter
+	public	final views	= List[of IView]()	# *View
+	public	final ticks	as uint				# Ticks per frame
+	public	final core	as Ant				# KRI Core
+	private final stat	as lib.StatPeriod	# Stat counter
 	
 	public PointerNdc as Vector3:
 		get: return Vector3.Multiply( Vector3(
@@ -43,9 +43,9 @@ public class Window( GameWindow ):
 		super(wid,het, gmode, title, gameFlags, dd, opt.verMajor, opt.verMinor, flags)
 		ticks	= uint.Parse(	conf.ask('FrameTicks','0') )
 		period	= single.Parse(	conf.ask('StatPeriod','1.0') )
-		fps = FpsCounter(period,title)
 		core = Ant( conf, opt.debug, opt.gamma )
-		
+		core.stats = stat = lib.StatPeriod(title,period)
+
 
 	public override def Dispose() as void:
 		views.Clear()
@@ -67,11 +67,13 @@ public class Window( GameWindow ):
 		# update animations
 		core.update(ticks)
 		# update counter
-		if fps.update(core.Time):
-			Title = fps.gen()
+		str = stat.gather()
+		if str: Title=str
 		# redraw views
 		for v in views:
 			v.update()
+		# update stats
+		core.stats.frame()
 
 
 #-----------------------------------------------------------#
@@ -96,6 +98,8 @@ public class Ant(IDisposable):
 	public Time as double:
 		get: return sw.Elapsed.TotalSeconds
 	
+	# statistics
+	public stats	= lib.StatBase()
 	# techniques
 	public final techniques	= Dictionary[of string,rend.Basic]()
 	# extensions
