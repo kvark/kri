@@ -24,10 +24,13 @@ public class Statistic(StatBase):
 		tMax = 0.0
 	
 	public virtual def gather() as string:
-		time = kri.Ant.Inst.Time - tStart
-		fps = cast(int, nFrame / time)
-		fmx = cast(int, tMax*1000.0)
-		return "${fps} fps, ${fmx}ms max"
+		time	= kri.Ant.Inst.Time - tStart
+		fps		= cast(int, nFrame / time)
+		fmax	= cast(int, tMax*1000.0)
+		cDraw	= nDraw		/ nFrame
+		cInd	= nInd		/ nFrame
+		cTarg	= nTarget	/ nFrame
+		return "${fps} fps, ${fmax}ms max, ${cDraw} calls, ${cInd} indices, ${cTarg} targets"
 
 	public override	def frame() as void:
 		++nFrame

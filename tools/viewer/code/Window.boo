@@ -84,6 +84,7 @@ public class GladeApp:
 	
 	public def onInit(o as object, args as System.EventArgs) as void:
 		logic.init()
+		kri.Ant.Inst.stats = stat
 		gw.QueueResize()
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
@@ -102,7 +103,7 @@ public class GladeApp:
 		core = kri.Ant.Inst
 		if not core:	return
 		core.update(1)
-		logic.frame(butStereo.Active)
+		logic.frame( butStereo.Active )
 		stat.frame()
 		str = stat.gather()
 		if butDraw.Active and str:
