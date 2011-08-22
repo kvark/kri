@@ -14,7 +14,7 @@ def calc_TBN(verts, uvs):
 		ta = uvs[0][1] - uvs[0][0]
 		tb = uvs[0][2] - uvs[0][0]
 		tan = va*tb.y - vb*ta.y
-		if tan.dot(tan)>0.0:
+		if tan.length_squared>0.0:
 			bit = vb*ta.x - va*tb.x
 			n0 = tan.cross(bit)
 			hand = (-1.0 if n0.dot(n1) < 0.0 else 1.0)
@@ -54,7 +54,7 @@ class Face:
 		xuv	= tuple(tuple( layer[i]	for i in ind ) for layer in uves)
 		color	= tuple(tuple( layer[i]	for i in ind ) for layer in colors)
 		t,b,n,hand,nv = calc_TBN(self.v, xuv)
-		self.wes = tuple( 3 * [0.1+nv.dot(nv)] )
+		self.wes = tuple( 3 * [0.1+nv.length_squared] )
 		if Settings.putQuat and t != None:
 			self.ta = t.normalized()
 		else:	self.ta = None
@@ -104,7 +104,7 @@ def save_mesh(mesh,armature,groups):
 		nor = face.normal
 		for i in range(3):
 			v = Vertex( face.v[i] ) 
-			v.normal = (nor if nor.dot(nor)>0.1 else face.no[i])
+			v.normal = (nor if nor.length_squared>0.1 else face.no[i])
 			v.tex	= [layer[i] for layer in face.uv]
 			v.color	= [layer[i] for layer in face.color]
 			v.face = face
