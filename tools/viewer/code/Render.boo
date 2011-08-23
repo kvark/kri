@@ -8,7 +8,8 @@ public class RenderSet:
 	public	final	rZ		= kri.rend.EarlyZ()
 	public	final	rColor	= kri.rend.Color( fillColor:true, fillDepth:false )
 	public	final	rSkin	= support.skin.Universal()
-	public	final	rAttrib	= kri.rend.debug.Attrib()
+	public	final	rSkelet	= support.skin.Debug()
+	public	final	rAttrib		= kri.rend.debug.Attrib()
 	public	final	rSurfBake	= support.bake.surf.Update(0,false)
 	public	final	rStereo		= support.stereo.Split(0.1f)
 	public	final	rNormal		as support.light.normal.Apply	= null
@@ -38,6 +39,7 @@ public class RenderSet:
 		rMan.put(sz,		2,rZ,		sk)
 		rMan.put('color',	3,rColor,	'clear',sk)
 		rMan.put('atr',		3,rAttrib,	sk)
+		rMan.put('skinbug',	3,rSkelet,	'atr')
 		rMan.put('surf',	3,rSurfBake,sk)
 		grForward.fill( rMan, sk, sz)
 		grDeferred.fill( rMan, sz )
@@ -53,7 +55,7 @@ public class RenderSet:
 		for ren in rMan.Renders:
 			ren.active = false
 		if str == 'Debug':
-			rAttrib.active = true
+			rAttrib.active = rSkelet.active = true
 		if str == 'Simple':
 			for ren in (rSkin,rZ,rColor,rNormal,rDummy,rSurfBake):
 				ren.active = true
