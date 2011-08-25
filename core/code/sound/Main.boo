@@ -15,13 +15,6 @@ public class Buffer:
 		AL.BufferData(handle, format, data, data.Length, rate)
 
 
-public class Listener( kri.ani.Basic ):
-	public	final	node	as kri.Node
-	
-	public def constructor(n as kri.Node):
-		node = n
-	
-	def kri.ani.IBase.onFrame(time as double) as uint:
-		pos = node.World.pos
-		AL.Listener( ALListener3f.Position, pos )
-		return 0
+public static class Listener:
+	public Position as OpenTK.Vector3:
+		set: AL.Listener( ALListener3f.Position, value )

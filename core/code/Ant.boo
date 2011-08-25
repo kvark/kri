@@ -99,6 +99,8 @@ public class Ant(IDisposable):
 	public Time as double:
 		get: return sw.Elapsed.TotalSeconds
 	
+	# sound operator
+	public opera	as sound.Operator = null
 	# statistics
 	public stats	= lib.StatBase()
 	# techniques
@@ -159,6 +161,7 @@ public class Ant(IDisposable):
 		sw.Stop()
 
 	public def update(ticks as uint) as void:
+		if opera:	opera.update()
 		cur = params.parTime.Value.Z
 		tc = Time
 		for i in range(ticks):

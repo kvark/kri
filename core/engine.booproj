@@ -126,6 +126,7 @@
     <Compile Include="code\shade\Program.boo" />
     <Compile Include="code\sound\Cap.boo" />
     <Compile Include="code\sound\Main.boo" />
+    <Compile Include="code\sound\Operator.boo" />
     <Compile Include="code\sound\Source.boo" />
     <Compile Include="code\Spatial.boo" />
     <Compile Include="code\Tool.boo" />

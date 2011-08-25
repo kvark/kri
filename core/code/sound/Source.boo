@@ -2,8 +2,10 @@
 
 import OpenTK.Audio.OpenAL
 
+
 public class Source:
 	public final handle		as uint
+	public	node	as kri.Node	= null
 	
 	public def constructor():
 		handle = AL.GenSource()
@@ -18,6 +20,15 @@ public class Source:
 		set:
 			type = (ALSourceType.Static, ALSourceType.Streaming)[value]
 			AL.Source( handle, ALSourcei.SourceType, cast(int,type) )
+	
+	public Position as OpenTK.Vector3:
+		set: AL.Source( handle, ALSource3f.Position, value )
+	public Velocity as OpenTK.Vector3:
+		set: AL.Source( handle, ALSource3f.Velocity, value )
+	public Direction as OpenTK.Vector3:
+		set: AL.Source( handle, ALSource3f.Direction, value )
+	public SecOffset as single:
+		set: AL.Source( handle, ALSourcef.SecOffset, value )
 
 	public def init(buf as Buffer) as void:
 		AL.Source( handle, ALSourcei.Buffer, buf.handle )
