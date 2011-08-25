@@ -40,8 +40,8 @@ public class Array:
 	public	static	final Default	= Array(0)
 	public	static	Current		= Default
 	public	final	handle		as uint
-	private final	slots		= array[of Entry](	kri.Ant.Inst.caps.vertexAttribs )
-	private	final	timeAccess	= array[of uint](	kri.Ant.Inst.caps.vertexAttribs )
+	private final	slots		= array[of Entry](	kri.Ant.Inst.capGL.vertexAttribs )
+	private	final	timeAccess	= array[of uint](	kri.Ant.Inst.capGL.vertexAttribs )
 
 	private	useMask	as uint		= 0
 	private index	as Object	= null

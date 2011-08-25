@@ -18,7 +18,7 @@ public class General( Basic ):
 		vao		as kri.vb.Array			= null
 		if not e.va.TryGetValue(name,vao):
 			e.va[name] = vao = kri.vb.Array()
-			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
+			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.capGL.vertexAttribs )
 		if vao == kri.vb.Array.Default:
 			return false
 		for tag in e.enuTags[of kri.TagMat]():

@@ -88,7 +88,8 @@ public class Ant(IDisposable):
 	[getter(Inst)]
 	private static inst	as Ant = null		# Singleton
 	# context
-	public final caps	= lib.Capabilities(true)	# Render capabilities
+	public final capGL	= lib.Capabilities(true)	# Render capabilities
+	public final capAL	= sound.Capabilities()		# Sound	 capabilities
 	public final debug	as bool						# is debug context
 	public final gamma	as bool						# is gamma corrected
 	public final quad	as gen.Frame	= null		# Standard quad frame

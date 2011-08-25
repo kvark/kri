@@ -24,6 +24,7 @@ public final class Capabilities:
 	public final shadingVersion	as string
 	public final vendorName		as string
 	public final rendererName	as string
+	public final extensions		as string
 	public final bones			as byte
 	
 	public static def Var(pn as GetPName) as int:
@@ -36,6 +37,7 @@ public final class Capabilities:
 		shadingVersion	= GL.GetString( StringName.ShadingLanguageVersion )
 		vendorName		= GL.GetString( StringName.Vendor )
 		rendererName	= GL.GetString( StringName.Renderer )
+		extensions		= GL.GetString( StringName.Extensions )
 		drawBuffers		= Var( GetPName.MaxDrawBuffers )
 		multiSamples	= Var( GetPName.MaxSamples )
 		vertexAttribs	= Var( GetPName.MaxVertexAttribs )

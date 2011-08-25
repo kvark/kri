@@ -94,7 +94,7 @@ public class Program:
 
 	# assign vertex attribute slot
 	public def attrib(index as byte, name as string) as void:
-		assert index < kri.Ant.Inst.caps.vertexAttribs
+		assert index < kri.Ant.Inst.capGL.vertexAttribs
 		GL.BindAttribLocation(handle, index, name)
 	
 	public def attribAll(names as (string)) as void:
@@ -103,7 +103,7 @@ public class Program:
 	
 	# assign fragment output slot
 	public def fragout(*names as (string)) as void:
-		assert names.Length <= kri.Ant.Inst.caps.drawBuffers
+		assert names.Length <= kri.Ant.Inst.capGL.drawBuffers
 		for i in range(names.Length):
 			GL.BindFragDataLocation( handle, i, names[i] )
 	

@@ -23,7 +23,7 @@ public class Bake( kri.rend.tech.Basic ):
 	private final pCamera	= kri.lib.par.spa.Shared('s_old_cam')
 	private final pOffset	= kri.lib.par.spa.Shared('s_offset')
 	private final bones		= List[of kri.lib.par.spa.Shared]( kri.lib.par.spa.Shared("bone[${i}]")\
-		for i in range(kri.Ant.Inst.caps.bones) ).ToArray()
+		for i in range(kri.Ant.Inst.capGL.bones) ).ToArray()
 	
 	public def constructor(con as Context):
 		super('motion')
