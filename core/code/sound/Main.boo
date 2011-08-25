@@ -4,31 +4,24 @@ import OpenTK.Audio.OpenAL
 
 
 public class Buffer:
-	public final id	as uint
+	public final handle	as uint
+	
 	public def constructor():
-		id = AL.GenBuffer()
+		handle = AL.GenBuffer()
+	def destructor():
+		kri.Help.safeKill({ AL.DeleteBuffer(handle) })
+	
 	public def init(format as ALFormat, data as (byte), rate as int) as void:
-		AL.BufferData(id, format, data, data.Length, rate)
-	def destructor():
-		kri.Help.safeKill({ AL.DeleteBuffer(id) })
+		AL.BufferData(handle, format, data, data.Length, rate)
 
 
-public class Source:
-	public final buf	as Buffer
-	public final id		as uint
+public class Listener( kri.ani.Basic ):
+	public	final	node	as kri.Node
 	
-	public def constructor(buffer as Buffer):
-		id = AL.GenSource()
-		buf = buffer
-		AL.Source( id, ALSourcei.Buffer, buf.id )
-	public def constructor(src as Source):
-		id = AL.GenSource()
-		buf = src.buf
-		AL.Source( id, ALSourcei.Buffer, buf.id )
-	def destructor():
-		kri.Help.safeKill({ AL.DeleteSource(id) })
+	public def constructor(n as kri.Node):
+		node = n
 	
-	public def play() as void:
-		AL.SourcePlay(id)
-	public def stop() as void:
-		AL.SourceStop(id)
+	def kri.ani.IBase.onFrame(time as double) as uint:
+		pos = node.World.pos
+		AL.Listener( ALListener3f.Position, pos )
+		return 0
