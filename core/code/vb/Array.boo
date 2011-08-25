@@ -40,7 +40,8 @@ public class Array:
 	public	static	final Default	= Array(0)
 	public	static	Current		= Default
 	public	final	handle		as uint
-	private final	slots		= array[of Entry]( kri.Ant.Inst.caps.vertexAttribs )
+	private final	slots		= array[of Entry](	kri.Ant.Inst.caps.vertexAttribs )
+	private	final	timeAccess	= array[of uint](	kri.Ant.Inst.caps.vertexAttribs )
 
 	private	useMask	as uint		= 0
 	private index	as Object	= null
@@ -67,12 +68,14 @@ public class Array:
 		bind()
 		for i in range(slots.Length):
 			slots[i] = Entry.Zero
+			timeAccess[i] = 0
 			GL.DisableVertexAttribArray(i)
 	
 	public def push(slot as int, ref e as Entry) as bool:
-		if slots[slot] == e:
+		d = e.buffer
+		if slots[slot] == e: #and timeAccess[slot] == d.TimeStamp:
 			return true
-		(d=e.buffer).bind()
+		d.bind()
 		if not d.Allocated:
 			kri.lib.Journal.Log("VAO: trying to use un-allocated buffer (${d.handle}) for (${handle})")
 			return false
@@ -87,6 +90,7 @@ public class Array:
 			GL.VertexAttribPointer( slot, e.info.size,
 				e.info.type, false, e.stride, e.offset)
 		slots[slot] = e
+		timeAccess[slot] = d.TimeStamp
 		return true
 	
 	public def pushAll(ind as Object, sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:

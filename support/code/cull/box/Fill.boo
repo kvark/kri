@@ -43,8 +43,8 @@ public class Fill( kri.rend.Basic ):
 				if tag.checkNode(e.node):
 					doUpload = true
 					spa = kri.Node.SafeWorld( e.node )
-					model[i+0] = kri.Spatial.GetPos(spa)
-					model[i+1] = kri.Spatial.GetRot(spa)
+					model[i+0] = spa.PackPos
+					model[i+1] = spa.PackRot
 				if tag.checkBuf(bv):
 					tag.fresh = doDownload = true
 					GL.Scissor	( i,0, 2,1 )

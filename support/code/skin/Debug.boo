@@ -16,9 +16,9 @@ public class Debug( kri.rend.Basic ):
 	
 	public override def process(link as kri.rend.link.Basic) as void:
 		link.activate(false)
-		visited = List[of kri.Skeleton]()
 		scene = kri.Scene.Current
 		if not scene:	return
+		visited = List[of kri.Skeleton]()
 		for ent in scene.entities:
 			tag = ent.seTag[of Tag]()
 			if tag==null or tag.skel==null or tag.skel in visited:
@@ -28,14 +28,24 @@ public class Debug( kri.rend.Basic ):
 			frame.mesh.nVert = bones.Length
 			# fill data array
 			data = array[of OpenTK.Vector4]( bones.Length*3 )
-			nw = tag.skel.node.World
-			sp as kri.Spatial
 			for i in range(bones.Length):
 				bw = bones[i].World
-				sp.combine(bw,nw)
-				data[3*i+0] = kri.Spatial.GetPos(sp)
-				data[3*i+1] = kri.Spatial.GetRot(sp)
-				data[3*i+2] = OpenTK.Vector4.Zero
+				data[3*i+0] = bw.PackPos
+				data[3*i+1] = bw.PackRot
+				bw = bones[i].Parent.World
+				data[3*i+2] = bw.PackPos
+			# check
+			cam = kri.Camera.Current
+			pr = array[of OpenTK.Vector3](bones.Length)
+			cw = cam.node.World
+			cw.inverse()
+			for i in range(bones.Length):
+				vi = data[3*i].Xyz
+				vc = cw.byPoint(vi)
+				#pr[i] = cam.project(vc)
+				pr[i] = vc
 			# upload to mesh
+			OpenTK.Graphics.OpenGL.GL.PointSize(10f)
+			frame.va.bind()
 			vbo.init(data,true)
 			frame.draw(bu)

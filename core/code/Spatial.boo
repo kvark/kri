@@ -46,11 +46,11 @@ public struct Spatial:
 	public rot		as Quaternion
 	public static final Identity = Spatial( pos:Vector3.Zero, scale:1.0f, rot:Quaternion.Identity )
 	
-	#---	Simple parameter getters	---#
-	public static def GetPos(ref s as kri.Spatial) as Vector4:
-		return Vector4(s.pos, s.scale)
-	public static def GetRot(ref s as kri.Spatial) as Vector4:
-		return Vector4(s.rot.Xyz, s.rot.W)
+	#---	Simple parameter packers	---#
+	public PackPos as Vector4:
+		get: return Vector4(pos,scale)
+	public PackRot as Vector4:
+		get: return Vector4(rot.Xyz,rot.W)
 
 	#---	Helper static methods		---#
 	public static def Combine(ref a as Spatial, ref b as Spatial) as Spatial:

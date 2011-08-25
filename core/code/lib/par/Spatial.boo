@@ -18,8 +18,8 @@ public class Shared(IBase):
 		position = par.Value[of Vector4](s+'.pos')
 		rotation = par.Value[of Vector4](s+'.rot')
 	public def activate(ref sp as kri.Spatial) as void:
-		position.Value = kri.Spatial.GetPos(sp)
-		rotation.Value = kri.Spatial.GetRot(sp)
+		position.Value = sp.PackPos
+		rotation.Value = sp.PackRot
 	public def activate(n as kri.Node) as void:
 		sp = kri.Node.SafeWorld(n)
 		activate(sp)
@@ -43,10 +43,15 @@ public class TransVal( par.IBase[of Vector4] ):
 
 #---	Linked spatial to a concrete node, doesn't interact online	---#
 public class Linked(IBase):
+	private static def GetPos(ref s as kri.Spatial):
+		return s.PackPos
+	private static def GetRot(ref s as kri.Spatial):
+		return s.PackRot
+	
 	[Getter(Name)]
 	private final name	as string
-	public final position	= TransVal( kri.Spatial.GetPos )
-	public final rotation 	= TransVal( kri.Spatial.GetRot )
+	public final position	= TransVal(GetPos)
+	public final rotation 	= TransVal(GetRot)
 
 	public def constructor(s as string):
 		name = s

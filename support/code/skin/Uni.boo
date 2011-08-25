@@ -73,10 +73,11 @@ public class Universal( kri.rend.tech.Basic ):
 			# upload bone info
 			spa as kri.Spatial
 			for i in range(nBone):
-				b = tag.skel.bones[i]	# model->pose
+				b = tag.skel.bones[i]	# model->bind_pose
+				# assuming the model is parented to skeleton
 				b.genTransPose( e.node.local, spa )
 				s0 = s1 = b.World
-				s0.combine(spa,s1)	# ->world
+				s0.combine(spa,s1)	# ->pose->world
 				s1 = e.node.World
 				s1.inverse()
 				spa.combine(s0,s1)	# ->model
