@@ -53,7 +53,8 @@ public class Window( GameWindow ):
 
 	public override def Dispose() as void:
 		views.Clear()
-		(core as IDisposable).Dispose()
+		for dis in (of IDisposable:core,opera):
+			if dis: dis.Dispose()
 		GC.Collect()
 		GC.WaitForPendingFinalizers()
 		super()
@@ -142,6 +143,7 @@ public class Ant(IDisposable):
 		TransFeedback.CountPrimitives = (feedCount	== answers[1])
 		Discarder.Safe = (safeDiscard				== answers[1])
 
+		assert not inst
 		inst = self
 		sw.Start()
 		debug = bug
@@ -157,6 +159,7 @@ public class Ant(IDisposable):
 		extensions.Add(loaders)
 		
 	def IDisposable.Dispose() as void:
+		assert inst
 		inst = null
 		kri.TransFeedback.Bind()
 		dataMan.clear()
