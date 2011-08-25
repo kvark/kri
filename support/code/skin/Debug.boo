@@ -34,18 +34,7 @@ public class Debug( kri.rend.Basic ):
 				data[3*i+1] = bw.PackRot
 				bw = bones[i].Parent.World
 				data[3*i+2] = bw.PackPos
-			# check
-			cam = kri.Camera.Current
-			pr = array[of OpenTK.Vector3](bones.Length)
-			cw = cam.node.World
-			cw.inverse()
-			for i in range(bones.Length):
-				vi = data[3*i].Xyz
-				vc = cw.byPoint(vi)
-				#pr[i] = cam.project(vc)
-				pr[i] = vc
 			# upload to mesh
-			OpenTK.Graphics.OpenGL.GL.PointSize(10f)
 			frame.va.bind()
 			vbo.init(data,true)
 			frame.draw(bu)
