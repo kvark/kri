@@ -9,7 +9,7 @@ public class Universal( kri.rend.tech.Basic ):
 	private final	bu		= kri.shade.Bundle()
 	private final	bones	= List[of kri.lib.par.spa.Shared](
 		kri.lib.par.spa.Shared("bone[${i}]")
-		for i in range(kri.Ant.Inst.capGL.bones)
+		for i in range(kri.Ant.Inst.caps.bones)
 		).ToArray()
 	
 	private	final	maxBones	as byte	= 0

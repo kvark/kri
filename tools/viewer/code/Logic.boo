@@ -8,6 +8,8 @@ public class Logic:
 	private	final	objTree	= Gtk.TreeStore(object)
 	private	vProxy	as kri.IView	= null
 	private rset	as RenderSet	= null
+	private	ant		as kri.Ant			= null
+	private	opera	as kri.sound.Opera	= null
 	
 	public ViewCam	as kri.Camera:
 		get: return view.cam
@@ -133,6 +135,7 @@ public class Logic:
 	
 
 	public def init() as void:
+		auDev = config.ask('AL.Device',null)
 		samples = byte.Parse(config.ask('InnerSamples','0'))
 		ant = kri.Ant( config, options.debug, options.gamma )
 		eLayer	= support.layer.Extra()
@@ -141,12 +144,18 @@ public class Logic:
 		eMorph	= support.morph.Extra()
 		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
 		ant.anim = al
+		if auDev!=null:
+			opera = kri.sound.Opera(auDev)
 		rset = RenderSet( true, samples, eCorp.con )
 		rset.grDeferred.rBug.layer = -1
 		vProxy = support.stereo.Proxy(view,0.01f,0f)
 	
 	public def quit() as void:
 		rset = null
+		for dis in (of System.IDisposable: ant,opera):
+			if dis: dis.Dispose()
+		ant = null
+		opera = null
 
 	public def frame(stereo as bool) as void:
 		(view,vProxy)[stereo].update()

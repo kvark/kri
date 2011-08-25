@@ -24,5 +24,5 @@ def Main():
 		#cone = kri.gen.Sphere(3, 10f * Vector3.One)
 		scene.entities.Add( ent = cone.wrap(ct.mDef) )
 		ent.node = kri.Node('cone')
-		win.core.anim = kri.ani.ControlMouse( win.Mouse, ent.node, 0.01f )
+		win.core.anim = kri.ani.ControlMouse( win.Mouse, ent.node, view.cam, 0.01f )
 		win.Run()

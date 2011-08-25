@@ -46,15 +46,17 @@ public class Compensate( Action ):
 
 public class ControlMouse(Basic):
 	private final node	as kri.Node
+	private final cam	as kri.Camera
 	private final sense	as single
 	private final mouse as Input.MouseDevice
 	private active	= false
 	private x	= -1
 	private y	= -1
 	private base	as kri.Spatial
-	public def constructor(rat as Input.MouseDevice, n as kri.Node, sen as single):
+	
+	public def constructor(rat as Input.MouseDevice, n as kri.Node, c as kri.Camera, sen as single):
 		assert n
-		mouse=rat; node=n; sense=sen
+		mouse=rat; node=n; cam=c; sense=sen
 		mouse.ButtonDown	+= def():
 			x = mouse.X
 			y = mouse.Y
@@ -72,7 +74,7 @@ public class ControlMouse(Basic):
 		size	= sense * axis.LengthFast
 		
 		qrot	= Quaternion.FromAxisAngle(axis, size)
-		n		= kri.Camera.current.node
+		n		= cam.node
 		s		= (n.World	if n else kri.Spatial.Identity)
 		qrot	= s.rot * qrot * Quaternion.Invert(s.rot)
 		s		= base

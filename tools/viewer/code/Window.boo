@@ -89,7 +89,6 @@ public class GladeApp:
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		logic.quit()
-		(kri.Ant.Inst as System.IDisposable).Dispose()
 		Gtk.Application.Quit()
 	
 	public def onIdle() as bool:

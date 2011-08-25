@@ -99,7 +99,7 @@ public class Mesh( vb.Storage ):
 			)[indexSize-1]
 	
 	protected def draw(off as uint, num as uint, nob as uint) as bool:
-		caps = kri.Ant.Inst.capGL
+		caps = kri.Ant.Inst.caps
 		if ind:
 			if num+off>nPoly or num*polySize > caps.elemIndices:
 				return false
@@ -123,7 +123,7 @@ public class Mesh( vb.Storage ):
 		return draw(0,NumElements,nob)
 	# draw all points
 	private def draw() as bool:
-		if nVert>kri.Ant.Inst.capGL.elemVertices:
+		if nVert>kri.Ant.Inst.caps.elemVertices:
 			return false
 		GL.DrawArrays( BeginMode.Points, 0, nVert )
 		kri.Ant.Inst.stats.draw(nVert)

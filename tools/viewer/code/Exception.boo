@@ -87,8 +87,11 @@ public class ExceptApp:
 			response = uploadString( path+'/ex.txt', str )
 			if subEx: break
 			sysInfo = getSystemInfo()
-			glInfo = kri.Ant.Inst.capGL.getInfo()
-			alInfo = kri.Ant.Inst.capAL.getInfo()
+			glInfo = alInfo = ''
+			if kri.Ant.Inst:
+				glInfo = kri.Ant.Inst.caps.getInfo()
+			if kri.sound.Opera.Inst:
+				alInfo = kri.sound.Opera.Inst.caps.getInfo()
 			info = "Signature: ${entryName.Text}\n${sysInfo}\n${glInfo}\n${alInfo}"
 			stage = 'UploadInfo'
 			response = uploadString( path+'/info.txt', info )

@@ -9,7 +9,7 @@ public class Update( kri.rend.tech.Basic ):
 	private final bu2	= kri.shade.Bundle()
 	private final par	= List[of kri.lib.par.spa.Shared](
 		kri.lib.par.spa.Shared("bone[${i}]")
-		for i in range(kri.Ant.Inst.capGL.bones)
+		for i in range(kri.Ant.Inst.caps.bones)
 		).ToArray()
 	public final at_all	as (int)
 

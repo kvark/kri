@@ -7,7 +7,12 @@ import OpenTK.Graphics.OpenGL
 #-----------------------------------#
 
 public final class Capabilities:
-	public final drawBuffers	as byte	
+	public final contextVersion	as string
+	public final shadingVersion	as string
+	public final vendorName		as string
+	public final rendererName	as string
+	public final coreProfile	as bool		= false
+	public final drawBuffers	as byte
 	public final multiSamples	as byte
 	public final vertexAttribs	as byte
 	public final colorAttaches	as byte
@@ -20,11 +25,6 @@ public final class Capabilities:
 	public final samplesDepth	as ushort	= 0
 	public final elemIndices	as uint
 	public final elemVertices	as uint
-	public final contextVersion	as string
-	public final shadingVersion	as string
-	public final vendorName		as string
-	public final rendererName	as string
-	public final extensions		as string
 	public final bones			as byte
 	
 	public static def Var(pn as GetPName) as int:
@@ -32,12 +32,11 @@ public final class Capabilities:
 		GL.GetInteger(pn,val)
 		return val
 	
-	public def constructor(gl3 as bool):
+	public def constructor():
 		contextVersion	= GL.GetString( StringName.Version )
 		shadingVersion	= GL.GetString( StringName.ShadingLanguageVersion )
 		vendorName		= GL.GetString( StringName.Vendor )
 		rendererName	= GL.GetString( StringName.Renderer )
-		extensions		= GL.GetString( StringName.Extensions )
 		drawBuffers		= Var( GetPName.MaxDrawBuffers )
 		multiSamples	= Var( GetPName.MaxSamples )
 		vertexAttribs	= Var( GetPName.MaxVertexAttribs )
@@ -46,7 +45,7 @@ public final class Capabilities:
 		textureLayers	= Var( GetPName.MaxArrayTextureLayers )
 		textureSize		= Var( GetPName.MaxTextureSize )
 		renderBufSize	= Var( GetPName.MaxRenderbufferSize )
-		if gl3:
+		if contextVersion.StartsWith('3'):
 			samplesColor	= Var( GetPName.MaxColorTextureSamples )
 			samplesInt		= Var( GetPName.MaxIntegerSamples )
 			samplesDepth	= Var( GetPName.MaxDepthTextureSamples )

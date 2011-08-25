@@ -12,7 +12,8 @@ import OpenTK
 public class Window( GameWindow ):
 	public	final views	= List[of IView]()	# *View
 	public	final ticks	as uint				# Ticks per frame
-	public	final core	as Ant				# KRI Core
+	public	final core	as Ant			= null	# KRI Graphics
+	public	final opera	as sound.Opera	= null	# KRI Sound
 	private final stat	as lib.StatPeriod	# Stat counter
 	
 	public PointerNdc as Vector3:
@@ -24,8 +25,8 @@ public class Window( GameWindow ):
 	public def constructor(cPath as string, depth as int):
 		# read config
 		conf = lib.Config(cPath)
-		title	= conf.ask('Title','kri')
-		sizes	= conf.ask('Window','0x0').Split(char('x'))
+		title	= conf.ask('Window.Title','kri')
+		sizes	= conf.ask('Window.Size','0x0').Split(char('x'))
 		wid	= uint.Parse( sizes[0] )
 		het	= uint.Parse( sizes[1] )
 		opt = lib.OptionReader(conf)
@@ -43,8 +44,11 @@ public class Window( GameWindow ):
 		super(wid,het, gmode, title, gameFlags, dd, opt.verMajor, opt.verMinor, flags)
 		ticks	= uint.Parse(	conf.ask('FrameTicks','0') )
 		period	= single.Parse(	conf.ask('StatPeriod','1.0') )
+		auDev	= conf.ask('AL.Device',null)
 		core = Ant( conf, opt.debug, opt.gamma )
 		core.stats = stat = lib.StatPeriod(title,period)
+		if auDev!=null:
+			opera = sound.Opera(auDev)
 
 
 	public override def Dispose() as void:
@@ -60,7 +64,8 @@ public class Window( GameWindow ):
 			lib.Journal.Log("Resize: failed on view (${v})")
 	
 	public override def OnUpdateFrame(e as FrameEventArgs) as void:
-		core.update( (1,0)[ticks] )
+		if core:	core.update( (1,0)[ticks] )
+		if opera:	opera.update()
 
 	public override def OnRenderFrame(e as FrameEventArgs) as void:
 		SwapBuffers()
@@ -88,19 +93,17 @@ public class Ant(IDisposable):
 	[getter(Inst)]
 	private static inst	as Ant = null		# Singleton
 	# context
-	public final capGL	= lib.Capabilities(true)	# Render capabilities
-	public final capAL	= sound.Capabilities()		# Sound	 capabilities
+	public final caps	= lib.Capabilities()		# render capabilities
 	public final debug	as bool						# is debug context
 	public final gamma	as bool						# is gamma corrected
 	public final quad	as gen.Frame	= null		# Standard quad frame
 	# time
 	private final sw	= Diagnostics.Stopwatch()	# Time counter
-	public anim	as ani.IBase	= null		# Animation
 	public Time as double:
 		get: return sw.Elapsed.TotalSeconds
 	
-	# sound operator
-	public opera	as sound.Operator = null
+	# animation (container)
+	public anim		as ani.IBase		= null
 	# statistics
 	public stats	= lib.StatBase()
 	# techniques
@@ -125,8 +128,8 @@ public class Ant(IDisposable):
 		safeDiscard	= answers[kri.Discarder.Safe]
 		if conf:
 			defPath		= conf.ask('ShaderPath',defPath)
-			feedCount	= conf.ask('FeedbackCount',feedCount)
-			safeDiscard	= conf.ask('SafeDiscard',safeDiscard)
+			feedCount	= conf.ask('GL.FeedbackCount',feedCount)
+			safeDiscard	= conf.ask('GL.SafeDiscard',safeDiscard)
 			# check configuration completeness
 			unused = List[of string]( conf.getUnused() ).ToArray()
 			if unused.Length:
@@ -161,7 +164,6 @@ public class Ant(IDisposable):
 		sw.Stop()
 
 	public def update(ticks as uint) as void:
-		if opera:	opera.update()
 		cur = params.parTime.Value.Z
 		tc = Time
 		for i in range(ticks):

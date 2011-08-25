@@ -57,7 +57,7 @@ def Main(argv as (string)):
 			n.local.rot = Quaternion.FromAxisAngle(Vector3.UnitX,0f)
 			view.scene.entities.Add(e)
 			
-			al.add( kri.ani.ControlMouse( win.Mouse,n,0.01f ))
+			al.add( kri.ani.ControlMouse( win.Mouse,n,view.cam,0.01f ))
 			lic = support.light.Context(2,2)
 			rlis.Add( support.light.spot.Fill(lic) )
 			rlis.Add( support.light.spot.Apply(lic) )

@@ -42,18 +42,18 @@ public struct OptionReader:
 	
 	public def constructor(conf as Config):
 		# read GL context flags
-		context	= conf.ask('Context','3.0')
+		context	= conf.ask('GL.Context','3.2')
 		debug = context.EndsWith('d')
 		if debug:	context = context.TrimEnd(char('d'))
 		ver = context.Split(char('.'))
-		verMajor,verMinor = 3,0
+		verMajor,verMinor = 3,2
 		if ver.Length>1:	verMajor = byte.Parse(ver[0])
 		if ver.Length>0:	verMinor = byte.Parse(ver[-1])
 		# read main FB flags
-		samples	= byte.Parse(conf.ask('Samples','0'))
-		buffers	= byte.Parse(conf.ask('Buffers','2'))
-		stereo	= conf.ask('Stereo','no')	== 'yes'
-		gamma	= conf.ask('Gamma','no')	== 'yes'
+		samples	= byte.Parse(conf.ask('FB.Samples','0'))
+		buffers	= byte.Parse(conf.ask('FB.Buffers','2'))
+		stereo	= conf.ask('FB.Stereo','no')	== 'yes'
+		gamma	= conf.ask('FB.Gamma','no')	== 'yes'
 	
 	public def genMode(bpp as byte, depth as byte) as GraphicsMode:
 		stencil = (0,8)[depth==24]

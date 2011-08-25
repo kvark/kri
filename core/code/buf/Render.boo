@@ -32,7 +32,7 @@ public class Render(Surface):
 	
 	public override def init() as void:
 		bind()
-		caps = kri.Ant.Inst.capGL
+		caps = kri.Ant.Inst.caps
 		assert wid <= caps.renderBufSize
 		assert het <= caps.renderBufSize
 		ready = true

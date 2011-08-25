@@ -35,7 +35,7 @@ public struct Attrib:
 #---------
 
 public class Mega(Program):
-	public	final attribs	= array[of Attrib]( kri.Ant.Inst.capGL.vertexAttribs )
+	public	final attribs	= array[of Attrib]( kri.Ant.Inst.caps.vertexAttribs )
 	public	final uniforms	= List[of Uniform]()
 	public	final static PrefixAttrib	as string	= 'at_'
 	public	final static PrefixUnit		as string	= 'unit_'

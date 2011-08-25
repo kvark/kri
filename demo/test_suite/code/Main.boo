@@ -17,7 +17,8 @@ def Main(argv as (string)):
 		#rlis.Add( Geometry() )
 		rlis.Add( SamplerArray() )
 		
-		view.resize(10,10)
-		view.update()
+		iv = view as kri.IView
+		iv.resize(10,10)
+		iv.update()
 		
 		print string.Join("\n", log.messages.ToArray())

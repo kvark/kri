@@ -114,7 +114,7 @@ public class Texture(Surface):
 	
 	public def initMulti(fixedLoc as bool) as void:
 		bind()
-		caps = kri.Ant.Inst.capGL
+		caps = kri.Ant.Inst.caps
 		fullWidth,fullHeight = wid,het
 		assert samples and samples <= caps.multiSamples
 		assert wid <= caps.textureSize
@@ -146,7 +146,7 @@ public class Texture(Surface):
 		allocated[level] = true
 		# check
 		assert not samples
-		caps = kri.Ant.Inst.capGL
+		caps = kri.Ant.Inst.caps
 		assert wid <= caps.textureSize
 		assert het <= caps.textureSize
 		assert dep <= caps.textureSize

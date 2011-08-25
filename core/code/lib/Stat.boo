@@ -27,9 +27,12 @@ public class Statistic(StatBase):
 		time	= kri.Ant.Inst.Time - tStart
 		fps		= cast(int, nFrame / time)
 		fmax	= cast(int, tMax*1000.0)
-		cDraw	= nDraw		/ nFrame
-		cInd	= nInd		/ nFrame
-		cTarg	= nTarget	/ nFrame
+		if nFrame:
+			cDraw	= nDraw		/ nFrame
+			cInd	= nInd		/ nFrame
+			cTarg	= nTarget	/ nFrame
+		else:
+			cDraw = cInd = cTarg = 0
 		return "${fps} fps, ${fmax}ms max, ${cDraw} calls, ${cInd} indices, ${cTarg} targets"
 
 	public override	def frame() as void:
