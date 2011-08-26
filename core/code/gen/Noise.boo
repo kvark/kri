@@ -4,7 +4,6 @@ import OpenTK.Graphics.OpenGL
 import kri.shade
 
 public class Noise:
-	private final targ	= TextureTarget.Texture1D
 	private final tPerm	= par.Texture('perm')
 	private final tGrad	= par.Texture('grad')
 	public final dict	= par.Dict()
@@ -16,20 +15,23 @@ public class Noise:
 		dict.unit(tPerm,tGrad)
 		# create textures
 		for pt in (tPerm,tGrad):
-			pt.Value = kri.buf.Texture( target:targ )
+			pt.Value = kri.buf.Texture( target:TextureTarget.Texture1D )
 			pt.Value.setState(1,false,false)
 		# init permutations
-		generate(order)	if order
+		if order:	generate(order)
 		# init gradient
-		tGrad.Value.bind()
 		data = (of single:
 			1f,1f,0f, -1f,1f,0f, 1f,-1f,0f, -1f,-1f,0f,
 			1f,0f,1f, -1f,0f,1f, 1f,0f,-1f, -1f,0f,-1f,
 			0f,1f,1f, 0f,-1f,1f, 0f,1f,-1f, 0f,-1f,-1f)
 		for i in range( data.Length ):
 			data[i] = 0.5f * (data[i]+1f)
-		GL.TexImage1D( targ, 0, PixelInternalFormat.Rgb8, 12, 0,
-			PixelFormat.Rgb, PixelType.Float, data )
+		# upload
+		t = tGrad.Value
+		t.wid = data.Length / 3
+		t.pixFormat = PixelFormat.Rgb
+		t.intFormat = PixelInternalFormat.Rgb8
+		t.init(data,false)
 	
 	public def generate(order as byte) as void:
 		# allocate storage
@@ -52,7 +54,8 @@ public class Noise:
 			++j
 		assert j == data.Length
 		# upload
-		tPerm.Value.bind()
-		pif = (PixelInternalFormat.R8, PixelInternalFormat.R16)[ order>8 ]
-		GL.TexImage1D( targ, 0, pif, data.Length, 0,
-			PixelFormat.Red, PixelType.UnsignedShort, data )
+		t = tPerm.Value
+		t.wid = 1<<order
+		t.intFormat = (PixelInternalFormat.R8, PixelInternalFormat.R16)[ order>8 ]
+		t.pixFormat = PixelFormat.Red
+		t.init(data,false)

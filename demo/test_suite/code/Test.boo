@@ -120,8 +120,7 @@ private class Feedback( kri.rend.Basic ):
 		bu.shader.feedback(false,'to_pos')
 		bu.link()
 		#make data
-		varray = kri.vb.Array()
-		varray.bind()
+		kri.vb.Array.Bind = kri.vb.Array()
 		dar = (of single: 1f,2f,3f,4f,5f,6f,7f,8f)
 		vin.init(dar,false)
 		vot = kri.vb.Attrib()
