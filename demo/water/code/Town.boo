@@ -17,7 +17,9 @@ private class Town( kri.rend.Basic ):
 		bu.shader.add( con.sh_simplex, con.sh_turbo )
 		bu.shader.add( '/copy_v', 'text/town_f' )
 		bu.dicts.Add( con.dict )
-		fbo.at.color[0] = Texture.Color(0)
+		fbo.at.color[0] = t = Texture.Color(0)
+		t.bind()
+		t.setState(0,true,true)
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		active = true

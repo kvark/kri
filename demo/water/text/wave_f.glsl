@@ -5,11 +5,33 @@ uniform sampler2D unit_wave;
 uniform vec4 cur_time, wave_con;	//X=alpha, Y=grav
 
 noperspective in vec2 tex_coord;
-out vec2 next;
 const vec2 level = vec2(0.0);
 
 float delta_kern = 1.0 / textureSize(unit_kern,0);
 vec2 delta_wave = vec2(1.0) / textureSize(unit_wave,0);
+
+
+//----------------------//
+//	TEST		//
+
+//X=height, Y=momentum
+
+float get_sum()	{
+	const ivec3 off = ivec3(-1,0,1);
+	return  textureOffset( unit_wave, tex_coord, off.xy ).x+
+		textureOffset( unit_wave, tex_coord, off.zy ).x+
+		textureOffset( unit_wave, tex_coord, off.yx ).x+
+		textureOffset( unit_wave, tex_coord, off.yz ).x;
+}
+
+vec2 get_test()	{
+	const float kk = 100.0;
+	vec2 wave = texture(unit_wave, tex_coord).xy - level;
+	float f = kk*( get_sum() - 4*(level.x+wave.x) );
+	float dt = cur_time.x;
+	float vel = wave.y + f*dt;
+	return level + vec2(wave.x+vel*dt, vel);
+}
 
 
 //----------------------//
@@ -39,7 +61,6 @@ vec2 get_future()	{
 			dphi += sample2(x,y,kf);
 		}
 	}
-	//get result
 	float h2 = wave.x + dt*dphi;
 	return level + vec2(h2, wave.y + kf*(wave.x+h2));
 }
@@ -121,8 +142,10 @@ vec2 get_simple()	{
 
 //----------------------//
 //	MAIN		//
+out vec2 next;
 
 void main()	{
 	//next = level + texture(unit_kern, tex_coord).x;
-	next = get_future();
+	next = get_test();
 }
+

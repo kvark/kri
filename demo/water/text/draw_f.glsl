@@ -25,7 +25,7 @@ void main()	{
 	float s11 = wave.x;
 
 	//rez_color = vec4(texture(unit_kern,tex_coord)); return;
-	rez_color = vec4(wave.y+0.5); return;
+	rez_color = vec4(wave.x+0.5); return;
 	
 	float s01 = textureOffset(unit_wave, tex_coord, off.xy).x;
 	float s21 = textureOffset(unit_wave, tex_coord, off.zy).x;

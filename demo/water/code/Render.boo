@@ -61,6 +61,7 @@ private class Update( kri.ani.Delta ):
 		con.dict.var(pCon)
 		bu.shader.add('/copy_v','text/wave_f')
 		bu.dicts.Add( con.dict )
+		bu.link()
 	
 	protected override def onDelta(delta as double) as uint:
 		if not ct.buf.at.color[0].wid:
@@ -121,6 +122,7 @@ public class Draw( kri.rend.Basic ):
 		ct = con
 		bu.shader.add('/copy_v','text/draw_f')
 		bu.dicts.Add( con.dict )
+		bu.link()
 	
 	public override def setup(pl as kri.buf.Plane) as bool:
 		ct.buf.resize( pl.wid, pl.het )

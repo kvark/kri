@@ -38,6 +38,7 @@ def Main(argv as (string)):
 		view = kri.ViewScreen()
 		win.views.Add( view )
 		win.VSync = VSyncMode.On
+		log = kri.lib.Journal()
 		
 		view.scene = kri.Scene('main')
 		view.cam = kri.Camera()
@@ -65,7 +66,7 @@ def Main(argv as (string)):
 			node.local.rot = Quaternion.FromAxisAngle(Vector3(0.3,0.5,0.1),0.6)
 			view.scene.entities.AddRange((t0,t1))
 		
-		con = Context(15)
+		con = Context(1)
 		win.core.anim = ac = kri.ani.Scheduler()
 		#ac.add( kri.ani.ControlMouse( win.Mouse, node, 0.01f ))
 		utouch = Update(con,win)
@@ -85,5 +86,7 @@ def Main(argv as (string)):
 		wat.lit = lit
 		wat.lit.node = n = kri.Node('lit')
 		n.local.pos = Vector3(1f,2f,10f)
-		
+
+		if log.messages.Count:
+			log.flush()
 		win.Run(30.0,30.0)
