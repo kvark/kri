@@ -234,8 +234,9 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 			if not tm:
 				continue	
 			m = tm.mat
-			if m.tech[name] == shade.Bundle.Empty:
-				ml.Add(m)
+			bu as shade.Bundle = null
+			m.tech.TryGetValue(name,bu)
+			if not bu:	ml.Add(m)
 		return ml
 	
 	public def render(vao as vb.Array, bu as shade.Bundle, tf as kri.TransFeedback) as bool:

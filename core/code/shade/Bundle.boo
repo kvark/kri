@@ -62,8 +62,6 @@ public class Bundle:
 				link()
 			return failed
 	
-	public	final static Empty	= Bundle(null as Mega)
-	
 	public def constructor():
 		shader = Mega()
 	public def constructor(sh as Mega):

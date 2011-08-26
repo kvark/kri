@@ -30,7 +30,7 @@ public class Tech( Basic ):
 		bu as kri.shade.Bundle = null
 		if not m.tech.TryGetValue(name,bu):
 			m.tech[name] = bu = construct(pe)
-		if bu == Bundle.Empty:
+		if not bu:
 			return null
 		ready as bool
 		if not pe.techReady.TryGetValue(name,ready):
@@ -66,7 +66,7 @@ public class Meta( Tech ):
 	public override def construct(pe as kri.part.Emitter) as Bundle:
 		assert pe.mat and pe.owner
 		sl = pe.mat.collect(geom,lMets)
-		if not sl:	return Bundle.Empty
+		if not sl:	return null
 		return factory.link( sl, dict, pe.owner.dict, pe.mat.dict )
 	
 	public virtual def onManager(man as kri.part.Manager) as void:

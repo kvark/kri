@@ -106,7 +106,7 @@ public class Fill( kri.rend.tech.General ):
 		uname = 'unit'
 		din[uname] = un.input
 		mapins = kri.load.Meta.MakeTexCoords(false,din)
-		if not mapins:	return Bundle.Empty
+		if not mapins:	return null
 		(un as kri.meta.ISlave).link(uname,pDic)	# add offset and scale under proper names
 		(un.input as kri.meta.IBase).link(pDic)		# add input-specific data
 		sall = List[of Object](mapins)
