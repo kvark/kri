@@ -68,13 +68,13 @@ public class Core:
 		kid = 1f / ((1 << (8,16)[isBig]) - 1f)
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
-			va as kri.vb.Array = null
-			if not e.va.TryGetValue(name,va) or va == kri.vb.Array.Default:
+			vac as kri.vb.Array = null
+			if not (e.va.TryGetValue(name,vac) and vac):
 				continue
-			kri.vb.Array.Bind = va
+			kri.vb.Array.Bind = vac
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.activate(e)
-			e.render(va,bx)
+			e.render(vac,bx)
 
 	public def tick(s as kri.Scene) as void:
 		# prepare the camera

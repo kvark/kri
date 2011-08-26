@@ -19,7 +19,7 @@ public class General( Basic ):
 		if not e.va.TryGetValue(name,vao):
 			e.va[name] = vao = kri.vb.Array()
 			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
-		if vao == kri.vb.Array.Default:
+		if not vao:
 			return false
 		for tag in e.enuTags[of kri.TagMat]():
 			m = tag.mat
@@ -43,7 +43,7 @@ public class General( Basic ):
 			onPass(vao,tag,prog)
 		if atar and not vd:	vd = e.CombinedAttribs
 		if atar and not vao.pushAll( e.mesh.ind, atar, vd ):
-			e.va[name] = kri.vb.Array.Default
+			e.va[name] = null
 			return false
 		return true
 

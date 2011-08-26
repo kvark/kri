@@ -43,31 +43,29 @@ public class Array:
 
 	private	useMask	as uint		= 0
 	private index	as Object	= null
-	public	static	final	Default		= Array(0)
-	private	static	current	as Array	= Default
+	private	static	current	as Array	= null
 	
 	public	static	Bind	as Array:
 		get:	return current
 		set:
-			v = (value if value else Default)
-			if current == v:	return
-			current = v
-			v.useMask = 0
-			GL.BindVertexArray( v.handle )
+			if current == value:	return
+			current = value
+			if value:
+				value.useMask = 0
+				GL.BindVertexArray( value.handle )
+			else:
+				GL.BindVertexArray(0)
 	
 	public def constructor():
 		tmp = 0
 		GL.GenVertexArrays(1,tmp)
 		handle = tmp
-	private def constructor(h as uint):
-		handle = h
 	def destructor():
 		tmp = handle
 		kri.Help.safeKill() do():
 			GL.DeleteVertexArrays(1,tmp)
 	
 	public def clean() as void:
-		useMask = 0
 		Bind = self
 		for i in range(slots.Length):
 			slots[i] = Entry.Zero
@@ -97,7 +95,6 @@ public class Array:
 		return true
 	
 	public def pushAll(ind as Object, sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
-		useMask = 0
 		Bind = self
 		for i in range(sat.Length):
 			str = sat[i].name

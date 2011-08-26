@@ -225,7 +225,8 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	# returns null if entity does't have all attributes requested
 	# otherwise - a list of rejected materials
 	public def check(name as string) as kri.Material*:
-		if va[name] == vb.Array.Default:
+		vac as vb.Array = null
+		if not (va.TryGetValue(name,vac) and vac):
 			return null
 		ml = List[of kri.Material]()
 		for t in tags:
