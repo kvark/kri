@@ -71,7 +71,7 @@ public class Core:
 			va as kri.vb.Array = null
 			if not e.va.TryGetValue(name,va) or va == kri.vb.Array.Default:
 				continue
-			va.bind()
+			kri.vb.Array.Bind = va
 			pId.Value = (i+1.5f)*kid + 0.5f
 			kri.Ant.Inst.params.activate(e)
 			e.render(va,bx)

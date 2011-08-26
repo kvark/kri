@@ -30,6 +30,7 @@ public abstract class Profile(Basic):
 		dpro.Clear()
 		for r in rlis:
 			if not (r and r.active):	continue
+			kri.vb.Array.Bind = null
 			if doProfile:
 				dpro[r] = q = qpool.fetch()
 				using q.catch( QueryTarget.TimeElapsed ):

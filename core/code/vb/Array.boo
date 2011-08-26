@@ -37,35 +37,38 @@ public struct Entry:
 #-----------------------
 
 public class Array:
-	public	static	final Default	= Array(0)
-	public	static	Current		= Default
 	public	final	handle		as uint
 	private final	slots		= array[of Entry](	kri.Ant.Inst.caps.vertexAttribs )
 	private	final	timeAccess	= array[of uint](	kri.Ant.Inst.caps.vertexAttribs )
 
 	private	useMask	as uint		= 0
 	private index	as Object	= null
+	public	static	final	Default		= Array(0)
+	private	static	current	as Array	= Default
+	
+	public	static	Bind	as Array:
+		get:	return current
+		set:
+			v = (value if value else Default)
+			if current == v:	return
+			current = v
+			v.useMask = 0
+			GL.BindVertexArray( v.handle )
 	
 	public def constructor():
 		tmp = 0
 		GL.GenVertexArrays(1,tmp)
 		handle = tmp
-	private def constructor(xid as uint):
-		handle = xid
+	private def constructor(h as uint):
+		handle = h
 	def destructor():
 		tmp = handle
 		kri.Help.safeKill() do():
 			GL.DeleteVertexArrays(1,tmp)
 	
-	public def bind() as void:
-		useMask = 0
-		if self == Current:
-			return
-		Current = self
-		GL.BindVertexArray(handle)
-	
 	public def clean() as void:
-		bind()
+		useMask = 0
+		Bind = self
 		for i in range(slots.Length):
 			slots[i] = Entry.Zero
 			timeAccess[i] = 0
@@ -94,7 +97,8 @@ public class Array:
 		return true
 	
 	public def pushAll(ind as Object, sat as (kri.shade.Attrib), edic as Dictionary[of string,Entry]) as bool:
-		bind()
+		useMask = 0
+		Bind = self
 		for i in range(sat.Length):
 			str = sat[i].name
 			if not str:

@@ -30,7 +30,7 @@ public class View(IView):
 		Ant.Inst.params.activate(cam)
 		if ren and ren.active:
 			ren.process(link)
-			vb.Array.Default.bind()
+			vb.Array.Bind = null
 		elif link:
 			link.activate(false)
 			link.ClearColor()

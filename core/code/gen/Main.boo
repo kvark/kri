@@ -59,7 +59,7 @@ public struct Constructor:
 	
 	# fill up the mesh data
 	public def apply(m as kri.Mesh) as void:
-		kri.vb.Array.Default.bind()
+		kri.vb.Array.Bind = null
 		if v:
 			m.nVert = v.Length
 			m.nPoly = m.nVert / m.polySize

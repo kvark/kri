@@ -35,6 +35,6 @@ public class Debug( kri.rend.Basic ):
 				bw = bones[i].Parent.World
 				data[3*i+2] = bw.PackPos
 			# upload to mesh
-			frame.va.bind()
+			kri.vb.Array.Bind = frame.va
 			vbo.init(data,true)
 			frame.draw(bu)

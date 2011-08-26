@@ -23,5 +23,5 @@ public class View( kri.IView ):
 		elif link:
 			link.activate(false)
 			link.ClearColor()
-		kri.vb.Array.Default.bind()
+		kri.vb.Array.Bind = null
 		Scene.current = null
