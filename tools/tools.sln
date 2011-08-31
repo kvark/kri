@@ -2,17 +2,17 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 # SharpDevelop 3.2.1.6466
-Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "viewer", "viewer.booproj", "{C1D20577-F85B-4E98-8285-9150089773FF}"
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "viewer", "viewer\code\viewer.booproj", "{C1D20577-F85B-4E98-8285-9150089773FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK", "..\..\..\..\opentk\Source\OpenTK\OpenTK.csproj", "{A37A7E14-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK", "..\..\opentk\Source\OpenTK\OpenTK.csproj", "{A37A7E14-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLWidget", "..\..\..\..\GLWidget\GLWidget\GLWidget.csproj", "{34627299-AB51-4C99-B5DA-C03EB751B387}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLWidget", "..\..\GLWidget\GLWidget\GLWidget.csproj", "{34627299-AB51-4C99-B5DA-C03EB751B387}"
 EndProject
-Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "support", "..\..\..\support\support.booproj", "{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}"
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "support", "..\support\support.booproj", "{789A5076-DF09-4C9F-B4A6-2F3CB9872BEC}"
 EndProject
-Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "ext", "..\..\..\lib\ext.booproj", "{ACE1CC26-970D-4F3B-9129-70911A339AC7}"
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "ext", "..\lib\ext.booproj", "{ACE1CC26-970D-4F3B-9129-70911A339AC7}"
 EndProject
-Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "engine", "..\..\..\core\engine.booproj", "{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}"
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "engine", "..\core\engine.booproj", "{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -49,7 +49,9 @@ public class Mega(Program):
 		for i in range(num):
 			at = Attrib()
 			str = GL.GetActiveAttrib( handle, i, size, at.type )
-			assert str.StartsWith( PrefixAttrib )
+			if not str.StartsWith(PrefixAttrib):
+				kri.lib.Journal.Log("Shader: unrecognized attribute (${str})")
+				continue
 			at.name = str.Substring( PrefixAttrib.Length )
 			at.size = size
 			loc = GL.GetAttribLocation( handle, str )
