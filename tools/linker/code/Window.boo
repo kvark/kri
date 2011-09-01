@@ -14,6 +14,7 @@ public class GladeApp:
 	
 	public def onException(args as GLib.UnhandledExceptionArgs) as void:
 		args.ExitApplication = true
+		System.IO.File.WriteAllText( 'exception.txt', args.ExceptionObject.ToString() )
 	
 	public def onDelete(o as object, args as Gtk.DeleteEventArgs) as void:
 		(logic as System.IDisposable).Dispose()
