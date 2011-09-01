@@ -36,18 +36,16 @@ public class GladeApp:
 		logic.remove(args.Path)
 	
 	public def onDragShader(o as object, args as Gtk.DragDataReceivedArgs) as void:
-		result = false
 		begin = 'file:///'
-		str = System.Text.Encoding.ASCII.GetString( args.SelectionData.Data )
-		pos = 0
-		while not result:
-			if not str.StartsWith(begin):	break
-			pos += begin.Length
+		together = System.Text.Encoding.ASCII.GetString( args.SelectionData.Data )
+		for str in together.Split( *"\n".ToCharArray() ):
+			if not str.StartsWith(begin):	continue
+			pos = begin.Length
 			x = str.LastIndexOf('.glsl')
-			if x<0:	break
-			result = logic.addShader( str.Substring(pos,x-pos) )
-			viewShader.ExpandAll()
-		Gtk.Drag.Finish( args.Context, result, false, args.Time )
+			if x<0:	continue
+			logic.addShader( str.Substring(pos,x-pos) )
+		viewShader.ExpandAll()
+		Gtk.Drag.Finish( args.Context, true, false, args.Time )
 		
 	#--------------------
 	# construction
