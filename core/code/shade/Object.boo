@@ -2,15 +2,19 @@
 
 import OpenTK.Graphics.OpenGL
 
+public interface ILogged:
+	Log as string:
+		get
 
 #---------------------------#
 #	STANDARD SHADER	OBJECT	#
 #---------------------------#
 
-public class Object:
+public class Object(ILogged):
 	public final handle		as int
 	[Getter(Description)]
 	private final tag		as string
+	private log				as string = ''
 	public final type		as ShaderType
 
 	public static def Type(name as string) as ShaderType:
@@ -22,6 +26,9 @@ public class Object:
 	
 	public static def Load(path as string) as Object:
 		return kri.Ant.Inst.dataMan.load[of Object](path)
+	
+	ILogged.Log as string:
+		get: return log
 	
 	# create from source
 	public def constructor(tip as ShaderType, label as string, text as string):
@@ -44,10 +51,8 @@ public class Object:
 
 	# check compilation result
 	private def check() as void:
-		info as string
-		GL.GetShaderInfoLog(handle,info)
-		#Debug.WriteLine("Shader: "+tag+"\n"+info);
+		GL.GetShaderInfoLog(handle,log)
 		result as int
 		GL.GetShader(handle, ShaderParameter.CompileStatus, result)
 		if not result:
-			kri.lib.Journal.Log("Shader: Failed to compile object (${tag}), message: ${info}")
+			kri.lib.Journal.Log("Shader: Failed to compile object (${tag}), message: ${log}")

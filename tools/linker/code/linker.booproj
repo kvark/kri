@@ -52,6 +52,9 @@
       <Project>{3AF8D8CA-1C4C-4229-BDDA-BB7C2C46D627}</Project>
       <Name>engine</Name>
     </ProjectReference>
+    <Reference Include="gdk-sharp">
+      <HintPath>..\..\..\..\..\..\Program Files\Mono-2.10.1\lib\mono\gtk-sharp-2.0\gdk-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="glade-sharp">
       <HintPath>..\..\..\..\..\..\Program Files\Mono-2.10.1\lib\mono\gtk-sharp-2.0\glade-sharp.dll</HintPath>
     </Reference>

@@ -10,7 +10,7 @@ import OpenTK.Graphics.OpenGL
 #	STANDARD SHADER	PROGRAM		#
 #-------------------------------#
 
-public class Program:
+public class Program(ILogged):
 	public final	handle	as int
 	private hasGeometry		as bool	= false
 	[Getter(GeometryInput)]
@@ -18,9 +18,11 @@ public class Program:
 	[Getter(Ready)]
 	private linked	as bool = false
 	private static	Current	as Program	= null
-	[Getter(Log)]
 	private log		as string = ''
 	private final	blocks	= List[of Object]()	# for debug
+	
+	ILogged.Log as string:
+		get: return log
 
 	public def constructor():
 		handle = GL.CreateProgram()
