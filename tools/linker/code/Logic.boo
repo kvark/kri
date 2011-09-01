@@ -13,6 +13,7 @@ public class Logic( System.IDisposable ):
 	public	final	bu			= kri.shade.Bundle()
 	private	final	entry		= Dictionary[of ShaderType,Gtk.TreeIter]()
 	
+
 	public def constructor():
 		gameWindow.Visible = false
 		entry[ShaderType.VertexShader]		= treeShader.AppendValues('Vertex:',null)
@@ -31,6 +32,10 @@ public class Logic( System.IDisposable ):
 		return false
 	
 	public def link() as bool:
+		treeInfo.Clear()
+		eAtr		= treeInfo.AppendValues('Attributes:')
+		eUni		= treeInfo.AppendValues('Uniforms:')
+		#eRez		= treeInfo.AppendValues('Results:')
 		bu.clear()
 		for data in entry:
 			it = Gtk.TreeIter()
@@ -43,6 +48,23 @@ public class Logic( System.IDisposable ):
 				treeShader.SetValue(it,1,sob)
 				rez = treeShader.IterNext(it)
 		bu.link()
+		if bu.LinkFail:
+			return false
+		sa = bu.shader
+		# read attribs
+		for atr in sa.attribs:
+			if string.IsNullOrEmpty(atr.name):
+				continue
+			str = "${atr.type} ${atr.name}"
+			if atr.size>1:	str += "[${atr.size}]"
+			treeInfo.AppendValues(eAtr,str)
+		# read uniforms
+		for uni in sa.uniforms:
+			str = "${uni.type} ${uni.name}"
+			if uni.size>1:	str += "[${uni.size}]"
+			treeInfo.AppendValues(eUni,str)
+		# read outputs
+		return true
 	
 	public def remove(tp as Gtk.TreePath) as void:
 		par = it = Gtk.TreeIter()

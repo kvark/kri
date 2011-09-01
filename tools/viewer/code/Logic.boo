@@ -5,7 +5,7 @@ public class Logic:
 	private final	options	= kri.lib.OptionReader(config)
 	private	final	view	= kri.ViewScreen()
 	private	final	al		= kri.ani.Scheduler()
-	private	final	objTree	= Gtk.TreeStore(object)
+	private	final	objTree	= Gtk.TreeStore(*(object, ))
 	private	vProxy	as kri.IView	= null
 	private rset	as RenderSet	= null
 	private	ant		as kri.Ant			= null

@@ -22,6 +22,7 @@ public class GladeApp:
 	public def onButAction(o as object, args as System.EventArgs) as void:
 		logic.link()
 		onSelectShader(null,null)
+		viewInfo.ExpandAll()
 	
 	public def onSelectShader(o as object, args as System.EventArgs) as void:
 		obj as kri.shade.ILogged = logic.bu.shader
@@ -74,7 +75,9 @@ public class GladeApp:
 		Gtk.Drag.DestSet( viewShader, Gtk.DestDefaults.Drop, targets, Gdk.DragAction.Default )
 		viewShader.DragDataReceived	+= onDragShader
 		# make info view
-		viewInfo.AppendColumn('Information:', Gtk.CellRendererText())
+		rTex = Gtk.CellRendererText()
+		col = viewInfo.AppendColumn('Information:',rTex)
+		col.AddAttribute(rTex,'text',0)
 		viewInfo.Model = logic.treeInfo
 		# start
 		window.ShowAll()
