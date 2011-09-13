@@ -47,7 +47,7 @@ public class Copy( Basic ):
 
 public class EarlyZ( tech.Sorted ):
 	public	final	bu	= kri.shade.Bundle()
-	public	offset	= 1f
+	public	offset	= 0f
 	public def constructor():
 		super('zcull')
 		bu.shader.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v' )
