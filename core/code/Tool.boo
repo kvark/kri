@@ -73,7 +73,10 @@ public class Blender(Section):
 		set: GL.BlendColor(0f,0f,0f, value)
 	public static def min() as void:
 		GL.BlendEquation( BlendEquationMode.Min )
-		GL.BlendFunc( BlendingFactorSrc.One,			BlendingFactorDest.One )
+		add()
+	public static def max() as void:
+		GL.BlendEquation( BlendEquationMode.Max )
+		add()
 	public static def alpha() as void:
 		GL.BlendFunc( BlendingFactorSrc.SrcAlpha,		BlendingFactorDest.OneMinusSrcAlpha )
 	public static def add() as void:

@@ -14,8 +14,8 @@ public class General( Basic ):
 	public virtual def addObject(e as kri.Entity, vd as kri.vb.Dict) as bool:
 		if not e.VisibleCam:
 			return false
-		atar	as (kri.shade.Attrib)	= null
-		vao		as kri.vb.Array			= null
+		atar	as (kri.shade.Attrib)	= null	//array of attributes used by any of the entitys materials
+		vao		as kri.vb.Array			= null	//vertex array object to used for drawing the entity
 		if not e.va.TryGetValue(name,vao):
 			e.va[name] = vao = kri.vb.Array()
 			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
@@ -27,10 +27,11 @@ public class General( Basic ):
 			prog as kri.shade.Bundle = null
 			if not m.tech.TryGetValue(name,prog):
 				m.tech[name] = prog = construct(m)
-				if prog.shader and not prog.shader.Ready:
+				if prog and prog.shader and not prog.shader.Ready:
 					prog.shader.attribAll( e.mesh.gatherAttribs() )
 					prog.link()	# force attribute order
-			if prog.LinkFail:	continue
+			if prog==null or prog.LinkFail:
+				continue
 			if atar:	# merge attribs
 				ats = prog.shader.attribs
 				for i in range(atar.Length):

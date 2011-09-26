@@ -65,9 +65,12 @@ public class Group( kri.rend.Group ):
 		rMap.active = false
 		super(rBoxFill,rFill,rApply,rBoxUp,rMap)
 	
-	public def actNormal() as void:
+	public def actNormal(debug as int) as void:
 		for r in (rBoxFill,rBoxDraw,rBoxUp,rFill,rApply):
 			r.active = true
+		if debug>=0:
+			rMap.active = true
+			rMap.level = debug
 	
 	public def fill(rm as kri.rend.Manager, skin as string, sZ as string, sEmi as string) as void:
 		rm.put(sBoxFill,	2,rBoxFill,	skin)

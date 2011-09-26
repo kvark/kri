@@ -24,7 +24,6 @@ public class Fill( kri.rend.Basic ):
 
 public class Apply( kri.rend.Basic ):
 	public	final	bu		= kri.shade.Bundle()
-	public	final	pTex	= kri.shade.par.Texture('input')
 	private	final	tf		= kri.TransFeedback(1)
 	private	final	frame	as kri.gen.Frame	= null
 	private	final	dest	= kri.vb.Object()
@@ -47,10 +46,12 @@ public class Apply( kri.rend.Basic ):
 		scene = kri.Scene.Current
 		if not scene:	return
 		# perform culling
+		tex.setBorder( Graphics.Color4.Black )
 		tf.Bind(dest)
 		using kri.Discarder():
 			frame.draw(bu,tf)
 		# store the result
+		ant = kri.Ant.Inst
 		cam = kri.Camera.Current
 		dest.read(rez,0)
 		for ent in scene.entities:

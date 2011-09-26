@@ -30,9 +30,12 @@ public class Fill( kri.rend.Basic ):
 		v = single.PositiveInfinity
 		doUpload = con.spatial.Allocated==0
 		doDownload = false
+		# beware: operating in local coordinates!
 		using blend = kri.Blender(), kri.Section(EnableCap.ScissorTest):
 			blend.min()
 			for e in scene.entities:
+				if not e.visible:
+					continue
 				e.frameVisible.Clear()
 				bv = e.findAny('vertex')
 				tag = e.seTag[of Tag]()
