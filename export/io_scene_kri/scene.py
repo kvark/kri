@@ -63,6 +63,7 @@ def save_scene(filename, context):
 	timeStart = time.clock()
 	print("\nExporting...")
 	out = Writer.inst = Writer(filename)
+	print('Started.')
 	out.begin('kri')
 	out.pack('B',3)
 	out.end()
@@ -110,4 +111,4 @@ def save_scene(filename, context):
 			save_particle(ob,p)
 	print( ('Done.','Terminated')[out.stop] )
 	out.conclude()
-	print("Export time: %.2f sec" % (time.clock()-timeStart))
+	print("Time spent: %.2f sec\n" % (time.clock()-timeStart))

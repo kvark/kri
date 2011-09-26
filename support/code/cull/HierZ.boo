@@ -46,12 +46,11 @@ public class Apply( kri.rend.Basic ):
 		scene = kri.Scene.Current
 		if not scene:	return
 		# perform culling
-		tex.setBorder( Graphics.Color4.Black )
+		tex.setBorder( Graphics.Color4.White )
 		tf.Bind(dest)
 		using kri.Discarder():
 			frame.draw(bu,tf)
 		# store the result
-		ant = kri.Ant.Inst
 		cam = kri.Camera.Current
 		dest.read(rez,0)
 		for ent in scene.entities:

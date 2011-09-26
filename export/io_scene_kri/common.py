@@ -14,16 +14,21 @@ class Settings:
 	cutPaths	= True
 	kFrameSec	= 1.0 / 25.0
 
+import sys
+
 
 class Writer:
 	tabs = ('',"\t","\t\t","\t\t\t")
 	inst = None
-	__slots__= 'fx','pos','counter','stop'
+	__slots__= 'fx','pos','counter','stop','oldout'
 	def __init__(self,path):
 		self.fx = open(path,'wb')
 		self.pos = 0
 		self.counter = {'':0,'i':0,'w':0,'e':0}
 		self.stop = False
+		self.oldout = sys.stdout
+		log_name = path.replace('.scene','.log')
+		sys.stdout = open(log_name,'w')
 	def pack(self,tip,*args):
 		import struct
 		assert self.pos
@@ -65,8 +70,11 @@ class Writer:
 		print( "%s%s" % (Writer.tabs[indent],message) )
 	def conclude(self):
 		self.fx.close()
+		sys.stdout.close()
+		sys.stdout = self.oldout
 		c = self.counter
 		print(c['e'],'errors,',c['w'],'warnings,',c['i'],'infos')
+		
 
 
 def save_color(rgb):

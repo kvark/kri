@@ -73,7 +73,7 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 		Settings.putUv		= self.properties.put_uv
 		Settings.putColor	= self.properties.put_color
 		Settings.doQuatInt	= self.properties.quat_int
-		save_scene(self.properties.filepath, context)
+		save_scene( self.properties.filepath, context )
 		return {'FINISHED'}
 
 
