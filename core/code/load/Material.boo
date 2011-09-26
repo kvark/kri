@@ -260,7 +260,7 @@ public class ExMaterial( kri.IExtension ):
 	public def pt_zero(r as Reader) as bool:
 		u = r.geData[of AdUnit]()
 		if not u:	return false
-		u.Value = kri.gen.Texture.color
+		u.Value = null
 		return true
 
 	#---	Texture: noise		---#

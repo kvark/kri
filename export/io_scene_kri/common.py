@@ -14,6 +14,24 @@ class Settings:
 	cutPaths	= True
 	kFrameSec	= 1.0 / 25.0
 
+	def printLog():
+		print("Settings:")
+		s = ''
+		s += ('','i')[	Settings.showInfo	]
+		s += ('','w')[	Settings.showWarning	]
+		s += ('e','e!')[Settings.breakError	]
+		print("\tLog:",s)
+		s = ''
+		s += ('','n')[	Settings.putNormal	]
+		s += ('','q')[	Settings.putQuat	]
+		s += ('','u')[	Settings.putUv		]
+		s += ('','c')[	Settings.putColor	]
+		print("\tData:",s)
+		if Settings.doQuatInt and Settings.putQuat:
+			print("\tQuat interpolation ready")
+		print("\tTick:" , Settings.kFrameSec)
+
+
 import sys
 
 
@@ -21,6 +39,7 @@ class Writer:
 	tabs = ('',"\t","\t\t","\t\t\t")
 	inst = None
 	__slots__= 'fx','pos','counter','stop','oldout'
+
 	def __init__(self,path):
 		self.fx = open(path,'wb')
 		self.pos = 0
@@ -29,6 +48,8 @@ class Writer:
 		self.oldout = sys.stdout
 		log_name = path.replace('.scene','.log')
 		sys.stdout = open(log_name,'w')
+		Settings.printLog()
+
 	def pack(self,tip,*args):
 		import struct
 		assert self.pos
@@ -43,6 +64,7 @@ class Writer:
 			assert x<256
 			bt = bytes(s,'ascii')
 			self.pack('B%ds'%(x),x,bt)
+
 	def begin(self,name):
 		import struct
 		assert len(name)<8 and not self.pos
@@ -57,6 +79,7 @@ class Writer:
 		self.fx.write( struct.pack('<L',off) )
 		self.fx.seek(+off+0,1)
 		self.pos = 0
+
 	def log(self,indent,level,message):
 		self.counter[level] += 1
 		if level=='i' and not Settings.showInfo:
@@ -68,6 +91,7 @@ class Writer:
 		print('%s(%c) %s' % (Writer.tabs[indent],level,message))
 	def logu(self,indent,message):
 		print( "%s%s" % (Writer.tabs[indent],message) )
+
 	def conclude(self):
 		self.fx.close()
 		sys.stdout.close()
@@ -75,6 +99,7 @@ class Writer:
 		c = self.counter
 		print(c['e'],'errors,',c['w'],'warnings,',c['i'],'infos')
 		
+
 
 
 def save_color(rgb):
