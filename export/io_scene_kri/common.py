@@ -2,33 +2,29 @@ __author__ = ['Dzmitry Malyshau']
 __bpydoc__ = 'Settings & Writing access for KRI exporter.'
 
 class Settings:
-	showInfo	= True
-	showWarning	= True
 	breakError	= False
 	putNormal	= True
 	putQuat		= True
 	putUv		= True
 	putColor	= True
 	doQuatInt	= True
-	logInfo		= True
+	allowEmptyTex	= True
 	cutPaths	= True
 	kFrameSec	= 1.0 / 25.0
 
 	def printLog():
 		print("Settings:")
 		s = ''
-		s += ('','i')[	Settings.showInfo	]
-		s += ('','w')[	Settings.showWarning	]
-		s += ('e','e!')[Settings.breakError	]
-		print("\tLog:",s)
-		s = ''
 		s += ('','n')[	Settings.putNormal	]
 		s += ('','q')[	Settings.putQuat	]
 		s += ('','u')[	Settings.putUv		]
 		s += ('','c')[	Settings.putColor	]
 		print("\tData:",s)
-		if Settings.doQuatInt and Settings.putQuat:
-			print("\tQuat interpolation ready")
+		ny = ('no','yes')
+		val = (Settings.doQuatInt and Settings.putQuat)
+		print("\tQuat interpolation:",ny[val])
+		val = Settings.allowEmptyTex
+		print("\tEmpty textures:",ny[val])
 		print("\tTick:" , Settings.kFrameSec)
 
 
@@ -82,10 +78,6 @@ class Writer:
 
 	def log(self,indent,level,message):
 		self.counter[level] += 1
-		if level=='i' and not Settings.showInfo:
-			return
-		if level=='w' and not Settings.showWarning:
-			return
 		if level=='e' and Settings.breakError:
 			self.stop = True
 		print('%s(%c) %s' % (Writer.tabs[indent],level,message))

@@ -199,7 +199,7 @@ Anaglyph</property>
                 <child>
                   <widget class="GtkLabel" id="tabZero">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">UNKNOWN</property>
+                    <property name="label" translatable="yes">-</property>
                   </widget>
                 </child>
                 <child>

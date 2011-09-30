@@ -235,5 +235,8 @@ def save_mat(mat):
 	for mt in mat.texture_slots:
 		if not mt: continue
 		out.logu(1,'+map: ' + mt.name)
+		if mt.texture.type != 'IMAGE' and not Settings.allowEmptyTex:
+			out.log(2,'w','skipped')
+			continue
 		save_mat_unit(mt)
 		save_mat_image(mt)

@@ -36,12 +36,6 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 	filepath	= StringProperty( name='File Path',
 		description='Filepath used for exporting the KRI scene',
 		maxlen=1024, default='')
-	show_info	= BoolProperty( name='Show infos',
-		description='Print information messages (i)',
-		default=Settings.showInfo )
-	show_warn	= BoolProperty( name='Show warnings',
-		description='Print warning messages (w)',
-		default=Settings.showWarning )
 	break_err	= BoolProperty( name='Break on error',
 		description='Stop the process on first error',
 		default=Settings.breakError )
@@ -60,19 +54,21 @@ class ExportKRI(bpy.types.Operator, ExportHelper):
 	quat_int	= BoolProperty( name='Process quaternions',
 		description='Prepare mesh quaternions for interpolation',
 		default=Settings.doQuatInt )
+	empty_tex	= BoolProperty( name='Empty textures',
+		description='Allow texture units with non-existing textures',
+		default=Settings.allowEmptyTex )
 	cut_paths	= BoolProperty( name='Cut paths',
 		description='Force relative paths',
 		default=Settings.cutPaths )
 
 	def execute(self, context):
-		Settings.showInfo	= self.properties.show_info
-		Settings.showWarning	= self.properties.show_warn
 		Settings.breakError	= self.properties.break_err
 		Settings.putNormal	= self.properties.put_normal
 		Settings.putQuat	= self.properties.put_quat
 		Settings.putUv		= self.properties.put_uv
 		Settings.putColor	= self.properties.put_color
 		Settings.doQuatInt	= self.properties.quat_int
+		Settings.allowEmptyTex	= self.properties.empty_tex
 		save_scene( self.properties.filepath, context )
 		return {'FINISHED'}
 

@@ -17,7 +17,7 @@ public class RenderSet:
 	public	final	rParticle	as kri.rend.part.Standard		= null
 	public	final	grForward	as support.light.group.Forward	= null
 	public	final	grDeferred	as support.defer.Group			= null
-	public	final	grCull		= support.cull.Group(256)
+	public	final	grCull		= support.cull.Group(410)
 
 	public	ClearColor	as Graphics.Color4:
 		set:	rClear.backColor = grForward.rEmi.backColor = value

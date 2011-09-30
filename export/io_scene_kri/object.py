@@ -85,7 +85,9 @@ def save_particle(obj,part):
 	out = Writer.inst
 	st = part.settings
 	life = (st.frame_start, st.frame_end, st.lifetime)
-	mat = obj.material_slots[ st.material-1 ].material
+	mat = None
+	if len(obj.material_slots) >= st.material:
+		mat = obj.material_slots[ st.material-1 ].material
 	matname = (mat.name if mat else '')
 	info = (part.name, matname, st.count)
 	out.logu(1,'+particle: %s [%s], %d num' % info )
