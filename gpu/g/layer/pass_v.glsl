@@ -28,17 +28,16 @@ out	vec3	var_normal;
 
 
 void main()	{
-	//world space normal and quaternion
-	var_quat = qmul( s_model.rot, at_quat );
-	var_normal = qrot( s_model.rot, at_normal );
-
 	make_tex_coords();
+	handiness = at_vertex.w;
+	n_space = get_quaternion();
 
 	vec3 vw = trans_for( at_vertex.xyz, s_model );
 	vec3 vc = trans_inv( vw, s_cam );
 	gl_Position = get_proj_cam(vc);
 
-	view	= s_cam.pos.xyz - vw;
-	handiness = at_vertex.w;
-	n_space = get_quaternion();
+	//world space normal, quaternion and camera vector
+	var_quat	= qmul( s_model.rot, at_quat );
+	var_normal	= qrot( s_model.rot, at_normal );
+	view		= s_cam.pos.xyz - vw;
 }

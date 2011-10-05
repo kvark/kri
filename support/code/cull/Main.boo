@@ -5,6 +5,7 @@ public class Context:
 	public	final	bound	= kri.vb.Attrib()
 	public	final	maxn	as uint
 	public	final	pTex	= kri.shade.par.Texture('input')
+	public	final	pMinLev	= kri.shade.par.Value[of int]('min_level')
 	public	final	dict	= kri.shade.par.Dict()
 	public	final	frame	as kri.gen.Frame	= null
 	
@@ -14,6 +15,8 @@ public class Context:
 		bound.initUnit(n)
 		kri.Help.enrich(spatial,4,'pos','rot')
 		dict.unit(pTex)
+		dict.var(pMinLev)
+		pMinLev.Value = 0
 		m = kri.Mesh( nVert:maxn )
 		m.buffers.AddRange(( bound, spatial ))
 		frame = kri.gen.Frame('box',m)

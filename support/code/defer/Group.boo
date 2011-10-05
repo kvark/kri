@@ -34,12 +34,11 @@ public class Group( kri.rend.Group ):
 		super( *rl.ToArray() )
 
 	public def actNormal(layered as bool) as void:
-		rFill.active = true
+		rFill.active = not layered
+		rLayer.active = layered
 		if rParticle:	rParticle.active = true
 		if rApply:		rApply.active = true
-		rLayer.active = layered
-		rFill.active = not layered
-
+		
 	public def fill(rm as kri.rend.Manager, sZ as string) as void:
 		rm.put(sFill,	3,rFill,		sZ)
 		rm.put(sLayer,	4,rLayer,		sFill)

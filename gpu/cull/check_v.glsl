@@ -1,6 +1,7 @@
 #version 150 core
 
 uniform sampler2D unit_input;
+uniform int	min_level;
 
 uniform struct Spatial	{
 	vec4 pos,rot;
@@ -60,13 +61,17 @@ void main()	{
 	// compute LOD
 	vec4 xm = vec4( max(one.xx,xmin.xy), min(one.yy,xmax.xy) );
 	int lod = get_lod(xm);
-	// get samples finally
-	vec4 sam = vec4(
-		textureLod( unit_input, xm.xy, lod ).x,
-		textureLod( unit_input, xm.xw, lod ).x,
-		textureLod( unit_input, xm.zy, lod ).x,
-		textureLod( unit_input, xm.zw, lod ).x);
-	// compare to our depth
-	float maxDepth = max( max(sam.x,sam.w), max(sam.y,sam.z) );
+
+	float maxDepth = 0.0;
+	if (lod>=min_level)	{
+		// get samples finally
+		vec4 sam = vec4(
+			textureLod( unit_input, xm.xy, lod ).x,
+			textureLod( unit_input, xm.xw, lod ).x,
+			textureLod( unit_input, xm.zy, lod ).x,
+			textureLod( unit_input, xm.zw, lod ).x);
+		// compute max depth
+		maxDepth = max( max(sam.x,sam.w), max(sam.y,sam.z) );
+	} //derive visibility
 	to_visible = int(xmin.z < maxDepth);
 }

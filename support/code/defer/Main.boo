@@ -32,7 +32,7 @@ public class Context:
 		# dictionary
 		dict.unit('depth',texDepth)
 		# diffuse, specular, world space normal
-		pif = (PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba16)
+		pif = (PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba8, PixelInternalFormat.Rgba12)
 		for i in range(3):
 			pt = par.Texture('g'+i)
 			tex = kri.buf.Texture(0, pif[i], PixelFormat.Rgba )
