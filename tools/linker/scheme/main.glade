@@ -18,9 +18,17 @@
             <property name="can_focus">True</property>
             <property name="position">250</property>
             <child>
-              <widget class="GtkTreeView" id="viewShader">
+              <widget class="GtkScrolledWindow" id="scrolledwindow1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <widget class="GtkTreeView" id="viewShader">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </widget>
+                </child>
               </widget>
               <packing>
                 <property name="resize">False</property>
@@ -52,9 +60,17 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkTreeView" id="viewInfo">
+                  <widget class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <widget class="GtkTreeView" id="viewInfo">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="resize">True</property>
@@ -74,10 +90,18 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkTextView" id="textLog">
+          <widget class="GtkScrolledWindow" id="scrolledwindow3">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="editable">False</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <widget class="GtkTextView" id="textLog">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="editable">False</property>
+              </widget>
+            </child>
           </widget>
           <packing>
             <property name="resize">True</property>

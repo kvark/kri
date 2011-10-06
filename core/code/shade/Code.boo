@@ -167,5 +167,5 @@ public class Template(ICode):
 			else: rez += line + "\n"
 		for line in text.Split( "\n".ToCharArray()[0] ):
 			append(line)
-		dict[key] = sh = Object(tip,'template',rez)
+		dict[key] = sh = Object(tip,key,rez)
 		return sh

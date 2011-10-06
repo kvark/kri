@@ -21,6 +21,9 @@ public class Program(ILogged):
 	private log		as string = ''
 	private final	blocks	= List[of Object]()	# for debug
 	
+	public Description as string:
+		get: return join( (sh.Description for sh in blocks), "\n")
+	
 	ILogged.Log as string:
 		get: return log
 
