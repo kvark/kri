@@ -36,9 +36,10 @@ def save_mat_unit(mtex):
 	infoStr = 'affects:'
 	for x in supported:
 		enabled = mtex.__getattribute__('use_map_'+x)
+		x = x.replace('spec','specular')
 		if not enabled: continue
 		if x.startswith(xcolor):
-			fname = x.replace(xcolor,'').replace('spec','specular') + '_' + xcolor
+			fname = x.replace(xcolor,'') + '_' + xcolor
 		else:	fname = x+'_'
 		factor = mtex.__getattribute__(fname+'factor')
 		out.text(x)
@@ -62,6 +63,7 @@ def save_mat_unit(mtex):
 	if tc == 'OBJECT':	out.text( mtex.object.name )
 	out.end()
 	out.begin('u_apply')
+	out.pack('B', mtex.use )
 	out.text( mtex.blend_type, mtex.normal_map_space )
 	out.pack('3B', mtex.use_rgb_to_intensity, mtex.invert, mtex.use_stencil )
 	save_color( mtex.color )

@@ -80,7 +80,7 @@ public class Fill( kri.rend.tech.General ):
 				afDiff = true
 			if aff == 'color_emission':
 				afEmis = true
-			if aff == 'color_spec':
+			if aff == 'color_specular':
 				afSpec = true
 			if aff == 'hardness':
 				afHard = true

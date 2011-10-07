@@ -39,6 +39,7 @@ public class Extra( kri.IExtension ):
 		id = m.unit.IndexOf(u)
 		pa = Pass( Name:'pass-'+id, Unit:id )
 		m.metaList.Add(pa)
+		pa.enable		= r.getByte()>0
 		pa.blend		= r.getString()
 		pa.bumpSpace	= r.getString()
 		pa.doIntensity	= r.getByte()>0
