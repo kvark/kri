@@ -13,8 +13,8 @@ public interface ILogged:
 public class Object(ILogged):
 	public final handle		as int
 	[Getter(Description)]
-	private final tag		as string
-	private log				as string = ''
+	public final tag		as string	= ''
+	private log				as string	= ''
 	public final type		as ShaderType
 
 	public static def Type(name as string) as ShaderType:

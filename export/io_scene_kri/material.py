@@ -38,7 +38,7 @@ def save_mat_unit(mtex):
 		enabled = mtex.__getattribute__('use_map_'+x)
 		if not enabled: continue
 		if x.startswith(xcolor):
-			fname = x.replace(xcolor,'') + '_' + xcolor
+			fname = x.replace(xcolor,'').replace('spec','specular') + '_' + xcolor
 		else:	fname = x+'_'
 		factor = mtex.__getattribute__(fname+'factor')
 		out.text(x)
@@ -78,6 +78,7 @@ def save_mat_image(mtex):
 	it = mtex.texture
 	assert it
 	out.logu(2, 'type: ' + it.type)
+	hasNormals = True
 	# tex mapping
 	out.begin('t_map')
 	if mtex.mapping_x != 'X' or mtex.mapping_y != 'Y' or mtex.mapping_z != 'Z':
@@ -104,6 +105,7 @@ def save_mat_image(mtex):
 
 	if it.type == 'ENVIRONMENT_MAP':
 		# environment map chunk
+		hasNormals = False
 		env = mtex.texture.environment_map
 		if env.source != 'IMAGE_FILE':
 			clip = (env.clip_start, env.clip_end)
@@ -147,8 +149,10 @@ def save_mat_image(mtex):
 	if fullname.find(name) not in (0,1):
 		out.log(2,'w', 'path cut to: %s' % (name))
 	out.text( name)
-	out.pack('B', it.use_normal_map)
-	if it.use_normal_map:
+	if hasNormals:
+		hasNormals = it.use_normal_map
+	out.pack('B', hasNormals)
+	if hasNormals:
 		out.log(2,'i', 'normal space: %s' % (mtex.normal_map_space))
 	out.end()
 	# texture image sampling

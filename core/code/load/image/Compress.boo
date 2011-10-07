@@ -158,4 +158,5 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 			size = ((t.wid+3)>>2) * ((t.het+3)>>2) * block
 		# pass-through result
 		t.switchLevel(0)
+		t.filt(true,true)
 		return Dummy( tex:t )

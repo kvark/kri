@@ -6,7 +6,9 @@ import OpenTK.Graphics.OpenGL
 
 
 public class Texture(Surface):
-	public	final	handle	as uint
+	public	final	handle	as uint	= 0
+	[Getter(Description)]
+	public	tag		as string = ''
 	private static	bound	as uint	= 0
 	private	final	allocated	= array[of bool](16)
 	private			filtered	= false
@@ -28,13 +30,13 @@ public class Texture(Surface):
 		get: return allocated[0] and filtered
 
 	public def constructor():
-		handle = GL.GenTexture()	
+		handle = GL.GenTexture()
 		for i in range(allocated.Length):
 			allocated[i] = false
 	
 	private def constructor(manId as uint):
-		allocated[0] = filtered = true
 		handle = manId
+		allocated[0] = filtered = true
 
 	public def constructor(sm as byte, ifm as PixelInternalFormat, pf as PixelFormat):
 		self()
