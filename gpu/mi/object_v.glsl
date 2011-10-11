@@ -12,5 +12,5 @@ vec3 trans_inv(vec3,Spatial);
 
 vec3 mi_object()	{
 	vec3 vw = trans_for( at_vertex.xyz, s_model );
-	return trans_inv(vw,s_target);
+	return 0.5*trans_inv(vw,s_target) + vec3(0.5);
 }

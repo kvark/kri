@@ -20,7 +20,7 @@ public class Targa( ILoaderGen[of IGenerator[of kri.buf.Texture]] ):
 		public def check() as bool:
 			return false	if cmType!=0 or imType != 2
 			return false	if xrig + yrig
-			return false	if descr<bits and bits != 24+descr
+			return false	if descr<bits and bits < 24+descr
 			return true
 
 	public def read(path as string) as IGenerator[of kri.buf.Texture]:	#imp: ILoaderGen
