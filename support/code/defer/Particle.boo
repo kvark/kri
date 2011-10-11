@@ -2,7 +2,7 @@
 
 public class Particle(ApplyBase):
 	private final pHalo		= kri.shade.par.Value[of OpenTK.Vector4]('halo_data')
-	private final light		= kri.Light( energy:1f, quad1:0f, quad2:0f )
+	private final light		= kri.Light( factor0:1f, factor1:0f, factor2:0f )
 	private final sphere	as kri.Mesh
 	# init
 	public def constructor(pc as kri.part.Context, con as Context):

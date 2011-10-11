@@ -55,9 +55,9 @@ public class Light(Projector,IColored):
 	public softness	= 0f
 	[Property(Color)]
 	private color	as Graphics.Color4	= Graphics.Color4(1f,1f,1f,1f)
-	public energy	= 1f	# initial energy
-	public quad1	= 0f	# linear factor
-	public quad2	= 0f	# quadratic factor
+	public factor0	= 1f	# constant factor
+	public factor1	= 0f	# linear factor
+	public factor2	= 0f	# quadratic factor
 	public sphere	= 0f	# spherical bound
 	public depth	as buf.Texture	= null
 	# parallel projection

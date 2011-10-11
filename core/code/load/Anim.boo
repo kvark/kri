@@ -91,7 +91,7 @@ public class ExAnim( kri.IExtension ):
 		anid['t.scale']			= RacTexUnit({u| return u.pScale })
 		# light
 		anid['l.energy']	= Rac(getReal)	do(pl as IPlayer, v as single, i as byte):
-			(pl as kri.Light).energy = v
+			(pl as kri.Light).factor0 = 1f / v
 		anid['l.color']		= Rac(getColor)	do(pl as IPlayer, v as Color4, i as byte):
 			(pl as kri.IColored).Color = v
 		anid['l.clip_start']	= RacProject(fp_prin)

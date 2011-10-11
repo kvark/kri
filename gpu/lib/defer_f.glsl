@@ -29,7 +29,6 @@ vec3 unproject(vec3 v, vec4 pr)	{
 uniform vec4 lit_attenu;
 
 float get_attenuation2(float d)	{
-	vec3 a = vec3(1.0) + lit_attenu.wyz * vec3(-d,d,d*d);
-	//x: spherical, y :linear, z: quadratic
-	return a.x * lit_attenu.x / (a.y*a.z);
+	float r = dot( lit_attenu.xyz, vec3(1.0,d,d*d) );
+	return max(0.0,1.0-lit_attenu.w*d) / r;
 }

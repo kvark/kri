@@ -17,7 +17,7 @@ def save_lamp(lamp):
 	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0
 	# attenuation
 	kd = 1.0 / lamp.distance
-	q0,q1,q2,qs = lamp.energy, kd, kd*kd, 0.0
+	q0,q1,q2,qs = 1.0/lamp.energy, kd, kd*kd, 0.0
 	if lamp.type in ('POINT','SPOT'):
 		if lamp.use_sphere:
 			out.log(1,'i','spherical limit')

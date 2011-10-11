@@ -37,7 +37,7 @@ public final class Light( IBase ):
 	public def activate(l as kri.Light) as void:
 		color.Value		= l.Color
 		kdir = (0f,1f)[l.fov>0f]
-		attenu.Value	= Vector4(l.energy, l.quad1, l.quad2, l.sphere)
+		attenu.Value	= Vector4(l.factor0, l.factor1, l.factor2, l.sphere)
 		data.Value		= Vector4(l.softness, kdir, 0f, 0f)
 
 	kri.INamed.Name as string:

@@ -73,9 +73,9 @@ public class ExObject( kri.IExtension ):
 		r.puData(l)
 		l.Color	= r.getColorByte()
 		# attenuation
-		l.energy	= r.getReal()
-		l.quad1		= r.getReal()
-		l.quad2		= r.getReal()
+		l.factor0	= r.getReal()
+		l.factor1	= r.getReal()
+		l.factor2	= r.getReal()
 		l.sphere	= r.getReal()
 		# main
 		type = r.getString()

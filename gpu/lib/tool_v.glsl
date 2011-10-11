@@ -36,12 +36,23 @@ vec4 get_proj_lit(vec3 v)	{
 }
 
 
-//	light attenuation, blender model	//
+//	light attenuation in Blender model	//
 
+//x: energy, y :linear, z: quadratic, w: spherical
 uniform	vec4	lit_attenu;
 
+//new Blender equation:
+//I = max(1-r/D,0) / (C + L*D + Q*D^2)
+
 float get_attenuation(float d)	{
+	float r = dot( lit_attenu.xyz, vec3(1.0,d,d*d) );
+	return max(0.0,1.0-lit_attenu.w*d) / r;
+}
+
+//old Blender equation:
+//I = E * max(1-r/D,0) / ((1+L*r/D)(1+Q*r*r/D/D))
+
+float get_attenuation_old(float d)	{
 	vec3 a = vec3(1.0) + lit_attenu.wyz * vec3(-d,d,d*d);
-	//x: spherical, y :linear, z: quadratic
-	return a.x * lit_attenu.x / (a.y*a.z);
+	return max(0.0,a.x) / (lit_attenu.x * a.y * a.z);
 }
