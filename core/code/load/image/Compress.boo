@@ -7,18 +7,42 @@ import kri.data
 public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 	public static final DdsMagic		= 0x20534444
 	# header flags
-	public static final FlagPixelFormat	= 0x00001000
-	public static final FlagCaps		= 0x00000001
-	public static final FlagMipCount	= 0x00020000
-	# pixel format flagd
-	public static final FlagFourCC		= 0x00000004
+	[System.Flags]
+	public enum HeadFlags:
+		PixelFormat	= 0x00001000
+		Caps		= 0x00000001
+		MipCount	= 0x00020000
+	# pixel format flags
+	[System.Flags]
+	public enum FormatFlags:
+		FourCC		= 0x00000004
+	# core caps
+	[System.Flags]
+	public enum CoreCaps:
+		Complex	= 0x00000008
+		Texture	= 0x00001000
+		Mipmap	= 0x00400000
+	# cube caps
+	[System.Flags]
+	public enum CubeCaps:
+		Cube	= 0x00000200
+		PosX	= 0x00000400
+		NegX	= 0x00000800
+		PosY	= 0x00001000
+		NegY	= 0x00002000
+		PosZ	= 0x00004000
+		NegZ	= 0x00008000
+		All		= PosX|NegX |PosY|NegY |PosZ|NegZ
+		Volume	= 0x00200000
 	# help members
 	private	final	buffer	= array[of byte](16)
+	private	curBlock	as uint	= 0
+	private curMips		as byte = 0
 	
 	private struct Header:
 		public magic	as ulong
 		public size		as ulong
-		public flags	as ulong
+		public flags	as HeadFlags
 		public height	as ulong
 		public width	as ulong
 		public pitch	as ulong
@@ -26,12 +50,12 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 		public mips		as ulong
 		public def check() as bool:
 			return false	if magic != DdsMagic or size != 124
-			return false	if not ((flags & FlagPixelFormat) | (flags & FlagCaps))
+			return false	if not (flags & HeadFlags.PixelFormat) or not (flags & HeadFlags.Caps)
 			return true
 	
 	private struct PixFormat:
 		public size		as ulong
-		public flags	as ulong
+		public flags	as FormatFlags
 		public fourCC	as string
 		public rgbBits	as ulong
 		public maskR	as ulong
@@ -44,9 +68,9 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 		public caps2	as ulong
 		public ddsx		as ulong
 	
-	private def flipVertical(data as (byte), het as uint, block as uint) as void:
+	private def flipVertical(data as (byte), het as uint) as void:
 		v as System.UInt64 = 0
-		hasAlpha = block>8
+		hasAlpha = curBlock>8
 		if het<=1:	return
 		if het==2:
 			i=0
@@ -62,17 +86,17 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 				data[i+5] = x
 				i += 8
 			return
-		totalBlocks = data.Length / block
+		totalBlocks = data.Length / curBlock
 		vertiBlocks = ((het+3)>>2)
 		horisBlocks = totalBlocks / vertiBlocks
 		assert vertiBlocks * horisBlocks == totalBlocks
 		for j in range (vertiBlocks>>1):
 			for i in range(horisBlocks):
-				a = block * (horisBlocks*j+i)
-				b = block * (horisBlocks*(vertiBlocks-j-1)+i)
-				System.Buffer.BlockCopy(data, a, buffer, 0, block)
-				System.Buffer.BlockCopy(data, b, data, a, block)
-				System.Buffer.BlockCopy(buffer, 0, data, b, block)
+				a = curBlock * (horisBlocks*j+i)
+				b = curBlock * (horisBlocks*(vertiBlocks-j-1)+i)
+				System.Buffer.BlockCopy(data, a, buffer,	0, curBlock)
+				System.Buffer.BlockCopy(data, b, data,		a, curBlock)
+				System.Buffer.BlockCopy(buffer, 0, data,	b, curBlock)
 		i=0
 		while i<data.Length:
 			if hasAlpha:
@@ -95,13 +119,21 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 			data[i+6] = x
 			i += 8
 	
+	private def readSide(br as BinaryReader, t as kri.buf.Texture, side as int) as void:
+		for i in range(curMips):
+			t.switchLevel(i)
+			size = ((t.wid+3)>>2) * ((t.het+3)>>2) * curBlock
+			data = br.ReadBytes(size)
+			flipVertical(data, t.het)
+			t.initCube(side,data,true)
+	
 	public def read(path as string) as  IGenerator[of kri.buf.Texture]:	#imp: ILoaderGen
 		br = BinaryReader( File.OpenRead(path) )
 		# read header
 		head = Header(
 			magic	: br.ReadUInt32(),
 			size	: br.ReadUInt32(),
-			flags	: br.ReadUInt32(),
+			flags	: cast( HeadFlags, br.ReadUInt32() ),
 			height	: br.ReadUInt32(),
 			width	: br.ReadUInt32(),
 			pitch	: br.ReadUInt32(),
@@ -111,26 +143,33 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 		# read pixel format
 		format = PixFormat(
 			size	: br.ReadUInt32(),
-			flags	: br.ReadUInt32(),
-			fourCC	: string(br.ReadChars(4)),
+			flags	: cast( FormatFlags, br.ReadUInt32() ),
+			fourCC	: string( br.ReadChars(4) ),
 			rgbBits	: br.ReadUInt32(),
 			maskR	: br.ReadUInt32(),
 			maskG	: br.ReadUInt32(),
 			maskB	: br.ReadUInt32(),
 			maskA	: br.ReadUInt32())
-		br.BaseStream.Seek(20, SeekOrigin.Current)
+		# read caps
+		coreCaps = cast( CoreCaps, br.ReadUInt32() )
+		cubeCaps = cast( CubeCaps, br.ReadUInt32() )
+		br.BaseStream.Seek(12, SeekOrigin.Current)
+		assert coreCaps & CoreCaps.Texture
 		# check input and init texture
 		if not head.check():
-			kri.lib.Journal.Log("DDS: bad format (${path})")
+			kri.lib.Journal.Log("DDS: unsupported header (${path})")
 			return null
 		t = kri.buf.Texture()
 		t.wid = head.width
 		t.het = head.height
 		# find internal format and block size
-		block = 0
-		if (format.flags & FlagFourCC):
+		curBlock = 0
+		if (format.flags & FormatFlags.FourCC):
 			id = System.Array.IndexOf( ('DXT1','DXT3','DXT5'), format.fourCC )
-			block = (8,16,16)[id]
+			if id<0:
+				kri.lib.Journal.Log("DDS: unknown 4CC format (${format.fourCC}) of texture (${path})")
+				return null
+			curBlock = (8,16,16)[id]
 			pif0 = (PixelInternalFormat.CompressedRgbaS3tcDxt1Ext,
 					PixelInternalFormat.CompressedRgbaS3tcDxt3Ext,
 					PixelInternalFormat.CompressedRgbaS3tcDxt5Ext)
@@ -142,20 +181,23 @@ public class Compress( ILoaderGen[of IGenerator[of kri.buf.Texture]]):
 		else:
 			kri.lib.Journal.Log("DDS: non-compressed (${path})")
 			return null
-		# fill up the mip maps
-		size = ((head.width+3)>>2) * ((head.height+3)>>2) * block
+		# check parameters
+		size = ((head.width+3)>>2) * ((head.height+3)>>2) * curBlock
 		if size != head.pitch:
-			kri.lib.Journal.Log("DDS: invalid size (${path}: ${size} != ${head.pitch})")
+			kri.lib.Journal.Log("DDS: invalid size (${path}: ${size} != ${head.pitch}) of texture (${path})")
 			return null
-		nMips = 1
-		if (head.flags & FlagMipCount):
-			nMips = head.mips
-		for i in range(nMips):
-			data = br.ReadBytes(size)
-			flipVertical(data, t.het, block)
-			t.init(data,true)
-			t.switchLevel(i+1)
-			size = ((t.wid+3)>>2) * ((t.het+3)>>2) * block
+		curMips = 1
+		if (head.flags & HeadFlags.MipCount):
+			assert coreCaps & CoreCaps.Mipmap
+			curMips = head.mips
+		sides = (0,)
+		if (cubeCaps & CubeCaps.Cube):
+			assert cubeCaps & CubeCaps.All == CubeCaps.All
+			t.target = TextureTarget.TextureCubeMap
+			sides = (1,-1,2,-2,3,-3)
+		# read sides, finally
+		for side in sides:
+			readSide(br,t,side)
 		# pass-through result
 		t.switchLevel(0)
 		t.filt(true,true)

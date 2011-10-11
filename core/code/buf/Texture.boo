@@ -167,14 +167,14 @@ public class Texture(Surface):
 		bind()
 		setImage(target,data,compressed)
 	
-	public def initCube[of T(struct)](side as int, data as (T)) as void:
+	public def initCube[of T(struct)](side as int, data as (T), compressed as bool) as void:
 		bind()
 		tArray = (
 			TextureTarget.TextureCubeMapNegativeX, TextureTarget.TextureCubeMapNegativeY, TextureTarget.TextureCubeMapNegativeZ,
-			TextureTarget.Texture1D,	# dummy corresponding side==0
+			target,	# dummy corresponding side==0
 			TextureTarget.TextureCubeMapPositiveX, TextureTarget.TextureCubeMapPositiveY, TextureTarget.TextureCubeMapPositiveZ)
-		assert side in (-3,-2,-1,1,2,3)
-		setImage( tArray[side+3], data, false )
+		assert side>=-3 and side<=3
+		setImage( tArray[side+3], data, compressed )
 	
 	public def initCube() as void:
 		bind()
