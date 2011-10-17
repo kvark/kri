@@ -18,52 +18,59 @@ public class Mesh( kri.Mesh ):
 		ent.tags.Add(tm)
 		return ent
 
+#---------	Generic Wrap	---------#
 
-#---------	POINT	---------#
-
-public class Point( Mesh ):
-	public def constructor():
-		super( BeginMode.Points )
-		.nVert = .nPoly = 1
+public class MeshGen[of T(struct)](Mesh):
+	public def constructor(mode as BeginMode, nv as uint, np as uint, data as (T), components as byte):
+		super(mode)
+		.nVert = nv
+		.nPoly = np
 		vat = kri.vb.Attrib()
-		vat.init(1)
-		ai = kri.vb.Info( name:'vertex', size:1,
-			type:VertexAttribPointerType.UnsignedByte )
-		vat.Semant.Add(ai)
-		buffers.Add(vat)
-
-
-#---------	QUAD	---------#
-
-public class Quad( Mesh ):
-	public def constructor():
-		super( BeginMode.TriangleStrip )
-		self.nVert = 4
-		self.nPoly = 4
-		vat = kri.vb.Attrib()
-		vat.init[of Vector2h]((of Vector2h:
-			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
-			Vector2h(-1f,1f),	Vector2h(1f,1f),
-			), false)
-		ai = kri.vb.Info( name:'vertex', size:2,
+		vat.init(data,false)
+		ai = kri.vb.Info( name:'vertex', size:components,
 			type:VertexAttribPointerType.HalfFloat )
 		vat.Semant.Add(ai)
 		buffers.Add(vat)
 
+public class MeshScreen( MeshGen[of Vector2h] ):
+	public def constructor(nv as uint, data as (Vector2h)):
+		super( BeginMode.TriangleStrip, nv, nv, data, 2 )
+		
+
+#---------	TRIANGLE	---------#
+
+public class Triangle( MeshScreen ):
+	public def constructor():
+		super( 3, (of Vector2h:
+			Vector2h(-1f,-1f),	Vector2h(3f,-1f), Vector2h(-1f,3f) 
+			))
+
+#---------	QUAD	---------#
+
+public class Quad( MeshScreen ):
+	public def constructor():
+		super( 4, (of Vector2h:
+			Vector2h(-1f,-1f),	Vector2h(1f,-1f),
+			Vector2h(-1f,1f),	Vector2h(1f,1f),
+			))
+
+
+#---------	POINT	---------#
+
+public class Point( MeshGen[of Vector4h] ):
+	public def constructor():
+		super( BeginMode.Points, 1, 1,
+			(of Vector4h: Vector4h(0f,0f,0f,1f),),
+			4)
+
 
 #----	LINE OBJECT (-1,1)	----#
 
-public class Line( Mesh ):
+public class Line( MeshGen[of Vector4h] ):
 	public def constructor():
-		super( BeginMode.Lines )
-		self.nVert = 2
-		self.nPoly = 1
-		data = (of Vector4: Vector4(-1f,0f,0f,1f), Vector4(1f,0f,0f,1f))
-		vat = kri.vb.Attrib()
-		vat.init( data, false )
-		kri.Help.enrich(vat, 4, 'vertex')
-		buffers.Add(vat)
-
+		super( BeginMode.Lines, 2, 1,
+			(of Vector4h: Vector4h(-1f,0f,0f,1f), Vector4h(1f,0f,0f,1f) ),
+			4)
 
 
 #----	PLANE OBJECT	----#

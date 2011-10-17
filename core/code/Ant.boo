@@ -148,7 +148,7 @@ public class Ant(IDisposable):
 		sw.Start()
 		debug = bug
 		gamma = gammaCorr
-		quad = gen.Frame( 'quad', gen.Quad() )
+		quad = gen.Frame( 'quad', gen.Triangle() )
 		
 		# shader library init
 		dataMan.register( shade.Loader() )
