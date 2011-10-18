@@ -103,7 +103,6 @@
     <Compile Include="code\skin\Uni.boo" />
     <Compile Include="code\stereo\Dual.boo" />
     <Compile Include="code\text\Scaler.boo" />
-    <Compile Include="code\vanburen\Model.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\opentk\Source\OpenTK\OpenTK.csproj">
@@ -143,7 +142,6 @@
     <Folder Include="code\pick" />
     <Folder Include="code\reflect" />
     <Folder Include="code\skin" />
-    <Folder Include="code\vanburen" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>
