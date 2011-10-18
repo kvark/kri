@@ -88,3 +88,28 @@ public static class Texture:
 			kri.Ant.Inst.quad.draw(bu)
 		t.setLevels(0,20)
 		GL.DepthFunc( DepthFunction.Lequal )
+		
+	
+	# transform a blender 2D environmental map to a cube map
+	public def toCube(fbo as kri.buf.Holder, pif as PixelInternalFormat) as kri.buf.Texture:
+		tin = fbo.at.color[0]
+		if not tin:	return null
+		fbo.at.color[1] = t = kri.buf.Texture(
+			target:TextureTarget.TextureCubeMap, intFormat:pif )
+		t.wid = tin.wid / 3
+		t.het = tin.het / 3
+		fbo.mask = 2
+		if not fbo.bind():
+			return null
+		fbo.mask = 1
+		fbo.bindRead(true)
+		for layer in range(6):
+			x = layer % 3
+			y = layer / 3
+			t.layer = layer
+			GL.BlitFramebuffer(
+				x*t.wid, y*t.het, (x+1)*t.wid, (y+1)*t.het,
+				0,0, t.wid, t.het, ClearBufferMask.ColorBufferBit,
+				BlitFramebufferFilter.Nearest )
+		t.layer = -1
+		return t

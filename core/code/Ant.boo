@@ -148,6 +148,7 @@ public class Ant(IDisposable):
 		sw.Start()
 		debug = bug
 		gamma = gammaCorr
+		// using Christophe Riccio's idea of a large triangle here
 		quad = gen.Frame( 'quad', gen.Triangle() )
 		
 		# shader library init
