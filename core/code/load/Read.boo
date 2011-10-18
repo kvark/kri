@@ -14,12 +14,12 @@ public class Reader:
 	#---------	NODE RESOLVING IN A POST-PROCESS	---------#
 	public struct ResNode:
 		public name as string
-		public fun	as callable(kri.Node)
+		public fun	as Action[of kri.Node]
 
 	public final nodeResolve	= List[of ResNode]()
-	public def addResolve(fun as callable(kri.Node)) as void:
+	public def addResolve(fun as Action[of kri.Node]) as void:
 		nodeResolve.Add( ResNode( name:getString(), fun:fun ))
-	public def addPostProcess(fun as callable(kri.Node)) as void:
+	public def addPostProcess(fun as Action[of kri.Node]) as void:
 		nodeResolve.Add( ResNode( name:null, fun:fun ))
 	
 

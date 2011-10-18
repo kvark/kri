@@ -7,12 +7,14 @@ public class Group( kri.rend.Group ):
 	# renders
 	public	final	rFill		as fill.Fork	= null
 	public	final	rLayer		as support.layer.Fill	= null
+	public	final	rEnvir		as env.Apply	= null
 	public	final	rApply		as Apply		= null
 	public	final	rParticle	as Particle		= null
 	public	final	rBug		as BugLayer		= null
 	# signatures
 	public	final	sFill	= 'd.fill'
 	public	final	sLayer	= 'd.layer'
+	public	final	sEnvir	= 'd.envir'
 	public	final	sApply	= 'd.apply'
 	public	final	sPart	= 'd.part'
 	public	final	sBug	= 'd.bug'
@@ -21,8 +23,9 @@ public class Group( kri.rend.Group ):
 		con = cx = Context(qord,ncone)
 		rFill	= support.defer.fill.Fork(cx)
 		rLayer	= support.layer.Fill(cx)
+		rEnvir	= env.Apply(cx)
 		rl = List[of kri.rend.Basic]()
-		rl.Extend(( rFill, rLayer ))
+		rl.Extend(( rFill, rLayer, rEnvir ))
 		if lc:
 			rApply = Apply(lc,cx)
 			rl.Add(rApply)
@@ -36,12 +39,13 @@ public class Group( kri.rend.Group ):
 	public def actNormal(layered as bool) as void:
 		rFill.active = not layered
 		rLayer.active = layered
-		if rParticle:	rParticle.active = true
-		if rApply:		rApply.active = true
+		for r in (of kri.rend.Basic: rEnvir,rApply,rParticle):
+			if r: r.active = true
 		
 	public def fill(rm as kri.rend.Manager, sZ as string) as void:
 		rm.put(sFill,	3,rFill,		sZ)
 		rm.put(sLayer,	4,rLayer,		sFill)
+		rm.put(sEnvir,	4,rEnvir,		sLayer)
 		rm.put(sApply,	4,rApply,		sLayer)
 		rm.put(sPart,	3,rParticle,	sLayer)
 		rm.put(sBug,	1,rBug,			sLayer)

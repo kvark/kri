@@ -109,7 +109,10 @@ def save_mat_image(mtex):
 		# environment map chunk
 		hasNormals = False
 		env = mtex.texture.environment_map
-		if env.source != 'IMAGE_FILE':
+		if env.source == 'IMAGE_FILE':
+			out.begin('t_cube')
+			out.end()
+		else:
 			clip = (env.clip_start, env.clip_end)
 			out.logu(2, 'environ: %s [%.2f-%2.f]' % (env.mapping,clip[0],clip[1]))
 			view = ''

@@ -50,6 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="code\defer\Envir.boo" />
     <Compile Include="code\skin\Debug.boo" />
     <Compile Include="code\stereo\Anaglyph.boo" />
     <Compile Include="code\asm\Context.boo" />

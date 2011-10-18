@@ -88,7 +88,7 @@ public class Logic:
 
 	public def load(path as string) as string:
 		rset.grCull.con.reset()
-		pos = path.LastIndexOfAny((char('/'),char('\\')))
+		pos = path.LastIndexOfAny("/\\".ToCharArray())
 		fdir = path.Substring(0,pos)
 		# load scene
 		kri.Ant.Inst.loaders.materials.prefix = fdir
@@ -142,7 +142,8 @@ public class Logic:
 		eSkin	= support.skin.Extra()
 		eCorp	= support.corp.Extra()
 		eMorph	= support.morph.Extra()
-		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
+		eEnvir	= support.defer.env.Extra()
+		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph,eEnvir))
 		ant.anim = al
 		if auDev!=null:
 			opera = kri.sound.Opera(auDev)

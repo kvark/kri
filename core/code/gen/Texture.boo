@@ -91,22 +91,22 @@ public static class Texture:
 		
 	
 	# transform a blender 2D environmental map to a cube map
-	public def toCube(fbo as kri.buf.Holder, pif as PixelInternalFormat) as kri.buf.Texture:
-		tin = fbo.at.color[0]
+	public def toCube(fbo as (kri.buf.Holder)) as kri.buf.Texture:
+		tin = fbo[0].at.color[0]
 		if not tin:	return null
-		fbo.at.color[1] = t = kri.buf.Texture(
-			target:TextureTarget.TextureCubeMap, intFormat:pif )
+		fbo[0].mask = 1
+		fbo[0].bindRead(true)
+		t = kri.buf.Texture( target:TextureTarget.TextureCubeMap )
 		t.wid = tin.wid / 3
 		t.het = tin.het / 3
-		fbo.mask = 2
-		if not fbo.bind():
-			return null
-		fbo.mask = 1
-		fbo.bindRead(true)
-		for layer in range(6):
-			x = layer % 3
-			y = layer / 3
-			t.layer = layer
+		t.initCube()
+		GL.BindFramebuffer( FramebufferTarget.DrawFramebuffer, fbo[1].handle )
+		for la in range(6):
+			x = la % 3
+			y = la / 3
+			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
+				FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapNegativeX, t.handle, 0)
+			GL.DrawBuffer( DrawBufferMode.ColorAttachment0 )
 			GL.BlitFramebuffer(
 				x*t.wid, y*t.het, (x+1)*t.wid, (y+1)*t.het,
 				0,0, t.wid, t.het, ClearBufferMask.ColorBufferBit,

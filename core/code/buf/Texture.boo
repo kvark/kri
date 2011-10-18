@@ -107,7 +107,9 @@ public class Texture(Surface):
 		#syncBack()	# produces InvalidEnum when asking for width
 	
 	public override def init() as void:
-		if samples:
+		if target == TextureTarget.TextureCubeMap:
+			initCube()
+		elif samples:
 			initMulti(level>0)
 		elif pixFormat == PixelFormat.DepthStencil:
 			init[of double](null,false)
