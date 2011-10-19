@@ -117,4 +117,27 @@ public static class Texture:
 				0,0, t.wid, t.het, ClearBufferMask.ColorBufferBit,
 				BlitFramebufferFilter.Nearest )
 		t.layer = -1
+		fbo.markDirty()
 		return t
+
+	
+	# lay out mip levels into a single layer
+	public def flatMipmap(fi as kri.buf.Holder, fo as kri.buf.Holder, depth as bool) as void:
+		t = (fi.at.color[0],fi.at.depth)[depth] as kri.buf.Texture
+		if not t:	return
+		t.switchLevel(0)
+		fo.mask = fi.mask = (1,0)[depth]
+		fi.bind()
+		fo.bind()
+		fi.bindRead(not depth)
+		clearMask = (ClearBufferMask.ColorBufferBit,ClearBufferMask.DepthBufferBit)[depth]
+		attachment = (FramebufferAttachment.ColorAttachment0,FramebufferAttachment.DepthAttachment)[depth]
+		ofx = ofy = 0
+		for i in range( 1, t.MipsNumber ):
+			t.switchLevel(i)
+			GL.FramebufferTexture( FramebufferTarget.ReadFramebuffer, attachment, t.handle, i )
+			GL.BlitFramebuffer(	0,0, t.wid, t.het,
+				ofx, ofy, ofx+t.wid, ofy+t.het,
+				clearMask, BlitFramebufferFilter.Nearest )
+			ofx += t.wid	# horisontal offset
+		t.switchLevel(0)

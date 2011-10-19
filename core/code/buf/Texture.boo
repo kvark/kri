@@ -24,6 +24,8 @@ public class Texture(Surface):
 	
 	public	MipMapped	as bool:
 		get: return mipmapped
+	public	MipsNumber	as byte:
+		get: return Array.IndexOf(allocated,false)
 	private Allocated	as bool:
 		get: return allocated[level]
 	public	CanSample	as bool:
