@@ -26,6 +26,7 @@ public class ExMaterial( kri.IExtension ):
 		tarDict['color_emission']	= MapTarget('emissive',	con.slib.emissive_t2 )
 		tarDict['color_specular']	= MapTarget('specular',	con.slib.specular_t2 )
 		tarDict['normal']			= MapTarget('bump',		con.slib.bump_t2 )
+		tarDict['mirror']			= MapTarget('mirror',	null )
 		for s in ('diffuse','emission','specular'):
 			tarDict[s] = tarDict['color_'+s]
 		# material
@@ -45,6 +46,7 @@ public class ExMaterial( kri.IExtension ):
 		nt.readers['t_zero']	= pt_zero
 		nt.readers['t_noise']	= pt_noise
 		nt.readers['t_blend']	= pt_blend
+		nt.readers['t_cube']	= pt_cube
 	
 	
 	private def init() as void:
@@ -185,6 +187,7 @@ public class ExMaterial( kri.IExtension ):
 			con.slib.specular_u,	r.getColorFull() ))
 		m.metaList.Add( Data[of single]('glossiness',
 			con.slib.glossiness_u,	r.getReal() ))
+		m.metaList.Add(Mirror())
 		model = r.getString()
 		sh = {
 			'COOKTORR':	con.slib.cooktorr,
@@ -274,4 +277,22 @@ public class ExMaterial( kri.IExtension ):
 	public def pt_blend(r as Reader) as bool:
 		r.getString()	# interpolator
 		r.getByte()		# flip_axis
+		return true
+	
+	#---	Texture: environment	---#
+	public def pt_cube(r as Reader) as bool:
+		effect = 'mirror'
+		m = r.geData[of kri.Material]()
+		u = r.geData[of AdUnit]()
+		x = m.Meta[effect] as Mirror
+		if not (m and u and x) :
+			return false
+		if effect not in u.affects:
+			kri.lib.Journal.Log("Loader: environment unit has to affect ${effect}")
+			return false
+		# prepare for sampling after loading
+		r.addPostProcess() do(n as kri.Node):
+			u.Value.setState(0,true,true)	if u.Value
+		amount = u.affects[effect]
+		x.Value = Vector4.One * amount
 		return true

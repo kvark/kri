@@ -32,9 +32,12 @@ public class Reader:
 	
 	public def finish() as Atom:
 		for nr in nodeResolve:
-			if string.IsNullOrEmpty(nr.name):
-				nr.fun(null)
-			else: nr.fun( at.nodes[nr.name] )
+			n as kri.Node = null
+			str = nr.name
+			if string.IsNullOrEmpty(str) or at.nodes.TryGetValue(str,n):
+				nr.fun(n)
+			else:
+				kri.lib.Journal.Log("Loader: node (${str}) is not resolved")
 		nodeResolve.Clear()
 		bin.Close()
 		return at

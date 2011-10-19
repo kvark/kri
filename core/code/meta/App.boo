@@ -57,3 +57,10 @@ public class Halo(Advanced):
 		return copyTo( Halo( Data:Data ))
 	def IBase.link(d as par.Dict) as void:
 		d.var(pData)
+
+
+#---	environment mirror		---#
+public class Mirror( Data[of Vector4] ):
+	public cube	as kri.buf.Texture	= null
+	public def constructor():
+		super( 'mirror', null, Vector4.Zero )

@@ -77,6 +77,7 @@ public class Context:
 		ml.Add( Data[of Color4]('specular',	slib.specular_u, spec ))
 		ml.Add( Data[of single]('glossiness',	slib.glossiness_u, glossy ))
 		ml.Add(Advanced	( Name:'bump', 		Shader:slib.bump_c ))
+		ml.Add(Mirror())
 		ml.Add(Advanced	( Name:'comp_diff',	Shader:slib.lambert ))
 		ml.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
 

@@ -8,7 +8,7 @@ public class Group( kri.rend.Group ):
 	public	final	rFill		as fill.Fork	= null
 	public	final	rLayer		as support.layer.Fill	= null
 	public	final	rApply		as Apply		= null
-	public	final	rEnvir		as env.Apply	= null
+	public	final	rEnvir		as Envir		= null
 	public	final	rParticle	as Particle		= null
 	public	final	rBug		as BugLayer		= null
 	# signatures
@@ -29,7 +29,7 @@ public class Group( kri.rend.Group ):
 			rApply = Apply(lc,cx)
 			rl.Add(rApply)
 		if envir:
-			rEnvir	= env.Apply(cx)
+			rEnvir	= Envir(cx)
 			rl.Add(rEnvir)
 		if pc:
 			rParticle = Particle(pc,cx)

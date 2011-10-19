@@ -1,51 +1,15 @@
-﻿namespace support.defer.env
+﻿namespace support.defer
 
 import OpenTK
 
 
-public class Meta( kri.meta.Data[of Vector4] ):
-	public def constructor():
-		super( 'envir', null, Vector4.Zero )
-
-
-public class Extra( kri.IExtension ):
-	private final	fbo		= kri.buf.Holder()
-	public	final	effect	= 'mirror'
-	
-	public def pt_cube(r as kri.load.Reader) as bool:
-		m = r.geData[of kri.Material]()
-		u = r.geData[of kri.meta.AdUnit]()
-		if not (m and u) :	return false
-		if effect not in u.affects:
-			kri.lib.Journal.Log("Envir: tex unit has to affect ${effect}")
-			return false
-		# add 2d->cube conversion to the post loading
-		r.addPostProcess() do(n as kri.Node):
-			fbo.at.color[0] = tin = u.Value
-			if not tin.CanSample:
-				tin.filt(false,false)
-			tr = kri.gen.Texture.toCube(fbo)
-			if not tr:
-				kri.lib.Journal.Log("Envir: error converting to cube (${tin.Description})")
-			else: u.Value = tr
-		# add meta
-		amount = u.affects[effect]
-		meta = Meta()
-		meta.Unit	= m.unit.IndexOf(u)
-		meta.Value	= Vector4.One * amount
-		m.metaList.Add(meta)
-		return true
-		
-	def kri.IExtension.attach(nt as kri.load.Native) as void:
-		nt.readers['t_cube'] = pt_cube
-
-
-
-public class Apply( kri.rend.Basic ):
+public class Envir( kri.rend.Basic ):
 	public	final	bu		= kri.shade.Bundle()
+	public	final	effect	= 'mirror'
 	private	final	pTex	= kri.shade.par.Texture('env')
 	private	final	pMulti	= kri.shade.par.Value[of Vector4]('env_multi')
 	private	final	va		= kri.vb.Array()
+	private final	fbo		= kri.buf.Holder()
 	private	mesh	as kri.Mesh		= null
 	private dict	as kri.vb.Dict	= null
 	
@@ -66,9 +30,18 @@ public class Apply( kri.rend.Basic ):
 			blend.add()
 			for e in scene.entities:
 				for tm in e.enuTags[of kri.TagMat]():
-					meta = tm.mat.Meta['envir'] as Meta
+					meta = tm.mat.Meta['mirror'] as kri.meta.Mirror
 					if not (meta and meta.Unit>=0):	continue
+					u = tm.mat.unit[meta.Unit]
+					if not meta.cube:
+						fbo.at.color[0] = tin = u.Value
+						meta.cube = kri.gen.Texture.toCube(fbo)
+						if not meta.cube:
+							kri.lib.Journal.Log("Envir: error converting to cube (${tin.Description})")
+							meta.cube = kri.buf.Texture.Zero
+					if meta.cube == kri.buf.Texture.Zero:
+						continue
 					pMulti.Value = meta.Value
-					pTex.Value = tm.mat.unit[meta.Unit].Value
+					pTex.Value = meta.cube
 					dict = e.CombinedAttribs
 					e.mesh.render( va,bu, dict, tm.off, tm.num, 1,null )
