@@ -9,23 +9,30 @@ public class Meta( kri.meta.Data[of Vector4] ):
 
 
 public class Extra( kri.IExtension ):
-	private final fi	= kri.buf.Holder()
-	private final fo	= kri.buf.Holder()
+	private final	fbo		= kri.buf.Holder()
+	public	final	effect	= 'mirror'
 	
 	public def pt_cube(r as kri.load.Reader) as bool:
 		m = r.geData[of kri.Material]()
 		u = r.geData[of kri.meta.AdUnit]()
 		if not (m and u) :	return false
+		if effect not in u.affects:
+			kri.lib.Journal.Log("Envir: tex unit has to affect ${effect}")
+			return false
 		# add 2d->cube conversion to the post loading
 		r.addPostProcess() do(n as kri.Node):
-			fi.at.color[0] = u.Value
-			tr = kri.gen.Texture.toCube((fi,fo))
+			fbo.at.color[0] = tin = u.Value
+			if not tin.CanSample:
+				tin.filt(false,false)
+			tr = kri.gen.Texture.toCube(fbo)
 			if not tr:
-				kri.lib.Journal.Log("Envir: error converting to cube: ${u.Value.Description}")
+				kri.lib.Journal.Log("Envir: error converting to cube (${tin.Description})")
 			else: u.Value = tr
 		# add meta
+		amount = u.affects[effect]
 		meta = Meta()
-		meta.Unit = m.unit.IndexOf(u)
+		meta.Unit	= m.unit.IndexOf(u)
+		meta.Value	= Vector4.One * amount
 		m.metaList.Add(meta)
 		return true
 		

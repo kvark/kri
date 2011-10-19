@@ -90,23 +90,28 @@ public static class Texture:
 		GL.DepthFunc( DepthFunction.Lequal )
 		
 	
-	# transform a blender 2D environmental map to a cube map
-	public def toCube(fbo as (kri.buf.Holder)) as kri.buf.Texture:
-		tin = fbo[0].at.color[0]
+	# transform blender 2D environmental map to a cube map
+	public def toCube(fbo as kri.buf.Holder) as kri.buf.Texture:
+		tin = fbo.at.color[0]
 		if not tin:	return null
-		fbo[0].mask = 1
-		fbo[0].bindRead(true)
-		t = kri.buf.Texture( target:TextureTarget.TextureCubeMap )
+		t = kri.buf.Texture( target:TextureTarget.TextureCubeMap, tag:'transformed cube' )
 		t.wid = tin.wid / 3
-		t.het = tin.het / 3
+		t.het = tin.het / 2
 		t.initCube()
-		GL.BindFramebuffer( FramebufferTarget.DrawFramebuffer, fbo[1].handle )
+		t.setState(0,false,false)
+		fbo.mask = 2
+		fbo.bind()
+		fbo.mask = 1
+		fbo.bindRead(true)
+		sides = (of TextureTarget:
+			TextureTarget.TextureCubeMapNegativeX, TextureTarget.TextureCubeMapNegativeZ, TextureTarget.TextureCubeMapPositiveX,
+			TextureTarget.TextureCubeMapNegativeY, TextureTarget.TextureCubeMapPositiveY, TextureTarget.TextureCubeMapPositiveZ)
 		for la in range(6):
 			x = la % 3
 			y = la / 3
 			GL.FramebufferTexture2D( FramebufferTarget.DrawFramebuffer,
-				FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapNegativeX, t.handle, 0)
-			GL.DrawBuffer( DrawBufferMode.ColorAttachment0 )
+				FramebufferAttachment.ColorAttachment1, sides[la], t.handle, 0)
+			GL.DrawBuffer( DrawBufferMode.ColorAttachment1 )
 			GL.BlitFramebuffer(
 				x*t.wid, y*t.het, (x+1)*t.wid, (y+1)*t.het,
 				0,0, t.wid, t.het, ClearBufferMask.ColorBufferBit,

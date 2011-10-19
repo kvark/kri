@@ -28,7 +28,7 @@ public class RenderSet:
 		rDummy		= kri.rend.part.Dummy(pc)
 		rParticle	= kri.rend.part.Standard(pc)
 		grForward	= support.light.group.Forward( 8, false )
-		grDeferred	= support.defer.Group( 3, 10, grForward.con, null )
+		grDeferred	= support.defer.Group( 3, 10, grForward.con, true, null )
 		rNormal		= support.light.normal.Apply( grForward.con )
 		# populate render manager
 		sk = 'skin'

@@ -70,7 +70,7 @@ public class Texture(Surface):
 
 	public override def attachTo(fa as FramebufferAttachment) as void:
 		if not Allocated:	init()
-		assert Allocated
+		assert CanSample	# some GL implementations require filtering to be set as well
 		if layer>=0:
 			GL.FramebufferTextureLayer(	FramebufferTarget.Framebuffer, fa, handle, level, layer)
 		else:	# let GL decide

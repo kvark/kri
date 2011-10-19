@@ -87,7 +87,7 @@ public class Frame:
 		bind()	# update attachments
 		fr.bind()
 		doColor = (what & (ClearBufferMask.ColorBufferBit)) != 0 
-		doDepth = (what & (ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)) != 0 
+		doDepth = (what & (ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)) != 0
 		if not bindRead(doColor):
 			kri.lib.Journal.Log("Blit: failed to bind read buffer (${handle})")
 			return false
