@@ -14,7 +14,7 @@ public class Fill( kri.rend.Basic ):
 		buDown.shader.add('/copy_v','/cull/down_f')
 	public override def process(link as kri.rend.link.Basic) as void:
 		fbo.at.depth = t = pTex.Value = link.Depth
-		t.setBorder( Graphics.Color4.White )
+		t.setBorder( Graphics.Color4.Black )
 		t.shadow(false)
 		t.setState(0,false,false)
 		kri.gen.Texture.createMipmap(fbo,10,buDown)

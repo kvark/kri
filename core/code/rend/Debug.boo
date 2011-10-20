@@ -15,6 +15,7 @@ public class Map( kri.rend.Basic ):
 		name = ''
 		if depth:
 			name = ('show_depth','copy_cube')[cube]
+			bu.shader.add('/lib/defer_f','/lib/math_f')
 		else:
 			name = ('copy','copy_ar')[id>=0]
 		bu.shader.add( '/copy_v', "/${name}_f" )
