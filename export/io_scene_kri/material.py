@@ -5,6 +5,50 @@ import bpy
 from io_scene_kri.common	import *
 
 
+###  NODE TREE   ###
+
+def save_graph(nt):
+	out = Writer.inst
+	def save_sockets(slist):
+		out.pack('B',len(slist))
+		for sock in slist:
+			tip = ('VALUE','VECTOR','RGBA').index(sock.type)
+			out.pack('B',tip)
+			out.text(sock.name)
+	def save_io(io):
+		save_sockets(io.inputs)
+		save_sockets(io.outputs)
+	def save_nid(node):
+		nid = 0	# parent node index
+		if node:	nid = nt.nodes.values().index(node)+1
+		out.pack('B',nid)
+	def save_nid_socket(node,isOut,socket):
+		save_nid(node)
+		if not node:	return
+		var = (node.inputs,node.outputs)[isOut]
+		out.pack('B', var.values().index(socket))
+	out.begin('graph')
+	out.text(nt.type)
+	save_io(nt)
+	out.pack('B',len(nt.nodes))
+	for node in nt.nodes:
+		ins = ','.join(x.name	for x in node.inputs)
+		ots = ','.join(x.name	for x in node.outputs)
+		out.logu(2,"%s: %s -> %s" % (node.name,ins,ots))
+		tip = ''
+		if node.__getattribute__('type'):
+			tip = node.type
+		out.text(tip, node.name, node.label)
+		save_nid(node.parent)
+		save_io(node)
+	out.pack('B',len(nt.links))
+	for link in nt.links:
+		save_nid_socket( link.from_node, True, link.from_socket )
+		save_nid_socket( link.to_node, False, link.to_socket )
+	out.end()
+	return
+
+
 ###  MATERIAL:UNIT   ###
 
 def find_uv_layer(mtex,name):
@@ -186,6 +230,9 @@ def save_mat(mat):
 	out.text( mat.name )
 	out.pack('2B', mat.use_shadeless, mat.use_tangent_shading)
 	out.end()
+	if mat.use_nodes:
+		out.logu(1,"+graph")
+		save_graph( mat.node_tree )
 	# diffuse subroutine
 	def save_diffuse(model):
 		out.begin('m_diff')
