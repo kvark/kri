@@ -8,7 +8,6 @@ from io_scene_kri.common	import *
 
 def save_lamp(lamp):
 	out = Writer.inst
-	energy_threshold = 0.1
 	out.logu(1,'%s type, %.1f distance' % (lamp.type, lamp.distance))
 	out.begin('lamp')
 	save_color( lamp.color )
@@ -17,7 +16,7 @@ def save_lamp(lamp):
 	clip0,clip1,spotAng,spotBlend = 1.0,2.0*lamp.distance,0.0,0.0
 	# attenuation
 	kd = 1.0 / lamp.distance
-	q0,q1,q2,qs = 1.0/lamp.energy, kd, kd*kd, 0.0
+	q0,q1,q2,qs = lamp.energy, kd, kd, 0.0
 	if lamp.type in ('POINT','SPOT'):
 		if lamp.use_sphere:
 			out.log(1,'i','spherical limit')
