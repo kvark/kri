@@ -7,30 +7,38 @@ from io_scene_kri.common	import *
 
 ###  NODE TREE   ###
 
+def save_sockets(slist,orient):
+	out = Writer.inst
+	for sock in slist:
+		out.begin('g_sock')
+		out.pack('B',orient)
+		out.text(sock.name)
+		dv = sock.default_value
+		if	sock.type=='VALUE':
+			out.pack('Bf',1,dv)
+		elif	sock.type=='VECTOR':
+			out.pack('B3f',3,dv[0],dv[1],dv[2])
+		elif	sock.type=='RGBA':
+			out.pack('B',4)
+			save_color(dv)
+		else:	out.log(2,'w','bad socket type: '+sock.type)
+		out.end()
+
 def save_graph(nt):
 	out = Writer.inst
-	def save_sockets(slist):
-		out.pack('B',len(slist))
-		for sock in slist:
-			tip = ('VALUE','VECTOR','RGBA').index(sock.type)
-			out.pack('B',tip)
-			out.text(sock.name)
 	def save_io(io):
-		save_sockets(io.inputs)
-		save_sockets(io.outputs)
+		save_sockets(io.inputs,0)
+		save_sockets(io.outputs,1)
 	def save_nid(node):
 		nid = 0	# parent node index
-		if node:	nid = nt.nodes.values().index(node)+1
+		if node:	nid = 1+nt.nodes.values().index(node)
 		out.pack('B',nid)
-	def save_nid_socket(node,isOut,socket):
-		save_nid(node)
-		if not node:	return
-		var = (node.inputs,node.outputs)[isOut]
-		out.pack('B', var.values().index(socket))
+		return node
 	out.begin('graph')
 	out.text(nt.type)
-	save_io(nt)
 	out.pack('B',len(nt.nodes))
+	out.end()
+	save_io(nt)
 	for node in nt.nodes:
 		ins = ','.join(x.name	for x in node.inputs)
 		ots = ','.join(x.name	for x in node.outputs)
@@ -38,13 +46,18 @@ def save_graph(nt):
 		tip = ''
 		if node.__getattribute__('type'):
 			tip = node.type
+		out.begin('g_node')
 		out.text(tip, node.name, node.label)
 		save_nid(node.parent)
+		out.end()
 		save_io(node)
+	out.begin('g_links')
 	out.pack('B',len(nt.links))
 	for link in nt.links:
-		save_nid_socket( link.from_node, True, link.from_socket )
-		save_nid_socket( link.to_node, False, link.to_socket )
+		if save_nid( link.from_node ):
+			out.pack('B', link.from_node.outputs.values().index( link.from_socket ))	
+		if save_nid( link.to_node ):
+			out.pack('B', link.to_node.inputs.values().index( link.to_socket ))	
 	out.end()
 	return
 

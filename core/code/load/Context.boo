@@ -82,8 +82,8 @@ public class Context:
 		ml.Add(Advanced	( Name:'comp_spec',	Shader:slib.phong ))
 
 	public def setMatTexture(mat as kri.Material, tex as kri.buf.Texture) as void:
-		me = mat.Meta['emissive']
-		md = mat.Meta['diffuse']
+		me = mat.Meta['emissive']	as Advanced
+		md = mat.Meta['diffuse']	as Advanced
 		assert me and md
 		me.Unit = md.Unit = mat.unit.Count
 		un = kri.meta.AdUnit( Value:tex )

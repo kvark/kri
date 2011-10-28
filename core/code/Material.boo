@@ -8,8 +8,8 @@ public class Material( ani.data.Player ):
 	public final dict	= shade.par.Dict()
 	public final unit	= List[of meta.AdUnit]()
 	public final tech	= Dictionary[of string,shade.Bundle]()
-	public final metaList = List[of meta.Advanced]()
-	public Meta[str as string] as meta.Advanced:
+	public final metaList = List[of meta.IBaseMat]()
+	public Meta[str as string] as meta.IBaseMat:
 		get: return metaList.Find({m| return m.Name == str})
 	public def getData[of T(struct)](str as string) as meta.Data[of T]:
 		return Meta[str] as meta.Data[of T]
@@ -38,8 +38,10 @@ public class Material( ani.data.Player ):
 			lis.Add(h)
 		for m in metaList:
 			push(m)
-			if m.Unit<0:	continue
-			u = unit[m.Unit]
+			ma = m as meta.Advanced
+			if not (ma and ma.Unit>=0):
+				continue
+			u = unit[ma.Unit]
 			if not u.Value:
 				kri.lib.Journal.Log("Material: texture is missing for ${name}:${m.Name}")
 			(u as meta.ISlave).link( m.Name, dict )
@@ -50,14 +52,15 @@ public class Material( ani.data.Player ):
 	public def collect(geom as bool, melist as (string)) as shade.Object*:
 		dd = Dictionary[of shade.Object,meta.IShaded]()
 		def push(m as meta.IShaded):
-			if m.Shader:	dd[m.Shader] = m
+			if (m and m.Shader):
+				dd[m.Shader] = m
 		# collect mets shaders & map inputs
 		din = Dictionary[of string,meta.Hermit]()
 		for str in melist:
 			reject = str.StartsWith('!')
 			if reject:
 				str = str.Substring(1)
-			m = Meta[str]
+			m = Meta[str] as meta.Advanced
 			if reject != (not m):
 				return null
 			if not m:	continue

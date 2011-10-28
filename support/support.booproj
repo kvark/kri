@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="code\defer\Envir.boo" />
+    <Compile Include="code\node\Main.boo" />
     <Compile Include="code\skin\Debug.boo" />
     <Compile Include="code\stereo\Anaglyph.boo" />
     <Compile Include="code\asm\Context.boo" />
@@ -137,6 +138,7 @@
     <Folder Include="code\morph" />
     <Folder Include="code\motion" />
     <Folder Include="code\asm" />
+    <Folder Include="code\node" />
     <Folder Include="code\stereo" />
     <Folder Include="code\text" />
     <Folder Include="code\phys" />
