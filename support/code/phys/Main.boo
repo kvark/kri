@@ -69,7 +69,7 @@ public class Core:
 		for i in range(scene.entities.Count):
 			e = scene.entities[i]
 			vac as kri.vb.Array = null
-			if not (e.va.TryGetValue(name,vac) and vac):
+			if not (e.techVar.TryGetValue(name,vac) and vac):
 				continue
 			kri.vb.Array.Bind = vac
 			pId.Value = (i+1.5f)*kid + 0.5f

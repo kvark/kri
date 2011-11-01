@@ -174,10 +174,10 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	public mesh		as Mesh	= null
 	public visible	as bool	= true
 	public final frameVisible	= Dictionary[of Projector,bool]()
-	public localBox	= Box(1f)
-	public final store	= vb.Storage()
-	public final va		= Dictionary[of string,vb.Array]()
-	public final tags	= List[of ITag]()
+	public localBox			= Box(1f)
+	public final store		= vb.Storage()
+	public final techVar	= Dictionary[of string,vb.Array]()
+	public final tags		= List[of ITag]()
 	
 	INoded.Node as Node:
 		get: return node
@@ -226,7 +226,7 @@ public class Entity( kri.ani.data.Player, INoded, IMeshed, INamed ):
 	# otherwise - a list of rejected materials
 	public def check(name as string) as kri.Material*:
 		vac as vb.Array = null
-		if not (va.TryGetValue(name,vac) and vac):
+		if not (techVar.TryGetValue(name,vac) and vac):
 			return null
 		ml = List[of kri.Material]()
 		for t in tags:

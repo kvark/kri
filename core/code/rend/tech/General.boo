@@ -16,8 +16,8 @@ public class General( Basic ):
 			return false
 		atar	as (kri.shade.Attrib)	= null	//array of attributes used by any of the entitys materials
 		vao		as kri.vb.Array			= null	//vertex array object to used for drawing the entity
-		if not e.va.TryGetValue(name,vao):
-			e.va[name] = vao = kri.vb.Array()
+		if not e.techVar.TryGetValue(name,vao):
+			e.techVar[name] = vao = kri.vb.Array()
 			atar = array[of kri.shade.Attrib]( kri.Ant.Inst.caps.vertexAttribs )
 		if not vao:
 			return false
@@ -44,7 +44,7 @@ public class General( Basic ):
 			onPass(vao,tag,prog)
 		if atar and not vd:	vd = e.CombinedAttribs
 		if atar and not vao.pushAll( e.mesh.ind, atar, vd ):
-			e.va[name] = null
+			e.techVar[name] = null
 			return false
 		return true
 
