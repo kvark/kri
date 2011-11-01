@@ -11,11 +11,13 @@ public interface ILogged:
 #---------------------------#
 
 public class Object(ILogged):
-	public final handle		as int
+	public final handle		as int		= 0
 	[Getter(Description)]
 	public final tag		as string	= ''
 	private log				as string	= ''
 	public final type		as ShaderType
+	private static NextId	as uint		= 0
+	public final uniqueId	as uint		= 0
 
 	public static def Type(name as string) as ShaderType:
 		rez = cast(ShaderType,0)
@@ -34,6 +36,7 @@ public class Object(ILogged):
 	public def constructor(tip as ShaderType, label as string, text as string):
 		tag,type = label,tip
 		handle = compose(text)
+		uniqueId = ++NextId
 		if handle:	check()
 	
 	# delete

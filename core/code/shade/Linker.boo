@@ -7,14 +7,14 @@ import System.Collections.Generic
 #-------------------------------#
 
 public class Linker:
-	public final samap = Dictionary[of string,Bundle]()
+	public final	samap = Dictionary[of string,Bundle]()
 	public final	onLink	as callable(Mega)	= null
 	
 	public def constructor(fun as callable(Mega)):
 		onLink = fun
 	
 	public def link(sl as Object*, *dc as (par.Dict)) as Bundle:
-		key = join( (x.handle.ToString() for x in sl), ',' )
+		key = join(x.uniqueId.ToString() for x in sl, ',')
 		bu as Bundle = null
 		if samap.TryGetValue(key,bu):
 			bu = Bundle(bu)

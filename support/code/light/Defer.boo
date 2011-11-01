@@ -55,8 +55,7 @@ public class Bake( kri.rend.Basic ):
 		con.ClearColor( Graphics.Color4(0f,0f,0f,0f) )
 		GL.CullFace( CullFaceMode.Front )
 		GL.DepthFunc( DepthFunction.Gequal )
-		using blender = kri.Blender():
-			blender.add()
+		using kri.Blender( kri.Blend.Add ):
 			for l in kri.Scene.Current.lights:
 				continue	if l.fov != 0f
 				kri.Ant.Inst.params.activate(l)

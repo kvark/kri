@@ -3,12 +3,23 @@
 import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
+public enum Blend:
+	None
+	Add
+	Sub
+	Min
+	Max
+	Alpha
+
+
 public class Material( ani.data.Player ):
-	public final name	as string
-	public final dict	= shade.par.Dict()
-	public final unit	= List[of meta.AdUnit]()
-	public final tech	= Dictionary[of string,shade.Bundle]()
-	public final metaList = List[of meta.IBaseMat]()
+	public final	name	as string
+	public			blend	= Blend.None
+	public final	dict	= shade.par.Dict()
+	public final	unit	= List[of meta.AdUnit]()
+	public final	tech	= Dictionary[of string,shade.Bundle]()
+	public final	metaList = List[of meta.IBaseMat]()
+	
 	public Meta[str as string] as meta.IBaseMat:
 		get: return metaList.Find({m| return m.Name == str})
 	public def getData[of T(struct)](str as string) as meta.Data[of T]:

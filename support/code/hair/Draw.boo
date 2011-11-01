@@ -44,10 +44,8 @@ public class Draw( kri.rend.part.Meta ):
 
 	public def constructor(lc as support.light.Context):
 		super('part.light.draw', doGeom, 'strand','diffuse','specular','glossiness')
-		bAdd = 0f
 		# drawing
 		if lc:
-			#bAdd = 1f
 			texLit = lc.texLit
 			dict.attach( lc.dict )
 			shobs.Add( lc.getApplyShader() )
@@ -80,12 +78,10 @@ public class DrawChild( kri.rend.part.Meta ):
 
 	public def constructor(pc as kri.part.Context, lc as support.light.Context):
 		super('part.child.light.draw', doGeom, 'strand','diffuse','child')
-		bAdd = 0f
 		# drawing
 		shobs.AddRange(( pc.sh_tool, pc.sh_child ))
 		suffixes = ('child_v','g','f')
 		if lc:
-			#bAdd = 1f
 			texLit = lc.texLit
 			dict.attach( lc.dict )
 			shobs.Add( lc.getApplyShader() )

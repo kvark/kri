@@ -103,8 +103,7 @@ public class Color( tech.Sorted ):
 			link.ClearColor()
 			drawScene()
 		else:
-			using blend = kri.Blender():
-				blend.add()
+			using kri.Blender( kri.Blend.Add ):
 				drawScene()
 
 

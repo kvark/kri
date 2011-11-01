@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
     <Compile Include="code\corp\Entity.boo" />
+    <Compile Include="code\corp\rend\Main.boo" />
     <Compile Include="code\defer\Envir.boo" />
     <Compile Include="code\node\Main.boo" />
     <Compile Include="code\skin\Debug.boo" />
@@ -128,6 +129,7 @@
     <Folder Include="code\bake" />
     <Folder Include="code\corp" />
     <Folder Include="code\corp\beh" />
+    <Folder Include="code\corp\rend" />
     <Folder Include="code\cull" />
     <Folder Include="code\cull\box" />
     <Folder Include="code\defer" />

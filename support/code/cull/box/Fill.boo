@@ -31,8 +31,7 @@ public class Fill( kri.rend.Basic ):
 		doUpload = con.spatial.Allocated==0
 		doDownload = false
 		# beware: operating in local coordinates!
-		using blend = kri.Blender(), kri.Section(EnableCap.ScissorTest):
-			blend.min()
+		using kri.Blender( kri.Blend.Min ), kri.Section( EnableCap.ScissorTest ):
 			for e in scene.entities:
 				if not e.visible:
 					continue

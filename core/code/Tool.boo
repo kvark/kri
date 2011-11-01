@@ -42,10 +42,12 @@ public static class Help:
 
 # Provides GL state on/off mechanics
 public class Section(IDisposable):
+	public static final DummyCap	= EnableCap.Fog
 	public final	cap as EnableCap
 	public final	dir	as bool
 	
 	public def switch(val as bool) as void:
+		if cap == DummyCap:	return
 		on = (val == dir)
 		if on == GL.IsEnabled(cap):
 			lib.Journal.Log("GL: unexpected state (${cap} == ${not on})")
@@ -59,6 +61,9 @@ public class Section(IDisposable):
 	
 	public def constructor(state as EnableCap):
 		self(state,true)
+	
+	public def constructor():
+		self(DummyCap)
 		
 	public virtual def Dispose() as void:  #imp: IDisposable
 		switch(false)
@@ -68,15 +73,32 @@ public class Section(IDisposable):
 public class Blender(Section):
 	public def constructor():
 		super( EnableCap.Blend )
-		GL.BlendEquation( BlendEquationMode.FuncAdd )
+	public def constructor(method as Blend):
+		if method == Blend.None:
+			super()
+			return
+		self()
+		if method == Blend.Sub:
+			GL.BlendEquation( BlendEquationMode.FuncSubtract )
+			add()
+		elif method == Blend.Add:
+			GL.BlendEquation( BlendEquationMode.FuncAdd )
+			add()
+		elif method == Blend.Min:
+			GL.BlendEquation( BlendEquationMode.Min )
+			add()
+		elif method == Blend.Max:
+			GL.BlendEquation( BlendEquationMode.Max )
+			add()
+		elif method == Blend.Alpha:
+			GL.BlendEquation( BlendEquationMode.FuncAdd )
+			alpha()
+		else:
+			lib.Journal.Log("Blend: unknown method (${method})")
+			return
+
 	public Alpha as single:
 		set: GL.BlendColor(0f,0f,0f, value)
-	public static def min() as void:
-		GL.BlendEquation( BlendEquationMode.Min )
-		add()
-	public static def max() as void:
-		GL.BlendEquation( BlendEquationMode.Max )
-		add()
 	public static def alpha() as void:
 		GL.BlendFunc( BlendingFactorSrc.SrcAlpha,		BlendingFactorDest.OneMinusSrcAlpha )
 	public static def add() as void:

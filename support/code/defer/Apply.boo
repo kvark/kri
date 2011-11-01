@@ -38,8 +38,7 @@ public class ApplyBase( kri.rend.Basic ):
 		GL.DepthFunc( DepthFunction.Gequal )
 		link.TextureCubeMapSeamless = true
 		# add lights
-		using blend = kri.Blender():
-			blend.add()
+		using kri.Blender( kri.Blend.Add ):
 			onDraw()
 		GL.CullFace( CullFaceMode.Back )
 		GL.DepthFunc( DepthFunction.Lequal )

@@ -15,7 +15,6 @@ public class Standard( Meta ):
 
 public class Dummy( Simple ):
 	public def constructor(pc as kri.part.Context):
-		super.bAdd = 0f
 		bu.shader.add( pc.sh_draw )
 		bu.shader.add( *kri.Ant.Inst.libShaders )
 		bu.shader.add('/part/draw/simple_v','/part/draw/simple_f')

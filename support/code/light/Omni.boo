@@ -83,8 +83,7 @@ public class Apply( kri.rend.tech.Meta ):
 			# determine subset of affected objects
 			for e in scene.entities:
 				addObject(e,null)
-		using blend = kri.Blender():
-			blend.add()
+		using kri.Blender( kri.Blend.Add ):
 			butch.Sort( kri.rend.tech.Batch.cMat )
 			for b in butch:
 				b.draw()

@@ -37,8 +37,7 @@ public class Apply( kri.rend.tech.Meta ):
 		butch.Sort( kri.rend.tech.Batch.cMat )
 		# draw
 		con.activate( con.Target.Same, 0f, false )
-		using blend = kri.Blender():
-			blend.add()
+		using kri.Blender( kri.Blend.Add ):
 			for b in butch:
 				b.draw()
 

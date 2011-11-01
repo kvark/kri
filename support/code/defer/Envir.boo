@@ -26,8 +26,7 @@ public class Envir( kri.rend.Basic ):
 		link.activate( link.Target.Same, 0f, false )
 		scene = kri.Scene.Current
 		if not scene:	return
-		using blend = kri.Blender():
-			blend.add()
+		using kri.Blender( kri.Blend.Add ):
 			for e in scene.entities:
 				for tm in e.enuTags[of kri.TagMat]():
 					meta = tm.mat.Meta['mirror'] as kri.meta.Mirror

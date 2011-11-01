@@ -39,8 +39,7 @@ public class Split( kri.rend.Basic ):
 		scene = kri.Scene.Current
 		if not scene:	return
 		pFocus.Value = getFocus( kri.Camera.Current )
-		using blend = kri.Blender():
-			blend.add()
+		using kri.Blender( kri.Blend.Add ):
 			for ent in scene.entities:
 				kri.Ant.Inst.params.activate(ent)
 				ent.render(vao,bu)
