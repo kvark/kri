@@ -10,7 +10,7 @@ public class Counter(Basic):
 	public count	= 0
 	public def constructor(lim as int):
 		limit = lim
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		count = limit	if not count
 		--count
 		return (2,1)[count>0]
@@ -65,7 +65,7 @@ public class ControlMouse(Basic):
 		mouse.ButtonUp		+= def():
 			active = false
 		
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		return 0	if not active
 
 		dx = cast(single, mouse.X-x)

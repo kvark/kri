@@ -175,5 +175,5 @@ public class Ant(IDisposable):
 			dt = 1f / Math.Max(0.001f, add)
 			cur += add
 			params.parTime.Value = Vector4(add,cur,cur,dt)
-			if anim and anim.onFrame(cur):
+			if anim and anim.onTick(cur):
 				anim = null

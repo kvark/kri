@@ -23,7 +23,7 @@ public class Scheduler(IBase):
 		public tik	as double
 		public tag	as int
 		public def onTime(time as double) as uint:
-			if an.onFrame(time-tik):
+			if an.onTick(time-tik):
 				rec(tag)	if rec
 				return 1
 			return 0
@@ -41,7 +41,7 @@ public class Scheduler(IBase):
 			xan.an.onKill()
 		anims.Clear()
 
-	def IBase.onFrame(time as double) as uint:		#imp: IAnimation
+	def IBase.onTick(time as double) as uint:		#imp: IAnimation
 		anims.RemoveAll() do(ref xan as XAniData):
 			return xan.onTime(time) != 0
 		return 0

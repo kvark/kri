@@ -118,7 +118,7 @@ public class Anim( kri.ani.Basic ):
 	public def constructor(pl as IPlayer, rec as Record):
 		player,record = pl,rec
 	
-	def kri.ani.IBase.onFrame(time as double) as uint:
+	def kri.ani.IBase.onTick(time as double) as uint:
 		if not record:
 			return 2
 		if time > record.length:

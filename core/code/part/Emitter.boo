@@ -55,7 +55,7 @@ public class Emitter( kri.vb.IProvider, kri.INoded, kri.IMeshed, kri.ani.IBase )
 			return false
 		return mesh.render( owner.va, bu, entries, num, null )
 
-	def kri.ani.IBase.onFrame(time as double) as uint:
+	def kri.ani.IBase.onTick(time as double) as uint:
 		kri.Ant.Inst.params.parTime.Value.Y = time
 		if not (owner and owner.Ready):
 			kri.lib.Journal.Log("Particle: invalid manager for animating '${name}'")

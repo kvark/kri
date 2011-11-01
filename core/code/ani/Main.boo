@@ -2,21 +2,20 @@
 
 # Animation Interface
 public interface IBase:
-	# more onTick than onFrame, a legacy name
-	def onFrame(time as double) as uint
+	def onTick(time as double) as uint
 	def onKill() as void
 
-public abstract class Basic(IBase):
+public class Basic(IBase):
 	def IBase.onKill() as void:
 		pass
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		return 0
 
 
 public class Action(Basic):
 	protected virtual def execute() as void:
 		pass
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		execute()
 		return 1
 
@@ -25,7 +24,7 @@ public class Delta(Basic):
 	private last	= 0.0
 	protected abstract def onDelta(delta as double) as uint:
 		pass
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		d = time - last
 		last += d
 		return onDelta(d)
@@ -40,7 +39,7 @@ public class Loop(Basic):
 		pass
 	protected virtual def onRate(rate as double) as void:
 		pass
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		if time >= start+lTime:
 			if not loops:
 				onRate(1.0)

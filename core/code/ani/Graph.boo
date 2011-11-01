@@ -36,14 +36,14 @@ public class Graph(IBase):
 		stop()
 		alist.Add(init)
 
-	def IBase.onFrame(time as double) as uint:
+	def IBase.onTick(time as double) as uint:
 		return 1	if alist.Count == 0
 		tmp = List[of AgNode]()
 		def add(t as AgNode) as void:
 			tmp.Add(t)	if not t in tmp
 		# separate candidates
 		alist.RemoveAll() do(a as AgNode):
-			id = (a.anim.onFrame(time - a.tik) if a.anim else 1)
+			id = (a.anim.onTick(time - a.tik) if a.anim else 1)
 			return false	if not id
 			a.onFinish()	if a.onFinish
 			a.tik = -1.0
