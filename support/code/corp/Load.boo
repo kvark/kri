@@ -63,6 +63,28 @@ public class Extra( kri.IExtension ):
 				scene.particles.AddRange(lays)
 		if not pe.Ready:
 			pe.allocate()
+	
+	public def finish2(ent as kri.Entity, scene as kri.Scene) as void:
+		pe = ent.seTag[of Emitter]()
+		if not pe:	return
+		pm = pe.owner
+		if not pm.Ready:
+			ps = pm.seBeh[of beh.Standard]()
+			ph = pm.seBeh[of support.hair.Behavior]()
+			if ps:
+				pm.behos.Add( beh.Sys() )
+				con.makePart( pm.col_init, pm.col_update )
+				born = (con.sh_born_time, con.sh_born_loop)[ bLoop ]
+				pm.col_update.extra.Add(born)
+			elif ph:
+				con.makeHair( pm.col_init, pm.col_update )
+			else: return
+			pm.init(con)
+			#if ph:
+			#	scene.particles.Remove(pe)
+			#	lays = ph.genLayers(pe)
+			#	scene.particles.AddRange(lays)
+		pm.insureMesh( ent.mesh, pe.entries )
 		
 	
 	private def upNode(e as kri.Entity):
@@ -73,23 +95,23 @@ public class Extra( kri.IExtension ):
 
 	#---	Parse emitter object	---#
 	public def f_part(r as kri.load.Reader) as bool:
-		pm = kri.part.Manager( r.bin.ReadUInt32() )
+		pm = Manager( r.bin.ReadUInt32() )
 		r.puData(pm)
 		# create emitter
-		pe = kri.part.Emitter( pm, r.getString() )
+		obj = r.geData[of kri.Entity]()
+		pe = Emitter( obj, pm, r.getString() )
 		r.puData(pe)
-		pe.obj = r.geData[of kri.Entity]()
-		r.at.scene.particles.Add(pe)
+		ent = kri.Entity()
+		ent.tags.Add(pe)
+		r.puData(ent)
+		r.at.scene.entities.Add(ent)
 		# link to material
-		matName = r.getString()
-		if not r.at.mats.TryGetValue(matName, pe.mat):
-			kri.lib.Journal.Log("Loader: particle material not found (${matName})");
-			pe.mat = null
-		if not pe.mat:
-			pe.mat = kri.Ant.Inst.loaders.materials.con.mDef
+		tm = kri.TagMat( off:0, num:pm.Total )
+		ent.tags.Add(tm)
+		tm.mat = r.getMaterial()
 		# post-process
 		r.addPostProcess() do(n as kri.Node):
-			finish( pe, r.at.scene )
+			finish2( ent, r.at.scene )
 		return true
 
 
@@ -98,10 +120,10 @@ public class Extra( kri.IExtension ):
 		source = r.getString()
 		r.getString()	# type
 		r.getReal()		# jitter factor
-		ent = r.geData[of kri.Entity]()
-		pe = r.geData[of kri.part.Emitter]()
+		pe = r.geData[of Emitter]()
 		if not pe:	return false
 		pm = pe.owner
+		ent = pe.entity
 		
 		ph = pm.seBeh[of support.hair.Behavior]()
 		edgeTag = ent.seTag[of support.bake.edge.Tag]()
@@ -159,7 +181,7 @@ public class Extra( kri.IExtension ):
 
 	#---	Parse life data	(emitter)	---#
 	public def fp_life(r as kri.load.Reader) as bool:
-		pm = r.geData[of kri.part.Manager]()
+		pm = r.geData[of Manager]()
 		if not pm:	return false
 		bh = beh.Standard(con)
 		pm.behos.Add( bh )
@@ -169,7 +191,7 @@ public class Extra( kri.IExtension ):
 	
 	#---	Parse hair dynamics data	---#
 	public def fp_hair(r as kri.load.Reader) as bool:
-		pm = r.geData[of kri.part.Manager]()
+		pm = r.geData[of Manager]()
 		if not pm:	return false
 		segs = r.getByte()
 		pm.behos.Add( support.hair.Behavior(con,segs) )
@@ -183,7 +205,7 @@ public class Extra( kri.IExtension ):
 	
 	#---	Parse velocity setup		---#
 	public def fp_vel(r as kri.load.Reader) as bool:
-		pe = r.geData[of kri.part.Emitter]()
+		pe = r.geData[of Emitter]()
 		if not (pe and pe.owner):	return false
 		objFactor	= r.getVector()	# object-aligned factor
 		tanFactor	= r.getVector()	# normal, tangent, tan-phase
@@ -210,13 +232,13 @@ public class Extra( kri.IExtension ):
 		mode = r.getString()
 		factor = r.getReal()
 		if mode == 'SPIN':
-			pm = r.geData[of kri.part.Manager]()
+			pm = r.geData[of Manager]()
 			if not pm:	return false
 			pm.behos.Add( beh.Rotate(factor) )
 		return true
 	
 	public def fp_phys(r as kri.load.Reader) as bool:
-		pm = r.geData[of kri.part.Manager]()
+		pm = r.geData[of Manager]()
 		if not pm:	return false
 		pg = r.at.scene.pGravity
 		if pg:
@@ -229,16 +251,8 @@ public class Extra( kri.IExtension ):
 		pm.behos.Add(biz)
 		return true
 	
-	public def getMaterial(r as kri.load.Reader) as kri.Material:
-		pe = r.geData[of kri.part.Emitter]()
-		if not (pe and pe.mat):
-			return null	
-		if pe.mat == kri.Ant.Inst.loaders.materials.con.mDef:
-			return null	
-		return pe.mat
-	
 	public def fp_child(r as kri.load.Reader) as bool:
-		mat = getMaterial(r)
+		mat = r.geData[of kri.Material]()
 		if not mat:	return false
 		meta = child.Meta( Name:'child' )
 		mat.metaList.Add(meta)
@@ -248,7 +262,7 @@ public class Extra( kri.IExtension ):
 		return true
 	
 	public def fpr_inst(r as kri.load.Reader) as bool:
-		mat = getMaterial(r)
+		mat = r.geData[of kri.Material]()
 		if not mat:	return false
 		meta = inst.Meta( Name:'inst' )
 		mat.metaList.Add(meta)

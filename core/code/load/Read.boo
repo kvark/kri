@@ -60,7 +60,7 @@ public class Reader:
 	public def puData[of T](r as T) as void:
 		#rep.RemoveAll(predicate)
 		rep.Remove( geData[of T]() )
-		rep.Insert(0,r)
+		rep.Insert(0,r)	if r
 	
 	
 	#---------	HELPER METHODS	---------#
@@ -108,3 +108,14 @@ public class Reader:
 		return kri.Spatial.EulerQuat( getVector() )
 	public def getSpatial() as kri.Spatial:
 		return kri.Spatial( pos:getVector(), scale:getReal(), rot:getQuat() )
+	
+	public def getMaterial() as kri.Material:
+		name = getString()
+		rez as kri.Material = null
+		if not at.mats.TryGetValue(name,rez):
+			kri.lib.Journal.Log("Loader: material not found (${name})")
+			rez = kri.Ant.Inst.loaders.materials.con.mDef
+			puData[of kri.Material](null)
+		else:
+			puData(rez)
+		return rez

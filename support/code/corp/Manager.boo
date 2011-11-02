@@ -7,28 +7,16 @@ import System.Collections.Generic
 #	ABSTRACT PARTICLE MANAGER			#
 #---------------------------------------#
 
-public class Manager( kri.IMeshed ):
-	public	final tf	= kri.TransFeedback(1)
-	public	final va	= kri.vb.Array()
-	public	final behos	= List[of kri.part.Behavior]()
-	public	final dict	= kri.shade.par.Dict()
+private class MeshHolder( kri.IMeshed ):
 	public	final mesh	= kri.Mesh()	//points
-
-	public	final col_init		= kri.shade.Collector()
-	public	final col_update	= kri.shade.Collector()
-
-	private parTotal	= kri.shade.par.Value[of single]('part_total')
+	
 	public	Total	as uint:
 		get: return mesh.nVert
-	public	Ready	as bool:
-		get: return mesh.buffers.Count==1 and col_init.Ready and col_update.Ready
-	
 	kri.IMeshed.Mesh as kri.Mesh:
 		get: return mesh
 	
-	public def constructor(num as uint):
-		mesh.nVert = num
-		dict.var(parTotal)
+	public def constructor(n as uint):
+		mesh.nVert = n
 	
 	public def initMesh(m as kri.Mesh) as void:
 		assert m and mesh.buffers.Count
@@ -39,7 +27,37 @@ public class Manager( kri.IMeshed ):
 		m.nVert = Total
 		m.buffers[0].Semant.AddRange( mesh.buffers[0].Semant )
 		m.allocate()
+	
+	public def checkMesh(m as kri.Mesh) as bool:
+		return m.buffers.Count>0 and m.buffers[0].Allocated>0
+	
+	public def insureMesh(m as kri.Mesh, vd as kri.vb.Dict) as void:
+		if checkMesh(m):	return
+		initMesh(m)
+		if not vd:			return
+		vd.Clear()
+		mesh.fillEntries(vd)
 
+	
+
+public class Manager( MeshHolder ):
+	public	final tf	= kri.TransFeedback(1)
+	public	final va	= kri.vb.Array()
+	public	final behos	= List[of kri.part.Behavior]()
+	public	final dict	= kri.shade.par.Dict()
+
+	public	final col_init		= kri.shade.Collector()
+	public	final col_update	= kri.shade.Collector()
+
+	private parTotal	= kri.shade.par.Value[of single]('part_total')
+	public	Ready	as bool:
+		get: return mesh.buffers.Count==1 and col_init.Ready and col_update.Ready
+	
+	
+	public def constructor(num as uint):
+		super(num)
+		dict.var(parTotal)
+	
 	public def seBeh[of T(kri.part.Behavior)]() as T:
 		for beh in behos:
 			bt = beh as T

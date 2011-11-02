@@ -33,10 +33,7 @@ public class ExObject( kri.IExtension ):
 			n = r.bin.ReadUInt16()
 			tag = kri.TagMat( off:off, num:n )
 			if n:
-				mName = r.getString()
-				if not r.at.mats.TryGetValue( mName, tag.mat ):
-					kri.lib.Journal.Log("Loader: entity (${node.name}) wants unregistered material (${mName})")
-					tag.mat = mDef
+				tag.mat = r.getMaterial()
 				off += n
 			else:
 				tag.num = m.nPoly - off
