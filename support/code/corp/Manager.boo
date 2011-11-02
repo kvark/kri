@@ -1,7 +1,6 @@
-﻿namespace kri.part
+﻿namespace support.corp
 
 import System.Collections.Generic
-import OpenTK.Graphics.OpenGL
 
 
 #---------------------------------------#
@@ -11,9 +10,9 @@ import OpenTK.Graphics.OpenGL
 public class Manager( kri.IMeshed ):
 	public	final tf	= kri.TransFeedback(1)
 	public	final va	= kri.vb.Array()
-	public	final behos	= List[of Behavior]()
+	public	final behos	= List[of kri.part.Behavior]()
 	public	final dict	= kri.shade.par.Dict()
-	public	final mesh	= kri.Mesh( BeginMode.Points )
+	public	final mesh	= kri.Mesh()	//points
 
 	public	final col_init		= kri.shade.Collector()
 	public	final col_update	= kri.shade.Collector()
@@ -40,14 +39,14 @@ public class Manager( kri.IMeshed ):
 		m.nVert = Total
 		m.buffers[0].Semant.AddRange( mesh.buffers[0].Semant )
 		m.allocate()
-	
-	public def seBeh[of T(Behavior)]() as T:
+
+	public def seBeh[of T(kri.part.Behavior)]() as T:
 		for beh in behos:
 			bt = beh as T
 			return bt	if bt
 		return null	as T
 
-	public def init(pc as Context) as void:
+	public def init(pc as kri.part.Context) as void:
 		# collect attributes
 		mesh.buffers.Clear()
 		mesh.buffers.Add( vob = kri.vb.Attrib() )
@@ -58,10 +57,10 @@ public class Manager( kri.IMeshed ):
 		# collect shaders
 		for col in (col_init,col_update):
 			col.bu.clear()
-			col.absorb[of Behavior](behos)
+			col.absorb[of kri.part.Behavior](behos)
 			col.compose( vob.Semant, dict, kri.Ant.Inst.dict )
 	
-	protected def process(pe as Emitter, bu as kri.shade.Bundle) as bool:
+	protected def process(pe as Emitter, target as kri.Mesh, bu as kri.shade.Bundle) as bool:
 		if not (Ready and pe.update()):
 			return false
 		if not tf.Bind( mesh.buffers[0] ):
@@ -76,12 +75,16 @@ public class Manager( kri.IMeshed ):
 		# swap data
 		mesh.fillEntries( pe.entries )
 		data = mesh.buffers[0]
-		mesh.buffers[0] = pe.mesh.buffers[0]
-		pe.mesh.buffers[0] = data
+		mesh.buffers[0] = target.buffers[0]
+		target.buffers[0] = data
 		return true
 
-	public def process(pe as Emitter) as bool:
-		if not pe.filled:
-			pe.filled = process( pe, col_init.bu )
-			return pe.filled
-		return process( pe, col_update.bu )
+	public def process(pe as Emitter, target as kri.Mesh) as bool:
+		rez = false
+		if pe.state == State.Unknown:
+			rez = process( pe, target, col_init.bu )
+			if rez:	pe.state = State.Filled
+		if pe.state == State.Filled:
+			rez = process( pe, target, col_update.bu )
+		if not rez: pe.state = State.Invalid
+		return rez

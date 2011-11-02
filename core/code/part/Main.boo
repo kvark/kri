@@ -64,3 +64,18 @@ public class Context:
 	public final	sh_surf_vertex	= Object.Load('/part/surf/vertex_v')
 	public final	sh_surf_edge	= Object.Load('/part/surf/edge_v')
 	public final	sh_surf_face	= Object.Load('/part/surf/face_v')
+
+	# helper methods
+	public def makePart(cin as Collector, cup as Collector) as void:
+		cin.root = sh_init
+		cin.mets['init'] = DefMethod.Void
+		cup.root = sh_root
+		cup.extra.Add( sh_tool )
+		cup.mets['reset']	= DefMethod.Float
+		cup.mets['update']	= DefMethod.Float
+	
+	public def makeHair(cin as Collector, cup as Collector) as void:
+		cin.mets['init']	= DefMethod.Void
+		cin.root	= sh_fur_init
+		cup.mets['update']	= DefMethod.Float
+		cup.root	= sh_fur_root

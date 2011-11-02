@@ -50,11 +50,11 @@ public class Extra( kri.IExtension ):
 			ph = pm.seBeh[of support.hair.Behavior]()
 			if ps:
 				pm.behos.Add( beh.Sys() )
-				pm.makeStandard(con)
+				con.makePart( pm.col_init, pm.col_update )
 				born = (con.sh_born_time, con.sh_born_loop)[ bLoop ]
 				pm.col_update.extra.Add(born)
 			elif ph:
-				pm.makeHair(con)
+				con.makeHair( pm.col_init, pm.col_update )
 			else: return
 			pm.init(con)
 			if ph:

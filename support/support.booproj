@@ -50,8 +50,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
-    <Compile Include="code\corp\Entity.boo" />
-    <Compile Include="code\corp\rend\Main.boo" />
+    <Compile Include="code\corp\Emitter.boo" />
+    <Compile Include="code\corp\Manager.boo" />
+    <Compile Include="code\corp\rend\Draw.boo" />
+    <Compile Include="code\corp\rend\Update.boo" />
     <Compile Include="code\defer\Envir.boo" />
     <Compile Include="code\node\Main.boo" />
     <Compile Include="code\skin\Debug.boo" />
@@ -68,7 +70,7 @@
     <Compile Include="code\corp\beh\Small.boo" />
     <Compile Include="code\corp\Child.boo" />
     <Compile Include="code\corp\Inst.boo" />
-    <Compile Include="code\corp\Main.boo" />
+    <Compile Include="code\corp\Load.boo" />
     <Compile Include="code\cull\box\Apply.boo" />
     <Compile Include="code\cull\box\Fill.boo" />
     <Compile Include="code\cull\box\Main.boo" />
