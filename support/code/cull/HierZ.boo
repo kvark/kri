@@ -48,7 +48,7 @@ public class Apply( kri.rend.Basic ):
 		# perform culling
 		tex.setBorder( Graphics.Color4.White )
 		tf.Bind(dest)
-		using kri.Discarder():
+		using tf.discard():
 			frame.draw(bu,tf)
 		# store the result
 		cam = kri.Camera.Current

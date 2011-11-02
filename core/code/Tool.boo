@@ -40,32 +40,35 @@ public static class Help:
 #	GL Caps		#
 #---------------#
 
-# Provides GL state on/off mechanics
-public class Section(IDisposable):
-	public static final DummyCap	= EnableCap.Fog
+public class State:
 	public final	cap as EnableCap
-	public final	dir	as bool
+	public def constructor(state as EnableCap):
+		cap = state
+	public On as bool:
+		get: return GL.IsEnabled(cap)
+		set: 
+			if value:	GL.Enable(cap)
+			else:		GL.Disable(cap)
+	
+
+# Provides GL state on/off mechanics
+public class Section(State,IDisposable):
+	public static final DummyCap	= EnableCap.Fog
 	
 	public def switch(val as bool) as void:
 		if cap == DummyCap:	return
-		on = (val == dir)
-		if on == GL.IsEnabled(cap):
-			lib.Journal.Log("GL: unexpected state (${cap} == ${not on})")
-		if on:	GL.Enable(cap)
-		else:	GL.Disable(cap)
+		if On == val:
+			lib.Journal.Log("GL: unexpected state (${cap} == ${not val})")
+		On = val
 			
-	public def constructor(state as EnableCap, direct as bool):
-		cap = state
-		dir = direct
-		switch(true)
-	
 	public def constructor(state as EnableCap):
-		self(state,true)
+		super(state)
+		switch(true)
 	
 	public def constructor():
 		self(DummyCap)
 		
-	public virtual def Dispose() as void:  #imp: IDisposable
+	def IDisposable.Dispose() as void:
 		switch(false)
 
 
@@ -113,18 +116,3 @@ public class Blender(Section):
 		GL.BlendFunc( BlendingFactorSrc.One,			BlendingFactorDest.ConstantAlpha )
 	public static def skipAlpha() as void:
 		GL.BlendFunc( BlendingFactorSrc.ConstantAlpha,	BlendingFactorDest.One )
-
-
-# Provide standard blending options
-public class Discarder(Section):
-	public static Safe	= false
-	public def constructor():
-		super( EnableCap.RasterizerDiscard )
-		if Safe:
-			GL.PointSize(1.0)
-			GL.ColorMask(false,false,false,false)
-			GL.Disable( EnableCap.DepthTest )
-	public override def Dispose() as void:
-		if Safe:
-			GL.ColorMask(true,true,true,true)
-		super()

@@ -5,7 +5,6 @@ import OpenTK.Graphics.OpenGL
 #---------	RENDER PARTICLES BASE		--------#
 
 public class Basic( kri.rend.Basic ):
-	public bAdd		as single = 0f
 	protected abstract def prepare(pe as kri.part.Emitter, ref nin as uint) as kri.shade.Bundle:
 		pass
 	public def drawScene() as void:

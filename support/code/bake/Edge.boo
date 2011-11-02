@@ -38,7 +38,7 @@ public class Update( kri.rend.tech.Basic ):
 			n = (null,e.node)[tag.worldSpace]
 			kri.Ant.Inst.params.spaModel.activate(n)
 			tf.Bind( tag.data )
-			using kri.Discarder():
+			using tf.discard():
 				if not e.render(va,bu):
 					kri.lib.Journal.Log("Bake: edge update failed for ${e.node.name}")
 					e.tags.Remove(tag)

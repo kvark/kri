@@ -126,11 +126,9 @@ public class Ant(IDisposable):
 		defPath = '../../gpu'
 		answers = ('no','yes')
 		feedCount	= answers[kri.TransFeedback.CountPrimitives]
-		safeDiscard	= answers[kri.Discarder.Safe]
 		if conf:
 			defPath		= conf.ask('ShaderPath',defPath)
 			feedCount	= conf.ask('GL.FeedbackCount',feedCount)
-			safeDiscard	= conf.ask('GL.SafeDiscard',safeDiscard)
 			# check configuration completeness
 			unused = List[of string]( conf.getUnused() ).ToArray()
 			if unused.Length:
@@ -141,7 +139,6 @@ public class Ant(IDisposable):
 		kri.rend.link.Basic.Init()
 		shade.Code.Folder = defPath
 		TransFeedback.CountPrimitives = (feedCount	== answers[1])
-		Discarder.Safe = (safeDiscard				== answers[1])
 
 		assert not inst
 		inst = self

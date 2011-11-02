@@ -84,6 +84,6 @@ public class Universal( kri.rend.tech.Basic ):
 				bones[i+1].activate(spa)
 			# run the transform
 			kri.Ant.Inst.params.activate(e)
-			using kri.Discarder():
+			using tf.discard():
 				e.mesh.render(va,bu,vDict,1,tf)
 			tag.Sync = true

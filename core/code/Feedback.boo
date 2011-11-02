@@ -73,6 +73,9 @@ public class TransFeedback(Query):
 	public def catch() as IDisposable:
 		return CatcherFeed( mode, (null,self)[CountPrimitives] )
 	
+	public def discard() as IDisposable:
+		return Section( EnableCap.RasterizerDiscard )
+	
 	public static def Bind(buffers as (vb.Object), offsets as (uint), sizes as (uint)) as bool:
 		for i in range( buffers.Length ):
 			bf = Cache[i] = buffers[i]
