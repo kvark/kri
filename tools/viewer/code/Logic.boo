@@ -142,7 +142,7 @@ public class Logic:
 		eSkin	= support.skin.Extra()
 		eCorp	= support.corp.Extra()
 		eMorph	= support.morph.Extra()
-		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eCorp,eMorph))
+		ant.extensions.AddRange((of kri.IExtension:eLayer,eSkin,eMorph)) #eCorp
 		ant.anim = al
 		if auDev!=null:
 			opera = kri.sound.Opera(auDev)

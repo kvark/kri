@@ -94,5 +94,12 @@ public class Context:
 
 	public def constructor():
 		fillMat(mDef, Color4.Gray, 0.1f, Color4.Gray, 50f)
-		mDef.metaList.Add(Halo( Name:'halo', Shader:slib.halo_u, Data:OpenTK.Vector4(0.1f,50f,0f,1f) ))
+		mDef.metaList.Add(Halo(
+			Name:'halo', Shader:slib.halo_u,
+			Data:OpenTK.Vector4(0.1f,50f,0f,1f)
+			))
+		mDef.metaList.Add(Strand(
+			Name:'strand', Shader:slib.strand_u,
+			Data:OpenTK.Vector4.Zero	//todo: use a meaningful value
+			))
 		mDef.link()

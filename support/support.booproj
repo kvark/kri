@@ -54,6 +54,7 @@
     <Compile Include="code\corp\Manager.boo" />
     <Compile Include="code\corp\rend\Draw.boo" />
     <Compile Include="code\corp\rend\Update.boo" />
+    <Compile Include="code\cull\Soft.boo" />
     <Compile Include="code\defer\Envir.boo" />
     <Compile Include="code\node\Main.boo" />
     <Compile Include="code\skin\Debug.boo" />

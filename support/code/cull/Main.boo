@@ -46,6 +46,7 @@ public class Group( kri.rend.Group ):
 	public	final	rBoxFill	as box.Fill					= null
 	public	final	rBoxDraw	as box.Draw					= null
 	public	final	rBoxUp		as box.Update				= null
+	public	final	rSoft		as Soft						= null
 	public	final	rFill		as hier.Fill				= null
 	public	final	rApply		as hier.Apply				= null
 	public	final	rMap		as kri.rend.debug.MapDepth	= null
@@ -53,6 +54,7 @@ public class Group( kri.rend.Group ):
 	public	final	sBoxFill	= 'box.fill'
 	public	final	sBoxDraw	= 'box.draw'
 	public	final	sBoxUp		= 'box.up'
+	public	final	sSoft		= 'z.soft'
 	public	final	sFill		= 'z.fill'
 	public	final	sApply		= 'z.app'
 	public	final	sMap		= 'z.map'
@@ -62,23 +64,29 @@ public class Group( kri.rend.Group ):
 		rBoxFill = box.Fill(con)
 		rBoxDraw = box.Draw(con)
 		rBoxUp = box.Update(con)
+		rSoft = Soft()
 		rFill = hier.Fill(con)
 		rApply = hier.Apply(con)
 		rMap = kri.rend.debug.MapDepth()
-		rMap.active = false
-		super(rBoxFill,rFill,rApply,rBoxUp,rMap)
+		rSoft.active = rMap.active = false
+		super(rBoxFill,rSoft,rFill,rApply,rBoxUp,rMap)
 	
 	public def actNormal(debug as int) as void:
-		for r in (rBoxFill,rBoxDraw,rBoxUp,rFill,rApply):
+		for r in (rBoxFill,rBoxUp,rFill,rApply):
 			r.active = true
 		if debug>=0:
 			rMap.active = true
 			rMap.level = debug
 	
+	public def actSoft() as void:
+		for r in (rBoxFill,rBoxUp,rSoft):
+			r.active = true
+	
 	public def fill(rm as kri.rend.Manager, skin as string, sZ as string, sEmi as string) as void:
 		rm.put(sBoxFill,	2,rBoxFill,	skin)
 		rm.put(sBoxDraw,	1,rBoxDraw,	sBoxFill,sEmi)
 		rm.put(sBoxUp,		1,rBoxUp,	sBoxFill)
+		rm.put(sSoft,		1,rSoft,	sBoxUp)
 		rm.put(sFill,		1,rFill,	sZ)
 		rm.put(sApply,		1,rApply,	sFill,sBoxFill)
 		rm.put(sMap,		1,rMap,		sFill,sEmi)

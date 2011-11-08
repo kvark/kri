@@ -39,6 +39,20 @@ public class Projector( ani.data.Player, INoded ):
 	public def setRanges(a as single, b as single) as void:
 		assert b>a
 		rangeIn,rangeOut = a,b
+	
+	public def getFrustum() as (Vector4):
+		planes = array[of Vector4](6)
+		cos = System.Math.Cos(fov)
+		sin = System.Math.Sin(fov)
+		planes[0] = Vector4(cos,0f,sin,0f)
+		planes[1] = Vector4(-cos,0f,sin,0f)
+		planes[2] = Vector4(0f,cos*aspect,sin,0f)
+		planes[2].Normalize()
+		planes[3] = Vector4(0f,-cos*aspect,sin,0f)
+		planes[3].Normalize()
+		planes[4] = Vector4(0f,0f,1f,rangeIn)
+		planes[5] = Vector4(0f,0f,-1f,-rangeOut)
+		return planes
 		
 
 public class Camera(Projector):

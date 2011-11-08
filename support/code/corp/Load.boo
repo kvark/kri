@@ -103,7 +103,6 @@ public class Extra( kri.IExtension ):
 		r.puData(pe)
 		ent = kri.Entity()
 		ent.tags.Add(pe)
-		r.puData(ent)
 		r.at.scene.entities.Add(ent)
 		# link to material
 		tm = kri.TagMat( off:0, num:pm.Total )
@@ -169,7 +168,7 @@ public class Extra( kri.IExtension ):
 				upNode(e)
 				tag = e.seTag[of support.bake.surf.Tag]()
 				if not (tag and tag.stamp>=0.0 and tag.Vert and tag.Quat):
-					return false	
+					return false
 				tVert.Value = tag.Vert
 				tQuat.Value = tag.Quat
 				return true

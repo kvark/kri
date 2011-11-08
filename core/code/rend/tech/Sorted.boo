@@ -58,6 +58,9 @@ public abstract class Sorted(General):
 		bat.off = tm.off
 		tempList.Add(bat)
 	
+	protected virtual def isGood(ent as kri.Entity) as bool:
+		return true
+	
 	public override def addObject(e as kri.Entity, vd as kri.vb.Dict) as bool:
 		tempList.Clear()
 		bat.dict = e.CombinedAttribs
@@ -69,14 +72,14 @@ public abstract class Sorted(General):
 			return true
 		return false
 	
-	# shouldn't be used as some objects have to be excluded
-	protected def drawScene() as void:
+	protected virtual def drawScene() as void:
 		scene = kri.Scene.Current
 		if not scene:
 			return
 		butch.Clear()
 		for e in scene.entities:
-			addObject(e,null)
+			if isGood(e):
+				addObject(e,null)
 		if comparer:
 			butch.Sort(comparer)
 		for b in butch:

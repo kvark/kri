@@ -93,7 +93,7 @@ def save_mat_unit(mtex):
 	infoStr = 'affects:'
 	for x in supported:
 		enabled = mtex.__getattribute__('use_map_'+x)
-		x = x.replace('spec','specular')
+		#x = x.replace('spec','specular')
 		if not enabled: continue
 		if x.startswith(xcolor):
 			fname = x.replace(xcolor,'') + '_' + xcolor

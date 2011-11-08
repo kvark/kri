@@ -70,6 +70,7 @@ public class RenderSet:
 			for ren in (rSkin,rZ,rClear,rNormal):
 				ren.active = true
 			grCull.actNormal(-1)
+			#grCull.actSoft()
 		if str in ('Anaglyph'):
 			for ren in (rSkin,rZ,rColor,rNormal,rStereo):
 				ren.active = true

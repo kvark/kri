@@ -50,7 +50,7 @@ public class EarlyZ( tech.Sorted ):
 	public	offset	= 1f
 	public def constructor():
 		super('zcull')
-		bu.shader.add( '/zcull_v', '/empty_f', '/lib/tool_v', '/lib/quat_v' )
+		bu.shader.add( '/zcull_v', '/lib/tool_v', '/lib/quat_v' )
 		bu.link()
 	public override def construct(mat as kri.Material) as kri.shade.Bundle:
 		return bu
