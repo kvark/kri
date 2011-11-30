@@ -149,7 +149,7 @@ public class Logic:
 		rset = RenderSet( true, samples, eCorp.con )
 		rset.grDeferred.rBug.layer = -1
 		vProxy = support.stereo.Proxy(view,0.01f,0f)
-	
+
 	public def quit() as void:
 		rset = null
 		for dis in (of System.IDisposable: ant,opera):
@@ -202,7 +202,14 @@ public class Logic:
 	public def makeWidget() as Gtk.GLWidget:
 		gm = options.genMode(32,24)
 		fl = options.genFlags()
-		return Gtk.GLWidget( gm, options.verMajor, options.verMinor, fl )
+		widget = Gtk.GLWidget( gm, options.verMajor, options.verMinor, fl )
+		# change size
+		sizes	= config.ask('GL.Size','0x0').Split(char('x'))
+		wid	= uint.Parse( sizes[0] )
+		het	= uint.Parse( sizes[1] )
+		if wid*het:
+			widget.SetSizeRequest(wid,het)
+		return widget
 	
 	public def report() as string:
 		return rset.rMan.genReport()
