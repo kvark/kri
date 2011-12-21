@@ -18,7 +18,7 @@
     <StartWorkingDirectory>..\</StartWorkingDirectory>
     <NoWin32Manifest>True</NoWin32Manifest>
     <BaseIntermediateOutputPath>..\obj\</BaseIntermediateOutputPath>
-    <StartArguments>-draw -pipe=HierZ</StartArguments>
+    <StartArguments>-draw -pipe=HierZ -play -scene=../../export/scenes/build/unfold.scene</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

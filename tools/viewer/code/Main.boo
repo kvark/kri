@@ -13,10 +13,10 @@ private struct Launcher:
 	# init
 	public def onInit(o as object, args as System.EventArgs):
 		if initPipe:	ga.setPipe(initPipe)
-		if initScene:	ga.load(initScene)
 		if doUpdate:	ga.setDraw()
 		if doStereo:	ga.setStereo()
-		if doPlay:		ga.logic.playAll()
+		ga.sceneToLoad = initScene
+		ga.playOnLoad = doPlay
 	
 	# create
 	public def constructor(argv as (string)):

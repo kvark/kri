@@ -38,7 +38,9 @@ public class GladeApp:
 	private final	dialog	as Gtk.MessageDialog
 	public	final	gw		as Gtk.GLWidget
 	public	final	logic	= Logic()
-	private	curObj	as object		= null
+	public	sceneToLoad		as string	= null
+	public	playOnLoad		as bool		= false
+	private	curObj			as object	= null
 	private	curIter	= Gtk.TreeIter.Zero
 	private	flushCount	= 0
 	
@@ -92,6 +94,12 @@ public class GladeApp:
 		Gtk.Application.Quit()
 	
 	public def onIdle() as bool:
+		if not string.IsNullOrEmpty(sceneToLoad):
+			load(sceneToLoad)
+			sceneToLoad = null
+			if playOnLoad:
+				logic.playAll()
+				playOnLoad = false
 		if butDraw.Active:
 			gw.QueueDraw()
 		elif window.Title != stat.title:
